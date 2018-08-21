@@ -6,8 +6,8 @@ spring:
 spring:
   profiles: test, development
   cloud:
-  kubernetes:
-  enabled: false
+    kubernetes:
+      enabled: false
     config:
       enabled: false
     discovery:
