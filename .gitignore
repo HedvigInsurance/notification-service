@@ -24,3 +24,6 @@ hs_err_pid*
 
 # hide target folder
 target/*
+
+#hide intellij stuff
+*.iml
