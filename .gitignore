@@ -27,3 +27,6 @@ target/*
 
 #hide intellij stuff
 *.iml
+
+application.yaml
+application-*.yml
