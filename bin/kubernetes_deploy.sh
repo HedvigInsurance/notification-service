@@ -10,7 +10,7 @@ if [ -z "$TRAVIS_PULL_REQUEST" ] || [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
     chmod +x ./kubectl
     chmod +x ~/.kube/heptio-authenticator-aws
     
-    ./kubectl set image deployment/member-service member-service=$REMOTE_IMAGE_URL:${TRAVIS_COMMIT}
+    ./kubectl set image deployment/notification-service notification-service=$REMOTE_IMAGE_URL:${TRAVIS_COMMIT}
   else
     echo "Skipping deploy because branch is not 'master'"
   fi
