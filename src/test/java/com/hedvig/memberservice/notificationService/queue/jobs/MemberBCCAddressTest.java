@@ -1,8 +1,7 @@
 package com.hedvig.memberservice.notificationService.queue.jobs;
 
-
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import com.hedvig.memberservice.notificationService.queue.MemberBCCAddress;
 import lombok.val;
@@ -24,8 +23,9 @@ public class MemberBCCAddressTest {
   @Test
   public void create_withInvalidEmailAddress_throwsException() {
 
-    assertThatThrownBy(() -> new MemberBCCAddress(ILLEGAL_EMAIL_ADDRESS)).isInstanceOf(IllegalArgumentException.class).hasMessageContaining(ILLEGAL_EMAIL_ADDRESS);
-
+    assertThatThrownBy(() -> new MemberBCCAddress(ILLEGAL_EMAIL_ADDRESS))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessageContaining(ILLEGAL_EMAIL_ADDRESS);
   }
 
 
