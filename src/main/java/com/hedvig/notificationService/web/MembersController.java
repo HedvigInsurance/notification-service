@@ -6,6 +6,7 @@ import com.hedvig.notificationService.enteties.FirebaseRepository;
 import com.hedvig.notificationService.enteties.FirebaseToken;
 import com.hedvig.notificationService.enteties.MailConfirmation;
 import com.hedvig.notificationService.enteties.MailRepository;
+import com.hedvig.notificationService.service.FirebaseNotificationService;
 import com.hedvig.notificationService.service.NotificationService;
 import com.hedvig.notificationService.serviceIntegration.productsPricing.ProductClient;
 import com.hedvig.notificationService.serviceIntegration.productsPricing.dto.InsuranceNotificationDTO;
@@ -43,16 +44,19 @@ public class MembersController {
   private final ProductClient productClient;
   private final MailRepository mailRepository;
   private final FirebaseRepository firebaseRepository;
+  private final FirebaseNotificationService firebaseNotificationService;
 
   public MembersController(
       NotificationService notificationService,
       ProductClient productClient,
       MailRepository mailRepository,
-      FirebaseRepository firebaseRepository) {
+      FirebaseRepository firebaseRepository,
+      FirebaseNotificationService firebaseNotificationService) {
     this.notificationService = notificationService;
     this.productClient = productClient;
     this.mailRepository = mailRepository;
     this.firebaseRepository = firebaseRepository;
+    this.firebaseNotificationService = firebaseNotificationService;
   }
 
   @PostMapping("/{memberId}/cancellationEmailSentToInsurer")
@@ -197,5 +201,11 @@ public class MembersController {
           e);
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
+  }
+
+  @PostMapping("/{memberId}/push/send")
+  public ResponseEntity<?> sendPushNotification(@PathVariable(name = "memberId") String memberId) {
+    firebaseNotificationService.sendNewMessageNotification(memberId);
+    return ResponseEntity.noContent().build();
   }
 }
