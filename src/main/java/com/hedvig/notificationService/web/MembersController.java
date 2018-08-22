@@ -2,6 +2,8 @@ package com.hedvig.notificationService.web;
 
 import com.hedvig.notificationService.dto.CancellationEmailSentToInsurerRequest;
 import com.hedvig.notificationService.dto.InsuranceActivationDateUpdatedRequest;
+import com.hedvig.notificationService.enteties.MailConfirmation;
+import com.hedvig.notificationService.enteties.MailRepository;
 import com.hedvig.notificationService.service.NotificationService;
 import com.hedvig.notificationService.serviceIntegration.productsPricing.ProductClient;
 import com.hedvig.notificationService.serviceIntegration.productsPricing.dto.InsuranceNotificationDTO;
@@ -13,7 +15,9 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import javax.validation.Valid;
+import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -33,10 +37,15 @@ public class MembersController {
   private final Logger log = LoggerFactory.getLogger(MembersController.class);
   private final NotificationService notificationService;
   private final ProductClient productClient;
+  private final MailRepository mailRepository;
 
-  public MembersController(NotificationService notificationService, ProductClient productClient) {
+  public MembersController(
+      NotificationService notificationService,
+      ProductClient productClient,
+      MailRepository mailRepository) {
     this.notificationService = notificationService;
     this.productClient = productClient;
+    this.mailRepository = mailRepository;
   }
 
   @PostMapping("/{memberId}/cancellationEmailSentToInsurer")
@@ -136,5 +145,14 @@ public class MembersController {
       }
       return ResponseEntity.notFound().build();
     }
+  }
+
+  @PostMapping("/mailConfirmed")
+  public ResponseEntity<?> mailConfirmed(@RequestBody String memberId) {
+    val conf = new MailConfirmation();
+    conf.setMemberId(memberId);
+    conf.setConfirmationId(UUID.randomUUID().toString());
+    mailRepository.save(conf);
+    return ResponseEntity.noContent().build();
   }
 }
