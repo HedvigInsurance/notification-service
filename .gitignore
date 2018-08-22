@@ -30,3 +30,4 @@ target/*
 
 application.yaml
 application-*.yml
+service-account.json
