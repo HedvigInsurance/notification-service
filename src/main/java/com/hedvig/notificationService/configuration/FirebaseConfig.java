@@ -33,7 +33,7 @@ public class FirebaseConfig {
 
   @PostConstruct
   public void init() throws IOException {
-    logger.info("AAAAAAAA {}",configPath);
+    logger.info("Initializing FirebaseApp");
     InputStream inputStream = getClass().getResourceAsStream(configPath);
 
     FirebaseOptions options =
@@ -43,5 +43,6 @@ public class FirebaseConfig {
             .build();
 
     FirebaseApp.initializeApp(options);
+    logger.info("FirebaseApp Initialized");
   }
 }
