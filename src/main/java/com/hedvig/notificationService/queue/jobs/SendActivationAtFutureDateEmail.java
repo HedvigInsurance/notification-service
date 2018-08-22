@@ -2,7 +2,7 @@ package com.hedvig.notificationService.queue.jobs;
 
 import com.hedvig.notificationService.queue.EmailSender;
 import com.hedvig.notificationService.queue.requests.SendActivationAtFutureDateRequest;
-import com.hedvig.notificationService.serviceIntegration.expo.ExpoNotificationService;
+import com.hedvig.notificationService.service.FirebaseNotificationService;
 import com.hedvig.notificationService.serviceIntegration.memberService.MemberServiceClient;
 import com.hedvig.notificationService.serviceIntegration.memberService.dto.Member;
 import java.io.IOException;
@@ -21,7 +21,7 @@ public class SendActivationAtFutureDateEmail {
   private Logger log = LoggerFactory.getLogger(SendActivationEmail.class);
 
   private final MemberServiceClient memberServiceClient;
-  private final ExpoNotificationService expoNotificationService;
+  private final FirebaseNotificationService firebaseNotificationService;
 
   private final String mandateSentNotification;
   private final ClassPathResource signatureImage;
@@ -32,13 +32,13 @@ public class SendActivationAtFutureDateEmail {
 
   public SendActivationAtFutureDateEmail(
       MemberServiceClient memberServiceClient,
-      ExpoNotificationService expoNotificationService,
+      FirebaseNotificationService firebaseNotificationService,
       EmailSender emailSender)
       throws IOException {
     this.memberServiceClient = memberServiceClient;
-    this.expoNotificationService = expoNotificationService;
+    this.firebaseNotificationService = firebaseNotificationService;
     this.emailSender = emailSender;
-    this.mandateSentNotification = LoadEmail("activated.html"); //TODO: CHANGE
+    this.mandateSentNotification = LoadEmail("activated.html"); // TODO: CHANGE
     this.signatureImage = new ClassPathResource("mail/wordmark_mail.jpg");
   }
 
@@ -55,8 +55,7 @@ public class SendActivationAtFutureDateEmail {
       }
 
       sendPush(body.getMemberId(), body.getFirstName());
-    }
-    else{
+    } else {
       log.error("Response body from member-service is null: {}", profile);
     }
   }
@@ -64,7 +63,7 @@ public class SendActivationAtFutureDateEmail {
   private void sendPush(Long memberId, String firstName) {
 
     String message = String.format(PUSH_MESSAGE, firstName);
-    expoNotificationService.sendNotification(Objects.toString(memberId), message);
+    firebaseNotificationService.sendNotification(Objects.toString(memberId), message);
   }
 
   // TODO: CHANGE

@@ -2,7 +2,7 @@ package com.hedvig.notificationService.queue.jobs;
 
 import com.hedvig.notificationService.queue.EmailSender;
 import com.hedvig.notificationService.queue.requests.SendActivationDateUpdatedRequest;
-import com.hedvig.notificationService.serviceIntegration.expo.ExpoNotificationService;
+import com.hedvig.notificationService.service.FirebaseNotificationService;
 import com.hedvig.notificationService.serviceIntegration.memberService.MemberServiceClient;
 import com.hedvig.notificationService.serviceIntegration.memberService.dto.Member;
 import java.io.IOException;
@@ -26,25 +26,25 @@ public class SendActivationDateUpdatedEmail {
   private final EmailSender emailSender;
 
   private final MemberServiceClient memberServiceClient;
-  private final ExpoNotificationService expoNotificationService;
+  private final FirebaseNotificationService firebaseNotificationService;
 
   private final String mandateSentNotification;
   private final ClassPathResource signatureImage;
-  private static final String PUSH_MESSAGE = "Hej %s! Bra nyheter! %s har bekräftat ditt uppsägningsdatum - det är %s. Samma dag aktiveras din Hedvigförsäkring. Jag hör av mig då! 🙌";
+  private static final String PUSH_MESSAGE =
+      "Hej %s! Bra nyheter! %s har bekräftat ditt uppsägningsdatum - det är %s. Samma dag aktiveras din Hedvigförsäkring. Jag hör av mig då! 🙌";
 
   public SendActivationDateUpdatedEmail(
-        EmailSender emailSender,
-        MemberServiceClient memberServiceClient,
-        ExpoNotificationService expoNotificationService)
-            throws IOException {
+      EmailSender emailSender,
+      MemberServiceClient memberServiceClient,
+      FirebaseNotificationService firebaseNotificationService)
+      throws IOException {
     this.emailSender = emailSender;
     this.memberServiceClient = memberServiceClient;
-    this.expoNotificationService = expoNotificationService;
+    this.firebaseNotificationService = firebaseNotificationService;
 
     mandateSentNotification = LoadEmail("notifications/insurance_activation_date_updated.html");
     signatureImage = new ClassPathResource("mail/wordmark_mail.jpg");
   }
-
 
   public void run(SendActivationDateUpdatedRequest request) {
 
@@ -62,15 +62,13 @@ public class SendActivationDateUpdatedEmail {
             body.getEmail(),
             body.getFirstName(),
             request.getInsurer(),
-            localDate.format(format)
-        );
+            localDate.format(format));
       } else {
-        log.error(
-            String.format("Could not find email on user with id: %s", request.getMemberId()));
+        log.error(String.format("Could not find email on user with id: %s", request.getMemberId()));
       }
 
-      sendPush(body.getMemberId(), body.getFirstName(), request.getInsurer(),
-          localDate.format(format));
+      sendPush(
+          body.getMemberId(), body.getFirstName(), request.getInsurer(), localDate.format(format));
     } else {
       log.error("Response body from member-service is null: {}", profile);
     }
@@ -78,7 +76,7 @@ public class SendActivationDateUpdatedEmail {
 
   private void sendPush(Long memberId, String firstName, String insurer, String date) {
     String message = String.format(PUSH_MESSAGE, firstName, insurer, date);
-    expoNotificationService.sendNotification(Objects.toString(memberId), message);
+    firebaseNotificationService.sendNotification(Objects.toString(memberId), message);
   }
 
   private void sendEmail(
@@ -87,15 +85,16 @@ public class SendActivationDateUpdatedEmail {
       final String firstName,
       final String insurer,
       final String date) {
-    val finalEmail = mandateSentNotification
-        .replace("{FIRST_NAME}", firstName)
-        .replace("{INSURER}", insurer)
-        .replace("{DATE}", date);
+    val finalEmail =
+        mandateSentNotification
+            .replace("{FIRST_NAME}", firstName)
+            .replace("{INSURER}", insurer)
+            .replace("{DATE}", date);
 
     emailSender.sendEmail(memberId, "Goda nyheter 🚝", email, finalEmail, signatureImage);
-    }
+  }
 
-    private String LoadEmail(final String s) throws IOException {
-        return IOUtils.toString(new ClassPathResource("mail/" + s).getInputStream(), "UTF-8");
-    }
+  private String LoadEmail(final String s) throws IOException {
+    return IOUtils.toString(new ClassPathResource("mail/" + s).getInputStream(), "UTF-8");
+  }
 }
