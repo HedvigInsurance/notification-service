@@ -1,7 +1,6 @@
 package com.hedvig.notificationService.web;
 
 import com.hedvig.notificationService.dto.CancellationEmailSentToInsurerRequest;
-import com.hedvig.notificationService.dto.InsuranceActivatedRequest;
 import com.hedvig.notificationService.dto.InsuranceActivationDateUpdatedRequest;
 import com.hedvig.notificationService.service.NotificationService;
 import com.hedvig.notificationService.serviceIntegration.productsPricing.ProductClient;
@@ -55,8 +54,7 @@ public class MembersController {
   }
 
   @PostMapping("/{memberId}/insuranceActivated")
-  public ResponseEntity<?> insuranceActivated(
-      @PathVariable Long memberId, @RequestBody InsuranceActivatedRequest body) {
+  public ResponseEntity<?> insuranceActivated(@PathVariable Long memberId) {
     MDC.put("memberId", Objects.toString(memberId));
     try {
       notificationService.insuranceActivated(memberId);
