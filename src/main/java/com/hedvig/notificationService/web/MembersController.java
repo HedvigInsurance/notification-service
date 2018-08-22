@@ -89,7 +89,7 @@ public class MembersController {
    *     <p>or
    * @return 404 not found if there is no isnurance that will be activated on that date
    */
-  @PostMapping("/{memberId}/insuranceWillBeActivatedAt")
+  @PostMapping("/insuranceWillBeActivatedAt")
   public ResponseEntity<?> insuranceReminder(@RequestBody int NumberOfDaysFromToday) {
 
     if (NumberOfDaysFromToday < 0) {
