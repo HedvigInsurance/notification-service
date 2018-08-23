@@ -198,6 +198,12 @@
       <artifactId>springfox-swagger-ui</artifactId>
       <version>2.7.0</version>
     </dependency>
+    <dependency>
+      <groupId>com.google.firebase</groupId>
+      <artifactId>firebase-admin</artifactId>
+      <version>RELEASE</version>
+      <scope>compile</scope>
+    </dependency>
   </dependencies>
 
   <build>
