@@ -28,13 +28,13 @@ public class FirebaseConfig {
   @Value("${hedvig.firebase.database.url}")
   private String databaseUrl;
 
-  @Value("/service-account.json")
+  @Value("${hedvig.firebase.config.path}")
   private String configPath;
 
   @PostConstruct
   public void init() throws IOException {
     logger.info("Initializing FirebaseApp");
-    InputStream inputStream = getClass().getResourceAsStream(configPath);
+    InputStream inputStream = getClass().getClassLoader().getResourceAsStream(configPath);
 
     FirebaseOptions options =
         new FirebaseOptions.Builder()

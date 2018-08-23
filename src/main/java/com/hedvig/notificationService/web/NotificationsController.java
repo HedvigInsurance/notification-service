@@ -37,16 +37,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/_/notifications")
-public class MembersController {
+public class NotificationsController {
 
-  private final Logger log = LoggerFactory.getLogger(MembersController.class);
+  private final Logger log = LoggerFactory.getLogger(NotificationsController.class);
   private final NotificationService notificationService;
   private final ProductClient productClient;
   private final MailRepository mailRepository;
   private final FirebaseRepository firebaseRepository;
   private final FirebaseNotificationService firebaseNotificationService;
 
-  public MembersController(
+  public NotificationsController(
       NotificationService notificationService,
       ProductClient productClient,
       MailRepository mailRepository,
