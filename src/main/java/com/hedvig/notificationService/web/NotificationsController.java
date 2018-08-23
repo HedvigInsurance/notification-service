@@ -49,7 +49,6 @@ public class NotificationsController {
       NotificationService notificationService,
       ProductClient productClient,
       MailRepository mailRepository,
-      FirebaseRepository firebaseRepository,
       FirebaseNotificationService firebaseNotificationService) {
     this.notificationService = notificationService;
     this.productClient = productClient;
