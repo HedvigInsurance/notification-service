@@ -43,7 +43,6 @@ public class NotificationsController {
   private final NotificationService notificationService;
   private final ProductClient productClient;
   private final MailRepository mailRepository;
-  private final FirebaseRepository firebaseRepository;
   private final FirebaseNotificationService firebaseNotificationService;
 
   public NotificationsController(
@@ -55,7 +54,6 @@ public class NotificationsController {
     this.notificationService = notificationService;
     this.productClient = productClient;
     this.mailRepository = mailRepository;
-    this.firebaseRepository = firebaseRepository;
     this.firebaseNotificationService = firebaseNotificationService;
   }
 
@@ -186,7 +184,8 @@ public class NotificationsController {
   @GetMapping("/{memberId}/token")
   public ResponseEntity<?> getFirebaseToken(@PathVariable(name = "memberId") String memberId) {
     try {
-      Optional<FirebaseToken> firebaseTokenOptional = firebaseNotificationService.getFirebaseToken(memberId);
+      Optional<FirebaseToken> firebaseTokenOptional =
+          firebaseNotificationService.getFirebaseToken(memberId);
       return firebaseTokenOptional
           .map(firebaseToken -> ResponseEntity.ok(firebaseToken.token))
           .orElseGet(() -> ResponseEntity.notFound().build());
