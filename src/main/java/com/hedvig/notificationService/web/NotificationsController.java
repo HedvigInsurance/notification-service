@@ -171,11 +171,7 @@ public class NotificationsController {
   public ResponseEntity<?> saveFirebaseToken(
       @PathVariable(name = "memberId") String memberId, @RequestBody String token) {
     try {
-      FirebaseToken firebaseToken = new FirebaseToken();
-      firebaseToken.setMemberId(memberId);
-      firebaseToken.setToken(token);
-
-      firebaseRepository.save(firebaseToken);
+      firebaseNotificationService.setFirebaseToken(memberId, token);
     } catch (Exception e) {
       log.error(
           "Something went wrong while the Token {} for member {} was about to be stored in the database with error {}",
@@ -190,7 +186,7 @@ public class NotificationsController {
   @GetMapping("/{memberId}/token")
   public ResponseEntity<?> getFirebaseToken(@PathVariable(name = "memberId") String memberId) {
     try {
-      Optional<FirebaseToken> firebaseTokenOptional = firebaseRepository.findById(memberId);
+      Optional<FirebaseToken> firebaseTokenOptional = firebaseNotificationService.getFirebaseToken(memberId);
       return firebaseTokenOptional
           .map(firebaseToken -> ResponseEntity.ok(firebaseToken.token))
           .orElseGet(() -> ResponseEntity.notFound().build());

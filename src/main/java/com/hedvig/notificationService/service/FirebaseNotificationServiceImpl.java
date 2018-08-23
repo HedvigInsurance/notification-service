@@ -6,6 +6,7 @@ import com.google.firebase.messaging.Message;
 import com.hedvig.notificationService.enteties.FirebaseRepository;
 import com.hedvig.notificationService.enteties.FirebaseToken;
 import java.util.Optional;
+import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -67,5 +68,21 @@ public class FirebaseNotificationServiceImpl implements FirebaseNotificationServ
           memberId,
           e);
     }
+  }
+
+  @Override
+  @Transactional
+  public Optional<FirebaseToken> getFirebaseToken(String memberId) {
+    return firebaseRepository.findById(memberId);
+  }
+
+  @Override
+  @Transactional
+  public void setFirebaseToken(String memberId, String token) {
+    FirebaseToken firebaseToken = new FirebaseToken();
+    firebaseToken.setMemberId(memberId);
+    firebaseToken.setToken(token);
+
+    firebaseRepository.save(firebaseToken);
   }
 }
