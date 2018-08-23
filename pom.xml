@@ -8,9 +8,12 @@
   <version>0.0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
   <artifactId>notification-service</artifactId>
+
+
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <java.version>8</java.version>
+    <java.version>10</java.version>
   </properties>
   <parent>
     <groupId>org.springframework.boot</groupId>
@@ -204,7 +207,7 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.0</version>
         <configuration>
-          <!--<release>10</release>  &lt;!&ndash;<release>10</release>&ndash;&gt;-->
+          <release>10</release> <!-- &lt;!&ndash;<release>10</release>&ndash;&gt;-->
         </configuration>
       </plugin>
       <plugin>
