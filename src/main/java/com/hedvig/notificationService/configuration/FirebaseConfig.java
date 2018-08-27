@@ -5,6 +5,8 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import javax.annotation.PostConstruct;
@@ -29,12 +31,12 @@ public class FirebaseConfig {
   private String databaseUrl;
 
   @Value("${hedvig.firebase.config.path}")
-  private String configPath;
+  private File config;
 
   @PostConstruct
   public void init() throws IOException {
     logger.info("Initializing FirebaseApp");
-    InputStream inputStream = getClass().getClassLoader().getResourceAsStream(configPath);
+    InputStream inputStream = new FileInputStream(config);
 
     FirebaseOptions options =
         new FirebaseOptions.Builder()
