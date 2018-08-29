@@ -1,6 +1,6 @@
 package com.hedvig.notificationService.service;
 
-import com.hedvig.notificationService.enteties.FirebaseToken;
+import com.hedvig.notificationService.entities.FirebaseToken;
 import java.util.Optional;
 
 public interface FirebaseNotificationService {
