@@ -3,6 +3,9 @@ package com.hedvig.notificationService.configuration;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.client.builder.AwsClientBuilder;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
+import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
 import com.amazonaws.services.sqs.AmazonSQSAsync;
 import com.amazonaws.services.sqs.AmazonSQSAsyncClientBuilder;
 import lombok.val;
@@ -50,6 +53,13 @@ public class AWS {
   @Bean
   public QueueMessagingTemplate queueMessagingTemplate(AmazonSQSAsync amazonSqs) {
     return new QueueMessagingTemplate(amazonSqs);
+  }
+
+  @Bean
+  public AmazonSimpleEmailService amazonSimpleEmailService(AWSCredentialsProvider credentialsProvider) {
+    return AmazonSimpleEmailServiceClientBuilder.standard()
+        .withCredentials(credentialsProvider)
+        .withRegion(Regions.EU_WEST_1).build();
   }
 
   @Bean
