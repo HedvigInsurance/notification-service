@@ -3,6 +3,7 @@ package com.hedvig.notificationService.service;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.Notification;
 import com.hedvig.notificationService.entities.FirebaseRepository;
 import com.hedvig.notificationService.entities.FirebaseToken;
 import java.util.Optional;
@@ -29,12 +30,10 @@ public class FirebaseNotificationServiceImpl implements FirebaseNotificationServ
 
     Optional<FirebaseToken> firebaseToken = firebaseRepository.findById(memberId);
 
+    Notification notification = new Notification(TITLE, BODY);
+
     Message message =
-        Message.builder()
-            .putData("title", TITLE)
-            .putData("body", BODY)
-            .setToken(firebaseToken.get().token)
-            .build();
+        Message.builder().setNotification(notification).setToken(firebaseToken.get().token).build();
 
     try {
       String response = FirebaseMessaging.getInstance().send(message);
@@ -52,12 +51,10 @@ public class FirebaseNotificationServiceImpl implements FirebaseNotificationServ
   public void sendNotification(String memberId, String body) {
     Optional<FirebaseToken> firebaseToken = firebaseRepository.findById(memberId);
 
+    Notification notification = new Notification(TITLE, body);
+
     Message message =
-        Message.builder()
-            .putData("title", TITLE)
-            .putData("body", body)
-            .setToken(firebaseToken.get().token)
-            .build();
+        Message.builder().setNotification(notification).setToken(firebaseToken.get().token).build();
     try {
       String response = FirebaseMessaging.getInstance().send(message);
 
