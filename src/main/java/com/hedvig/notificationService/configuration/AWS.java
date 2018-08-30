@@ -51,6 +51,15 @@ public class AWS {
   }
 
   @Bean
+  public AmazonSimpleEmailService amazonSimpleEmailService(
+      AWSCredentialsProvider credentialsProvider) {
+    return AmazonSimpleEmailServiceClientBuilder.standard()
+        .withCredentials(credentialsProvider)
+        .withRegion(Regions.EU_WEST_1)
+        .build();
+  }
+
+  @Bean
   public QueueMessagingTemplate queueMessagingTemplate(AmazonSQSAsync amazonSqs) {
     return new QueueMessagingTemplate(amazonSqs);
   }

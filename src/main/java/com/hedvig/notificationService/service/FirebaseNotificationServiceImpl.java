@@ -18,6 +18,10 @@ public class FirebaseNotificationServiceImpl implements FirebaseNotificationServ
   public static final String TITLE = "Hedvig";
   public static final String BODY = "Hej, du har ett nytt meddelande från Hedvig!";
 
+  public static final String TYPE = "TYPE";
+  public static final String NEW_MESSAGE = "NEW_MESSAGE";
+  public static final String EMAIL = "EMAIL";
+
   private static Logger logger = LoggerFactory.getLogger(FirebaseNotificationServiceImpl.class);
   private final FirebaseRepository firebaseRepository;
 
@@ -33,7 +37,11 @@ public class FirebaseNotificationServiceImpl implements FirebaseNotificationServ
     Notification notification = new Notification(TITLE, BODY);
 
     Message message =
-        Message.builder().setNotification(notification).setToken(firebaseToken.get().token).build();
+        Message.builder()
+            .setNotification(notification)
+            .putData(TYPE, NEW_MESSAGE)
+            .setToken(firebaseToken.get().token)
+            .build();
 
     try {
       String response = FirebaseMessaging.getInstance().send(message);
@@ -54,7 +62,11 @@ public class FirebaseNotificationServiceImpl implements FirebaseNotificationServ
     Notification notification = new Notification(TITLE, body);
 
     Message message =
-        Message.builder().setNotification(notification).setToken(firebaseToken.get().token).build();
+        Message.builder()
+            .setNotification(notification)
+            .putData(TYPE, EMAIL)
+            .setToken(firebaseToken.get().token)
+            .build();
     try {
       String response = FirebaseMessaging.getInstance().send(message);
 
