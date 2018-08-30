@@ -8,15 +8,6 @@ import com.hedvig.notificationService.entities.MailConfirmation;
 import com.hedvig.notificationService.entities.MailRepository;
 import com.hedvig.notificationService.service.FirebaseNotificationService;
 import com.hedvig.notificationService.service.NotificationService;
-import com.hedvig.notificationService.serviceIntegration.productsPricing.ProductClient;
-import com.hedvig.notificationService.serviceIntegration.productsPricing.dto.InsuranceNotificationDTO;
-import feign.FeignException;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -41,17 +32,14 @@ public class NotificationsController {
 
   private final Logger log = LoggerFactory.getLogger(NotificationsController.class);
   private final NotificationService notificationService;
-  private final ProductClient productClient;
   private final MailRepository mailRepository;
   private final FirebaseNotificationService firebaseNotificationService;
 
   public NotificationsController(
       NotificationService notificationService,
-      ProductClient productClient,
       MailRepository mailRepository,
       FirebaseNotificationService firebaseNotificationService) {
     this.notificationService = notificationService;
-    this.productClient = productClient;
     this.mailRepository = mailRepository;
     this.firebaseNotificationService = firebaseNotificationService;
   }
@@ -113,46 +101,7 @@ public class NotificationsController {
       return ResponseEntity.badRequest().build();
     }
 
-    try {
-      ResponseEntity<List<InsuranceNotificationDTO>> insuranceResponse =
-          productClient.getInsurancesByActivationDate(
-              LocalDate.now()
-                  .plusDays(NumberOfDaysFromToday)
-                  .format(DateTimeFormatter.ISO_LOCAL_DATE));
-
-      final List<InsuranceNotificationDTO> insurancesToRemind = insuranceResponse.getBody();
-
-      if (insurancesToRemind != null && insurancesToRemind.size() > 0) {
-        try {
-          if (NumberOfDaysFromToday == 0) {
-            insurancesToRemind.forEach(
-                i -> notificationService.insuranceActivated(Long.parseLong(i.getMemberId())));
-          } else {
-            insurancesToRemind.forEach(
-                i ->
-                    notificationService.insuranceActivationAtFutureDate(
-                        Long.parseLong(i.getMemberId()),
-                        ZonedDateTime.ofLocal(
-                                i.getActivationDate(),
-                                ZoneId.of("Europe/Stockholm"),
-                                ZoneId.of("Europe/Stockholm").getRules().getOffset(Instant.now()))
-                            .format(DateTimeFormatter.ISO_DATE)));
-          }
-        } catch (MailException e) {
-          log.error("Could not send email to member", e);
-          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-        return ResponseEntity.ok().build();
-      } else {
-        return ResponseEntity.notFound().build();
-      }
-    } catch (FeignException ex) {
-      if (ex.status() != 404) {
-        log.error("Error from products-pricing", ex);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-      }
-      return ResponseEntity.notFound().build();
-    }
+    return ResponseEntity.ok(notificationService.sendActivationEmails(NumberOfDaysFromToday));
   }
 
   @PostMapping("/mailConfirmed")

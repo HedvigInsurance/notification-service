@@ -1,5 +1,6 @@
 package com.hedvig.notificationService.service;
 
+import com.google.common.collect.Lists;
 import com.hedvig.notificationService.dto.CancellationEmailSentToInsurerRequest;
 import com.hedvig.notificationService.dto.InsuranceActivationDateUpdatedRequest;
 import com.hedvig.notificationService.queue.JobPoster;
@@ -7,21 +8,36 @@ import com.hedvig.notificationService.queue.requests.SendActivationAtFutureDateR
 import com.hedvig.notificationService.queue.requests.SendActivationDateUpdatedRequest;
 import com.hedvig.notificationService.queue.requests.SendActivationEmailRequest;
 import com.hedvig.notificationService.queue.requests.SendOldInsuranceCancellationEmailRequest;
-import java.io.IOException;
+import com.hedvig.notificationService.serviceIntegration.productsPricing.ProductClient;
+import com.hedvig.notificationService.serviceIntegration.productsPricing.dto.InsuranceNotificationDTO;
+import feign.FeignException;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
 public class NotificationService {
   private final Logger log = LoggerFactory.getLogger(NotificationService.class);
 
   private final JobPoster jobPoster;
+  private final ProductClient productClient;
 
-  public NotificationService(JobPoster jobPoster) throws IOException {
+  public NotificationService(JobPoster jobPoster,
+      ProductClient productClient) {
     this.jobPoster = jobPoster;
+    this.productClient = productClient;
   }
 
   public void cancellationEmailSentToInsurer(
@@ -52,7 +68,7 @@ public class NotificationService {
     jobPoster.startJob(request, false);
   }
 
-  public void insuranceActivationAtFutureDate (final long memberId, final String activationDate) {
+  private void insuranceActivationAtFutureDate(final long memberId, final String activationDate) {
     SendActivationAtFutureDateRequest request = new SendActivationAtFutureDateRequest();
     request.setRequestId(UUID.randomUUID().toString());
     request.setMemberId(Objects.toString(memberId));
@@ -60,4 +76,49 @@ public class NotificationService {
     jobPoster.startJob(request, false);
   }
 
+  public List<String> sendActivationEmails(int NumberOfDaysFromToday) {
+    try {
+      final String activationDate = LocalDate.now().plusDays(NumberOfDaysFromToday)
+          .format(DateTimeFormatter.ISO_LOCAL_DATE);
+      val insuranceResponse = productClient.getInsurancesByActivationDate(activationDate);
+
+      final List<InsuranceNotificationDTO> insurancesToRemind = insuranceResponse.getBody();
+
+      return sendActivationEmails(NumberOfDaysFromToday, insurancesToRemind != null ? insurancesToRemind: Lists.newArrayList());
+    } catch (FeignException ex) {
+      if (ex.status() != 404) {
+        log.error("Error from products-pricing", ex.getMessage());
+        throw new RuntimeException("Error from products-pricing", ex);
+      }
+      return new ArrayList<>();
+    }
+  }
+
+  private List<String> sendActivationEmails(@RequestBody int NumberOfDaysFromToday,
+      @NonNull List<InsuranceNotificationDTO> insurancesToRemind) {
+
+    List<String> receivers = Lists.newArrayList();
+
+    if (NumberOfDaysFromToday == 0) {
+      insurancesToRemind.forEach(
+          i -> {
+            insuranceActivated(Long.parseLong(i.getMemberId()));
+            receivers.add(i.getMemberId());
+          });
+    } else {
+      insurancesToRemind.forEach(
+          i -> {
+            insuranceActivationAtFutureDate(
+                Long.parseLong(i.getMemberId()),
+                ZonedDateTime.ofLocal(
+                    i.getActivationDate(),
+                    ZoneId.of("Europe/Stockholm"),
+                    ZoneId.of("Europe/Stockholm").getRules().getOffset(Instant.now()))
+                    .format(DateTimeFormatter.ISO_DATE));
+            receivers.add(i.getMemberId());
+          });
+    }
+
+    return receivers;
+  }
 }
