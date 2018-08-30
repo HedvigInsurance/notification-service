@@ -65,13 +65,6 @@ public class AWS {
   }
 
   @Bean
-  public AmazonSimpleEmailService amazonSimpleEmailService(AWSCredentialsProvider credentialsProvider) {
-    return AmazonSimpleEmailServiceClientBuilder.standard()
-        .withCredentials(credentialsProvider)
-        .withRegion(Regions.EU_WEST_1).build();
-  }
-
-  @Bean
   AWSCredentialsProvider credentialsProvider() {
     return new DefaultAWSCredentialsProviderChain();
   }
