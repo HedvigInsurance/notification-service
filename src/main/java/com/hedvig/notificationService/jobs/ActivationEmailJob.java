@@ -35,7 +35,7 @@ public class ActivationEmailJob extends QuartzJobBean {
       log.info("Sent email to the following memberId: ", String.join(",", membersSentTo));
 
     } catch (Exception e) {
-      throw new JobExecutionException("Exception in job execution", e, true);
+      log.error("Exception in job execution", e);
     }
   }
 }
