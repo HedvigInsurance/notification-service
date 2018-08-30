@@ -2,7 +2,7 @@ package com.hedvig.notificationService.queue.jobs;
 
 import com.hedvig.notificationService.queue.EmailSender;
 import com.hedvig.notificationService.queue.requests.SendOldInsuranceCancellationEmailRequest;
-import com.hedvig.notificationService.serviceIntegration.expo.ExpoNotificationService;
+import com.hedvig.notificationService.service.FirebaseNotificationService;
 import com.hedvig.notificationService.serviceIntegration.memberService.MemberServiceClient;
 import com.hedvig.notificationService.serviceIntegration.memberService.dto.Member;
 import java.io.IOException;
@@ -18,66 +18,63 @@ import org.springframework.stereotype.Component;
 @Component
 public class SendCancellationEmail {
 
-    private final Logger log = LoggerFactory.getLogger(SendCancellationEmail.class);
+  private final Logger log = LoggerFactory.getLogger(SendCancellationEmail.class);
 
-    private final EmailSender emailSender;
+  private final EmailSender emailSender;
   private final MemberServiceClient memberServiceClient;
-    private final ExpoNotificationService expoNotificationService;
+  private final FirebaseNotificationService firebaseNotificationService;
 
-    private final String mandateSentNotification;
-    private final ClassPathResource signatureImage;
-    private static final String PUSH_MESSAGE = "Hej %s! Tänkte bara meddela att vi har skickat en uppsägning till ditt gamla försäkringsbolag %s nu! Jag återkommer till dig när de har bekräftat ditt uppsägningsdatum. Hej så länge! 👋";
+  private final String mandateSentNotification;
+  private final ClassPathResource signatureImage;
+  private static final String PUSH_MESSAGE =
+      "Hej %s! Tänkte bara meddela att vi har skickat en uppsägning till ditt gamla försäkringsbolag %s nu! Jag återkommer till dig när de har bekräftat ditt uppsägningsdatum. Hej så länge! 👋";
 
-    public SendCancellationEmail(
-        EmailSender emailSender,
-        MemberServiceClient memberServiceClient,
-        ExpoNotificationService expoNotificationService) throws IOException {
-        this.emailSender = emailSender;
-      this.memberServiceClient = memberServiceClient;
-        this.expoNotificationService = expoNotificationService;
+  public SendCancellationEmail(
+      EmailSender emailSender,
+      MemberServiceClient memberServiceClient,
+      FirebaseNotificationService firebaseNotificationService)
+      throws IOException {
+    this.emailSender = emailSender;
+    this.memberServiceClient = memberServiceClient;
+    this.firebaseNotificationService = firebaseNotificationService;
 
+    mandateSentNotification = LoadEmail("notifications/insurance_mandate_sent_to_insurer.html");
+    signatureImage = new ClassPathResource("mail/wordmark_mail.jpg");
+  }
 
-        mandateSentNotification = LoadEmail("notifications/insurance_mandate_sent_to_insurer.html");
-        signatureImage = new ClassPathResource("mail/wordmark_mail.jpg");
-    }
+  public void run(SendOldInsuranceCancellationEmailRequest request) {
+    ResponseEntity<Member> profile = memberServiceClient.profile(request.getMemberId());
+    Member body = profile.getBody();
 
-
-    public void run(SendOldInsuranceCancellationEmailRequest request) {
-      ResponseEntity<Member> profile = memberServiceClient.profile(request.getMemberId());
-      Member body = profile.getBody();
-
-      if (body != null) {
-        if (body.getEmail() != null) {
-          sendEmail(body.getEmail(), body.getFirstName(), request.getInsurer());
-        } else {
-          log.error(
-              String.format("Could not find email on user with id: %s", request.getMemberId()));
-        }
-
-        sendPush(body.getMemberId(), body.getFirstName(), request.getInsurer());
-
+    if (body != null) {
+      if (body.getEmail() != null) {
+        sendEmail(body.getEmail(), body.getFirstName(), request.getInsurer());
       } else {
-        log.error("Response body from member-service is null: {}", profile);
+        log.error(String.format("Could not find email on user with id: %s", request.getMemberId()));
       }
+
+      sendPush(body.getMemberId(), body.getFirstName(), request.getInsurer());
+
+    } else {
+      log.error("Response body from member-service is null: {}", profile);
     }
+  }
 
-    private void sendPush(Long memberId, String firstName, String insurer) {
+  private void sendPush(Long memberId, String firstName, String insurer) {
 
-        String message = String.format(PUSH_MESSAGE, firstName, insurer);
-        expoNotificationService.sendNotification(Objects.toString(memberId), message);
+    String message = String.format(PUSH_MESSAGE, firstName, insurer);
+    firebaseNotificationService.sendNotification(Objects.toString(memberId), message);
+  }
 
-    }
+  private void sendEmail(final String email, final String firstName, final String insurer) {
 
-    private void sendEmail(final String email, final String firstName, final String insurer) {
+    val finalEmail =
+        mandateSentNotification.replace("{FIRST_NAME}", firstName).replace("{INSURER}", insurer);
 
-        val finalEmail = mandateSentNotification
-            .replace("{FIRST_NAME}", firstName)
-            .replace("{INSURER}", insurer);
+    emailSender.sendEmail("", "Flytten har startat 🚝", email, finalEmail, signatureImage);
+  }
 
-        emailSender.sendEmail("", "Flytten har startat 🚝", email, finalEmail, signatureImage);
-    }
-
-    private String LoadEmail(final String s) throws IOException {
-        return IOUtils.toString(new ClassPathResource("mail/" + s).getInputStream(), "UTF-8");
-    }
+  private String LoadEmail(final String s) throws IOException {
+    return IOUtils.toString(new ClassPathResource("mail/" + s).getInputStream(), "UTF-8");
+  }
 }

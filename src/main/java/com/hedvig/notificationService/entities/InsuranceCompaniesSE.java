@@ -1,4 +1,4 @@
-package com.hedvig.notificationService.enteties;
+package com.hedvig.notificationService.entities;
 
 
 public enum InsuranceCompaniesSE {
