@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 @FeignClient(
         name = "bot-service",
-        url = "${hedvig.bot-service.location}")
+        url = "${hedvig.bot-service.location:bot-service}")
 public interface BotServiceClient {
 
     @GetMapping("/_/member/{hid}/push-token")

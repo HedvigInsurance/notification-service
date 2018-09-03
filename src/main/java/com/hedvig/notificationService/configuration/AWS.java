@@ -9,8 +9,6 @@ import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
 import com.amazonaws.services.sqs.AmazonSQSAsync;
 import com.amazonaws.services.sqs.AmazonSQSAsyncClientBuilder;
 import lombok.val;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.cloud.aws.messaging.config.SimpleMessageListenerContainerFactory;
 import org.springframework.cloud.aws.messaging.core.QueueMessagingTemplate;
 import org.springframework.cloud.aws.messaging.support.destination.DynamicQueueUrlDestinationResolver;
@@ -20,8 +18,6 @@ import org.springframework.context.annotation.Profile;
 
 @Configuration
 public class AWS {
-
-  private Logger log = LoggerFactory.getLogger(AWS.class);
 
   @Bean
   @Profile("development")

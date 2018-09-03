@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(name = "productPricing", url = "${hedvig.productsPricing.url}")
+@FeignClient(name = "productPricing", url = "${hedvig.productsPricing.url:product-pricing}")
 public interface ProductClient {
 
   @GetMapping("/_/insurance/searchByActivationDate?activationDate={date}")

@@ -1,6 +1,8 @@
 package com.hedvig.notificationService.serviceIntegration.memberService.exceptions;
 
 public class BankIdError extends RuntimeException {
+
+    private static final long serialVersionUID = 7440313931511731452L;
     private final ErrorType errorType;
     private final String message;
 

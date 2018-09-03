@@ -2,7 +2,6 @@ package com.hedvig.notificationService.web;
 
 import com.hedvig.notificationService.dto.CancellationEmailSentToInsurerRequest;
 import com.hedvig.notificationService.dto.InsuranceActivationDateUpdatedRequest;
-import com.hedvig.notificationService.entities.FirebaseRepository;
 import com.hedvig.notificationService.entities.FirebaseToken;
 import com.hedvig.notificationService.entities.MailConfirmation;
 import com.hedvig.notificationService.entities.MailRepository;

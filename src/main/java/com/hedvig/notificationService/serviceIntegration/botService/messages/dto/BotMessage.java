@@ -1,11 +1,8 @@
 package com.hedvig.notificationService.serviceIntegration.botService.messages.dto;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import lombok.Getter;
-
 import java.time.Instant;
-import java.util.Objects;
+import lombok.Getter;
 
 
 

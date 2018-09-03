@@ -1,13 +1,9 @@
 package com.hedvig.notificationService.queue;
 
 import lombok.Value;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Value
 public class MemberBCCAddress {
-
-  static private Logger log = LoggerFactory.getLogger(MemberBCCAddress.class);
 
   final String[] parts;
 
