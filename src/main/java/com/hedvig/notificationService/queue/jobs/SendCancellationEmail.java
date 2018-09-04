@@ -7,6 +7,7 @@ import com.hedvig.notificationService.serviceIntegration.memberService.MemberSer
 import com.hedvig.notificationService.serviceIntegration.memberService.dto.Member;
 import java.io.IOException;
 import java.util.Objects;
+import javax.validation.constraints.NotNull;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -48,7 +49,7 @@ public class SendCancellationEmail {
 
     if (body != null) {
       if (body.getEmail() != null) {
-        sendEmail(body.getEmail(), body.getFirstName(), request.getInsurer());
+        sendEmail(request.getMemberId(), body.getEmail(), body.getFirstName(), request.getInsurer());
       } else {
         log.error(String.format("Could not find email on user with id: %s", request.getMemberId()));
       }
@@ -66,12 +67,13 @@ public class SendCancellationEmail {
     firebaseNotificationService.sendNotification(Objects.toString(memberId), message);
   }
 
-  private void sendEmail(final String email, final String firstName, final String insurer) {
+  private void sendEmail(@NotNull final String memberId,
+      final String email, final String firstName, final String insurer) {
 
     val finalEmail =
-        mandateSentNotification.replace("{FIRST_NAME}", firstName).replace("{INSURER}", insurer);
+        mandateSentNotification.replace("{NAME}", firstName).replace("{INSURER}", insurer);
 
-    emailSender.sendEmail("", "Flytten har startat 🚝", email, finalEmail, signatureImage);
+    emailSender.sendEmail(memberId, "Välkommen till Hedvig 😍", email, finalEmail, signatureImage);
   }
 
   private String LoadEmail(final String s) throws IOException {

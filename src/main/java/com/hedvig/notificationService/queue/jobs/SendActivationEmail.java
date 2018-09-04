@@ -68,7 +68,7 @@ public class SendActivationEmail {
   private void sendEmail(final String memberId, final String email, final String firstName) {
 
     val finalEmail = mandateSentNotification.replace("{NAME}", firstName);
-    emailSender.sendEmail(memberId, "Goda nyheter 🚝", email, finalEmail, signatureImage);
+    emailSender.sendEmail(memberId, "Nu är din försäkring hos Hedvig aktiverad 🏠", email, finalEmail, signatureImage);
   }
 
   private String LoadEmail(final String s) throws IOException {
