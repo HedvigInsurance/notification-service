@@ -45,7 +45,7 @@ public class NotificationsController {
 
   @PostMapping("/{memberId}/cancellationEmailSentToInsurer")
   public ResponseEntity<?> cancellationEmailSentToInsurer(
-      @PathVariable Long memberId, @RequestBody CancellationEmailSentToInsurerRequest body) {
+      @PathVariable Long memberId, @RequestBody @Valid CancellationEmailSentToInsurerRequest body) {
     MDC.put("memberId", Objects.toString(memberId));
     try {
       notificationService.cancellationEmailSentToInsurer(memberId, body);
