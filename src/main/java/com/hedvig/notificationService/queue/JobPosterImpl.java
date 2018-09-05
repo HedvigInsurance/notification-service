@@ -13,6 +13,8 @@ import com.hedvig.notificationService.queue.requests.SendActivationAtFutureDateR
 import com.hedvig.notificationService.queue.requests.SendActivationDateUpdatedRequest;
 import com.hedvig.notificationService.queue.requests.SendActivationEmailRequest;
 import com.hedvig.notificationService.queue.requests.SendOldInsuranceCancellationEmailRequest;
+import io.sentry.Sentry;
+import io.sentry.event.UserBuilder;
 import java.util.HashMap;
 import lombok.val;
 import org.slf4j.Logger;
@@ -73,30 +75,32 @@ public class JobPosterImpl implements JobPoster {
 
   @SqsListener("${hedvig.notification-service.queueTasklist}")
   public void jobListener(String requestAsJson) {
+
     try {
       JobRequest request = objectMapper.readValue(requestAsJson, JobRequest.class);
       log.info("Receiving jobrequest from sqs queue: {} ", requestAsJson);
 
-      try{
-        MDC.put("memberId", request.getMemberId());
+      val sentryContext = Sentry.getContext();
+      sentryContext.setUser(new UserBuilder().setId(request.getMemberId()).build());
+      MDC.put("memberId", request.getMemberId());
 
-        if (SendOldInsuranceCancellationEmailRequest.class.isInstance(request)) {
-          sendCancellationEmail.run((SendOldInsuranceCancellationEmailRequest) request);
-        } else if (SendActivationDateUpdatedRequest.class.isInstance(request)) {
-          sendActivationDateUpdatedEmail.run((SendActivationDateUpdatedRequest) request);
-        } else if (SendActivationEmailRequest.class.isInstance(request)) {
-          sendActivationEmail.run((SendActivationEmailRequest) request);
-        } else if (SendActivationAtFutureDateEmail.class.isInstance(request)) {
-          sendActivationAtFutureDateEmail.run((SendActivationAtFutureDateRequest) request);
-        } else {
-          log.error("Could not start job for message: {}", requestAsJson);
-        }
-      }finally{
-        MDC.remove("memberId");
+      if (SendOldInsuranceCancellationEmailRequest.class.isInstance(request)) {
+        sendCancellationEmail.run((SendOldInsuranceCancellationEmailRequest) request);
+      } else if (SendActivationDateUpdatedRequest.class.isInstance(request)) {
+        sendActivationDateUpdatedEmail.run((SendActivationDateUpdatedRequest) request);
+      } else if (SendActivationEmailRequest.class.isInstance(request)) {
+        sendActivationEmail.run((SendActivationEmailRequest) request);
+      } else if (SendActivationAtFutureDateEmail.class.isInstance(request)) {
+        sendActivationAtFutureDateEmail.run((SendActivationAtFutureDateRequest) request);
+      } else {
+        log.error("Could not start job for message: {}", requestAsJson);
       }
 
     } catch (Exception e) {
       log.error("Caught exception, {}", e.getMessage(), e);
+    } finally {
+      Sentry.clearContext();
+      MDC.remove("memberId");
     }
   }
 }

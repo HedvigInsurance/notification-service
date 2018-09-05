@@ -71,7 +71,7 @@ public class SendCancellationEmail {
       final String email, final String firstName, final String insurer) {
 
     val finalEmail =
-        mandateSentNotification.replace("{NAME}", firstName).replace("{INSURER}", insurer);
+        mandateSentNotification.replace("{NAME}", firstName).replace("{INSURER}", insurer == null ? "": insurer);
 
     emailSender.sendEmail(memberId, "Välkommen till Hedvig 😍", email, finalEmail, signatureImage);
   }
