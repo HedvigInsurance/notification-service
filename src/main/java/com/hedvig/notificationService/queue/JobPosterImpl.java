@@ -77,30 +77,27 @@ public class JobPosterImpl implements JobPoster {
   public void jobListener(String requestAsJson) {
 
     try {
+      JobRequest request = objectMapper.readValue(requestAsJson, JobRequest.class);
+      log.info("Receiving jobrequest from sqs queue: {} ", requestAsJson);
 
-      try {
-        JobRequest request = objectMapper.readValue(requestAsJson, JobRequest.class);
-        log.info("Receiving jobrequest from sqs queue: {} ", requestAsJson);
+      val sentryContext = Sentry.getContext();
+      sentryContext.setUser(new UserBuilder().setId(request.getMemberId()).build());
+      MDC.put("memberId", request.getMemberId());
 
-        val sentryContext = Sentry.getContext();
-        sentryContext.setUser(new UserBuilder().setId(request.getMemberId()).build());
-        MDC.put("memberId", request.getMemberId());
-
-        if (SendOldInsuranceCancellationEmailRequest.class.isInstance(request)) {
-          sendCancellationEmail.run((SendOldInsuranceCancellationEmailRequest) request);
-        } else if (SendActivationDateUpdatedRequest.class.isInstance(request)) {
-          sendActivationDateUpdatedEmail.run((SendActivationDateUpdatedRequest) request);
-        } else if (SendActivationEmailRequest.class.isInstance(request)) {
-          sendActivationEmail.run((SendActivationEmailRequest) request);
-        } else if (SendActivationAtFutureDateEmail.class.isInstance(request)) {
-          sendActivationAtFutureDateEmail.run((SendActivationAtFutureDateRequest) request);
-        } else {
-          log.error("Could not start job for message: {}", requestAsJson);
-        }
-
-      } catch (Exception e) {
-        log.error("Caught exception, {}", e.getMessage(), e);
+      if (SendOldInsuranceCancellationEmailRequest.class.isInstance(request)) {
+        sendCancellationEmail.run((SendOldInsuranceCancellationEmailRequest) request);
+      } else if (SendActivationDateUpdatedRequest.class.isInstance(request)) {
+        sendActivationDateUpdatedEmail.run((SendActivationDateUpdatedRequest) request);
+      } else if (SendActivationEmailRequest.class.isInstance(request)) {
+        sendActivationEmail.run((SendActivationEmailRequest) request);
+      } else if (SendActivationAtFutureDateEmail.class.isInstance(request)) {
+        sendActivationAtFutureDateEmail.run((SendActivationAtFutureDateRequest) request);
+      } else {
+        log.error("Could not start job for message: {}", requestAsJson);
       }
+
+    } catch (Exception e) {
+      log.error("Caught exception, {}", e.getMessage(), e);
     } finally {
       Sentry.clearContext();
       MDC.remove("memberId");
