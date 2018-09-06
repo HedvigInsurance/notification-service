@@ -7,7 +7,7 @@ public interface FirebaseNotificationService {
 
   void sendNewMessageNotification(String memberId);
 
-  void sendNotification(String memberId, String body);
+  boolean sendNotification(String memberId, String body);
 
   Optional<FirebaseToken> getFirebaseToken(String memberId);
 

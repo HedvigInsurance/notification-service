@@ -24,9 +24,11 @@ public class FirebaseNotificationServiceImpl implements FirebaseNotificationServ
 
   private static Logger logger = LoggerFactory.getLogger(FirebaseNotificationServiceImpl.class);
   private final FirebaseRepository firebaseRepository;
+  private final FirebaseMessaging firebaseMessaging;
 
-  public FirebaseNotificationServiceImpl(FirebaseRepository firebaseRepository) {
+  public FirebaseNotificationServiceImpl(FirebaseRepository firebaseRepository, FirebaseMessaging firebaseMessaging) {
     this.firebaseRepository = firebaseRepository;
+    this.firebaseMessaging = firebaseMessaging;
   }
 
   @Override
@@ -44,7 +46,7 @@ public class FirebaseNotificationServiceImpl implements FirebaseNotificationServ
             .build();
 
     try {
-      String response = FirebaseMessaging.getInstance().send(message);
+      String response = firebaseMessaging.send(message);
 
       logger.info("Response from pushing notification {}", response);
     } catch (FirebaseMessagingException e) {
@@ -56,27 +58,34 @@ public class FirebaseNotificationServiceImpl implements FirebaseNotificationServ
   }
 
   @Override
-  public void sendNotification(String memberId, String body) {
+  public boolean sendNotification(String memberId, String body) {
     Optional<FirebaseToken> firebaseToken = firebaseRepository.findById(memberId);
 
     Notification notification = new Notification(TITLE, body);
 
-    Message message =
-        Message.builder()
-            .setNotification(notification)
-            .putData(TYPE, EMAIL)
-            .setToken(firebaseToken.get().token)
-            .build();
-    try {
-      String response = FirebaseMessaging.getInstance().send(message);
+    if (firebaseToken.isPresent()) {
+      Message message =
+          Message.builder()
+              .setNotification(notification)
+              .putData(TYPE, EMAIL)
+              .setToken(firebaseToken.get().token)
+              .build();
+      try {
+        String response = firebaseMessaging.send(message);
 
-      logger.info("Response from pushing notification {}", response);
-    } catch (FirebaseMessagingException e) {
-      logger.error(
-          "SendNewMessageNotification: Cannot send notification with memberId {} through firebase. Error: {}",
-          memberId,
-          e);
+        logger.info("Response from pushing notification {}", response);
+      } catch (FirebaseMessagingException e) {
+        logger.error(
+            "SendNewMessageNotification: Cannot send notification with memberId {} through firebase. Error: {}",
+            memberId,
+            e);
+        return false;
+      }
+      return true;
+    }else {
+      return false;
     }
+
   }
 
   @Override
