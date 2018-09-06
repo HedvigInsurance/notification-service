@@ -101,7 +101,7 @@
     <springProfile name="kubernetes">
         <root level="INFO">
             <!--  <appender-ref ref="CONSOLE"/> -->
-            <!--<appender-ref ref="FILE"/>-->
+            <appender-ref ref="SENTRY"/>
             <appender-ref ref="JSON_FILE"/>
         </root>
     </springProfile>
