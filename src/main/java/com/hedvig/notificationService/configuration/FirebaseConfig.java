@@ -5,6 +5,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 
 @Configuration
 public class FirebaseConfig {
@@ -47,4 +49,11 @@ public class FirebaseConfig {
     FirebaseApp.initializeApp(options);
     logger.info("FirebaseApp Initialized");
   }
+
+  @Bean()
+  @DependsOn("firebaseConfig")
+  public FirebaseMessaging firebaseMessaging(){
+    return FirebaseMessaging.getInstance();
+  }
+
 }
