@@ -8,6 +8,7 @@ import com.hedvig.notificationService.queue.requests.SendActivationAtFutureDateR
 import com.hedvig.notificationService.queue.requests.SendActivationDateUpdatedRequest;
 import com.hedvig.notificationService.queue.requests.SendActivationEmailRequest;
 import com.hedvig.notificationService.queue.requests.SendOldInsuranceCancellationEmailRequest;
+import com.hedvig.notificationService.queue.requests.SendSignedAndActivatedEmailRequest;
 import com.hedvig.notificationService.serviceIntegration.productsPricing.ProductClient;
 import com.hedvig.notificationService.serviceIntegration.productsPricing.dto.InsuranceNotificationDTO;
 import feign.FeignException;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import javax.validation.constraints.NotNull;
 import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +43,7 @@ public class NotificationServiceImpl implements NotificationService {
   }
 
   @Override
+  @Deprecated
   public void cancellationEmailSentToInsurer(
       final long memberId, final CancellationEmailSentToInsurerRequest insurer) {
     SendOldInsuranceCancellationEmailRequest request =
@@ -48,6 +51,17 @@ public class NotificationServiceImpl implements NotificationService {
     request.setRequestId(UUID.randomUUID().toString());
     request.setMemberId(Objects.toString(memberId));
     request.setInsurer(insurer.getInsurer());
+
+    jobPoster.startJob(request, true);
+  }
+
+  @Override
+  public void cancellationEmailSentToInsurer(
+      final long memberId, final @NotNull String insurer) {
+    SendOldInsuranceCancellationEmailRequest request = new SendOldInsuranceCancellationEmailRequest();
+    request.setRequestId(UUID.randomUUID().toString());
+    request.setMemberId(Objects.toString(memberId));
+    request.setInsurer(insurer);
 
     jobPoster.startJob(request, true);
   }
@@ -72,6 +86,14 @@ public class NotificationServiceImpl implements NotificationService {
   }
 
   @Override
+  public void insuranceSignedAndActivated(long memberId) {
+    SendSignedAndActivatedEmailRequest request = new SendSignedAndActivatedEmailRequest();
+    request.setRequestId(UUID.randomUUID().toString());
+    request.setMemberId(Objects.toString(memberId));
+    jobPoster.startJob(request, true);
+  }
+
+  @Override
   public List<String> sendActivationEmails(int NumberOfDaysFromToday) {
     try {
       final String activationDate = LocalDate.now().plusDays(NumberOfDaysFromToday)
@@ -88,11 +110,6 @@ public class NotificationServiceImpl implements NotificationService {
       }
       return new ArrayList<>();
     }
-  }
-
-  @Override
-  public void sendInsuranceSignedEmail(long memberId, boolean switchingFromCurrentInsurer) {
-    log.info("WIP");
   }
 
   private List<String> sendActivationEmails(int NumberOfDaysFromToday, @NonNull List<InsuranceNotificationDTO> insurancesToRemind) {

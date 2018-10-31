@@ -8,11 +8,13 @@ import com.hedvig.notificationService.queue.jobs.SendActivationAtFutureDateEmail
 import com.hedvig.notificationService.queue.jobs.SendActivationDateUpdatedEmail;
 import com.hedvig.notificationService.queue.jobs.SendActivationEmail;
 import com.hedvig.notificationService.queue.jobs.SendCancellationEmail;
+import com.hedvig.notificationService.queue.jobs.SendSignedAndActivatedEmail;
 import com.hedvig.notificationService.queue.requests.JobRequest;
 import com.hedvig.notificationService.queue.requests.SendActivationAtFutureDateRequest;
 import com.hedvig.notificationService.queue.requests.SendActivationDateUpdatedRequest;
 import com.hedvig.notificationService.queue.requests.SendActivationEmailRequest;
 import com.hedvig.notificationService.queue.requests.SendOldInsuranceCancellationEmailRequest;
+import com.hedvig.notificationService.queue.requests.SendSignedAndActivatedEmailRequest;
 import io.sentry.Sentry;
 import io.sentry.event.UserBuilder;
 import java.util.HashMap;
@@ -35,6 +37,7 @@ public class JobPosterImpl implements JobPoster {
   private final SendActivationDateUpdatedEmail sendActivationDateUpdatedEmail;
   private final SendActivationEmail sendActivationEmail;
   private final SendActivationAtFutureDateEmail sendActivationAtFutureDateEmail;
+  private final SendSignedAndActivatedEmail sendSignedAndActivatedEmail;
   private final QueueMessagingTemplate queueMessagingTemplate;
   private final ObjectMapper objectMapper;
   private final String queueName;
@@ -44,12 +47,14 @@ public class JobPosterImpl implements JobPoster {
       SendActivationDateUpdatedEmail sendActivationDateUpdatedEmail,
       SendActivationEmail sendActivationEmail,
       SendActivationAtFutureDateEmail sendActivationAtFutureDateEmail,
+      SendSignedAndActivatedEmail sendSignedAndActivatedEmail,
       QueueMessagingTemplate queueMessagingTemplate,
       ObjectMapper objectMapper,
       @Value("${hedvig.notification-service.queueTasklist}") String queueName) {
     this.sendCancellationEmail = sendCancellationEmail;
     this.sendActivationDateUpdatedEmail = sendActivationDateUpdatedEmail;
     this.sendActivationEmail = sendActivationEmail;
+    this.sendSignedAndActivatedEmail = sendSignedAndActivatedEmail;
     this.queueMessagingTemplate = queueMessagingTemplate;
     this.sendActivationAtFutureDateEmail = sendActivationAtFutureDateEmail;
     this.objectMapper = objectMapper;
@@ -92,7 +97,9 @@ public class JobPosterImpl implements JobPoster {
         sendActivationEmail.run((SendActivationEmailRequest) request);
       } else if (SendActivationAtFutureDateEmail.class.isInstance(request)) {
         sendActivationAtFutureDateEmail.run((SendActivationAtFutureDateRequest) request);
-      } else {
+      } else if (SendSignedAndActivatedEmail.class.isInstance(request)){
+        sendSignedAndActivatedEmail.run((SendSignedAndActivatedEmailRequest) request);
+      }else {
         log.error("Could not start job for message: {}", requestAsJson);
       }
 

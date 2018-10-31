@@ -8,11 +8,13 @@ public interface NotificationService {
 
   void cancellationEmailSentToInsurer(long memberId, CancellationEmailSentToInsurerRequest insurer);
 
+  void cancellationEmailSentToInsurer(long memberId, String insurer);
+
   void insuranceActivationDateUpdated(long memberId, InsuranceActivationDateUpdatedRequest request);
 
   void insuranceActivated(long memberId);
 
   List<String> sendActivationEmails(int NumberOfDaysFromToday);
 
-  void sendInsuranceSignedEmail(long memberId, boolean switchingFromCurrentInsurer);
+  void insuranceSignedAndActivated(long memberId);
 }

@@ -6,5 +6,6 @@ import lombok.Value;
 public class InsuranceSignedEmailRequest {
 
   long memberId;
-  boolean switchingFromCurrentInsurer;
+  boolean currentlyInsured;
+  String currentInsurer;
 }

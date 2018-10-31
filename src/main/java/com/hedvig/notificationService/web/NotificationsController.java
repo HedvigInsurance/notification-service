@@ -37,6 +37,7 @@ public class NotificationsController {
   }
 
   @PostMapping("/{memberId}/cancellationEmailSentToInsurer")
+  @Deprecated
   public ResponseEntity<?> cancellationEmailSentToInsurer(
       @PathVariable Long memberId, @RequestBody @Valid CancellationEmailSentToInsurerRequest body) {
     MDC.put("memberId", Objects.toString(memberId));
@@ -107,8 +108,11 @@ public class NotificationsController {
   public ResponseEntity<?> insuranceSigned(@RequestBody @Valid InsuranceSignedEmailRequest req) {
     MDC.put("memberId", Objects.toString(req.getMemberId()));
     try {
-      notificationService
-          .sendInsuranceSignedEmail(req.getMemberId(), req.isSwitchingFromCurrentInsurer());
+      if (req.isCurrentlyInsured()){
+        notificationService.cancellationEmailSentToInsurer(req.getMemberId(), req.getCurrentInsurer());
+      }else {
+        notificationService.insuranceSignedAndActivated(req.getMemberId());
+      }
     } catch (MailException e) {
       log.error("Could not send email to member {}, error: {}", req.getMemberId(), e);
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
