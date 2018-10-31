@@ -86,7 +86,7 @@ public class NotificationServiceImpl implements NotificationService {
   }
 
   @Override
-  public void insuranceSignedAndActivated(long memberId) {
+  public void insuranceSignedAndActivated(final long memberId) {
     SendSignedAndActivatedEmailRequest request = new SendSignedAndActivatedEmailRequest();
     request.setRequestId(UUID.randomUUID().toString());
     request.setMemberId(Objects.toString(memberId));

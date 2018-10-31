@@ -1,14 +1,18 @@
 package com.hedvig.notificationService.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 
 import com.google.common.collect.Lists;
 import com.hedvig.notificationService.queue.JobPoster;
+import com.hedvig.notificationService.queue.jobs.SendSignedAndActivatedEmail;
 import com.hedvig.notificationService.queue.requests.JobRequest;
 import com.hedvig.notificationService.queue.requests.SendActivationEmailRequest;
+import com.hedvig.notificationService.queue.requests.SendSignedAndActivatedEmailRequest;
 import com.hedvig.notificationService.serviceIntegration.productsPricing.ProductClient;
 import com.hedvig.notificationService.serviceIntegration.productsPricing.dto.InsuranceNotificationDTO;
 import java.time.LocalDate;
@@ -68,5 +72,19 @@ public class NotificationServiceTest {
     assertThat(jobRequestCaptor.getValue())
         .isExactlyInstanceOf(SendActivationEmailRequest.class)
         .isEqualToIgnoringGivenFields(expectedJobRequest, "requestId");
+  }
+
+  @Test
+  public void Should_sendSignedAndActivatedEmail_WhenGetARequest() {
+    // given
+    willDoNothing().given(jobPoster).startJob(jobRequestCaptor.capture(), eq(true));
+
+    notificationService.insuranceSignedAndActivated(Long.valueOf(MEMBER_ID));
+
+    val expectedJobRequest = new SendSignedAndActivatedEmailRequest();
+    expectedJobRequest.setMemberId(MEMBER_ID);
+    expectedJobRequest.setRequestId(UUID_STRING);
+    assertThat(jobRequestCaptor.getValue())
+        .isExactlyInstanceOf(SendSignedAndActivatedEmailRequest.class);
   }
 }
