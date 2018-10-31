@@ -2,6 +2,7 @@ package com.hedvig.notificationService.web;
 
 import com.hedvig.notificationService.dto.CancellationEmailSentToInsurerRequest;
 import com.hedvig.notificationService.dto.InsuranceActivationDateUpdatedRequest;
+import com.hedvig.notificationService.dto.InsuranceSignedEmailRequest;
 import com.hedvig.notificationService.entities.MailConfirmation;
 import com.hedvig.notificationService.entities.MailRepository;
 import com.hedvig.notificationService.service.NotificationService;
@@ -29,7 +30,8 @@ public class NotificationsController {
   private final NotificationService notificationService;
   private final MailRepository mailRepository;
 
-  public NotificationsController(NotificationService notificationService,MailRepository mailRepository) {
+  public NotificationsController(NotificationService notificationService,
+      MailRepository mailRepository) {
     this.notificationService = notificationService;
     this.mailRepository = mailRepository;
   }
@@ -98,6 +100,19 @@ public class NotificationsController {
     conf.setMemberId(memberId);
     conf.setConfirmationId(UUID.randomUUID().toString());
     mailRepository.save(conf);
+    return ResponseEntity.noContent().build();
+  }
+
+  @PostMapping("/insuranceSigned")
+  public ResponseEntity<?> insuranceSigned(@RequestBody @Valid InsuranceSignedEmailRequest req) {
+    MDC.put("memberId", Objects.toString(req.getMemberId()));
+    try {
+      notificationService
+          .sendInsuranceSignedEmail(req.getMemberId(), req.isSwitchingFromCurrentInsurer());
+    } catch (MailException e) {
+      log.error("Could not send email to member {}, error: {}", req.getMemberId(), e);
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
     return ResponseEntity.noContent().build();
   }
 }

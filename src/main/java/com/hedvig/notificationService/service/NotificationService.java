@@ -13,4 +13,6 @@ public interface NotificationService {
   void insuranceActivated(long memberId);
 
   List<String> sendActivationEmails(int NumberOfDaysFromToday);
+
+  void sendInsuranceSignedEmail(long memberId, boolean switchingFromCurrentInsurer);
 }

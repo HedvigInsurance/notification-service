@@ -40,6 +40,7 @@ public class NotificationServiceImpl implements NotificationService {
     this.productClient = productClient;
   }
 
+  @Override
   public void cancellationEmailSentToInsurer(
       final long memberId, final CancellationEmailSentToInsurerRequest insurer) {
     SendOldInsuranceCancellationEmailRequest request =
@@ -51,6 +52,7 @@ public class NotificationServiceImpl implements NotificationService {
     jobPoster.startJob(request, true);
   }
 
+  @Override
   public void insuranceActivationDateUpdated(
       final long memberId, final InsuranceActivationDateUpdatedRequest request) {
     SendActivationDateUpdatedRequest request2 = new SendActivationDateUpdatedRequest();
@@ -61,6 +63,7 @@ public class NotificationServiceImpl implements NotificationService {
     jobPoster.startJob(request2, false);
   }
 
+  @Override
   public void insuranceActivated(final long memberId) {
     SendActivationEmailRequest request = new SendActivationEmailRequest();
     request.setRequestId(UUID.randomUUID().toString());
@@ -68,6 +71,7 @@ public class NotificationServiceImpl implements NotificationService {
     jobPoster.startJob(request, false);
   }
 
+  @Override
   public List<String> sendActivationEmails(int NumberOfDaysFromToday) {
     try {
       final String activationDate = LocalDate.now().plusDays(NumberOfDaysFromToday)
@@ -84,6 +88,11 @@ public class NotificationServiceImpl implements NotificationService {
       }
       return new ArrayList<>();
     }
+  }
+
+  @Override
+  public void sendInsuranceSignedEmail(long memberId, boolean switchingFromCurrentInsurer) {
+    log.info("WIP");
   }
 
   private List<String> sendActivationEmails(int NumberOfDaysFromToday, @NonNull List<InsuranceNotificationDTO> insurancesToRemind) {
