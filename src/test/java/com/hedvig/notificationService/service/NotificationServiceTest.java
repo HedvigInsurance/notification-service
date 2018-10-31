@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 import lombok.val;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -35,7 +36,15 @@ public class NotificationServiceTest {
 
   @Mock ProductClient client;
 
+  @Mock NotificationService notificationService;
+
   @Captor ArgumentCaptor<JobRequest> jobRequestCaptor;
+
+  @Before
+  public void setUp(){
+    notificationService = new NotificationServiceImpl(jobPoster, client);
+  }
+
 
   @Test
   public void sendActivationEmails() {
@@ -51,13 +60,7 @@ public class NotificationServiceTest {
     given(client.getInsurancesByActivationDate(TODAY_DATE_STRING))
         .willReturn(ResponseEntity.ok(activeInsurances));
 
-    // when
-
-    val sut = new NotificationService(jobPoster, client);
-
-    sut.sendActivationEmails(0);
-
-    // then
+    notificationService.sendActivationEmails(0);
 
     val expectedJobRequest = new SendActivationEmailRequest();
     expectedJobRequest.setMemberId(MEMBER_ID);
