@@ -1,14 +1,18 @@
 package com.hedvig.notificationService.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 
 import com.google.common.collect.Lists;
 import com.hedvig.notificationService.queue.JobPoster;
+import com.hedvig.notificationService.queue.jobs.SendSignedAndActivatedEmail;
 import com.hedvig.notificationService.queue.requests.JobRequest;
 import com.hedvig.notificationService.queue.requests.SendActivationEmailRequest;
+import com.hedvig.notificationService.queue.requests.SendSignedAndActivatedEmailRequest;
 import com.hedvig.notificationService.serviceIntegration.productsPricing.ProductClient;
 import com.hedvig.notificationService.serviceIntegration.productsPricing.dto.InsuranceNotificationDTO;
 import java.time.LocalDate;
@@ -16,6 +20,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 import lombok.val;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -35,7 +40,15 @@ public class NotificationServiceTest {
 
   @Mock ProductClient client;
 
+  @Mock NotificationService notificationService;
+
   @Captor ArgumentCaptor<JobRequest> jobRequestCaptor;
+
+  @Before
+  public void setUp(){
+    notificationService = new NotificationServiceImpl(jobPoster, client);
+  }
+
 
   @Test
   public void sendActivationEmails() {
@@ -51,13 +64,7 @@ public class NotificationServiceTest {
     given(client.getInsurancesByActivationDate(TODAY_DATE_STRING))
         .willReturn(ResponseEntity.ok(activeInsurances));
 
-    // when
-
-    val sut = new NotificationService(jobPoster, client);
-
-    sut.sendActivationEmails(0);
-
-    // then
+    notificationService.sendActivationEmails(0);
 
     val expectedJobRequest = new SendActivationEmailRequest();
     expectedJobRequest.setMemberId(MEMBER_ID);
@@ -65,5 +72,19 @@ public class NotificationServiceTest {
     assertThat(jobRequestCaptor.getValue())
         .isExactlyInstanceOf(SendActivationEmailRequest.class)
         .isEqualToIgnoringGivenFields(expectedJobRequest, "requestId");
+  }
+
+  @Test
+  public void Should_sendSignedAndActivatedEmail_WhenGetARequest() {
+    // given
+    willDoNothing().given(jobPoster).startJob(jobRequestCaptor.capture(), eq(true));
+
+    notificationService.insuranceSignedAndActivated(Long.valueOf(MEMBER_ID));
+
+    val expectedJobRequest = new SendSignedAndActivatedEmailRequest();
+    expectedJobRequest.setMemberId(MEMBER_ID);
+    expectedJobRequest.setRequestId(UUID_STRING);
+    assertThat(jobRequestCaptor.getValue())
+        .isExactlyInstanceOf(SendSignedAndActivatedEmailRequest.class);
   }
 }
