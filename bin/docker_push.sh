@@ -1,8 +1,8 @@
-#! /bin/bash
+#!/usr/bin/env bash
 # Push only if it's not a pull request
 if [ -z "$TRAVIS_PULL_REQUEST" ] || [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
   # Push only if we're testing the master branch
-  if [ "$TRAVIS_BRANCH" == "master" ]; then
+  if [ "$TRAVIS_BRANCH" == "develop" ]; then
 
     # This is needed to login on AWS and push the image on ECR
     # Change it accordingly to your docker repo
@@ -17,7 +17,7 @@ if [ -z "$TRAVIS_PULL_REQUEST" ] || [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
     docker push $REMOTE_IMAGE_URL:${TRAVIS_COMMIT}
     echo "Pushed $IMAGE_NAME:${TRAVIS_COMMIT}"
   else
-    echo "Skipping deploy because branch is not 'master'"
+    echo "Skipping deploy because branch is not 'develop'"
   fi
 else
   echo "Skipping deploy because it's a pull request"
