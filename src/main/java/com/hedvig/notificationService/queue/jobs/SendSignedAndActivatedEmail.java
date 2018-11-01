@@ -37,7 +37,7 @@ public class SendSignedAndActivatedEmail {
     this.memberServiceClient = memberServiceClient;
     this.firebaseNotificationService = firebaseNotificationService;
 
-    signedAndActivatedNotification = LoadEmail("notifications/onboarded_today.html");
+    signedAndActivatedNotification = LoadEmail("onboarded_today.html");
     signatureImage = new ClassPathResource("mail/wordmark_mail.jpg");
   }
 
