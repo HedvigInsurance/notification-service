@@ -107,10 +107,17 @@ public class NotificationsController {
   @PostMapping("/insuranceSigned")
   public ResponseEntity<?> insuranceSigned(@RequestBody @Valid InsuranceSignedEmailRequest req) {
     MDC.put("memberId", Objects.toString(req.getMemberId()));
+
+    if ((req.isCurrentlyInsured() && req.getCurrentInsurer() == null)
+        || (!req.isCurrentlyInsured() && req.getCurrentInsurer() != null)) {
+      return ResponseEntity.badRequest().build();
+    }
+
     try {
-      if (req.isCurrentlyInsured()){
-        notificationService.cancellationEmailSentToInsurer(req.getMemberId(), req.getCurrentInsurer());
-      }else {
+      if (req.isCurrentlyInsured()) {
+        notificationService
+            .cancellationEmailSentToInsurer(req.getMemberId(), req.getCurrentInsurer());
+      } else {
         notificationService.insuranceSignedAndActivated(req.getMemberId());
       }
     } catch (MailException e) {
