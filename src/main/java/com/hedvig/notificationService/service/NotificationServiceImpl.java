@@ -120,7 +120,7 @@ public class NotificationServiceImpl implements NotificationService {
             insuranceActivated(Long.parseLong(i.getMemberId()));
             receivers.add(i.getMemberId());
           });
-    } else {
+    } else { //TODO: fix this, the maill with no be triggered. Check jobListener method in the JobPosterImpl class
       insurancesToRemind.forEach(
           i -> {
             insuranceActivationAtFutureDate(
