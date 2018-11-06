@@ -31,3 +31,10 @@ target/*
 application.yaml
 application-*.yml
 service-account.json
+
+# vscode
+.vscode
+.classpath
+.factorypath
+.project
+.settings
