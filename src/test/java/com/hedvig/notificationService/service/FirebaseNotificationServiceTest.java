@@ -14,7 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class FirebaseNotificationServiceImplTest {
+public class FirebaseNotificationServiceTest {
 
   @Mock
   FirebaseRepository firebaseRepository;

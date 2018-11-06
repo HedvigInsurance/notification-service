@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.0.4.RELEASE</version>
+    <version>2.1.0.RELEASE</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
 
@@ -27,7 +27,7 @@
       <dependency>
         <groupId>org.springframework.cloud</groupId>
         <artifactId>spring-cloud-dependencies</artifactId>
-        <version>Finchley.SR1</version>
+        <version>Finchley.SR2</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -60,7 +60,7 @@
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
-      <version>3.11.0</version>
+      <version>3.11.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -86,7 +86,7 @@
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>1.16.22</version>
+      <version>1.18.4</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -130,7 +130,7 @@
     <dependency>
       <groupId>net.logstash.logback</groupId>
       <artifactId>logstash-logback-encoder</artifactId>
-      <version>5.0</version>
+      <version>5.2</version>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
@@ -144,7 +144,7 @@
     <dependency>
       <groupId>javax.xml.bind</groupId>
       <artifactId>jaxb-api</artifactId>
-      <version>2.3.0</version>
+      <version>2.3.1</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.cloud</groupId>
@@ -166,7 +166,7 @@
     <dependency>
       <groupId>com.amazonaws</groupId>
       <artifactId>aws-java-sdk-ses</artifactId>
-      <version>1.11.336</version>
+      <version>1.11.439</version>
     </dependency>
     <dependency>
       <groupId>com.amazonaws</groupId>
@@ -176,12 +176,12 @@
     <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
-      <version>1.4.195</version>
+      <version>1.4.197</version>
     </dependency>
     <dependency>
       <groupId>io.sentry</groupId>
       <artifactId>sentry-spring</artifactId>
-      <version>1.6.7</version>
+      <version>1.7.13</version>
     </dependency>
     <dependency>
       <groupId>io.sentry</groupId>
@@ -191,12 +191,12 @@
     <dependency>
       <groupId>io.springfox</groupId>
       <artifactId>springfox-swagger2</artifactId>
-      <version>2.7.0</version>
+      <version>2.9.2</version>
     </dependency>
     <dependency>
       <groupId>io.springfox</groupId>
       <artifactId>springfox-swagger-ui</artifactId>
-      <version>2.7.0</version>
+      <version>2.9.2</version>
     </dependency>
     <dependency>
       <groupId>com.google.firebase</groupId>

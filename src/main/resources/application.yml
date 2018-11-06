@@ -12,5 +12,4 @@ hedvig.productsPricing.url: http://localhost:4085
 
 
 logging.level.com.hedvig: DEBUG
-
-
+spring.main.allow-bean-definition-overriding: true
