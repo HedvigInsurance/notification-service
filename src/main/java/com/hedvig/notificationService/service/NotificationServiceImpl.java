@@ -27,7 +27,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
 public class NotificationServiceImpl implements NotificationService {
@@ -121,7 +120,7 @@ public class NotificationServiceImpl implements NotificationService {
             insuranceActivated(Long.parseLong(i.getMemberId()));
             receivers.add(i.getMemberId());
           });
-    } else {
+    } else { //TODO: fix this, the maill with no be triggered. Check jobListener method in the JobPosterImpl class
       insurancesToRemind.forEach(
           i -> {
             insuranceActivationAtFutureDate(

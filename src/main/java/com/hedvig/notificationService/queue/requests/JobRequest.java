@@ -14,7 +14,8 @@ import lombok.experimental.NonFinal;
 @JsonSubTypes({
         @JsonSubTypes.Type(value = SendOldInsuranceCancellationEmailRequest.class, name = "sendOldInsuranceCancellationEmailRequest"),
         @JsonSubTypes.Type(value = SendActivationEmailRequest.class, name = "sendActivationEmailRequest"),
-        @JsonSubTypes.Type(value = SendActivationDateUpdatedRequest.class, name = "sendActivationDateUpdatedRequest")
+        @JsonSubTypes.Type(value = SendActivationDateUpdatedRequest.class, name = "sendActivationDateUpdatedRequest"),
+        @JsonSubTypes.Type(value = SendSignedAndActivatedEmailRequest.class, name = "sendSignedAndActivatedEmailRequest")
 })
 public class JobRequest {
   @NotNull

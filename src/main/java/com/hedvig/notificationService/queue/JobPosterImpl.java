@@ -97,7 +97,7 @@ public class JobPosterImpl implements JobPoster {
         sendActivationEmail.run((SendActivationEmailRequest) request);
       } else if (SendActivationAtFutureDateEmail.class.isInstance(request)) {
         sendActivationAtFutureDateEmail.run((SendActivationAtFutureDateRequest) request);
-      } else if (SendSignedAndActivatedEmail.class.isInstance(request)){
+      } else if (SendSignedAndActivatedEmailRequest.class.isInstance(request)){
         sendSignedAndActivatedEmail.run((SendSignedAndActivatedEmailRequest) request);
       }else {
         log.error("Could not start job for message: {}", requestAsJson);
