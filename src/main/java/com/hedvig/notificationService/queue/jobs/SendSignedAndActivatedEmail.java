@@ -6,7 +6,6 @@ import com.hedvig.notificationService.service.FirebaseNotificationService;
 import com.hedvig.notificationService.serviceIntegration.memberService.MemberServiceClient;
 import com.hedvig.notificationService.serviceIntegration.memberService.dto.Member;
 import java.io.IOException;
-import java.util.Objects;
 import javax.validation.constraints.NotNull;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -26,7 +25,7 @@ public class SendSignedAndActivatedEmail {
 
   private final String signedAndActivatedNotification;
   private final ClassPathResource signatureImage;
-  private static final String PUSH_MESSAGE = "Välkommen till Hedvig!👋"; //TODO: Ask for copy
+  private static final String PUSH_MESSAGE = "Välkommen till Hedvig!👋";
 
   public SendSignedAndActivatedEmail(
       EmailSender emailSender,
@@ -52,15 +51,9 @@ public class SendSignedAndActivatedEmail {
         log.error(String.format("Could not find email on user with id: %s", request.getMemberId()));
       }
 
-      sendPush(body.getMemberId(), body.getFirstName());
-
     } else {
       log.error("Response body from member-service is null: {}", profile);
     }
-  }
-
-  private void sendPush(Long memberId, String firstName) {
-    firebaseNotificationService.sendNotification(Objects.toString(memberId), PUSH_MESSAGE);
   }
 
   private void sendEmail(@NotNull final String memberId, final String email, final String firstName) {
