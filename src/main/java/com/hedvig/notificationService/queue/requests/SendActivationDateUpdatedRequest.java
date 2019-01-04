@@ -9,6 +9,7 @@ import lombok.ToString;
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
+@Deprecated
 public class SendActivationDateUpdatedRequest extends JobRequest {
 
   @NotNull String insurer;

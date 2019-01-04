@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 @Component
+@Deprecated
 public class SendActivationDateUpdatedEmail {
 
   private final Logger log = LoggerFactory.getLogger(SendActivationDateUpdatedEmail.class);

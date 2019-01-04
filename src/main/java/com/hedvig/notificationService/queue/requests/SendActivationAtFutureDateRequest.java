@@ -8,6 +8,7 @@ import lombok.ToString;
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
+@Deprecated
 public class SendActivationAtFutureDateRequest extends JobRequest {
   @NotNull
   String activationDate;
