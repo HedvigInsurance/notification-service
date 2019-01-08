@@ -7,5 +7,6 @@ import lombok.ToString;
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
+@Deprecated
 public class SendActivationEmailRequest extends JobRequest{
 }

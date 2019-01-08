@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 @Component
+@Deprecated
 public class SendCancellationEmail {
 
   private final Logger log = LoggerFactory.getLogger(SendCancellationEmail.class);

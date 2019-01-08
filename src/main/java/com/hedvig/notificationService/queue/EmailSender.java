@@ -22,6 +22,7 @@ public class EmailSender {
     this.bcc = bcc;
   }
 
+  @Deprecated // Emails should be sent from CRM
   public void sendEmail(
       final String memberId,
       final String subject,
@@ -45,7 +46,9 @@ public class EmailSender {
         helper.addInline("image002.jpg", signatureImage);
       }
 
-      mailSender.send(message);
+      // TODO kill 👇 when we're sure we don't break stuff
+      log.warn("DEPRECATED: Tried to send email from notification service when you shouldn't [subject=\"{}\", memberId={}]", subject, memberId);
+      // mailSender.send(message);
     } catch (Exception e) {
       log.error("Could not send email to member", e);
       throw new RuntimeException("Could not send email to member", e);

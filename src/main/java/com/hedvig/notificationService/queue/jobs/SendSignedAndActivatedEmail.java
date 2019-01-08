@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 @Component
+
 public class SendSignedAndActivatedEmail {
   private final Logger log = LoggerFactory.getLogger(SendSignedAndActivatedEmail.class);
 

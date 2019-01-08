@@ -89,19 +89,20 @@ public class JobPosterImpl implements JobPoster {
       sentryContext.setUser(new UserBuilder().setId(request.getMemberId()).build());
       MDC.put("memberId", request.getMemberId());
 
-      if (SendOldInsuranceCancellationEmailRequest.class.isInstance(request)) {
-        sendCancellationEmail.run((SendOldInsuranceCancellationEmailRequest) request);
-      } else if (SendActivationDateUpdatedRequest.class.isInstance(request)) {
-        sendActivationDateUpdatedEmail.run((SendActivationDateUpdatedRequest) request);
-      } else if (SendActivationEmailRequest.class.isInstance(request)) {
-        sendActivationEmail.run((SendActivationEmailRequest) request);
-      } else if (SendActivationAtFutureDateEmail.class.isInstance(request)) {
-        sendActivationAtFutureDateEmail.run((SendActivationAtFutureDateRequest) request);
-      } else if (SendSignedAndActivatedEmailRequest.class.isInstance(request)){
-        sendSignedAndActivatedEmail.run((SendSignedAndActivatedEmailRequest) request);
-      }else {
+      // TODO kill 👇 once we deleted all producers
+//      if (SendOldInsuranceCancellationEmailRequest.class.isInstance(request)) {
+//        sendCancellationEmail.run((SendOldInsuranceCancellationEmailRequest) request);
+//      } else if (SendActivationDateUpdatedRequest.class.isInstance(request)) {
+//        sendActivationDateUpdatedEmail.run((SendActivationDateUpdatedRequest) request);
+//      } else if (SendActivationEmailRequest.class.isInstance(request)) {
+//        sendActivationEmail.run((SendActivationEmailRequest) request);
+//      } else if (SendActivationAtFutureDateEmail.class.isInstance(request)) {
+//        sendActivationAtFutureDateEmail.run((SendActivationAtFutureDateRequest) request);
+//      } else if (SendSignedAndActivatedEmailRequest.class.isInstance(request)){
+//        sendSignedAndActivatedEmail.run((SendSignedAndActivatedEmailRequest) request);
+//      }else {
+//      }
         log.error("Could not start job for message: {}", requestAsJson);
-      }
 
     } catch (Exception e) {
       log.error("Caught exception, {}", e.getMessage(), e);

@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
+@Deprecated
 public class SendActivationAtFutureDateEmail {
 
   private Logger log = LoggerFactory.getLogger(SendActivationEmail.class);
