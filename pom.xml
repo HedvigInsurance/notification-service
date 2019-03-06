@@ -112,7 +112,7 @@
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-kubernetes-ribbon</artifactId>
-      <version>0.3.0.RELEASE</version>
+      <version>1.0.1.RELEASE</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
