@@ -1,15 +1,8 @@
 package com.hedvig.notificationService.web;
 
-import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.CollectionReference;
-import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.QuerySnapshot;
-import com.google.firebase.cloud.FirestoreClient;
 import com.hedvig.notificationService.entities.FirebaseToken;
 import com.hedvig.notificationService.service.FirebaseNotificationService;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,30 +29,6 @@ public class FirebaseController {
   @PostMapping("/{memberId}/token")
   public ResponseEntity<?> saveFirebaseToken(
       @PathVariable(name = "memberId") String memberId, @RequestBody String token) {
-
-    Firestore db = FirestoreClient.getFirestore();
-    CollectionReference collection = db.collection("push-notification-tokens");
-
-    ApiFuture<QuerySnapshot> future = collection
-            .whereEqualTo("token", token)
-            .whereEqualTo("memberId", memberId).get();
-
-    try {
-      QuerySnapshot snapshot = future.get();
-
-      if (snapshot.getDocuments().isEmpty()) {
-        Map<String, Object> docData = new HashMap<>();
-        docData.put("memberId", memberId);
-        docData.put("token", token);
-        collection.add(docData);
-      }
-    } catch (Exception e) {
-      log.error(
-        "Something went wrong while fetching documents from firebase",
-        e
-      );
-    }
-
     try {
       firebaseNotificationService.setFirebaseToken(memberId, token);
     } catch (Exception e) {
