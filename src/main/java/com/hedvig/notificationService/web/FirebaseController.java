@@ -1,12 +1,8 @@
 package com.hedvig.notificationService.web;
 
-import com.google.cloud.firestore.Firestore;
-import com.google.firebase.cloud.FirestoreClient;
 import com.hedvig.notificationService.entities.FirebaseToken;
 import com.hedvig.notificationService.service.FirebaseNotificationService;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,15 +29,6 @@ public class FirebaseController {
   @PostMapping("/{memberId}/token")
   public ResponseEntity<?> saveFirebaseToken(
       @PathVariable(name = "memberId") String memberId, @RequestBody String token) {
-
-    Map<String, Object> docData = new HashMap<>();
-    docData.put("memberId", memberId);
-    docData.put("token", token);
-
-    Firestore db = FirestoreClient.getFirestore();
-
-    db.collection("push-notification-tokens").add(docData);
-
     try {
       firebaseNotificationService.setFirebaseToken(memberId, token);
     } catch (Exception e) {

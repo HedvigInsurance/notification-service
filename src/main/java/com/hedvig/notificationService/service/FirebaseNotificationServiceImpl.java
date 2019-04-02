@@ -1,11 +1,19 @@
 package com.hedvig.notificationService.service;
 
+import com.google.api.core.ApiFuture;
+import com.google.cloud.firestore.CollectionReference;
+import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.QuerySnapshot;
+import com.google.firebase.cloud.FirestoreClient;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import com.hedvig.notificationService.entities.FirebaseRepository;
 import com.hedvig.notificationService.entities.FirebaseToken;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import javax.transaction.Transactional;
 import org.slf4j.Logger;
@@ -97,6 +105,29 @@ public class FirebaseNotificationServiceImpl implements FirebaseNotificationServ
   @Override
   @Transactional
   public void setFirebaseToken(String memberId, String token) {
+    Firestore db = FirestoreClient.getFirestore();
+    CollectionReference collection = db.collection("push-notification-tokens");
+
+    ApiFuture<QuerySnapshot> future = collection
+            .whereEqualTo("token", token)
+            .whereEqualTo("memberId", memberId).get();
+
+    try {
+      QuerySnapshot snapshot = future.get();
+
+      if (snapshot.getDocuments().isEmpty()) {
+        Map<String, Object> docData = new HashMap<>();
+        docData.put("memberId", memberId);
+        docData.put("token", token);
+        collection.add(docData);
+      }
+    } catch (Exception e) {
+      logger.error(
+              "Something went wrong while fetching documents from firebase",
+              e
+      );
+    }
+
     FirebaseToken firebaseToken = new FirebaseToken();
     firebaseToken.setMemberId(memberId);
     firebaseToken.setToken(token);
