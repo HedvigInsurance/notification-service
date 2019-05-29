@@ -29,8 +29,8 @@ public class FirebaseNotificationServiceImpl implements FirebaseNotificationServ
   public static final String REFERRAL_SUCCESS = "REFERRAL_SUCCESS";
   public static final String EMAIL = "EMAIL";
 
-  public static final String DATA_MESSAGE_TITLE = "TITLE";
-  public static final String DATA_MESSAGE_BODY = "NEW_MESSAGE_BODY";
+  public static final String DATA_MESSAGE_TITLE = "DATA_MESSAGE_TITLE";
+  public static final String DATA_MESSAGE_BODY = "DATA_MESSAGE_BODY";
 
   public static final String DATA_MESSAGE_REFERRED_SUCCESS_NAME = "DATA_MESSAGE_REFERRED_SUCCESS_NAME";
 
