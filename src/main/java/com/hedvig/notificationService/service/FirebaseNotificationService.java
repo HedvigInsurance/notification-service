@@ -1,11 +1,14 @@
 package com.hedvig.notificationService.service;
 
 import com.hedvig.notificationService.entities.FirebaseToken;
+
 import java.util.Optional;
 
 public interface FirebaseNotificationService {
 
   void sendNewMessageNotification(String memberId);
+
+  void sendReferredSuccessNotification(String memberId, String referredName);
 
   boolean sendNotification(String memberId, String body);
 
