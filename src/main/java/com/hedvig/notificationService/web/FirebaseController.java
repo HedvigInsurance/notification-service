@@ -1,19 +1,16 @@
 package com.hedvig.notificationService.web;
 
+import com.hedvig.notificationService.dto.ReferralsSuccessSendNotificationRequest;
 import com.hedvig.notificationService.entities.FirebaseToken;
 import com.hedvig.notificationService.service.FirebaseNotificationService;
-
-import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/_/notifications")
@@ -62,6 +59,12 @@ public class FirebaseController {
   @PostMapping("/{memberId}/push/send")
   public ResponseEntity<?> sendPushNotification(@PathVariable(name = "memberId") String memberId) {
     firebaseNotificationService.sendNewMessageNotification(memberId);
+    return ResponseEntity.noContent().build();
+  }
+
+  @PostMapping("/{memberId}/push/referred/success/send")
+  public ResponseEntity<?> sendReferredSuccessPushNotification(@PathVariable(name = "memberId") String memberId, @RequestBody @Valid ReferralsSuccessSendNotificationRequest body) {
+    firebaseNotificationService.sendReferredSuccessNotification(memberId, body.getReferredName());
     return ResponseEntity.noContent().build();
   }
 }
