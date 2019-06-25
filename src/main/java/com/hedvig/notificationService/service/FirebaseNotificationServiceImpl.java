@@ -33,6 +33,8 @@ public class FirebaseNotificationServiceImpl implements FirebaseNotificationServ
   public static final String DATA_MESSAGE_BODY = "DATA_MESSAGE_BODY";
 
   public static final String DATA_MESSAGE_REFERRED_SUCCESS_NAME = "DATA_MESSAGE_REFERRED_SUCCESS_NAME";
+  public static final String DATA_MESSAGE_REFERRED_SUCCESS_INCENTIVE_AMOUNT = "DATA_MESSAGE_REFERRED_SUCCESS_INCENTIVE_AMOUNT";
+  public static final String DATA_MESSAGE_REFERRED_SUCCESS_INCENTIVE_CURRENCY = "DATA_MESSAGE_REFERRED_SUCCESS_INCENTIVE_CURRENCY";
 
   private static Logger logger = LoggerFactory.getLogger(FirebaseNotificationServiceImpl.class);
   private final FirebaseRepository firebaseRepository;
@@ -50,8 +52,8 @@ public class FirebaseNotificationServiceImpl implements FirebaseNotificationServ
     Message message =
         Message.builder()
             .putData(TYPE, NEW_MESSAGE)
-            .setApnsConfig(createApnsConfig(TITLE, NEW_MESSAGE_BODY))
-            .setAndroidConfig(createAndroidConfigBuilder(TITLE, NEW_MESSAGE_BODY, NEW_MESSAGE).build())
+            .setApnsConfig(createApnsConfig(NEW_MESSAGE_BODY).build())
+            .setAndroidConfig(createAndroidConfigBuilder(NEW_MESSAGE_BODY, NEW_MESSAGE).build())
             .setToken(firebaseToken.get().token)
             .build();
 
@@ -68,7 +70,7 @@ public class FirebaseNotificationServiceImpl implements FirebaseNotificationServ
   }
 
   @Override
-  public void sendReferredSuccessNotification(String memberId, String referredName) {
+  public void sendReferredSuccessNotification(String memberId, String referredName, String incentiveAmount, String incentiveCurrency) {
     Optional<FirebaseToken> firebaseToken = firebaseRepository.findById(memberId);
 
     String body = String.format(REFERRAL_SUCCESS_BODY, referredName);
@@ -76,10 +78,17 @@ public class FirebaseNotificationServiceImpl implements FirebaseNotificationServ
     Message message = Message
         .builder()
         .putData(TYPE, REFERRAL_SUCCESS)
-        .setApnsConfig(createApnsConfig(TITLE, body))
+        .setApnsConfig(
+            createApnsConfig(body)
+                .putCustomData(DATA_MESSAGE_REFERRED_SUCCESS_NAME, referredName)
+                .putCustomData(DATA_MESSAGE_REFERRED_SUCCESS_INCENTIVE_AMOUNT, incentiveAmount)
+                .putCustomData(DATA_MESSAGE_REFERRED_SUCCESS_INCENTIVE_CURRENCY, incentiveCurrency)
+                .build())
         .setAndroidConfig(
-            createAndroidConfigBuilder(TITLE, body, REFERRAL_SUCCESS)
+            createAndroidConfigBuilder(body, REFERRAL_SUCCESS)
                 .putData(DATA_MESSAGE_REFERRED_SUCCESS_NAME, referredName)
+                .putData(DATA_MESSAGE_REFERRED_SUCCESS_INCENTIVE_AMOUNT, incentiveAmount)
+                .putData(DATA_MESSAGE_REFERRED_SUCCESS_INCENTIVE_CURRENCY, incentiveCurrency)
                 .build())
         .setToken(firebaseToken.get().token)
         .build();
@@ -104,8 +113,8 @@ public class FirebaseNotificationServiceImpl implements FirebaseNotificationServ
       Message message =
           Message.builder()
               .putData(TYPE, EMAIL)
-              .setApnsConfig(createApnsConfig(TITLE, body))
-              .setAndroidConfig(createAndroidConfigBuilder(TITLE, body, EMAIL).build())
+              .setApnsConfig(createApnsConfig(body).build())
+              .setAndroidConfig(createAndroidConfigBuilder(body, EMAIL).build())
               .setToken(firebaseToken.get().token)
               .build();
       try {
@@ -166,24 +175,23 @@ public class FirebaseNotificationServiceImpl implements FirebaseNotificationServ
   }
 
 
-  private ApnsConfig createApnsConfig(String tilte, String body) {
+  private ApnsConfig.Builder createApnsConfig(String body) {
     return ApnsConfig
         .builder()
         .setAps(Aps
             .builder()
             .setAlert(ApsAlert
                 .builder()
-                .setTitle(tilte)
+                .setTitle(FirebaseNotificationServiceImpl.TITLE)
                 .setBody(body)
                 .build()
-            ).build())
-        .build();
+            ).build());
   }
 
-  private AndroidConfig.Builder createAndroidConfigBuilder(String title, String body, String type) {
+  private AndroidConfig.Builder createAndroidConfigBuilder(String body, String type) {
     return AndroidConfig
         .builder()
-        .putData(DATA_MESSAGE_TITLE, title)
+        .putData(DATA_MESSAGE_TITLE, FirebaseNotificationServiceImpl.TITLE)
         .putData(DATA_MESSAGE_BODY, body)
         .putData(TYPE, type);
   }

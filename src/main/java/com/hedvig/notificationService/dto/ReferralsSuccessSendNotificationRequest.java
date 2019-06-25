@@ -8,4 +8,6 @@ import javax.validation.constraints.NotNull;
 @Value
 public class ReferralsSuccessSendNotificationRequest {
   @NotNull @NotEmpty String referredName;
+  @NotNull @NotEmpty String incentiveAmount;
+  @NotNull @NotEmpty String incentiveCurrency;
 }

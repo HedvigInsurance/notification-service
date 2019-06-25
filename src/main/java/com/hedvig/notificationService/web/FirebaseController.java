@@ -64,7 +64,7 @@ public class FirebaseController {
 
   @PostMapping("/{memberId}/push/referred/success/send")
   public ResponseEntity<?> sendReferredSuccessPushNotification(@PathVariable(name = "memberId") String memberId, @RequestBody @Valid ReferralsSuccessSendNotificationRequest body) {
-    firebaseNotificationService.sendReferredSuccessNotification(memberId, body.getReferredName());
+    firebaseNotificationService.sendReferredSuccessNotification(memberId, body.getReferredName(), body.getIncentiveAmount(), body.getIncentiveCurrency());
     return ResponseEntity.noContent().build();
   }
 }

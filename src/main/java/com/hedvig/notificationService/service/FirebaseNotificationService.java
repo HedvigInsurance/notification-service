@@ -8,7 +8,7 @@ public interface FirebaseNotificationService {
 
   void sendNewMessageNotification(String memberId);
 
-  void sendReferredSuccessNotification(String memberId, String referredName);
+  void sendReferredSuccessNotification(String memberId, String referredName, String incentiveAmount, String incentiveCurrency);
 
   boolean sendNotification(String memberId, String body);
 
