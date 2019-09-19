@@ -171,7 +171,7 @@
     <dependency>
       <groupId>com.amazonaws</groupId>
       <artifactId>aws-java-sdk-sts</artifactId>
-      <version>1.11.336</version>
+      <version>1.11.634</version>
     </dependency>
     <dependency>
       <groupId>com.h2database</groupId>
