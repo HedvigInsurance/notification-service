@@ -28,6 +28,7 @@ public class FirebaseNotificationServiceImpl implements FirebaseNotificationServ
   public static final String NEW_MESSAGE = "NEW_MESSAGE";
   public static final String REFERRAL_SUCCESS = "REFERRAL_SUCCESS";
   public static final String EMAIL = "EMAIL";
+  public static final String SIMPLE = "SIMPLE";
 
   public static final String DATA_MESSAGE_TITLE = "DATA_MESSAGE_TITLE";
   public static final String DATA_MESSAGE_BODY = "DATA_MESSAGE_BODY";
@@ -106,6 +107,29 @@ public class FirebaseNotificationServiceImpl implements FirebaseNotificationServ
   }
 
   @Override
+  public void sendSimpleNotification(String memberId, String title, String body) {
+    Optional<FirebaseToken> firebaseToken = firebaseRepository.findById(memberId);
+
+    Message message = Message
+            .builder()
+            .putData(TYPE, SIMPLE)
+            .setApnsConfig(createApnsConfig(title, body).build())
+            .setAndroidConfig(createAndroidConfigBuilder(title, body, SIMPLE).build())
+            .setToken(firebaseToken.get().token)
+            .build();
+    try {
+      String response = firebaseMessaging.send(message);
+
+      logger.info("Response from pushing notification {}", response);
+    } catch (FirebaseMessagingException e) {
+      logger.error(
+              "SendNewMessageNotification: Cannot send notification with memberId {} through firebase. Error: {}",
+              memberId,
+              e);
+    }
+  }
+
+  @Override
   public boolean sendNotification(String memberId, String body) {
     Optional<FirebaseToken> firebaseToken = firebaseRepository.findById(memberId);
 
@@ -176,22 +200,30 @@ public class FirebaseNotificationServiceImpl implements FirebaseNotificationServ
 
 
   private ApnsConfig.Builder createApnsConfig(String body) {
+    return createApnsConfig(FirebaseNotificationServiceImpl.TITLE, body);
+  }
+
+  private ApnsConfig.Builder createApnsConfig(String title, String body) {
     return ApnsConfig
         .builder()
         .setAps(Aps
             .builder()
             .setAlert(ApsAlert
                 .builder()
-                .setTitle(FirebaseNotificationServiceImpl.TITLE)
+                .setTitle(title)
                 .setBody(body)
                 .build()
             ).build());
   }
 
   private AndroidConfig.Builder createAndroidConfigBuilder(String body, String type) {
+    return createAndroidConfigBuilder(FirebaseNotificationServiceImpl.TITLE, body, type);
+  }
+
+  private AndroidConfig.Builder createAndroidConfigBuilder(String title, String body, String type) {
     return AndroidConfig
         .builder()
-        .putData(DATA_MESSAGE_TITLE, FirebaseNotificationServiceImpl.TITLE)
+        .putData(DATA_MESSAGE_TITLE, title)
         .putData(DATA_MESSAGE_BODY, body)
         .putData(TYPE, type);
   }

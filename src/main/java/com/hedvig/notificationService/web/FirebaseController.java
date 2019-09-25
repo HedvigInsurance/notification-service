@@ -1,6 +1,7 @@
 package com.hedvig.notificationService.web;
 
 import com.hedvig.notificationService.dto.ReferralsSuccessSendNotificationRequest;
+import com.hedvig.notificationService.dto.SendSimpleNotificationRequest;
 import com.hedvig.notificationService.entities.FirebaseToken;
 import com.hedvig.notificationService.service.FirebaseNotificationService;
 import org.slf4j.Logger;
@@ -65,6 +66,12 @@ public class FirebaseController {
   @PostMapping("/{memberId}/push/referred/success/send")
   public ResponseEntity<?> sendReferredSuccessPushNotification(@PathVariable(name = "memberId") String memberId, @RequestBody @Valid ReferralsSuccessSendNotificationRequest body) {
     firebaseNotificationService.sendReferredSuccessNotification(memberId, body.getReferredName(), body.getIncentiveAmount(), body.getIncentiveCurrency());
+    return ResponseEntity.noContent().build();
+  }
+
+  @PostMapping("/{memberId}/push/simple/send")
+  public ResponseEntity<?> sendSimplePushNotification(@PathVariable(name = "memberId") String memberId, @RequestBody @Valid SendSimpleNotificationRequest body) {
+    firebaseNotificationService.sendNewMessageNotification(memberId);
     return ResponseEntity.noContent().build();
   }
 }

@@ -10,6 +10,8 @@ public interface FirebaseNotificationService {
 
   void sendReferredSuccessNotification(String memberId, String referredName, String incentiveAmount, String incentiveCurrency);
 
+  void sendSimpleNotification(String memberId, String title, String body);
+
   boolean sendNotification(String memberId, String body);
 
   Optional<FirebaseToken> getFirebaseToken(String memberId);
