@@ -39,3 +39,6 @@ service-account.json
 .factorypath
 .project
 .settings
+
+# jenv
+.java-version
