@@ -204,6 +204,32 @@ open class FirebaseNotificationServiceImpl(
         }
     }
 
+    override fun sendGenericCommunicationNotification(memberId: String, title: String, body: String) {
+        val firebaseToken = firebaseRepository.findById(memberId)
+
+        val message = Message
+            .builder()
+            .putData(TYPE, GENERIC_COMMUNICATION)
+            .setApnsConfig(createApnsConfig(body).build())
+            .setAndroidConfig(
+                createAndroidConfigBuilder(body, GENERIC_COMMUNICATION)
+                    .putData(TITLE, title)
+                    .build()
+            ).setToken(firebaseToken.get().token)
+            .build()
+
+        try {
+            val response = firebaseMessaging.send(message)
+            logger.info("Response from pushing notification: {}", response)
+        } catch (e: FirebaseMessagingException) {
+            logger.error(
+                "SendGenericCommunicationNotification: Cannot send notification with memberId {} through Firebase. Error: {}",
+                memberId,
+                e
+            )
+        }
+    }
+
     override fun sendNotification(memberId: String, body: String): Boolean {
         val firebaseToken = firebaseRepository.findById(memberId)
 

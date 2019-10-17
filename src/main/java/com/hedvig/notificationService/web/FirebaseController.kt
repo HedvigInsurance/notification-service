@@ -4,6 +4,7 @@ import com.hedvig.notificationService.dto.ReferralsSuccessSendNotificationReques
 import com.hedvig.notificationService.entities.FirebaseToken
 import com.hedvig.notificationService.service.FirebaseNotificationService
 import com.hedvig.notificationService.web.dto.ClaimPaidNotificationRequest
+import com.hedvig.notificationService.web.dto.GenericCommunicationNotificationRequest
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -105,6 +106,20 @@ class FirebaseController(private val firebaseNotificationService: FirebaseNotifi
     @PostMapping("/{memberId}/push/insurance-renewed/send")
     fun sendInsuranceRenewedNotification(@PathVariable(name = "memberId") memberId: String): ResponseEntity<*> {
         firebaseNotificationService.sendInsuranceRenewedNotification(memberId)
+        return ResponseEntity.noContent().build<Any>()
+    }
+
+    @PostMapping("/{memberId}/push/generic-communication/send")
+    fun sendGenericCommunicationNotification(
+        @PathVariable(name = "memberId") memberId: String,
+        @RequestBody body: GenericCommunicationNotificationRequest
+    ): ResponseEntity<*> {
+        firebaseNotificationService
+            .sendGenericCommunicationNotification(
+                memberId,
+                body.title,
+                body.body
+            )
         return ResponseEntity.noContent().build<Any>()
     }
 }

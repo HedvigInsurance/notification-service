@@ -31,4 +31,6 @@ interface FirebaseNotificationService {
     fun getFirebaseToken(memberId: String): Optional<FirebaseToken>
 
     fun setFirebaseToken(memberId: String, token: String)
+
+    fun sendGenericCommunicationNotification(memberId: String, title: String, body: String)
 }
