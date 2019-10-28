@@ -1,26 +1,23 @@
 package com.hedvig.notificationService.service
 
-import com.google.api.core.ApiFuture
-import com.google.cloud.firestore.CollectionReference
-import com.google.cloud.firestore.Firestore
-import com.google.cloud.firestore.QuerySnapshot
 import com.google.firebase.cloud.FirestoreClient
 import com.google.firebase.messaging.*
 import com.hedvig.notificationService.entities.FirebaseRepository
 import com.hedvig.notificationService.entities.FirebaseToken
-import org.slf4j.Logger
+import com.hedvig.notificationService.serviceIntegration.memberService.MemberService
+import com.hedvig.service.LocalizationService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-
-import javax.transaction.Transactional
-import java.util.HashMap
-import java.util.Optional
+import java.util.*
 import javax.money.MonetaryAmount
+import javax.transaction.Transactional
 
 @Service
 open class FirebaseNotificationServiceImpl(
     private val firebaseRepository: FirebaseRepository,
-    private val firebaseMessaging: FirebaseMessaging
+    private val firebaseMessaging: FirebaseMessaging,
+    private val localizationService: LocalizationService,
+    private val memberService: MemberService
 ) : FirebaseNotificationService {
     override fun sendNewMessageNotification(memberId: String) {
         val firebaseToken = firebaseRepository.findById(memberId)
@@ -91,11 +88,17 @@ open class FirebaseNotificationServiceImpl(
 
     override fun sendConnectDirectDebitNotification(memberId: String) {
         val firebaseToken = firebaseRepository.findById(memberId)
+        val locale = memberService.getPreferredLanguage(memberId)
+        val title = localizationService.getText(locale, CONNECT_DD_TITLE) ?: throw Error("Could not find text key $CONNECT_DD_TITLE")
+        val body = localizationService.getText(locale, CONNECT_DD_BODY) ?: throw Error("Could not find text key $CONNECT_DD_BODY")
 
         val message = Message
             .builder()
             .putData(TYPE, CONNECT_DIRECT_DEBIT)
-            .setApnsConfig(createApnsConfig("Koppla autogiro").build()) // TODO: Copy from IEX
+            .setApnsConfig(createApnsConfig(
+                    title = title,
+                    body = body
+            ).build())
             .setAndroidConfig(createAndroidConfigBuilder(NEW_MESSAGE_BODY, CONNECT_DIRECT_DEBIT).build())
             .setToken(firebaseToken.get().token)
             .build()
@@ -114,11 +117,18 @@ open class FirebaseNotificationServiceImpl(
 
     override fun sendPaymentFailedNotification(memberId: String) {
         val firebaseToken = firebaseRepository.findById(memberId)
+        val locale = memberService.getPreferredLanguage(memberId)
+
+        val title = localizationService.getText(locale, PAYMENT_FAILED_TITLE) ?: throw Error("Could not find text key $PAYMENT_FAILED_TITLE")
+        val body = localizationService.getText(locale, PAYMENT_FAILED_BODY) ?: throw Error("Could not find text key $PAYMENT_FAILED_BODY")
 
         val message = Message
             .builder()
             .putData(TYPE, PAYMENT_FAILED)
-            .setApnsConfig(createApnsConfig("Betalning misslyckades").build()) // TODO: Copy from IEX
+            .setApnsConfig(createApnsConfig(
+                    title = title,
+                    body = body
+            ).build()) // TODO: Copy from IEX
             .setAndroidConfig(createAndroidConfigBuilder(NEW_MESSAGE_BODY, PAYMENT_FAILED).build())
             .setToken(firebaseToken.get().token)
             .build()
@@ -298,7 +308,7 @@ open class FirebaseNotificationServiceImpl(
     }
 
 
-    private fun createApnsConfig(body: String): ApnsConfig.Builder {
+    private fun createApnsConfig(body: String, title: String = TITLE): ApnsConfig.Builder {
         return ApnsConfig
             .builder()
             .setAps(
@@ -307,7 +317,7 @@ open class FirebaseNotificationServiceImpl(
                     .setAlert(
                         ApsAlert
                             .builder()
-                            .setTitle(TITLE)
+                            .setTitle(title)
                             .setBody(body)
                             .build()
                     ).build()
@@ -327,6 +337,12 @@ open class FirebaseNotificationServiceImpl(
         const val TITLE = "Hedvig"
         const val NEW_MESSAGE_BODY = "Hej, du har ett nytt meddelande från Hedvig!"
         const val REFERRAL_SUCCESS_BODY = "%s skaffade Hedvig tack vare dig!"
+
+        private const val CONNECT_DD_TITLE = "NOTIFICATION_CONNECT_DD_BODY"
+        private const val CONNECT_DD_BODY = "NOTIFICATION_CONNECT_DD_BODY"
+
+        private const val PAYMENT_FAILED_TITLE = "NOTIFICATION_PAYMENT_FAILED_TITLE"
+        private const val PAYMENT_FAILED_BODY = "NOTIFICATION_PAYMENT_FAILED_BODY"
 
         const val TYPE = "TYPE"
         const val NEW_MESSAGE = "NEW_MESSAGE"
