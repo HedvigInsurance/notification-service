@@ -1,8 +1,7 @@
 package com.hedvig.notificationService.service
 
 import com.hedvig.notificationService.entities.FirebaseToken
-
-import java.util.Optional
+import java.util.*
 import javax.money.MonetaryAmount
 
 interface FirebaseNotificationService {
@@ -26,11 +25,9 @@ interface FirebaseNotificationService {
 
     fun sendInsuranceRenewedNotification(memberId: String)
 
-    fun sendNotification(memberId: String, body: String): Boolean
-
     fun getFirebaseToken(memberId: String): Optional<FirebaseToken>
 
     fun setFirebaseToken(memberId: String, token: String)
 
-    fun sendGenericCommunicationNotification(memberId: String, title: String, body: String)
+    fun sendGenericCommunicationNotification(memberId: String, titleTextKey: String, bodyTextKey: String)
 }

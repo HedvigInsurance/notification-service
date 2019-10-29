@@ -1,19 +1,14 @@
 package com.hedvig.notificationService.web
 
 import com.hedvig.notificationService.dto.ReferralsSuccessSendNotificationRequest
-import com.hedvig.notificationService.entities.FirebaseToken
 import com.hedvig.notificationService.service.FirebaseNotificationService
 import com.hedvig.notificationService.web.dto.ClaimPaidNotificationRequest
 import com.hedvig.notificationService.web.dto.GenericCommunicationNotificationRequest
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-
 import javax.validation.Valid
-import java.util.Optional
 
 @RestController
 @RequestMapping("/_/notifications")
@@ -117,8 +112,8 @@ class FirebaseController(private val firebaseNotificationService: FirebaseNotifi
         firebaseNotificationService
             .sendGenericCommunicationNotification(
                 memberId,
-                body.title,
-                body.body
+                body.titleTextKey,
+                body.bodyTextKey
             )
         return ResponseEntity.noContent().build<Any>()
     }

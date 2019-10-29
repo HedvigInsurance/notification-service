@@ -1,9 +1,11 @@
 package com.hedvig.notificationService.serviceIntegration.memberService.dto;
 
-import java.time.LocalDate;
-import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Value;
+import org.jetbrains.annotations.Nullable;
+
+import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 
 @Value
 @AllArgsConstructor
@@ -28,5 +30,8 @@ public class Member {
 
     private final LocalDate birthDate;
     private final String apartment;
+
+    @Nullable
+    private final String acceptLanguage;
 
 }

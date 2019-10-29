@@ -1,6 +1,6 @@
 package com.hedvig.notificationService.web.dto
 
 data class GenericCommunicationNotificationRequest(
-    val title: String,
-    val body: String
+    val titleTextKey: String,
+    val bodyTextKey: String
 )
