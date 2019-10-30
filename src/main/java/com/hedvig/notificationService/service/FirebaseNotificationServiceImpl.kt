@@ -1,7 +1,13 @@
 package com.hedvig.notificationService.service
 
 import com.google.firebase.cloud.FirestoreClient
-import com.google.firebase.messaging.*
+import com.google.firebase.messaging.AndroidConfig
+import com.google.firebase.messaging.ApnsConfig
+import com.google.firebase.messaging.Aps
+import com.google.firebase.messaging.ApsAlert
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.FirebaseMessagingException
+import com.google.firebase.messaging.Message
 import com.hedvig.notificationService.entities.FirebaseRepository
 import com.hedvig.notificationService.entities.FirebaseToken
 import com.hedvig.notificationService.service.TextKeys.CLAIM_PAID_BODY
@@ -20,11 +26,12 @@ import com.hedvig.notificationService.service.TextKeys.REFERRAL_SUCCESS_BODY
 import com.hedvig.notificationService.serviceIntegration.memberService.MemberServiceClient
 import com.hedvig.service.LocalizationService
 import com.hedvig.service.TextKeysLocaleResolver
-import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Service
-import java.util.*
+import java.util.Optional
 import javax.money.MonetaryAmount
 import javax.transaction.Transactional
+import kotlin.collections.HashMap
+import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Service
 
 @Service
 open class FirebaseNotificationServiceImpl(
@@ -310,7 +317,6 @@ open class FirebaseNotificationServiceImpl(
 
         firebaseRepository.save(firebaseToken)
     }
-
 
     private fun createApnsConfig(
         memberId: String,

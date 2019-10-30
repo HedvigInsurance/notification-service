@@ -4,11 +4,16 @@ import com.hedvig.notificationService.dto.ReferralsSuccessSendNotificationReques
 import com.hedvig.notificationService.service.FirebaseNotificationService
 import com.hedvig.notificationService.web.dto.ClaimPaidNotificationRequest
 import com.hedvig.notificationService.web.dto.GenericCommunicationNotificationRequest
+import javax.validation.Valid
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
-import javax.validation.Valid
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/_/notifications")
@@ -18,7 +23,8 @@ class FirebaseController(private val firebaseNotificationService: FirebaseNotifi
 
     @PostMapping("/{memberId}/token")
     fun saveFirebaseToken(
-        @PathVariable(name = "memberId") memberId: String, @RequestBody token: String
+        @PathVariable(name = "memberId") memberId: String,
+        @RequestBody token: String
     ): ResponseEntity<*> {
         try {
             firebaseNotificationService.setFirebaseToken(memberId, token)
