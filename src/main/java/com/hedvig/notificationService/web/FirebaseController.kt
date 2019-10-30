@@ -4,9 +4,7 @@ import com.hedvig.notificationService.dto.ReferralsSuccessSendNotificationReques
 import com.hedvig.notificationService.service.FirebaseNotificationService
 import com.hedvig.notificationService.web.dto.ClaimPaidNotificationRequest
 import com.hedvig.notificationService.web.dto.GenericCommunicationNotificationRequest
-import javax.validation.Valid
 import org.slf4j.LoggerFactory
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -14,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import javax.validation.Valid
 
 @RestController
 @RequestMapping("/_/notifications")
@@ -35,7 +34,7 @@ class FirebaseController(private val firebaseNotificationService: FirebaseNotifi
                 memberId,
                 e
             )
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build<Any>()
+            throw e
         }
 
         return ResponseEntity.noContent().build<Any>()
@@ -54,7 +53,7 @@ class FirebaseController(private val firebaseNotificationService: FirebaseNotifi
                 memberId,
                 e
             )
-            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build<Any>()
+            throw e
         }
     }
 
