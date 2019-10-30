@@ -58,17 +58,7 @@ open class FirebaseNotificationServiceImpl(
             .setToken(firebaseToken.get().token)
             .build()
 
-        try {
-            val response = firebaseMessaging.send(message)
-
-            logger.info("Response from pushing notification {}", response)
-        } catch (e: FirebaseMessagingException) {
-            logger.error(
-                "SendNewMessageNotification: Cannot send notification with memberId {} through firebase. Error: {}",
-                memberId,
-                e
-            )
-        }
+        sendNotification(NEW_MESSAGE, memberId, message)
     }
 
     override fun sendReferredSuccessNotification(
@@ -106,18 +96,7 @@ open class FirebaseNotificationServiceImpl(
             .setToken(firebaseToken.get().token)
             .build()
 
-        try {
-            val response = firebaseMessaging.send(message)
-
-            logger.info("Response from pushing notification {}", response)
-        } catch (e: FirebaseMessagingException) {
-            logger.error(
-                "SendNewMessageNotification: Cannot send notification with memberId {} through firebase. Error: {}",
-                memberId,
-                e
-            )
-        }
-
+        sendNotification(REFERRAL_SUCCESS, memberId, message)
     }
 
     override fun sendConnectDirectDebitNotification(memberId: String) {
@@ -144,16 +123,7 @@ open class FirebaseNotificationServiceImpl(
             .setToken(firebaseToken.get().token)
             .build()
 
-        try {
-            val response = firebaseMessaging.send(message)
-            logger.info("Response from pushing notification: {}", response)
-        } catch (e: FirebaseMessagingException) {
-            logger.error(
-                "SendConnectDirectDebitNotification: Cannot send notification with memberId {} through Firebase. Error: {}",
-                memberId,
-                e
-            )
-        }
+        sendNotification(CONNECT_DIRECT_DEBIT, memberId, message)
     }
 
     override fun sendPaymentFailedNotification(memberId: String) {
@@ -180,16 +150,7 @@ open class FirebaseNotificationServiceImpl(
             .setToken(firebaseToken.get().token)
             .build()
 
-        try {
-            val response = firebaseMessaging.send(message)
-            logger.info("Response from pushing notification: {}", response)
-        } catch (e: FirebaseMessagingException) {
-            logger.error(
-                "SendPaymentFailedNotification: Cannot send notification with memberId {} through Firebase. Error: {}",
-                memberId,
-                e
-            )
-        }
+        sendNotification(PAYMENT_FAILED, memberId, message)
     }
 
     override fun sendClaimPaidNotification(memberId: String, amount: MonetaryAmount) {
@@ -216,16 +177,7 @@ open class FirebaseNotificationServiceImpl(
             .setToken(firebaseToken.get().token)
             .build()
 
-        try {
-            val response = firebaseMessaging.send(message)
-            logger.info("Response from pushing notification: {}", response)
-        } catch (e: FirebaseMessagingException) {
-            logger.error(
-                "SendClaimPaidNotification: Cannot send notification with memberId {} through Firebase. Error: {}",
-                memberId,
-                e
-            )
-        }
+        sendNotification(CLAIM_PAID, memberId, message)
     }
 
     override fun sendInsurancePolicyUpdatedNotification(memberId: String) {
@@ -252,16 +204,7 @@ open class FirebaseNotificationServiceImpl(
             .setToken(firebaseToken.get().token)
             .build()
 
-        try {
-            val response = firebaseMessaging.send(message)
-            logger.info("Response from pushing notification: {}", response)
-        } catch (e: FirebaseMessagingException) {
-            logger.error(
-                "SendInsurancePolicyUpdatedNotification: Cannot send notification with memberId {} through Firebase. Error: {}",
-                memberId,
-                e
-            )
-        }
+        sendNotification(INSURANCE_POLICY_UPDATED, memberId, message)
     }
 
     override fun sendInsuranceRenewedNotification(memberId: String) {
@@ -288,16 +231,7 @@ open class FirebaseNotificationServiceImpl(
             .setToken(firebaseToken.get().token)
             .build()
 
-        try {
-            val response = firebaseMessaging.send(message)
-            logger.info("Response from pushing notification: {}", response)
-        } catch (e: FirebaseMessagingException) {
-            logger.error(
-                "SendInsuranceRenewedNotification: Cannot send notification with memberId {} through Firebase. Error: {}",
-                memberId,
-                e
-            )
-        }
+        sendNotification(INSURANCE_RENEWED, memberId, message)
     }
 
     override fun sendGenericCommunicationNotification(memberId: String, titleTextKey: String, bodyTextKey: String) {
@@ -323,12 +257,17 @@ open class FirebaseNotificationServiceImpl(
             ).setToken(firebaseToken.get().token)
             .build()
 
+        sendNotification(GENERIC_COMMUNICATION, memberId, message)
+    }
+
+    private fun sendNotification(type: String, memberId: String, message: Message) {
         try {
             val response = firebaseMessaging.send(message)
             logger.info("Response from pushing notification: {}", response)
         } catch (e: FirebaseMessagingException) {
             logger.error(
-                "SendGenericCommunicationNotification: Cannot send notification with memberId {} through Firebase. Error: {}",
+                "SendNotification: Cannot send notification of type {} with memberId {} through Firebase. Error: {}",
+                type,
                 memberId,
                 e
             )
