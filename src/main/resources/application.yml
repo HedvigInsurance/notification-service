@@ -10,6 +10,8 @@ hedvig.member-service.url: http://localhost:4084
 hedvig.bot-service.location: http://localhost:4081
 hedvig.productsPricing.url: http://localhost:4085
 
+graphcms.project: NotificationService
+graphcms.url: https://api-euwest.graphcms.com/v1/cjmawd9hw036a01cuzmjhplka/master
 
 logging.level.com.hedvig: DEBUG
 spring.main.allow-bean-definition-overriding: true
