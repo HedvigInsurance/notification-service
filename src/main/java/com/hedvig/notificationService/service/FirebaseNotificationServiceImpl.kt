@@ -26,11 +26,11 @@ import com.hedvig.notificationService.service.TextKeys.REFERRAL_SUCCESS_BODY
 import com.hedvig.notificationService.serviceIntegration.memberService.MemberServiceClient
 import com.hedvig.service.LocalizationService
 import com.hedvig.service.TextKeysLocaleResolver
-import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Service
 import java.util.Optional
 import javax.money.MonetaryAmount
 import javax.transaction.Transactional
+import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Service
 
 @Service
 open class FirebaseNotificationServiceImpl(
