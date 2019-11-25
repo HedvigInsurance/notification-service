@@ -26,12 +26,11 @@ import com.hedvig.notificationService.service.TextKeys.REFERRAL_SUCCESS_BODY
 import com.hedvig.notificationService.serviceIntegration.memberService.MemberServiceClient
 import com.hedvig.service.LocalizationService
 import com.hedvig.service.TextKeysLocaleResolver
+import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Service
 import java.util.Optional
 import javax.money.MonetaryAmount
 import javax.transaction.Transactional
-import kotlin.collections.HashMap
-import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Service
 
 @Service
 open class FirebaseNotificationServiceImpl(
@@ -158,6 +157,14 @@ open class FirebaseNotificationServiceImpl(
             .build()
 
         sendNotification(PAYMENT_FAILED, memberId, message)
+    }
+
+    override fun sendTerminatedFailedChargesNotification(memberId: String) {
+        this.sendGenericCommunicationNotification(
+            memberId = memberId,
+            titleTextKey = "TERMINATION_FAILED_CHARGES_TITLE",
+            bodyTextKey = "TERMINATION_FAILED_CHARGES_BODY"
+        )
     }
 
     override fun sendClaimPaidNotification(memberId: String, amount: MonetaryAmount) {
