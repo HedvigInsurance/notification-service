@@ -162,8 +162,8 @@ open class FirebaseNotificationServiceImpl(
     override fun sendTerminatedFailedChargesNotification(memberId: String) {
         this.sendGenericCommunicationNotification(
             memberId = memberId,
-            titleTextKey = "TERMINATION_FAILED_CHARGES_TITLE",
-            bodyTextKey = "TERMINATION_FAILED_CHARGES_BODY"
+            titleTextKey = TERMINATION_FAILED_CHARGES_TITLE,
+            bodyTextKey = TERMINATION_FAILED_CHARGES_BODY
         )
     }
 
@@ -387,6 +387,9 @@ open class FirebaseNotificationServiceImpl(
 
         const val DATA_MESSAGE_TITLE = "DATA_MESSAGE_TITLE"
         const val DATA_MESSAGE_BODY = "DATA_MESSAGE_BODY"
+
+        const val TERMINATION_FAILED_CHARGES_TITLE = "TERMINATION_FAILED_CHARGES_TITLE"
+        const val TERMINATION_FAILED_CHARGES_BODY = "TERMINATION_FAILED_CHARGES_BODY"
 
         const val DATA_MESSAGE_REFERRED_SUCCESS_NAME = "DATA_MESSAGE_REFERRED_SUCCESS_NAME"
         const val DATA_MESSAGE_REFERRED_SUCCESS_INCENTIVE_AMOUNT = "DATA_MESSAGE_REFERRED_SUCCESS_INCENTIVE_AMOUNT"
