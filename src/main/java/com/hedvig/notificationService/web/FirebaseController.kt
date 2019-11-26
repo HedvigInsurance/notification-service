@@ -22,9 +22,9 @@ class FirebaseController(private val firebaseNotificationService: FirebaseNotifi
 
     @PostMapping("/{memberId}/token")
     fun saveFirebaseToken(
-        @PathVariable(name = "memberId") memberId: String,
+        @PathVariable memberId: String,
         @RequestBody token: String
-    ): ResponseEntity<*> {
+    ): ResponseEntity<Void> {
         try {
             firebaseNotificationService.setFirebaseToken(memberId, token)
         } catch (e: Exception) {
@@ -37,11 +37,11 @@ class FirebaseController(private val firebaseNotificationService: FirebaseNotifi
             throw e
         }
 
-        return ResponseEntity.noContent().build<Any>()
+        return ResponseEntity.noContent().build()
     }
 
     @GetMapping("/{memberId}/token")
-    fun getFirebaseToken(@PathVariable(name = "memberId") memberId: String): ResponseEntity<*> {
+    fun getFirebaseToken(@PathVariable memberId: String): ResponseEntity<*> {
         return try {
             val firebaseTokenOptional = firebaseNotificationService.getFirebaseToken(memberId)
             firebaseTokenOptional
@@ -58,68 +58,77 @@ class FirebaseController(private val firebaseNotificationService: FirebaseNotifi
     }
 
     @PostMapping("/{memberId}/push/send")
-    fun sendPushNotification(@PathVariable(name = "memberId") memberId: String): ResponseEntity<*> {
+    fun sendPushNotification(@PathVariable memberId: String): ResponseEntity<Void> {
         firebaseNotificationService.sendNewMessageNotification(memberId)
-        return ResponseEntity.noContent().build<Any>()
+        return ResponseEntity.noContent().build()
     }
 
     @PostMapping("/{memberId}/push/referred/success/send")
-    fun sendReferredSuccessPushNotification(@PathVariable(name = "memberId") memberId: String, @RequestBody @Valid body: ReferralsSuccessSendNotificationRequest): ResponseEntity<*> {
+    fun sendReferredSuccessPushNotification(
+        @PathVariable memberId: String,
+        @RequestBody @Valid body: ReferralsSuccessSendNotificationRequest
+    ): ResponseEntity<Void> {
         firebaseNotificationService.sendReferredSuccessNotification(
             memberId,
             body.referredName,
             body.incentiveAmount,
             body.incentiveCurrency
         )
-        return ResponseEntity.noContent().build<Any>()
+        return ResponseEntity.noContent().build()
     }
 
     @PostMapping("/{memberId}/push/connect-direct-debit/send")
     fun sendConnectDirectDebitNotificationFailedNotification(
-        @PathVariable(name = "memberId") memberId: String
-    ): ResponseEntity<*> {
+        @PathVariable memberId: String
+    ): ResponseEntity<Void> {
         firebaseNotificationService.sendConnectDirectDebitNotification(memberId)
-        return ResponseEntity.noContent().build<Any>()
+        return ResponseEntity.noContent().build()
     }
 
     @PostMapping("/{memberId}/push/payment-failed/send")
-    fun sendPaymentFailedNotification(@PathVariable(name = "memberId") memberId: String): ResponseEntity<*> {
+    fun sendPaymentFailedNotification(@PathVariable memberId: String): ResponseEntity<Void> {
         firebaseNotificationService.sendPaymentFailedNotification(memberId)
-        return ResponseEntity.noContent().build<Any>()
+        return ResponseEntity.noContent().build()
+    }
+
+    @PostMapping("/{memberId}/push/terminated-failed-charges/send")
+    fun sendTerminatedFailedChargesNotification(@PathVariable memberId: String): ResponseEntity<Void> {
+        firebaseNotificationService.sendTerminatedFailedChargesNotification(memberId)
+        return ResponseEntity.noContent().build()
     }
 
     @PostMapping("/{memberId}/push/claim-paid/send")
     fun sendClaimPaidNotification(
-        @PathVariable(name = "memberId") memberId: String,
+        @PathVariable memberId: String,
         @RequestBody body: ClaimPaidNotificationRequest
-    ): ResponseEntity<*> {
+    ): ResponseEntity<Void> {
         firebaseNotificationService.sendClaimPaidNotification(memberId, body.amount)
-        return ResponseEntity.noContent().build<Any>()
+        return ResponseEntity.noContent().build()
     }
 
     @PostMapping("/{memberId}/push/insurance-policy-updated/send")
-    fun sendInsurancePolicyUpdatedNotification(@PathVariable(name = "memberId") memberId: String): ResponseEntity<*> {
+    fun sendInsurancePolicyUpdatedNotification(@PathVariable memberId: String): ResponseEntity<Void> {
         firebaseNotificationService.sendInsurancePolicyUpdatedNotification(memberId)
-        return ResponseEntity.noContent().build<Any>()
+        return ResponseEntity.noContent().build()
     }
 
     @PostMapping("/{memberId}/push/insurance-renewed/send")
-    fun sendInsuranceRenewedNotification(@PathVariable(name = "memberId") memberId: String): ResponseEntity<*> {
+    fun sendInsuranceRenewedNotification(@PathVariable memberId: String): ResponseEntity<Void> {
         firebaseNotificationService.sendInsuranceRenewedNotification(memberId)
-        return ResponseEntity.noContent().build<Any>()
+        return ResponseEntity.noContent().build()
     }
 
     @PostMapping("/{memberId}/push/generic-communication/send")
     fun sendGenericCommunicationNotification(
-        @PathVariable(name = "memberId") memberId: String,
+        @PathVariable memberId: String,
         @RequestBody body: GenericCommunicationNotificationRequest
-    ): ResponseEntity<*> {
+    ): ResponseEntity<Void> {
         firebaseNotificationService
             .sendGenericCommunicationNotification(
                 memberId,
                 body.titleTextKey,
                 body.bodyTextKey
             )
-        return ResponseEntity.noContent().build<Any>()
+        return ResponseEntity.noContent().build()
     }
 }

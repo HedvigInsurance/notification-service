@@ -30,4 +30,6 @@ interface FirebaseNotificationService {
     fun setFirebaseToken(memberId: String, token: String)
 
     fun sendGenericCommunicationNotification(memberId: String, titleTextKey: String, bodyTextKey: String)
+
+    fun sendTerminatedFailedChargesNotification(memberId: String)
 }

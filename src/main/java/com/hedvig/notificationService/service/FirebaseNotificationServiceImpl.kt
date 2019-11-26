@@ -29,7 +29,6 @@ import com.hedvig.service.TextKeysLocaleResolver
 import java.util.Optional
 import javax.money.MonetaryAmount
 import javax.transaction.Transactional
-import kotlin.collections.HashMap
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
@@ -158,6 +157,14 @@ open class FirebaseNotificationServiceImpl(
             .build()
 
         sendNotification(PAYMENT_FAILED, memberId, message)
+    }
+
+    override fun sendTerminatedFailedChargesNotification(memberId: String) {
+        this.sendGenericCommunicationNotification(
+            memberId = memberId,
+            titleTextKey = TERMINATION_FAILED_CHARGES_TITLE,
+            bodyTextKey = TERMINATION_FAILED_CHARGES_BODY
+        )
     }
 
     override fun sendClaimPaidNotification(memberId: String, amount: MonetaryAmount) {
@@ -380,6 +387,9 @@ open class FirebaseNotificationServiceImpl(
 
         const val DATA_MESSAGE_TITLE = "DATA_MESSAGE_TITLE"
         const val DATA_MESSAGE_BODY = "DATA_MESSAGE_BODY"
+
+        const val TERMINATION_FAILED_CHARGES_TITLE = "TERMINATION_FAILED_CHARGES_TITLE"
+        const val TERMINATION_FAILED_CHARGES_BODY = "TERMINATION_FAILED_CHARGES_BODY"
 
         const val DATA_MESSAGE_REFERRED_SUCCESS_NAME = "DATA_MESSAGE_REFERRED_SUCCESS_NAME"
         const val DATA_MESSAGE_REFERRED_SUCCESS_INCENTIVE_AMOUNT = "DATA_MESSAGE_REFERRED_SUCCESS_INCENTIVE_AMOUNT"
