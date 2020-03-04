@@ -8,6 +8,8 @@ import com.google.firebase.messaging.ApsAlert
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingException
 import com.google.firebase.messaging.Message
+import com.hedvig.localization.service.LocalizationService
+import com.hedvig.localization.service.TextKeysLocaleResolver
 import com.hedvig.notificationService.entities.FirebaseRepository
 import com.hedvig.notificationService.entities.FirebaseToken
 import com.hedvig.notificationService.service.TextKeys.CLAIM_PAID_BODY
@@ -24,8 +26,6 @@ import com.hedvig.notificationService.service.TextKeys.PAYMENT_FAILED_BODY
 import com.hedvig.notificationService.service.TextKeys.PAYMENT_FAILED_TITLE
 import com.hedvig.notificationService.service.TextKeys.REFERRAL_SUCCESS_BODY
 import com.hedvig.notificationService.serviceIntegration.memberService.MemberServiceClient
-import com.hedvig.service.LocalizationService
-import com.hedvig.service.TextKeysLocaleResolver
 import java.util.Optional
 import javax.money.MonetaryAmount
 import javax.transaction.Transactional
