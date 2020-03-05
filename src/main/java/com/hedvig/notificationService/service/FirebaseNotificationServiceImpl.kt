@@ -5,7 +5,6 @@ import com.google.firebase.messaging.AndroidConfig
 import com.google.firebase.messaging.ApnsConfig
 import com.google.firebase.messaging.Aps
 import com.google.firebase.messaging.ApsAlert
-import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingException
 import com.google.firebase.messaging.Message
 import com.hedvig.localization.service.LocalizationService
@@ -25,6 +24,7 @@ import com.hedvig.notificationService.service.TextKeys.NEW_MESSAGE_BODY
 import com.hedvig.notificationService.service.TextKeys.PAYMENT_FAILED_BODY
 import com.hedvig.notificationService.service.TextKeys.PAYMENT_FAILED_TITLE
 import com.hedvig.notificationService.service.TextKeys.REFERRAL_SUCCESS_BODY
+import com.hedvig.notificationService.service.firebase.FirebaseMessager
 import com.hedvig.notificationService.serviceIntegration.memberService.MemberServiceClient
 import java.util.Optional
 import javax.money.MonetaryAmount
@@ -35,7 +35,7 @@ import org.springframework.stereotype.Service
 @Service
 open class FirebaseNotificationServiceImpl(
     private val firebaseRepository: FirebaseRepository,
-    private val firebaseMessaging: FirebaseMessaging,
+    private val firebaseMessaging: FirebaseMessager,
     private val localizationService: LocalizationService,
     private val memberService: MemberServiceClient,
     private val textKeysLocaleResolver: TextKeysLocaleResolver
