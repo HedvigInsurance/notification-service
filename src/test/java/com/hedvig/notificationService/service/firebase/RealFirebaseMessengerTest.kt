@@ -18,12 +18,11 @@ internal class RealFirebaseMessengerTest {
     @get:Rule
     public var thrown = ExpectedException.none()
 
-
     @MockK(relaxed = true)
     lateinit var firebaseMessaging: FirebaseMessaging
 
     @Before
-    fun setUp(){
+    fun setUp() {
         MockKAnnotations.init(this)
     }
 
@@ -63,11 +62,6 @@ internal class RealFirebaseMessengerTest {
         val message = Message.builder().setToken("TEST").build()
 
         thrown.expect(FirebaseException::class.java)
-        val result = classUnderTest.send(message)
+        classUnderTest.send(message)
     }
 }
-
-/*
- test 1: sendMessage sends message
- test 2: messagingThrowsException
- */
