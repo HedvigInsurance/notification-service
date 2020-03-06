@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
-@EnableFeignClients(basePackages = "com.hedvig")
 @EnableTransactionManagement
 @ComponentScan("com.hedvig")
 public class NotificationServiceApplication {
