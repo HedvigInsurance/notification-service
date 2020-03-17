@@ -2,6 +2,7 @@ package com.hedvig.notificationService.service
 
 import com.hedvig.customerio.CustomerioMock
 import java.net.URI
+import net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -43,12 +44,22 @@ class CustomerIOPostDataTest {
     }
 
     @Test
+    fun postedDataForwardedToCorrectCustomer() {
+        val memberId = "1337"
+        val url = URI("http://localhost:$port/_/customerio/$memberId")
+        val body = mapOf("key" to "someKey")
+        testRestTemplate.postForEntity(url, HttpEntity(body), String::class.java)
+
+        assertThat(customerioMock.updates[0].first).isEqualTo(memberId)
+    }
+
+    @Test
     fun postedDataForwardedToCustomerIO() {
         val memberId = "1337"
         val url = URI("http://localhost:$port/_/customerio/$memberId")
         val body = mapOf("key" to "someKey")
-        val response = testRestTemplate.postForEntity(url, HttpEntity(body), String::class.java)
+        testRestTemplate.postForEntity(url, HttpEntity(body), String::class.java)
 
-        assertThat(customerioMock.updates[0].first).isEqualTo(memberId)
+        assertThatJson(customerioMock.updates[0].second).isObject.containsEntry("key", "someKey")
     }
 }
