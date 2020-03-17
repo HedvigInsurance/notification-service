@@ -245,6 +245,11 @@
       <version>1.1.1</version>
     </dependency>
     <dependency>
+      <groupId>com.hedvig.customerio</groupId>
+      <artifactId>customerio</artifactId>
+      <version>0.5</version>
+    </dependency>
+    <dependency>
       <groupId>com.fasterxml.jackson.module</groupId>
       <artifactId>jackson-module-kotlin</artifactId>
       <version>2.9.7</version>
@@ -289,8 +294,18 @@
           </execution>
         </executions>
         <configuration>
+          <compilerPlugins>
+            <plugin>spring</plugin>
+          </compilerPlugins>
           <jvmTarget>9</jvmTarget>
         </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-maven-allopen</artifactId>
+            <version>${kotlin.version}</version>
+          </dependency>
+        </dependencies>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
