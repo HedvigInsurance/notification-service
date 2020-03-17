@@ -35,7 +35,7 @@ class CustomerIOPostDataTest {
 
         val memberId = "1337"
         val url = URI("http://localhost:$port/_/customerio/$memberId")
-        val body = mapOf("id" to memberId, "key" to "someKey")
+        val body = mapOf("key" to "someKey")
 
         val response = testRestTemplate.postForEntity(url, HttpEntity(body), String::class.java)
 
@@ -46,7 +46,7 @@ class CustomerIOPostDataTest {
     fun postedDataForwardedToCustomerIO() {
         val memberId = "1337"
         val url = URI("http://localhost:$port/_/customerio/$memberId")
-        val body = mapOf("id" to memberId, "key" to "someKey")
+        val body = mapOf("key" to "someKey")
         val response = testRestTemplate.postForEntity(url, HttpEntity(body), String::class.java)
 
         assertThat(customerioMock.updates[0].first).isEqualTo(memberId)
