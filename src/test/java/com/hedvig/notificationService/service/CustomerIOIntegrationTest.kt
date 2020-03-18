@@ -20,7 +20,7 @@ import org.springframework.test.context.junit4.SpringRunner
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @Import(WebIntegrationTestConfig::class)
-class CustomerIOPostDataTest {
+class CustomerIOIntegrationTest {
 
     @LocalServerPort
     var port: Int = 0
