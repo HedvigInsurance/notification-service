@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import org.springframework.context.annotation.Profile
 
-@Profile("development")
+@Profile("development", "test")
 @Configuration
 open class DevelopmentConfig() {
 

@@ -13,7 +13,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Profile;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
@@ -25,32 +24,32 @@ import java.io.InputStream;
 @Configuration
 public class FirebaseConfig {
 
-  private final Logger logger = LoggerFactory.getLogger(FirebaseConfig.class);
+    private final Logger logger = LoggerFactory.getLogger(FirebaseConfig.class);
 
-  @Value("${hedvig.firebase.database.url}")
-  private String databaseUrl;
+    @Value("${hedvig.firebase.database.url}")
+    private String databaseUrl;
 
-  @Value("${hedvig.firebase.config.path}")
-  private File config;
+    @Value("${hedvig.firebase.config.path}")
+    private File config;
 
-  @PostConstruct
-  public void init() throws IOException {
-    logger.info("Initializing FirebaseApp");
-    InputStream inputStream = new FileInputStream(config);
+    @PostConstruct
+    public void init() throws IOException {
+        logger.info("Initializing FirebaseApp");
+        InputStream inputStream = new FileInputStream(config);
 
-    FirebaseOptions options =
-        new FirebaseOptions.Builder()
-            .setCredentials(GoogleCredentials.fromStream(inputStream))
-            .setDatabaseUrl(databaseUrl)
-            .build();
+        FirebaseOptions options =
+                new FirebaseOptions.Builder()
+                        .setCredentials(GoogleCredentials.fromStream(inputStream))
+                        .setDatabaseUrl(databaseUrl)
+                        .build();
 
-    FirebaseApp.initializeApp(options);
-    logger.info("FirebaseApp Initialized");
-  }
+        FirebaseApp.initializeApp(options);
+        logger.info("FirebaseApp Initialized");
+    }
 
-  @Bean()
-  @DependsOn("firebaseConfig")
-  public FirebaseMessager firebaseMessaging() {
-    return new RealFirebaseMessenger(FirebaseMessaging.getInstance());
-  }
+    @Bean()
+    @DependsOn("firebaseConfig")
+    public FirebaseMessager firebaseMessaging() {
+        return new RealFirebaseMessenger(FirebaseMessaging.getInstance());
+    }
 }

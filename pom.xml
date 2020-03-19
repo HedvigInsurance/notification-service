@@ -189,7 +189,8 @@
     <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
-      <version>1.4.197</version>
+      <version>1.4.199</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>io.sentry</groupId>
@@ -242,12 +243,34 @@
     <dependency>
       <groupId>com.hedvig.localization</groupId>
       <artifactId>localization</artifactId>
-      <version>1.1.0</version>
+      <version>1.1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>com.hedvig.customerio</groupId>
+      <artifactId>customerio</artifactId>
+      <version>0.5</version>
+    </dependency>
+    <dependency>
+      <groupId>com.squareup.okhttp3</groupId>
+      <artifactId>okhttp</artifactId>
+      <version>4.2.2</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.module</groupId>
       <artifactId>jackson-module-kotlin</artifactId>
       <version>2.9.7</version>
+    </dependency>
+    <dependency>
+      <groupId>io.mockk</groupId>
+      <artifactId>mockk</artifactId>
+      <version>1.9.3</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>net.javacrumbs.json-unit</groupId>
+      <artifactId>json-unit-assertj</artifactId>
+      <version>2.14.0</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
@@ -283,8 +306,18 @@
           </execution>
         </executions>
         <configuration>
+          <compilerPlugins>
+            <plugin>spring</plugin>
+          </compilerPlugins>
           <jvmTarget>9</jvmTarget>
         </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-maven-allopen</artifactId>
+            <version>${kotlin.version}</version>
+          </dependency>
+        </dependencies>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

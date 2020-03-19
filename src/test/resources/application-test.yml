@@ -1,0 +1,30 @@
+
+cloud:
+  aws:
+    region:
+      static: eu-central-1
+    stack:
+      auto: false
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:notification-service;MODE=PostgreSQL
+    driverClassName: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create
+
+
+hedvig:
+  usefakes: true
+  firebase:
+    database:
+      url: 123
+    config:
+      path: README.md
+
+  notificationService:
+    memberBcc: hej@hej.com
+  notification-service:
+    queueTasklist: asd
