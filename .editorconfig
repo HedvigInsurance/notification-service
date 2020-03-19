@@ -1,0 +1,3 @@
+[*.{kt, kts}]
+#Ktlint and intellij does not agree on import ordering
+disabled_rules = import-ordering

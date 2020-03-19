@@ -1,7 +1,7 @@
-package com.hedvig.notificationService.service
+package com.hedvig.notificationService.customerio
 
 import com.hedvig.customerio.CustomerioMock
-import java.net.URI
+import com.hedvig.notificationService.WebIntegrationTestConfig
 import net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -15,6 +15,7 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
+import java.net.URI
 
 @RunWith(SpringRunner::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -46,20 +47,12 @@ class CustomerIOIntegrationTest {
     @Test
     fun postedDataForwardedToCorrectCustomer() {
         val memberId = "1337"
+
         val url = URI("http://localhost:$port/_/customerio/$memberId")
         val body = mapOf("key" to "someKey")
         testRestTemplate.postForEntity(url, HttpEntity(body), String::class.java)
 
         assertThat(customerioMock.updates[0].first).isEqualTo(memberId)
-    }
-
-    @Test
-    fun postedDataForwardedToCustomerIO() {
-        val memberId = "1337"
-        val url = URI("http://localhost:$port/_/customerio/$memberId")
-        val body = mapOf("key" to "someKey")
-        testRestTemplate.postForEntity(url, HttpEntity(body), String::class.java)
-
         assertThatJson(customerioMock.updates[0].second).isObject.containsEntry("key", "someKey")
     }
 }

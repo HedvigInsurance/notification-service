@@ -1,7 +1,6 @@
 package com.hedvig.notificationService.configuration;
 
 import com.amazonaws.auth.AWSCredentialsProvider;
-import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
@@ -19,49 +18,44 @@ import org.springframework.context.annotation.Profile;
 @Configuration
 public class AWS {
 
-  @Bean
-  @Profile("development")
-  public AmazonSQSAsync amazonSQS(AWSCredentialsProvider credentialsProvider) {
-    val endpoint = "http://localhost:9324";
-    val region = "elastcmq";
-    return AmazonSQSAsyncClientBuilder.standard()
-        .withCredentials(credentialsProvider)
-        .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endpoint, region))
-        .build();
-  }
+    @Bean
+    @Profile("development")
+    public AmazonSQSAsync amazonSQS(AWSCredentialsProvider credentialsProvider) {
+        val endpoint = "http://localhost:9324";
+        val region = "elastcmq";
+        return AmazonSQSAsyncClientBuilder.standard()
+                .withCredentials(credentialsProvider)
+                .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endpoint, region))
+                .build();
+    }
 
-  @Bean
-  @Profile("development")
-  public SimpleMessageListenerContainerFactory simpleMessageListenerContainerFactory(
-      AmazonSQSAsync amazonSqs) {
-    DynamicQueueUrlDestinationResolver dynamicQueueUrlDestinationResolver =
-        new DynamicQueueUrlDestinationResolver(amazonSqs);
-    dynamicQueueUrlDestinationResolver.setAutoCreate(true);
+    @Bean
+    @Profile("development")
+    public SimpleMessageListenerContainerFactory simpleMessageListenerContainerFactory(
+            AmazonSQSAsync amazonSqs) {
+        DynamicQueueUrlDestinationResolver dynamicQueueUrlDestinationResolver =
+                new DynamicQueueUrlDestinationResolver(amazonSqs);
+        dynamicQueueUrlDestinationResolver.setAutoCreate(true);
 
-    SimpleMessageListenerContainerFactory simpleMessageListenerContainerFactory =
-        new SimpleMessageListenerContainerFactory();
-    simpleMessageListenerContainerFactory.setAmazonSqs(amazonSqs);
-    simpleMessageListenerContainerFactory.setDestinationResolver(
-        dynamicQueueUrlDestinationResolver);
-    return simpleMessageListenerContainerFactory;
-  }
+        SimpleMessageListenerContainerFactory simpleMessageListenerContainerFactory =
+                new SimpleMessageListenerContainerFactory();
+        simpleMessageListenerContainerFactory.setAmazonSqs(amazonSqs);
+        simpleMessageListenerContainerFactory.setDestinationResolver(
+                dynamicQueueUrlDestinationResolver);
+        return simpleMessageListenerContainerFactory;
+    }
 
-  @Bean
-  public AmazonSimpleEmailService amazonSimpleEmailService(
-      AWSCredentialsProvider credentialsProvider) {
-    return AmazonSimpleEmailServiceClientBuilder.standard()
-        .withCredentials(credentialsProvider)
-        .withRegion(Regions.EU_WEST_1)
-        .build();
-  }
+    @Bean
+    public AmazonSimpleEmailService amazonSimpleEmailService(
+            AWSCredentialsProvider credentialsProvider) {
+        return AmazonSimpleEmailServiceClientBuilder.standard()
+                .withCredentials(credentialsProvider)
+                .withRegion(Regions.EU_WEST_1)
+                .build();
+    }
 
-  @Bean
-  public QueueMessagingTemplate queueMessagingTemplate(AmazonSQSAsync amazonSqs) {
-    return new QueueMessagingTemplate(amazonSqs);
-  }
-
-  @Bean
-  AWSCredentialsProvider credentialsProvider() {
-    return new DefaultAWSCredentialsProviderChain();
-  }
+    @Bean
+    public QueueMessagingTemplate queueMessagingTemplate(AmazonSQSAsync amazonSqs) {
+        return new QueueMessagingTemplate(amazonSqs);
+    }
 }
