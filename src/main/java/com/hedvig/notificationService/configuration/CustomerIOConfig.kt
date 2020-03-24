@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.hedvig.customerio.Customerio
 import com.hedvig.customerio.CustomerioClient
 import com.hedvig.customerio.CustomerioMock
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
@@ -20,7 +21,11 @@ class CustomerIOConfig {
 
     @Bean("customerIO")
     @ConditionalOnMissingBean
-    fun customerIO(objectMapper: ObjectMapper): CustomerioClient {
-        return Customerio("", "", objectMapper, okhttp3.OkHttpClient())
+    fun customerIO(
+        objectMapper: ObjectMapper,
+        @Value("\${customerio.siteid}") siteId: String,
+        @Value("\${customerio.secretApiKey}") secretApiKey: String
+    ): CustomerioClient {
+        return Customerio(siteId, secretApiKey, objectMapper, okhttp3.OkHttpClient())
     }
 }
