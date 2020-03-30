@@ -14,7 +14,7 @@ class ProductPricingFacadeImpl(private val productPricingClient: ProductPricingC
             val response = productPricingClient.getContractMarketInfo(memberId)
 
             val market = response.body!!.market
-            getWorkspaceFromMarket(market)
+            Workspace.getWorkspaceFromMarket(market)
         } catch (ex: FeignException) {
             if (ex.status() != 404) {
                 log.error("Could not get contractMarketInfo for member $memberId", ex)

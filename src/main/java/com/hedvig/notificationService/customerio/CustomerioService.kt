@@ -28,7 +28,7 @@ class CustomerioService(
             val pickedLocale = memberServiceImpl.getPickedLocale(memberId)
 
             marketForMember =
-                getWorkspaceFromLocale(pickedLocale)
+                Workspace.getWorkspaceFromLocale(pickedLocale)
             if (marketForMember == Workspace.NOT_FOUND)
                 throw RuntimeException("Retrived unsupported locale from member-service: $pickedLocale")
         }
