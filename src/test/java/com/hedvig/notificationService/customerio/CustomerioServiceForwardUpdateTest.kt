@@ -5,12 +5,12 @@ import com.hedvig.customerio.CustomerioMock
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import junit.framework.TestCase.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
 import java.util.Locale
-import kotlin.test.assertEquals
 
 class CustomerioServiceForwardUpdateTest {
 
