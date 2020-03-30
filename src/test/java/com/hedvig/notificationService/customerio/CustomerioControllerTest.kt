@@ -16,7 +16,7 @@ class CustomerioControllerTest {
     val thrown = ExpectedException.none()
 
     @MockK
-    lateinit var router: Router
+    lateinit var customerioService: CustomerioService
 
     private val objectMapper = ObjectMapper()
 
@@ -27,10 +27,10 @@ class CustomerioControllerTest {
 
     @Test
     fun `return 500 on locale not found`() {
-        every { router.updateCustomer(any(), any()) } throws WorkspaceNotFound("")
+        every { customerioService.updateCustomerAttributes(any(), any()) } throws WorkspaceNotFound("")
 
         val controller =
-            CustomerioController(router, objectMapper)
+            CustomerioController(customerioService, objectMapper)
 
         thrown.expect(ResponseStatusException::class.java)
         controller.post("someMemberID", objectMapper.createObjectNode())

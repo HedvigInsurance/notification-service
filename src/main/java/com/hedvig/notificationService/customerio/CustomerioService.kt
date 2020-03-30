@@ -2,7 +2,7 @@ package com.hedvig.notificationService.customerio
 
 import com.hedvig.customerio.CustomerioClient
 
-class Router(
+class CustomerioService(
     private val productPricingFacade: ProductPricingFacade,
     private val memberServiceImpl: MemberServiceImpl,
     vararg clients: Pair<Workspace, CustomerioClient>
@@ -22,7 +22,7 @@ class Router(
         }
     }
 
-    fun updateCustomer(memberId: String, convertValue: Map<String, Any?>) {
+    fun updateCustomerAttributes(memberId: String, convertValue: Map<String, Any?>) {
         var marketForMember = productPricingFacade.getWorkspaceForMember(memberId)
         if (marketForMember == Workspace.NOT_FOUND) {
             val pickedLocale = memberServiceImpl.getPickedLocale(memberId)

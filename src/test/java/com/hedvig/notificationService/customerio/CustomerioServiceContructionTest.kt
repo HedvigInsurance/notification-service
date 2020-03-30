@@ -8,7 +8,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
 
-class RouterContructionTest {
+class CustomerioServiceContructionTest {
 
     @get:Rule
     var exceptionRule: ExpectedException = ExpectedException.none()
@@ -30,13 +30,13 @@ class RouterContructionTest {
     @Test
     fun `Throw if no markets are passed in the contructor`() {
         exceptionRule.expect(IllegalArgumentException::class.java)
-        Router(productPricingFacade, memberServiceImpl)
+        CustomerioService(productPricingFacade, memberServiceImpl)
     }
 
     @Test
     fun `Throw if not all markets are passed in the contructor`() {
         exceptionRule.expect(IllegalArgumentException::class.java)
-        Router(
+        CustomerioService(
             productPricingFacade,
             memberServiceImpl,
             Workspace.SWEDEN to customerioClient
@@ -45,7 +45,7 @@ class RouterContructionTest {
 
     @Test
     fun `Do not throw when all markets are passed in the contructor`() {
-        Router(
+        CustomerioService(
             productPricingFacade,
             memberServiceImpl,
             Workspace.SWEDEN to customerioClient,

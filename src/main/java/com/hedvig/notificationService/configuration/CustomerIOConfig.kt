@@ -5,10 +5,10 @@ import com.hedvig.customerio.Customerio
 import com.hedvig.customerio.CustomerioClient
 import com.hedvig.customerio.CustomerioMock
 import com.hedvig.notificationService.customerio.ConfigurationProperties
+import com.hedvig.notificationService.customerio.CustomerioService
 import com.hedvig.notificationService.customerio.MemberServiceImpl
 import com.hedvig.notificationService.customerio.ProductPricingFacade
 import com.hedvig.notificationService.customerio.ProductPricingFacadeImpl
-import com.hedvig.notificationService.customerio.Router
 import com.hedvig.notificationService.customerio.Workspace
 import com.hedvig.notificationService.serviceIntegration.memberService.MemberServiceClient
 import com.hedvig.notificationService.serviceIntegration.productPricing.client.ProductPricingClient
@@ -29,24 +29,24 @@ class CustomerIOConfig() {
 
     private val okHttp: OkHttpClient = OkHttpClient()
 
-    @Bean("productPricingFacade")
+    @Bean()
     fun productPricingFacade(productPricingClient: ProductPricingClient) =
         ProductPricingFacadeImpl(productPricingClient)
 
-    @Bean("memberServiceFacade")
+    @Bean()
     fun memberServiceFacade(memberServiceClient: MemberServiceClient) = MemberServiceImpl(memberServiceClient)
 
     @Bean
-    fun router(
+    fun customerioService(
         productPricingFacade: ProductPricingFacade,
         memberServiceImpl: MemberServiceImpl,
         objectMapper: ObjectMapper
-    ): Router {
+    ): CustomerioService {
 
         val clients =
             createClients(objectMapper)
 
-        return Router(
+        return CustomerioService(
             productPricingFacade,
             memberServiceImpl,
             *clients

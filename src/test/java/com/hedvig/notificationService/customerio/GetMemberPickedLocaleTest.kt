@@ -13,7 +13,7 @@ import java.io.Serializable
 import java.util.Locale
 
 @RunWith(Parameterized::class)
-class GetMemberPickedLocale(val pickedLocale: String, val parsedLocale: Locale) {
+class GetMemberPickedLocaleTest(val pickedLocale: String, val parsedLocale: Locale) {
 
     companion object {
         @Parameterized.Parameters

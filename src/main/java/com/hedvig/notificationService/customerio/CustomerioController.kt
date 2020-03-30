@@ -16,7 +16,7 @@ import org.springframework.web.server.ResponseStatusException
 @Controller
 @RequestMapping("/_/customerio")
 class CustomerioController(
-    private val customerioRouter: Router,
+    private val customerioCustomerioService: CustomerioService,
     private val objectMapper: ObjectMapper
 ) {
 
@@ -26,7 +26,7 @@ class CustomerioController(
     fun post(@PathVariable memberId: String, @RequestBody body: JsonNode): ResponseEntity<Any> {
 
         try {
-            customerioRouter.updateCustomer(memberId, objectMapper.convertValue(body))
+            customerioCustomerioService.updateCustomerAttributes(memberId, objectMapper.convertValue(body))
         } catch (ex: WorkspaceNotFound) {
             log.error("Exception from router: ${ex.message}", ex)
             throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not find workspace for member", ex)

@@ -1,7 +1,6 @@
 package com.hedvig.notificationService.customerio
 
 import com.hedvig.customerio.CustomerioMock
-import com.hedvig.notificationService.WebIntegrationTestConfig
 import net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -10,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.boot.web.server.LocalServerPort
-import org.springframework.context.annotation.Import
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.ActiveProfiles
@@ -20,7 +18,6 @@ import java.net.URI
 @RunWith(SpringRunner::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-@Import(WebIntegrationTestConfig::class)
 class CustomerIOIntegrationTest {
 
     @LocalServerPort
