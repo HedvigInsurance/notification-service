@@ -17,4 +17,7 @@ interface MemberServiceClient {
 
     @RequestMapping(value = ["/_/member/{memberId}"], method = [RequestMethod.GET])
     fun profile(@PathVariable("memberId") memberId: String): ResponseEntity<Member>
+
+    @RequestMapping(value = ["/_/member/{memberId}/pickedLocale"], method = [RequestMethod.GET])
+    fun pickedLocale(@PathVariable("memberId") memberId: String): ResponseEntity<PickedLocale>
 }

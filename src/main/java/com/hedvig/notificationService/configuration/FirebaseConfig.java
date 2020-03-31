@@ -20,7 +20,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-@ConditionalOnProperty(value = "hedvig.usefakes", havingValue = "false", matchIfMissing = true)
+@ConditionalOnProperty(value = {"hedvig.usefakes", "hedvig.firebase.usefake"}, havingValue = "false", matchIfMissing = true)
 @Configuration
 public class FirebaseConfig {
 
