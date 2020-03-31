@@ -3,10 +3,11 @@ package com.hedvig.notificationService.customerio
 import com.hedvig.customerio.CustomerioClient
 
 class CustomerioService(
-    private val productPricingFacade: ProductPricingFacade,
-    private val memberServiceImpl: MemberServiceImpl,
+    productPricingFacade: ProductPricingFacade,
+    memberServiceImpl: MemberServiceImpl,
     vararg clients: Pair<Workspace, CustomerioClient>
 ) {
+    private val workspaceSelector = WorkspaceSelector(productPricingFacade, memberServiceImpl)
 
     private val clients = mapOf(*clients)
 
@@ -23,15 +24,7 @@ class CustomerioService(
     }
 
     fun updateCustomerAttributes(memberId: String, convertValue: Map<String, Any?>) {
-        var marketForMember = productPricingFacade.getWorkspaceForMember(memberId)
-        if (marketForMember == Workspace.NOT_FOUND) {
-            val pickedLocale = memberServiceImpl.getPickedLocale(memberId)
-
-            marketForMember =
-                Workspace.getWorkspaceFromLocale(pickedLocale)
-            if (marketForMember == Workspace.NOT_FOUND)
-                throw RuntimeException("Retrived unsupported locale from member-service: $pickedLocale")
-        }
+        val marketForMember = workspaceSelector.getWorkspaceForMember(memberId)
 
         clients[marketForMember]?.updateCustomer(memberId, convertValue)
     }
