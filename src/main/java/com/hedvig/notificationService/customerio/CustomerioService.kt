@@ -30,6 +30,8 @@ class CustomerioService(
     }
 
     fun deleteCustomer(memberId: String) {
-        clients[Workspace.SWEDEN]?.deleteCustomer(memberId)
+        val marketForMember = workspaceSelector.getWorkspaceForMember(memberId)
+
+        clients[marketForMember]?.deleteCustomer(memberId)
     }
 }
