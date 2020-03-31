@@ -35,4 +35,8 @@ class CustomerioService(
 
         clients[marketForMember]?.updateCustomer(memberId, convertValue)
     }
+
+    fun deleteCustomer(memberId: String) {
+        clients[Workspace.SWEDEN]?.deleteCustomer(memberId)
+    }
 }
