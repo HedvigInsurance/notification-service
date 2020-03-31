@@ -13,7 +13,7 @@ class WorkspaceSelector(
             marketForMember =
                 Workspace.getWorkspaceFromLocale(pickedLocale)
             if (marketForMember == Workspace.NOT_FOUND)
-                throw RuntimeException("Retrived unsupported locale from member-service: $pickedLocale")
+                throw WorkspaceNotFound("Could not map member $memberId to workspace")
         }
         return marketForMember
     }

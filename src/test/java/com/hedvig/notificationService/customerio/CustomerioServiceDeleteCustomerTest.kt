@@ -13,8 +13,8 @@ class CustomerioServiceDeleteCustomerTest {
 
     @Test
     fun deleteCustomerNorway() {
-        val sweClient = mockk<CustomerioClient>()
-        val noClient = mockk<CustomerioClient>()
+        val sweClient = mockk<CustomerioClient>(relaxed = true)
+        val noClient = mockk<CustomerioClient>(relaxed = true)
 
         every { productPricingFacade.getWorkspaceForMember(any()) } returns Workspace.NORWAY
 
@@ -30,8 +30,8 @@ class CustomerioServiceDeleteCustomerTest {
 
     @Test
     fun deleteCustomerSweden() {
-        val sweClient = mockk<CustomerioClient>()
-        val noClient = mockk<CustomerioClient>()
+        val sweClient = mockk<CustomerioClient>(relaxed = true)
+        val noClient = mockk<CustomerioClient>(relaxed = true)
 
         every { productPricingFacade.getWorkspaceForMember(any()) } returns Workspace.SWEDEN
 
