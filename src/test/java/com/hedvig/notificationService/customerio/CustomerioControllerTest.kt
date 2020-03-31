@@ -35,4 +35,15 @@ class CustomerioControllerTest {
         thrown.expect(ResponseStatusException::class.java)
         controller.post("someMemberID", objectMapper.createObjectNode())
     }
+
+    @Test
+    fun `delete returns 500 on workspace not found`() {
+        every { customerioService.deleteCustomer(any()) } throws WorkspaceNotFound("")
+
+        val controller =
+            CustomerioController(customerioService, objectMapper)
+
+        thrown.expect(ResponseStatusException::class.java)
+        controller.delete("someMemberID")
+    }
 }

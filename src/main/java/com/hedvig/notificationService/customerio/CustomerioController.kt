@@ -38,7 +38,12 @@ class CustomerioController(
 
     @DeleteMapping("{memberId}")
     fun delete(@PathVariable memberId: String): ResponseEntity<Any> {
-        customerioCustomerioService.deleteCustomer(memberId)
+        try {
+            customerioCustomerioService.deleteCustomer(memberId)
+        } catch (ex: WorkspaceNotFound) {
+            log.error("Exception from router: ${ex.message}", ex)
+            throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not find workspace for member", ex)
+        }
         return ResponseEntity.accepted().build()
     }
 }
