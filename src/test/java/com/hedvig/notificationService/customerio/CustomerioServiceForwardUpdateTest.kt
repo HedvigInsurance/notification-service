@@ -123,7 +123,7 @@ class CustomerioServiceForwardUpdateTest {
             Workspace.NORWAY to customerIOMockNorway
         )
 
-        thrown.expect(RuntimeException::class.java)
+        thrown.expect(WorkspaceNotFound::class.java)
         router.updateCustomerAttributes("21313", mapOf())
     }
 }
