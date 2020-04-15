@@ -29,6 +29,15 @@ class CustomerioService(
     fun updateCustomerAttributes(memberId: String, convertValue: Map<String, Any?>) {
         val marketForMember = workspaceSelector.getWorkspaceForMember(memberId)
 
+        if (marketForMember == Workspace.NORWAY) {
+            if (convertValue.containsKey("partner_code") ||
+                convertValue.containsKey("switcher_company") ||
+                convertValue.containsKey("sign_source")
+            ) {
+                return
+            }
+        }
+
         clients[marketForMember]?.updateCustomer(memberId, convertValue)
     }
 
@@ -44,6 +53,6 @@ class CustomerioService(
     }
 
     fun sendUpdates() {
-        TODO("Not yet implemented")
+        clients[Workspace.NORWAY]?.sendEvent("1337", mapOf("name" to "TmpSignedInsuranceEvent"))
     }
 }
