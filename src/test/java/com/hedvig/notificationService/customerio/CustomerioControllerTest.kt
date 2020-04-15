@@ -27,7 +27,13 @@ class CustomerioControllerTest {
 
     @Test
     fun `return 500 on locale not found`() {
-        every { customerioService.updateCustomerAttributes(any(), any()) } throws WorkspaceNotFound("")
+        every {
+            customerioService.updateCustomerAttributes(
+                any(),
+                any(),
+                any()
+            )
+        } throws WorkspaceNotFound("")
 
         val controller =
             CustomerioController(customerioService, objectMapper)

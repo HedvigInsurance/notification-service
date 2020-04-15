@@ -9,8 +9,10 @@ import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
+import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 
 class NorwaySignEventTest {
 
@@ -20,10 +22,10 @@ class NorwaySignEventTest {
     @MockK
     lateinit var memberServiceImpl: MemberServiceImpl
 
-    @MockK
+    @MockK(relaxed = true)
     lateinit var seCustomerioClient: CustomerioClient
 
-    @MockK
+    @MockK(relaxed = true)
     lateinit var noCustomerIoClient: CustomerioClient
 
     @MockK
@@ -45,6 +47,8 @@ class NorwaySignEventTest {
     fun singleSignAttributeSendsCustomerIOUpdate() {
 
         every { productPricingFacade.getWorkspaceForMember(any()) } returns Workspace.NORWAY
+        val updateTime = Instant.parse("2020-04-15T14:53:40.550493Z")
+
         sut.updateCustomerAttributes(
             "1337", mapOf(
                 "partner_code" to "campaigncode",
@@ -52,10 +56,10 @@ class NorwaySignEventTest {
                 "sign_date" to LocalDate.now().atStartOfDay(ZoneId.of("Europe/Stockholm")).toEpochSecond(),
                 "switcher_company" to null,
                 "is_switcher" to false
-            )
+            ), updateTime
         )
 
-        sut.sendUpdates()
+        sut.sendUpdates(updateTime.plus(5, ChronoUnit.MINUTES))
 
         val eventDataSlot = slot<Map<String, Any>>()
         verify { noCustomerIoClient.sendEvent("1337", capture(eventDataSlot)) }
@@ -74,7 +78,7 @@ class NorwaySignEventTest {
                 "sign_date" to LocalDate.now().atStartOfDay(ZoneId.of("Europe/Stockholm")).toEpochSecond(),
                 "switcher_company" to null,
                 "is_switcher" to false
-            )
+            ), Instant.parse("2020-04-15T14:53:40.550493Z")
         )
 
         verify(inverse = true) { noCustomerIoClient.sendEvent("1337", any()) }
@@ -92,7 +96,7 @@ class NorwaySignEventTest {
                 "sign_date" to LocalDate.now().atStartOfDay(ZoneId.of("Europe/Stockholm")).toEpochSecond(),
                 "switcher_company" to null,
                 "is_switcher" to false
-            )
+            ), Instant.parse("2020-04-15T14:53:40.550493Z")
         )
 
         verify { seCustomerioClient.updateCustomer("1337", any()) }

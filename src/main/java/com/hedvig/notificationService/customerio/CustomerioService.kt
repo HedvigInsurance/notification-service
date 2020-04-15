@@ -1,6 +1,7 @@
 package com.hedvig.notificationService.customerio
 
 import com.hedvig.customerio.CustomerioClient
+import java.time.Instant
 
 class CustomerioService(
     private val workspaceSelector: WorkspaceSelector,
@@ -26,7 +27,11 @@ class CustomerioService(
         }
     }
 
-    fun updateCustomerAttributes(memberId: String, convertValue: Map<String, Any?>) {
+    fun updateCustomerAttributes(
+        memberId: String,
+        convertValue: Map<String, Any?>,
+        now: Instant = Instant.now()
+    ) {
         val marketForMember = workspaceSelector.getWorkspaceForMember(memberId)
 
         if (marketForMember == Workspace.NORWAY) {
@@ -52,7 +57,7 @@ class CustomerioService(
         clients[marketForMember]?.sendEvent(memberId, body)
     }
 
-    fun sendUpdates() {
+    fun sendUpdates(plus: Instant = Instant.now()) {
         clients[Workspace.NORWAY]?.sendEvent("1337", mapOf("name" to "TmpSignedInsuranceEvent"))
     }
 }
