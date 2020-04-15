@@ -246,7 +246,7 @@
         <dependency>
             <groupId>com.hedvig.customerio</groupId>
             <artifactId>customerio</artifactId>
-            <version>0.6</version>
+            <version>0.7.1</version>
         </dependency>
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
