@@ -3,11 +3,14 @@ package com.hedvig.notificationService.customerio
 import com.hedvig.customerio.CustomerioClient
 
 class CustomerioService(
-    productPricingFacade: ProductPricingFacade,
-    memberServiceImpl: MemberServiceImpl,
+    private val workspaceSelector: WorkspaceSelector,
     vararg clients: Pair<Workspace, CustomerioClient>
 ) {
-    private val workspaceSelector = WorkspaceSelector(productPricingFacade, memberServiceImpl)
+    constructor(
+        productPricingFacade: ProductPricingFacade,
+        memberServiceImpl: MemberServiceImpl,
+        vararg clients: Pair<Workspace, CustomerioClient>
+    ) : this(WorkspaceSelector(productPricingFacade, memberServiceImpl), *clients)
 
     private val clients = mapOf(*clients)
 
@@ -33,6 +36,11 @@ class CustomerioService(
         val marketForMember = workspaceSelector.getWorkspaceForMember(memberId)
 
         clients[marketForMember]?.deleteCustomer(memberId)
+    }
+
+    fun sendEvent(memberId: String, body: Map<String, Any?>) {
+        val marketForMember = workspaceSelector.getWorkspaceForMember(memberId)
+        clients[marketForMember]?.sendEvent(memberId, body)
     }
 
     fun sendUpdates() {

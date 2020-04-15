@@ -1,5 +1,6 @@
 package com.hedvig.notificationService.customerio
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.hedvig.customerio.CustomerioMock
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -49,5 +50,18 @@ class CustomerIOIntegrationTest {
         testRestTemplate.delete(url)
 
         assertThat(customerioMock.deletes.first()).isEqualTo(memberId)
+    }
+
+    @Test
+    fun sendEventToMember() {
+        val memberId = "9999"
+
+        val url = URI("http://localhost:$port/_/customerio/$memberId/events")
+
+        val body = mapOf("evetname" to "superduper")
+
+        testRestTemplate.postForEntity(url, HttpEntity(body), String::class.java)
+
+        assertThat(customerioMock.events).contains("9999" to ObjectMapper().valueToTree(body))
     }
 }

@@ -46,4 +46,10 @@ class CustomerioController(
         }
         return ResponseEntity.accepted().build()
     }
+
+    @PostMapping("{memberId}/events")
+    fun postEvent(@PathVariable memberId: String, @RequestBody body: JsonNode): ResponseEntity<Any> {
+        customerioCustomerioService.sendEvent(memberId, objectMapper.convertValue(body))
+        return ResponseEntity.accepted().build()
+    }
 }
