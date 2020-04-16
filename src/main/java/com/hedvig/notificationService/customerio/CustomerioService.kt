@@ -8,13 +8,9 @@ const val SIGN_EVENT_WINDOWS_SIZE_MINUTES = 5L
 
 class CustomerioService(
     private val workspaceSelector: WorkspaceSelector,
+    // private val stateRespository: CustomerIOStateRepository,
     vararg clients: Pair<Workspace, CustomerioClient>
 ) {
-    constructor(
-        productPricingFacade: ProductPricingFacade,
-        memberServiceImpl: MemberServiceImpl,
-        vararg clients: Pair<Workspace, CustomerioClient>
-    ) : this(WorkspaceSelector(productPricingFacade, memberServiceImpl), *clients)
 
     private val clients = mapOf(*clients)
 

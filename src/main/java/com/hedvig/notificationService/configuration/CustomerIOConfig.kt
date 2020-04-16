@@ -10,6 +10,7 @@ import com.hedvig.notificationService.customerio.MemberServiceImpl
 import com.hedvig.notificationService.customerio.ProductPricingFacade
 import com.hedvig.notificationService.customerio.ProductPricingFacadeImpl
 import com.hedvig.notificationService.customerio.Workspace
+import com.hedvig.notificationService.customerio.WorkspaceSelector
 import com.hedvig.notificationService.serviceIntegration.memberService.MemberServiceClient
 import com.hedvig.notificationService.serviceIntegration.productPricing.client.ProductPricingClient
 import okhttp3.OkHttpClient
@@ -47,8 +48,10 @@ class CustomerIOConfig() {
             createClients(objectMapper)
 
         return CustomerioService(
-            productPricingFacade,
-            memberServiceImpl,
+            WorkspaceSelector(
+                productPricingFacade,
+                memberServiceImpl
+            ),
             *clients
         )
     }

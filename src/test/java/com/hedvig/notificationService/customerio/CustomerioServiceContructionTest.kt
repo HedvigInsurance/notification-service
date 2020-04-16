@@ -14,10 +14,7 @@ class CustomerioServiceContructionTest {
     var exceptionRule: ExpectedException = ExpectedException.none()
 
     @MockK
-    lateinit var productPricingFacade: ProductPricingFacade
-
-    @MockK
-    lateinit var memberServiceImpl: MemberServiceImpl
+    lateinit var workspaceSelector: WorkspaceSelector
 
     @MockK
     lateinit var customerioClient: CustomerioClient
@@ -30,15 +27,14 @@ class CustomerioServiceContructionTest {
     @Test
     fun `Throw if no markets are passed in the contructor`() {
         exceptionRule.expect(IllegalArgumentException::class.java)
-        CustomerioService(productPricingFacade, memberServiceImpl)
+        CustomerioService(workspaceSelector)
     }
 
     @Test
     fun `Throw if not all markets are passed in the contructor`() {
         exceptionRule.expect(IllegalArgumentException::class.java)
         CustomerioService(
-            productPricingFacade,
-            memberServiceImpl,
+            workspaceSelector,
             Workspace.SWEDEN to customerioClient
         )
     }
@@ -46,8 +42,7 @@ class CustomerioServiceContructionTest {
     @Test
     fun `Do not throw when all markets are passed in the contructor`() {
         CustomerioService(
-            productPricingFacade,
-            memberServiceImpl,
+            workspaceSelector,
             Workspace.SWEDEN to customerioClient,
             Workspace.NORWAY to customerioClient
         )

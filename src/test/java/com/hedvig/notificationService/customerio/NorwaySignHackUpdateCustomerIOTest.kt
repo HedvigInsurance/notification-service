@@ -36,8 +36,10 @@ class NorwaySignHackUpdateCustomerIOTest {
         MockKAnnotations.init(this)
 
         sut = CustomerioService(
-            productPricingFacade,
-            memberServiceImpl,
+            WorkspaceSelector(
+                productPricingFacade,
+                memberServiceImpl
+            ),
             Workspace.SWEDEN to seCustomerioClient,
             Workspace.NORWAY to noCustomerIoClient
         )

@@ -8,6 +8,7 @@ import com.hedvig.notificationService.customerio.FakeProductPricingFacade
 import com.hedvig.notificationService.customerio.MemberServiceImpl
 import com.hedvig.notificationService.customerio.ProductPricingFacade
 import com.hedvig.notificationService.customerio.Workspace
+import com.hedvig.notificationService.customerio.WorkspaceSelector
 import com.hedvig.notificationService.serviceIntegration.memberService.FakeMemberServiceClient
 import com.hedvig.notificationService.serviceIntegration.memberService.MemberServiceClient
 import org.springframework.boot.test.context.TestConfiguration
@@ -31,8 +32,10 @@ class WebIntegrationTestConfig {
     @Primary
     fun customerioServiceTest(customerioMock: CustomerioClient): CustomerioService {
         return CustomerioService(
-            productPricingClientTest(),
-            MemberServiceImpl(memberServiceClientTest()),
+            WorkspaceSelector(
+                productPricingClientTest(),
+                MemberServiceImpl(memberServiceClientTest())
+            ),
             Workspace.SWEDEN to customerioMock,
             Workspace.NORWAY to customerioMock
         )

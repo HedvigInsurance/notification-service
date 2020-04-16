@@ -19,8 +19,7 @@ class CustomerioServiceDeleteCustomerTest {
         every { productPricingFacade.getWorkspaceForMember(any()) } returns Workspace.NORWAY
 
         val cut = CustomerioService(
-            productPricingFacade,
-            memberServiceImpl,
+            WorkspaceSelector(productPricingFacade, memberServiceImpl),
             Workspace.SWEDEN to sweClient,
             Workspace.NORWAY to noClient
         )
@@ -36,8 +35,7 @@ class CustomerioServiceDeleteCustomerTest {
         every { productPricingFacade.getWorkspaceForMember(any()) } returns Workspace.SWEDEN
 
         val cut = CustomerioService(
-            productPricingFacade,
-            memberServiceImpl,
+            WorkspaceSelector(productPricingFacade, memberServiceImpl),
             Workspace.SWEDEN to sweClient,
             Workspace.NORWAY to noClient
         )

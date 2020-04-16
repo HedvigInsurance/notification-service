@@ -39,8 +39,10 @@ class CustomerioServiceForwardUpdateTest {
 
         val router =
             CustomerioService(
-                productPricingFacade,
-                memberServiceImpl,
+                WorkspaceSelector(
+                    productPricingFacade,
+                    memberServiceImpl
+                ),
                 Workspace.SWEDEN to customerIOMockSweden,
                 Workspace.NORWAY to customerIOMockNorway
             )
@@ -58,8 +60,10 @@ class CustomerioServiceForwardUpdateTest {
 
         val router =
             CustomerioService(
-                productPricingFacade,
-                memberServiceImpl,
+                WorkspaceSelector(
+                    productPricingFacade,
+                    memberServiceImpl
+                ),
                 Workspace.SWEDEN to customerIOMockSweden,
                 Workspace.NORWAY to customerIOMockNorway
             )
@@ -77,8 +81,10 @@ class CustomerioServiceForwardUpdateTest {
         every { memberServiceImpl.getPickedLocale(any()) } returns Locale("sv", "se")
 
         val router = CustomerioService(
-            productPricingFacade,
-            memberServiceImpl,
+            WorkspaceSelector(
+                productPricingFacade,
+                memberServiceImpl
+            ),
             Workspace.SWEDEN to customerIOMockSweden,
             Workspace.NORWAY to customerIOMockNorway
         )
@@ -97,8 +103,10 @@ class CustomerioServiceForwardUpdateTest {
         every { memberServiceImpl.getPickedLocale(any()) } returns Locale("nb", "NO")
 
         val router = CustomerioService(
-            productPricingFacade,
-            memberServiceImpl,
+            WorkspaceSelector(
+                productPricingFacade,
+                memberServiceImpl
+            ),
             Workspace.SWEDEN to customerIOMockSweden,
             Workspace.NORWAY to customerIOMockNorway
         )
@@ -117,8 +125,10 @@ class CustomerioServiceForwardUpdateTest {
         every { memberServiceImpl.getPickedLocale(any()) } returns Locale("en", "gb")
 
         val router = CustomerioService(
-            productPricingFacade,
-            memberServiceImpl,
+            WorkspaceSelector(
+                productPricingFacade,
+                memberServiceImpl
+            ),
             Workspace.SWEDEN to customerIOMockSweden,
             Workspace.NORWAY to customerIOMockNorway
         )

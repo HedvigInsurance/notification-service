@@ -14,10 +14,7 @@ import java.time.ZoneId
 class NorwaySignHackHandleUpdatesFromUnderwriterTest {
 
     @MockK
-    lateinit var productPricingFacade: ProductPricingFacade
-
-    @MockK
-    lateinit var memberServiceImpl: MemberServiceImpl
+    lateinit var workspaceSelector: WorkspaceSelector
 
     @MockK(relaxed = true)
     lateinit var seCustomerioClient: CustomerioClient
@@ -33,17 +30,16 @@ class NorwaySignHackHandleUpdatesFromUnderwriterTest {
         MockKAnnotations.init(this)
 
         sut = CustomerioService(
-            productPricingFacade,
-            memberServiceImpl,
+            workspaceSelector,
             Workspace.SWEDEN to seCustomerioClient,
             Workspace.NORWAY to noCustomerIoClient
         )
     }
 
     @Test
-    fun singleSignAttributeNorwegianMemberDoesNotUpdateCustomerIo() {
+    fun norwegianMemberSignAttributeDoesNotUpdateCustomerIo() {
 
-        every { productPricingFacade.getWorkspaceForMember(any()) } returns Workspace.NORWAY
+        every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
 
         sut.updateCustomerAttributes(
             "1338", mapOf(
@@ -59,9 +55,9 @@ class NorwaySignHackHandleUpdatesFromUnderwriterTest {
     }
 
     @Test
-    fun singleSignAttributeSwedishMemberDoesUpdateCustomerIo() {
+    fun swedishSignAttributesDoesUpdateCustomerIo() {
 
-        every { productPricingFacade.getWorkspaceForMember(any()) } returns Workspace.SWEDEN
+        every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.SWEDEN
 
         sut.updateCustomerAttributes(
             "1337", mapOf(
