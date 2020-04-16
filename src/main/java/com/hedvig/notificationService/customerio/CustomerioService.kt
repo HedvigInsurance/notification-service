@@ -12,6 +12,7 @@ class CustomerioService(
     vararg clients: Pair<Workspace, CustomerioClient>
 ) {
     private val clients = mapOf(*clients)
+    private val eventCreator = CustomerioEventCreatorImpl()
 
     init {
         if (this.clients.isEmpty()) {
@@ -69,7 +70,7 @@ class CustomerioService(
 
             clients[Workspace.NORWAY]?.sendEvent(
                 customerioState.memberId,
-                mapOf("name" to "TmpSignedInsuranceEvent")
+                eventCreator.createTmpSignedInsuranceEvent()
             )
             val newState = customerioState.copy(sentTmpSignEvent = true)
             this.stateRespository.save(newState)

@@ -28,6 +28,8 @@ class NorwaySignHackUpdateCustomerIOTest {
     @MockK(relaxed = true)
     lateinit var noCustomerIoClient: CustomerioClient
 
+    private val EventCreator: CustomerioEventCreator = CustomerioEventCreatorImpl()
+
     private val repository = InMemoryCustomerIOStateRepository()
 
     @MockK
