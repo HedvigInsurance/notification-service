@@ -1,9 +1,13 @@
 package com.hedvig.notificationService.customerio
 
 import java.time.Instant
+import javax.persistence.Entity
+import javax.persistence.Id
 
+@Entity
 data class CustomerioState(
+    @Id
     val memberId: String,
-    val underwriterSignAttributesStarted: Instant,
+    val underwriterFirstSignAttributesUpdate: Instant,
     val sentTmpSignEvent: Boolean = false
 )
