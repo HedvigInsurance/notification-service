@@ -27,25 +27,26 @@ class CustomerioService(
 
     fun updateCustomerAttributes(
         memberId: String,
-        convertValue: Map<String, Any?>,
+        attributes: Map<String, Any?>,
         now: Instant = Instant.now()
     ) {
         val marketForMember = workspaceSelector.getWorkspaceForMember(memberId)
 
-        if (marketForMember == Workspace.NORWAY) {
-            if (convertValue.containsKey("partner_code") ||
-                convertValue.containsKey("switcher_company") ||
-                convertValue.containsKey("sign_source")
-            ) {
-                val customerState = stateRepository.findByMemberId(memberId)
-                if (customerState == null) {
-                    stateRepository.save(CustomerioState(memberId, now))
-                }
-                return
+        if (marketForMember == Workspace.NORWAY && isSignUpdateFromUnderwriter(attributes)) {
+            val customerState = stateRepository.findByMemberId(memberId)
+            if (customerState == null) {
+                stateRepository.save(CustomerioState(memberId, now))
             }
+            return
         }
 
-        clients[marketForMember]?.updateCustomer(memberId, convertValue)
+        clients[marketForMember]?.updateCustomer(memberId, attributes)
+    }
+
+    private fun isSignUpdateFromUnderwriter(attributes: Map<String, Any?>): Boolean {
+        return attributes.containsKey("partner_code") ||
+            attributes.containsKey("switcher_company") ||
+            attributes.containsKey("sign_source")
     }
 
     fun deleteCustomer(memberId: String) {
