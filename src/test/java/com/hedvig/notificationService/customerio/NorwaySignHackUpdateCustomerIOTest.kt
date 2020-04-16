@@ -72,7 +72,7 @@ class NorwaySignHackUpdateCustomerIOTest {
     }
 
     @Test
-    fun sendUpdatesBeforeWindoTimeLengthDoesNotSendCustomerIOUpdate() {
+    fun sendUpdatesBeforeWindowTimeLengthDoesNotSendCustomerIOUpdate() {
 
         every { productPricingFacade.getWorkspaceForMember(any()) } returns Workspace.NORWAY
         val updateTime = Instant.parse("2020-04-15T14:53:40.550493Z")
