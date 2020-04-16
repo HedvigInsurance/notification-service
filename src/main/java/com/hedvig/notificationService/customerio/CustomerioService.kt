@@ -60,13 +60,13 @@ open class CustomerioService(
             attributes.containsKey("sign_source")
     }
 
-    fun deleteCustomer(memberId: String) {
+    open fun deleteCustomer(memberId: String) {
         val marketForMember = workspaceSelector.getWorkspaceForMember(memberId)
 
         clients[marketForMember]?.deleteCustomer(memberId)
     }
 
-    fun sendEvent(memberId: String, body: Map<String, Any?>) {
+    open fun sendEvent(memberId: String, body: Map<String, Any?>) {
         val marketForMember = workspaceSelector.getWorkspaceForMember(memberId)
         clients[marketForMember]?.sendEvent(memberId, body)
     }
