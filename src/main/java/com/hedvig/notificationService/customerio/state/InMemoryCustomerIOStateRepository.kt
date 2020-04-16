@@ -1,6 +1,5 @@
-package com.hedvig.notificationService.customerio.repository
+package com.hedvig.notificationService.customerio.state
 
-import com.hedvig.notificationService.customerio.CustomerioState
 import java.time.Instant
 
 class InMemoryCustomerIOStateRepository(var data: Map<String, CustomerioState> = mapOf()) :

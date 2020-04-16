@@ -1,4 +1,4 @@
-package com.hedvig.notificationService.customerio
+package com.hedvig.notificationService.customerio.state
 
 import java.time.Instant
 import javax.persistence.Entity

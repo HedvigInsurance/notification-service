@@ -1,7 +1,8 @@
 package com.hedvig.notificationService.customerio
 
 import com.hedvig.customerio.CustomerioClient
-import com.hedvig.notificationService.customerio.repository.InMemoryCustomerIOStateRepository
+import com.hedvig.notificationService.customerio.state.CustomerioState
+import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -118,8 +119,18 @@ class NorwaySignHackUpdateCustomerIOTest {
     fun sendUpdatesAfterWindowTimeWithTwoMembers() {
 
         val someTime = Instant.parse("2020-04-15T14:53:40.550493Z")
-        repository.save(CustomerioState("memberOne", someTime))
-        repository.save(CustomerioState("memberTwo", someTime))
+        repository.save(
+            CustomerioState(
+                "memberOne",
+                someTime
+            )
+        )
+        repository.save(
+            CustomerioState(
+                "memberTwo",
+                someTime
+            )
+        )
 
         every { productPricingFacade.getContractTypeForMember(any()) } returns listOf(
             ContractInfo(
@@ -148,7 +159,12 @@ class NorwaySignHackUpdateCustomerIOTest {
     fun `two updates causes only one sent event`() {
         val time = Instant.parse("2020-04-15T14:53:40.550493Z")
 
-        repository.save(CustomerioState("someMemberID", time))
+        repository.save(
+            CustomerioState(
+                "someMemberID",
+                time
+            )
+        )
 
         every { productPricingFacade.getContractTypeForMember(any()) } returns listOf(
             ContractInfo(
@@ -167,7 +183,12 @@ class NorwaySignHackUpdateCustomerIOTest {
     fun `swedish contract causes exception to be thrown`() {
         val time = Instant.parse("2020-04-15T14:53:40.550493Z")
 
-        repository.save(CustomerioState("someMemberID", time))
+        repository.save(
+            CustomerioState(
+                "someMemberID",
+                time
+            )
+        )
 
         every { productPricingFacade.getContractTypeForMember(any()) } returns listOf(
             ContractInfo(

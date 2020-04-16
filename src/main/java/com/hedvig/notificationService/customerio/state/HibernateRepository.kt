@@ -1,6 +1,5 @@
-package com.hedvig.notificationService.customerio.repository
+package com.hedvig.notificationService.customerio.state
 
-import com.hedvig.notificationService.customerio.CustomerioState
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.query.Param

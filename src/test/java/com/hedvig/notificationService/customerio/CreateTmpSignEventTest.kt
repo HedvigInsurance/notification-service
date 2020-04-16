@@ -1,5 +1,6 @@
 package com.hedvig.notificationService.customerio
 
+import com.hedvig.notificationService.customerio.state.CustomerioState
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -36,7 +37,11 @@ class CreateTmpSignEventTest() {
             )
         )
 
-        val customerioState = CustomerioState("42", Instant.now(), false)
+        val customerioState = CustomerioState(
+            "42",
+            Instant.now(),
+            false
+        )
 
         val eventData = sut.createTmpSignedInsuranceEvent(customerioState)
 
@@ -53,7 +58,11 @@ class CreateTmpSignEventTest() {
             )
         )
 
-        val customerioState = CustomerioState("42", Instant.now(), false)
+        val customerioState = CustomerioState(
+            "42",
+            Instant.now(),
+            false
+        )
 
         val eventData = sut.createTmpSignedInsuranceEvent(customerioState)
 
@@ -71,7 +80,11 @@ class CreateTmpSignEventTest() {
             )
         )
 
-        val customerioState = CustomerioState("42", Instant.now(), false)
+        val customerioState = CustomerioState(
+            "42",
+            Instant.now(),
+            false
+        )
 
         val eventData = sut.createTmpSignedInsuranceEvent(customerioState)
 
@@ -89,7 +102,11 @@ class CreateTmpSignEventTest() {
             )
         )
 
-        val customerioState = CustomerioState("42", Instant.now(), false)
+        val customerioState = CustomerioState(
+            "42",
+            Instant.now(),
+            false
+        )
 
         val eventData = sut.createTmpSignedInsuranceEvent(customerioState)
 
@@ -106,7 +123,11 @@ class CreateTmpSignEventTest() {
             )
         )
 
-        val customerioState = CustomerioState("42", Instant.now(), false)
+        val customerioState = CustomerioState(
+            "42",
+            Instant.now(),
+            false
+        )
 
         val eventData = sut.createTmpSignedInsuranceEvent(customerioState)
 
@@ -125,7 +146,11 @@ class CreateTmpSignEventTest() {
             )
         )
 
-        val customerioState = CustomerioState("42", Instant.now(), false)
+        val customerioState = CustomerioState(
+            "42",
+            Instant.now(),
+            false
+        )
 
         val eventData = sut.createTmpSignedInsuranceEvent(customerioState)
 
@@ -143,7 +168,11 @@ class CreateTmpSignEventTest() {
             )
         )
 
-        val customerioState = CustomerioState("42", Instant.now(), false)
+        val customerioState = CustomerioState(
+            "42",
+            Instant.now(),
+            false
+        )
 
         val eventData = sut.createTmpSignedInsuranceEvent(customerioState)
 
@@ -165,7 +194,11 @@ class CreateTmpSignEventTest() {
             )
         )
 
-        val customerioState = CustomerioState("42", Instant.now(), false)
+        val customerioState = CustomerioState(
+            "42",
+            Instant.now(),
+            false
+        )
 
         val eventData = sut.createTmpSignedInsuranceEvent(customerioState)
         assertThat(eventData["is_signed_reise"]).isEqualTo(true)
@@ -182,7 +215,11 @@ class CreateTmpSignEventTest() {
             )
         )
 
-        val customerioState = CustomerioState("42", Instant.now(), false)
+        val customerioState = CustomerioState(
+            "42",
+            Instant.now(),
+            false
+        )
         thrown.expect(RuntimeException::class.java)
         val eventData = sut.createTmpSignedInsuranceEvent(customerioState)
     }

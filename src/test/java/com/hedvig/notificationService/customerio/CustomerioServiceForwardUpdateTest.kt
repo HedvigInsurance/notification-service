@@ -2,7 +2,7 @@ package com.hedvig.notificationService.customerio
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.hedvig.customerio.CustomerioMock
-import com.hedvig.notificationService.customerio.repository.InMemoryCustomerIOStateRepository
+import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK

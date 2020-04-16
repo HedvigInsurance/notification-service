@@ -1,5 +1,6 @@
 package com.hedvig.notificationService.customerio
 
+import com.hedvig.notificationService.customerio.state.CustomerioState
 import java.time.format.DateTimeFormatter
 
 class CustomerioEventCreatorImpl(private val productPricingFacade: ProductPricingFacade) : CustomerioEventCreator {

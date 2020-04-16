@@ -1,7 +1,8 @@
 package com.hedvig.notificationService.customerio
 
 import com.hedvig.customerio.CustomerioClient
-import com.hedvig.notificationService.customerio.repository.CustomerIOStateRepository
+import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
+import com.hedvig.notificationService.customerio.state.CustomerioState
 import org.slf4j.LoggerFactory
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -39,7 +40,12 @@ class CustomerioService(
         if (marketForMember == Workspace.NORWAY && isSignUpdateFromUnderwriter(attributes)) {
             val customerState = stateRepository.findByMemberId(memberId)
             if (customerState == null) {
-                stateRepository.save(CustomerioState(memberId, now))
+                stateRepository.save(
+                    CustomerioState(
+                        memberId,
+                        now
+                    )
+                )
             }
             return
         }
