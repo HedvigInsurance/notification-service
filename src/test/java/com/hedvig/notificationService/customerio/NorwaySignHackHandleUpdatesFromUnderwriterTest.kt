@@ -5,6 +5,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.verify
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
 import java.time.Instant
@@ -25,12 +26,17 @@ class NorwaySignHackHandleUpdatesFromUnderwriterTest {
     @MockK
     lateinit var sut: CustomerioService
 
+    lateinit var repository: InMemoryCustomerIOStateRepository
+
     @Before
     fun setup() {
         MockKAnnotations.init(this)
 
+        repository = InMemoryCustomerIOStateRepository(mapOf())
+
         sut = CustomerioService(
             workspaceSelector,
+            repository,
             Workspace.SWEDEN to seCustomerioClient,
             Workspace.NORWAY to noCustomerIoClient
         )
@@ -60,15 +66,29 @@ class NorwaySignHackHandleUpdatesFromUnderwriterTest {
         every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.SWEDEN
 
         sut.updateCustomerAttributes(
-            "1337", mapOf(
-                "partner_code" to "campaigncode",
-                "sign_source" to "RAPIO",
-                "sign_date" to LocalDate.now().atStartOfDay(ZoneId.of("Europe/Stockholm")).toEpochSecond(),
-                "switcher_company" to null,
-                "is_switcher" to false
-            ), Instant.parse("2020-04-15T14:53:40.550493Z")
+            "1337", signFromUnderwriterMap(), Instant.parse("2020-04-15T14:53:40.550493Z")
         )
 
         verify { seCustomerioClient.updateCustomer("1337", any()) }
     }
+
+    @Test
+    fun norwegianSignAttributesUpdatesRepositoryWithTime() {
+        every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
+
+        val updateInstant = Instant.parse("2020-04-15T14:53:40.550493Z")
+        sut.updateCustomerAttributes("randomId", signFromUnderwriterMap(), updateInstant)
+
+        assertThat(repository.data["randomId"]?.underwriterSignAttributesStarted).isEqualTo(updateInstant)
+    }
+}
+
+private fun signFromUnderwriterMap(): Map<String, Any?> {
+    return mapOf<String, Any?>(
+        "partner_code" to "campaigncode",
+        "sign_source" to "RAPIO",
+        "sign_date" to LocalDate.now().atStartOfDay(ZoneId.of("Europe/Stockholm")).toEpochSecond(),
+        "switcher_company" to null,
+        "is_switcher" to false
+    )
 }

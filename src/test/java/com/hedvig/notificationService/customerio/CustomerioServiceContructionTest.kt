@@ -19,6 +19,8 @@ class CustomerioServiceContructionTest {
     @MockK
     lateinit var customerioClient: CustomerioClient
 
+    private val repository = InMemoryCustomerIOStateRepository()
+
     @Before
     fun setup() {
         MockKAnnotations.init(this)
@@ -27,7 +29,7 @@ class CustomerioServiceContructionTest {
     @Test
     fun `Throw if no markets are passed in the contructor`() {
         exceptionRule.expect(IllegalArgumentException::class.java)
-        CustomerioService(workspaceSelector)
+        CustomerioService(workspaceSelector, repository)
     }
 
     @Test
@@ -35,6 +37,7 @@ class CustomerioServiceContructionTest {
         exceptionRule.expect(IllegalArgumentException::class.java)
         CustomerioService(
             workspaceSelector,
+            repository,
             Workspace.SWEDEN to customerioClient
         )
     }
@@ -43,6 +46,7 @@ class CustomerioServiceContructionTest {
     fun `Do not throw when all markets are passed in the contructor`() {
         CustomerioService(
             workspaceSelector,
+            repository,
             Workspace.SWEDEN to customerioClient,
             Workspace.NORWAY to customerioClient
         )

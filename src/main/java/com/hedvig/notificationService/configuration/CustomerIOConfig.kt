@@ -6,6 +6,7 @@ import com.hedvig.customerio.CustomerioClient
 import com.hedvig.customerio.CustomerioMock
 import com.hedvig.notificationService.customerio.ConfigurationProperties
 import com.hedvig.notificationService.customerio.CustomerioService
+import com.hedvig.notificationService.customerio.InMemoryCustomerIOStateRepository
 import com.hedvig.notificationService.customerio.MemberServiceImpl
 import com.hedvig.notificationService.customerio.ProductPricingFacade
 import com.hedvig.notificationService.customerio.ProductPricingFacadeImpl
@@ -52,6 +53,7 @@ class CustomerIOConfig() {
                 productPricingFacade,
                 memberServiceImpl
             ),
+            InMemoryCustomerIOStateRepository(),
             *clients
         )
     }

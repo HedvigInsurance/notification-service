@@ -25,6 +25,8 @@ class CustomerioServiceForwardUpdateTest {
     @MockK
     lateinit var memberServiceImpl: MemberServiceImpl
 
+    private val repository = InMemoryCustomerIOStateRepository()
+
     @Before
     fun setup() {
         MockKAnnotations.init(this)
@@ -43,6 +45,7 @@ class CustomerioServiceForwardUpdateTest {
                     productPricingFacade,
                     memberServiceImpl
                 ),
+                repository,
                 Workspace.SWEDEN to customerIOMockSweden,
                 Workspace.NORWAY to customerIOMockNorway
             )
@@ -64,6 +67,7 @@ class CustomerioServiceForwardUpdateTest {
                     productPricingFacade,
                     memberServiceImpl
                 ),
+                repository,
                 Workspace.SWEDEN to customerIOMockSweden,
                 Workspace.NORWAY to customerIOMockNorway
             )
@@ -85,6 +89,7 @@ class CustomerioServiceForwardUpdateTest {
                 productPricingFacade,
                 memberServiceImpl
             ),
+            repository,
             Workspace.SWEDEN to customerIOMockSweden,
             Workspace.NORWAY to customerIOMockNorway
         )
@@ -107,6 +112,7 @@ class CustomerioServiceForwardUpdateTest {
                 productPricingFacade,
                 memberServiceImpl
             ),
+            repository,
             Workspace.SWEDEN to customerIOMockSweden,
             Workspace.NORWAY to customerIOMockNorway
         )
@@ -129,6 +135,7 @@ class CustomerioServiceForwardUpdateTest {
                 productPricingFacade,
                 memberServiceImpl
             ),
+            repository,
             Workspace.SWEDEN to customerIOMockSweden,
             Workspace.NORWAY to customerIOMockNorway
         )

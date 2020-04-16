@@ -28,6 +28,8 @@ class NorwaySignHackUpdateCustomerIOTest {
     @MockK(relaxed = true)
     lateinit var noCustomerIoClient: CustomerioClient
 
+    private val repository = InMemoryCustomerIOStateRepository()
+
     @MockK
     lateinit var sut: CustomerioService
 
@@ -40,6 +42,7 @@ class NorwaySignHackUpdateCustomerIOTest {
                 productPricingFacade,
                 memberServiceImpl
             ),
+            repository,
             Workspace.SWEDEN to seCustomerioClient,
             Workspace.NORWAY to noCustomerIoClient
         )

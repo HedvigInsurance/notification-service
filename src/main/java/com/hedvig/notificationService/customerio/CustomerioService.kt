@@ -8,7 +8,7 @@ const val SIGN_EVENT_WINDOWS_SIZE_MINUTES = 5L
 
 class CustomerioService(
     private val workspaceSelector: WorkspaceSelector,
-    // private val stateRespository: CustomerIOStateRepository,
+    private val stateRespository: CustomerIOStateRepository,
     vararg clients: Pair<Workspace, CustomerioClient>
 ) {
 
@@ -40,7 +40,7 @@ class CustomerioService(
                 convertValue.containsKey("switcher_company") ||
                 convertValue.containsKey("sign_source")
             ) {
-                memberSignStartsAt = memberSignStartsAt.plus(memberId to now)
+                stateRespository.save(CustomerioState(memberId, now))
                 return
             }
         }
@@ -60,9 +60,16 @@ class CustomerioService(
     }
 
     fun sendUpdates(timeNow: Instant = Instant.now()) {
-        for (pair in memberSignStartsAt.entries) {
-            if (timeNow >= pair.value.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES)) {
-                clients[Workspace.NORWAY]?.sendEvent(pair.key, mapOf("name" to "TmpSignedInsuranceEvent"))
+        for (customerioState in this.stateRespository.allMembers()) {
+            if (timeNow >= customerioState.underwriterSignAttributesStarted.plus(
+                    SIGN_EVENT_WINDOWS_SIZE_MINUTES,
+                    ChronoUnit.MINUTES
+                )
+            ) {
+                clients[Workspace.NORWAY]?.sendEvent(
+                    customerioState.memberId,
+                    mapOf("name" to "TmpSignedInsuranceEvent")
+                )
             }
         }
     }

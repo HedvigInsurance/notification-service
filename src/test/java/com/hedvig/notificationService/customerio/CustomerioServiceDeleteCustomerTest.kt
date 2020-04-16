@@ -10,6 +10,7 @@ class CustomerioServiceDeleteCustomerTest {
 
     private val productPricingFacade = mockk<ProductPricingFacade>()
     private val memberServiceImpl = mockk<MemberServiceImpl>()
+    private val repository = InMemoryCustomerIOStateRepository()
 
     @Test
     fun deleteCustomerNorway() {
@@ -20,6 +21,7 @@ class CustomerioServiceDeleteCustomerTest {
 
         val cut = CustomerioService(
             WorkspaceSelector(productPricingFacade, memberServiceImpl),
+            repository,
             Workspace.SWEDEN to sweClient,
             Workspace.NORWAY to noClient
         )
@@ -36,6 +38,7 @@ class CustomerioServiceDeleteCustomerTest {
 
         val cut = CustomerioService(
             WorkspaceSelector(productPricingFacade, memberServiceImpl),
+            repository,
             Workspace.SWEDEN to sweClient,
             Workspace.NORWAY to noClient
         )

@@ -5,6 +5,7 @@ import com.hedvig.customerio.CustomerioClient
 import com.hedvig.customerio.CustomerioMock
 import com.hedvig.notificationService.customerio.CustomerioService
 import com.hedvig.notificationService.customerio.FakeProductPricingFacade
+import com.hedvig.notificationService.customerio.InMemoryCustomerIOStateRepository
 import com.hedvig.notificationService.customerio.MemberServiceImpl
 import com.hedvig.notificationService.customerio.ProductPricingFacade
 import com.hedvig.notificationService.customerio.Workspace
@@ -36,6 +37,7 @@ class WebIntegrationTestConfig {
                 productPricingClientTest(),
                 MemberServiceImpl(memberServiceClientTest())
             ),
+            InMemoryCustomerIOStateRepository(),
             Workspace.SWEDEN to customerioMock,
             Workspace.NORWAY to customerioMock
         )

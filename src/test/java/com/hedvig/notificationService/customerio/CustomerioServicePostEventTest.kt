@@ -16,6 +16,7 @@ class CustomerioServicePostEventTest {
 
         val sut = CustomerioService(
             workspaceSelector,
+            InMemoryCustomerIOStateRepository(),
             Workspace.SWEDEN to sweClient,
             Workspace.NORWAY to noClient
         )
@@ -35,6 +36,7 @@ class CustomerioServicePostEventTest {
 
         val sut = CustomerioService(
             workspaceSelector,
+            InMemoryCustomerIOStateRepository(),
             Workspace.SWEDEN to sweClient,
             Workspace.NORWAY to noClient
         )
