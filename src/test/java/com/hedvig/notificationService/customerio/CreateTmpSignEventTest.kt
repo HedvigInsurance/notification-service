@@ -70,8 +70,8 @@ class CreateTmpSignEventTest() {
 
         val eventData = sut.createTmpSignedInsuranceEvent(customerioState)
 
-        assertThat(eventData["is_switcher"]).isEqualTo(true)
-        assertThat(eventData["switcher_company"]).isEqualTo("folksam")
+        assertThat(eventData["is_switcher_innbo"]).isEqualTo(true)
+        assertThat(eventData["switcher_company_innbo"]).isEqualTo("folksam")
     }
 
     @Test
@@ -124,8 +124,8 @@ class CreateTmpSignEventTest() {
 
         val eventData = sut.createTmpSignedInsuranceEvent(customerioState)
 
-        assertThat(eventData["is_switcher"]).isEqualTo(true)
-        assertThat(eventData["switcher_company"]).isEqualTo("a new company")
+        assertThat(eventData["is_switcher_reise"]).isEqualTo(true)
+        assertThat(eventData["switcher_company_reise"]).isEqualTo("a new company")
     }
 
     @Test

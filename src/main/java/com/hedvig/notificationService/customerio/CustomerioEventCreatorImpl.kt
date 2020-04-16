@@ -14,16 +14,19 @@ class CustomerioEventCreatorImpl(private val productPricingFacade: ProductPricin
                 if (contract.startDate != null) {
                     returnMap["activation_date_innbo"] = contract.startDate.format(DateTimeFormatter.ISO_DATE)
                 }
+                if (contract.switcherCompany != null) {
+                    returnMap["is_switcher_innbo"] = true
+                    returnMap["switcher_company_innbo"] = contract.switcherCompany
+                }
             } else {
                 returnMap["is_signed_reise"] = true
                 if (contract.startDate != null) {
                     returnMap["activation_date_reise"] = contract.startDate.format(DateTimeFormatter.ISO_DATE)
                 }
-            }
-
-            if (contract.switcherCompany != null) {
-                returnMap["is_switcher"] = true
-                returnMap["switcher_company"] = contract.switcherCompany
+                if (contract.switcherCompany != null) {
+                    returnMap["is_switcher_reise"] = true
+                    returnMap["switcher_company_reise"] = contract.switcherCompany
+                }
             }
         }
 
