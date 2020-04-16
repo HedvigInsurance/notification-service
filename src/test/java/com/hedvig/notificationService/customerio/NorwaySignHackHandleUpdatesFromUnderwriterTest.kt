@@ -92,6 +92,14 @@ class NorwaySignHackHandleUpdatesFromUnderwriterTest {
 
         assertThat(repository.data["randomId"]?.underwriterSignAttributesStarted).isEqualTo(updateInstant)
     }
+
+    @Test
+    fun updateThatIsNotSignUpdateForwardsToCustomerio() {
+        every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
+        sut.updateCustomerAttributes("someID", mapOf("first_name" to "Test", "last_name" to "Ersson"))
+
+        verify { noCustomerIoClient.updateCustomer("someID", any()) }
+    }
 }
 
 private fun signFromUnderwriterMap(): Map<String, Any?> {
