@@ -19,8 +19,10 @@ class CustomerioServicePostEventTest {
             workspaceSelector,
             InMemoryCustomerIOStateRepository(),
             eventCreator,
-            Workspace.SWEDEN to sweClient,
-            Workspace.NORWAY to noClient
+            mapOf(
+                Workspace.SWEDEN to sweClient,
+                Workspace.NORWAY to noClient
+            )
         )
 
         every { workspaceSelector.getWorkspaceForMember("8080") } returns Workspace.SWEDEN
@@ -42,8 +44,10 @@ class CustomerioServicePostEventTest {
             InMemoryCustomerIOStateRepository(),
             eventCreator,
 
-            Workspace.SWEDEN to sweClient,
-            Workspace.NORWAY to noClient
+            mapOf(
+                Workspace.SWEDEN to sweClient,
+                Workspace.NORWAY to noClient
+            )
         )
 
         every { workspaceSelector.getWorkspaceForMember("8080") } returns Workspace.NORWAY

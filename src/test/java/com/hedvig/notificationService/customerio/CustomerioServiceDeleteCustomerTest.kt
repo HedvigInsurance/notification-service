@@ -23,8 +23,10 @@ class CustomerioServiceDeleteCustomerTest {
             WorkspaceSelector(productPricingFacade, memberServiceImpl),
             repository,
             CustomerioEventCreatorImpl(productPricingFacade),
-            Workspace.SWEDEN to sweClient,
-            Workspace.NORWAY to noClient
+            mapOf(
+                Workspace.SWEDEN to sweClient,
+                Workspace.NORWAY to noClient
+            )
         )
         cut.deleteCustomer("asdad")
         verify { noClient.deleteCustomer(any()) }
@@ -41,8 +43,10 @@ class CustomerioServiceDeleteCustomerTest {
             WorkspaceSelector(productPricingFacade, memberServiceImpl),
             repository,
             CustomerioEventCreatorImpl(productPricingFacade),
-            Workspace.SWEDEN to sweClient,
-            Workspace.NORWAY to noClient
+            mapOf(
+                Workspace.SWEDEN to sweClient,
+                Workspace.NORWAY to noClient
+            )
         )
         cut.deleteCustomer("asdad")
         verify { sweClient.deleteCustomer(any()) }

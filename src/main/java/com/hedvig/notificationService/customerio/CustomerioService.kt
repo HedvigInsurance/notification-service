@@ -8,11 +8,10 @@ const val SIGN_EVENT_WINDOWS_SIZE_MINUTES = 5L
 
 class CustomerioService(
     private val workspaceSelector: WorkspaceSelector,
-    private val stateRespository: CustomerIOStateRepository,
+    private val stateRepository: CustomerIOStateRepository,
     private val eventCreator: CustomerioEventCreator,
-    vararg clients: Pair<Workspace, CustomerioClient>
+    private val clients: Map<Workspace, CustomerioClient>
 ) {
-    private val clients = mapOf(*clients)
 
     init {
         if (this.clients.isEmpty()) {
@@ -38,9 +37,9 @@ class CustomerioService(
                 convertValue.containsKey("switcher_company") ||
                 convertValue.containsKey("sign_source")
             ) {
-                val customerState = stateRespository.findByMemberId(memberId)
+                val customerState = stateRepository.findByMemberId(memberId)
                 if (customerState == null) {
-                    stateRespository.save(CustomerioState(memberId, now))
+                    stateRepository.save(CustomerioState(memberId, now))
                 }
                 return
             }
@@ -66,14 +65,14 @@ class CustomerioService(
             SIGN_EVENT_WINDOWS_SIZE_MINUTES,
             ChronoUnit.MINUTES
         )
-        for (customerioState in this.stateRespository.shouldSendTempSignEvent(windowEndTime)) {
+        for (customerioState in this.stateRepository.shouldSendTempSignEvent(windowEndTime)) {
 
             clients[Workspace.NORWAY]?.sendEvent(
                 customerioState.memberId,
                 eventCreator.createTmpSignedInsuranceEvent(customerioState)
             )
             val newState = customerioState.copy(sentTmpSignEvent = true)
-            this.stateRespository.save(newState)
+            this.stateRepository.save(newState)
         }
     }
 }

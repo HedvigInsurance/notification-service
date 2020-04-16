@@ -47,8 +47,10 @@ class NorwaySignHackUpdateCustomerIOTest {
             ),
             repository,
             eventCreator,
-            Workspace.SWEDEN to seCustomerioClient,
-            Workspace.NORWAY to noCustomerIoClient
+            mapOf(
+                Workspace.SWEDEN to seCustomerioClient,
+                Workspace.NORWAY to noCustomerIoClient
+            )
         )
     }
 

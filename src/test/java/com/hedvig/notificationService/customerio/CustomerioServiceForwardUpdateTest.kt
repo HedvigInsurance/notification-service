@@ -47,8 +47,10 @@ class CustomerioServiceForwardUpdateTest {
                 ),
                 repository,
                 CustomerioEventCreatorImpl(productPricingFacade),
-                Workspace.SWEDEN to customerIOMockSweden,
-                Workspace.NORWAY to customerIOMockNorway
+                mapOf(
+                    Workspace.SWEDEN to customerIOMockSweden,
+                    Workspace.NORWAY to customerIOMockNorway
+                )
             )
 
         router.updateCustomerAttributes("1337", mapOf())
@@ -70,8 +72,10 @@ class CustomerioServiceForwardUpdateTest {
                 ),
                 repository,
                 CustomerioEventCreatorImpl(productPricingFacade),
-                Workspace.SWEDEN to customerIOMockSweden,
-                Workspace.NORWAY to customerIOMockNorway
+                mapOf(
+                    Workspace.SWEDEN to customerIOMockSweden,
+                    Workspace.NORWAY to customerIOMockNorway
+                )
             )
 
         router.updateCustomerAttributes("1337", mapOf())
@@ -93,8 +97,10 @@ class CustomerioServiceForwardUpdateTest {
             ),
             repository,
             CustomerioEventCreatorImpl(productPricingFacade),
-            Workspace.SWEDEN to customerIOMockSweden,
-            Workspace.NORWAY to customerIOMockNorway
+            mapOf(
+                Workspace.SWEDEN to customerIOMockSweden,
+                Workspace.NORWAY to customerIOMockNorway
+            )
         )
 
         router.updateCustomerAttributes("1337", mapOf())
@@ -117,8 +123,10 @@ class CustomerioServiceForwardUpdateTest {
             ),
             repository,
             CustomerioEventCreatorImpl(productPricingFacade),
-            Workspace.SWEDEN to customerIOMockSweden,
-            Workspace.NORWAY to customerIOMockNorway
+            mapOf(
+                Workspace.SWEDEN to customerIOMockSweden,
+                Workspace.NORWAY to customerIOMockNorway
+            )
         )
 
         router.updateCustomerAttributes("1337", mapOf())
@@ -141,8 +149,10 @@ class CustomerioServiceForwardUpdateTest {
             ),
             repository,
             CustomerioEventCreatorImpl(productPricingFacade),
-            Workspace.SWEDEN to customerIOMockSweden,
-            Workspace.NORWAY to customerIOMockNorway
+            mapOf(
+                Workspace.SWEDEN to customerIOMockSweden,
+                Workspace.NORWAY to customerIOMockNorway
+            )
         )
 
         thrown.expect(WorkspaceNotFound::class.java)

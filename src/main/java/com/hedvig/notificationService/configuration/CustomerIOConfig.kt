@@ -56,14 +56,14 @@ class CustomerIOConfig() {
             ),
             InMemoryCustomerIOStateRepository(),
             CustomerioEventCreatorImpl(productPricingFacade),
-            *clients
+            clients
         )
     }
 
-    private fun createClients(objectMapper: ObjectMapper): Array<Pair<Workspace, CustomerioClient>> {
+    private fun createClients(objectMapper: ObjectMapper): Map<Workspace, CustomerioClient> {
         return if (useFakes) {
             val customerioMock = CustomerioMock(objectMapper)
-            return arrayOf(
+            return mapOf(
                 Workspace.SWEDEN to customerioMock,
                 Workspace.NORWAY to customerioMock
             )
@@ -75,7 +75,7 @@ class CustomerIOConfig() {
                     objectMapper,
                     okHttp
                 )
-            }.toTypedArray()
+            }.toMap()
         }
     }
 }
