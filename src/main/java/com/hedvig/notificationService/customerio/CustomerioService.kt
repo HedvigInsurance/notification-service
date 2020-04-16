@@ -4,12 +4,13 @@ import com.hedvig.customerio.CustomerioClient
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import org.slf4j.LoggerFactory
+import org.springframework.scheduling.annotation.Scheduled
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
-const val SIGN_EVENT_WINDOWS_SIZE_MINUTES = 5L
+const val SIGN_EVENT_WINDOWS_SIZE_MINUTES = 10L
 
-class CustomerioService(
+open class CustomerioService(
     private val workspaceSelector: WorkspaceSelector,
     private val stateRepository: CustomerIOStateRepository,
     private val eventCreator: CustomerioEventCreator,
@@ -30,7 +31,7 @@ class CustomerioService(
         }
     }
 
-    fun updateCustomerAttributes(
+    open fun updateCustomerAttributes(
         memberId: String,
         attributes: Map<String, Any?>,
         now: Instant = Instant.now()
@@ -70,7 +71,14 @@ class CustomerioService(
         clients[marketForMember]?.sendEvent(memberId, body)
     }
 
-    fun sendUpdates(timeNow: Instant = Instant.now()) {
+    // @Scheduled functions cannot have any arguments
+    // so this is a bit of a hack
+    @Scheduled(fixedDelay = 1000 * 60 * 5)
+    open fun scheduledUpdates() {
+        sendUpdates()
+    }
+
+    open fun sendUpdates(timeNow: Instant = Instant.now()) {
 
         val windowEndTime = timeNow.minus(
             SIGN_EVENT_WINDOWS_SIZE_MINUTES,
