@@ -25,6 +25,14 @@ class ProductPricingFacadeImpl(private val productPricingClient: ProductPricingC
     }
 
     override fun getContractTypeForMember(memberId: String): List<ContractInfo> {
-        TODO()
+        val response = productPricingClient.getContractsForMember(memberId)
+
+        return response.body.map {
+            ContractInfo(
+                AgreementType.valueOf(it.agreements.first()::class.java.simpleName),
+                it.switchedFrom,
+                it.masterInception
+            )
+        }
     }
 }
