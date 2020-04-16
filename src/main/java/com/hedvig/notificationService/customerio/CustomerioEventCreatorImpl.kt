@@ -11,21 +11,19 @@ class CustomerioEventCreatorImpl(private val productPricingFacade: ProductPricin
         contracts.forEach { contract ->
             if (contract.type == AgreementType.NorwegianHomeContent) {
                 returnMap["is_signed_innbo"] = true
-                returnMap["activation_date_innbo"] = null
                 if (contract.startDate != null) {
                     returnMap["activation_date_innbo"] = contract.startDate.format(DateTimeFormatter.ISO_DATE)
                 }
             } else {
-                returnMap["is_signed_travel"] = true
-                returnMap["activation_date_travel"] = null
+                returnMap["is_signed_reise"] = true
                 if (contract.startDate != null) {
-                    returnMap["activation_date_travel"] = contract.startDate.format(DateTimeFormatter.ISO_DATE)
+                    returnMap["activation_date_reise"] = contract.startDate.format(DateTimeFormatter.ISO_DATE)
                 }
             }
 
             if (contract.switcherCompany != null) {
                 returnMap["is_switcher"] = true
-                returnMap["switcher_company"] = contracts.first().switcherCompany
+                returnMap["switcher_company"] = contract.switcherCompany
             }
         }
 

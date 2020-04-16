@@ -105,9 +105,9 @@ class CreateTmpSignEventTest() {
 
         val eventData = sut.createTmpSignedInsuranceEvent(customerioState)
 
-        assertThat(eventData["is_signed_travel"]).isEqualTo(true)
+        assertThat(eventData["is_signed_reise"]).isEqualTo(true)
         assertThat(eventData["is_signed_innbo"]).isEqualTo(null)
-        assertThat(eventData["activation_date_travel"]).isEqualTo(null)
+        assertThat(eventData["activation_date_reise"]).isEqualTo(null)
     }
 
     @Test
@@ -142,7 +142,7 @@ class CreateTmpSignEventTest() {
 
         val eventData = sut.createTmpSignedInsuranceEvent(customerioState)
 
-        assertThat(eventData["activation_date_travel"]).isEqualTo("2020-01-01")
+        assertThat(eventData["activation_date_reise"]).isEqualTo("2020-01-01")
     }
 
     @Test
@@ -163,7 +163,7 @@ class CreateTmpSignEventTest() {
         val customerioState = CustomerioState("42", Instant.now(), false)
 
         val eventData = sut.createTmpSignedInsuranceEvent(customerioState)
-        assertThat(eventData["is_signed_travel"]).isEqualTo(true)
+        assertThat(eventData["is_signed_reise"]).isEqualTo(true)
         assertThat(eventData["is_signed_innbo"]).isEqualTo(true)
     }
 }
