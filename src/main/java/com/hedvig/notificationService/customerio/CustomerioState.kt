@@ -4,5 +4,6 @@ import java.time.Instant
 
 data class CustomerioState(
     val memberId: String,
-    val underwriterSignAttributesStarted: Instant
+    val underwriterSignAttributesStarted: Instant,
+    val sentTmpSignEvent: Boolean = false
 )

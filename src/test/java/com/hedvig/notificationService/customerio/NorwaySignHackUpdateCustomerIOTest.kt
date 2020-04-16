@@ -113,4 +113,16 @@ class NorwaySignHackUpdateCustomerIOTest {
 
         verify(inverse = true) { noCustomerIoClient.sendEvent(any(), any()) }
     }
+
+    @Test
+    fun `two updates causes only one sent event`() {
+        val time = Instant.parse("2020-04-15T14:53:40.550493Z")
+
+        repository.save(CustomerioState("someMemberID", time))
+
+        sut.sendUpdates(time.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
+        sut.sendUpdates(time.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
+
+        verify(atMost = 1) { noCustomerIoClient.sendEvent("someMemberID", any()) }
+    }
 }

@@ -64,16 +64,25 @@ class CustomerioService(
 
     fun sendUpdates(timeNow: Instant = Instant.now()) {
         for (customerioState in this.stateRespository.allMembers()) {
-            if (timeNow >= customerioState.underwriterSignAttributesStarted.plus(
-                    SIGN_EVENT_WINDOWS_SIZE_MINUTES,
-                    ChronoUnit.MINUTES
-                )
-            ) {
+            if (timeToUpdate(timeNow, customerioState) && !customerioState.sentTmpSignEvent) {
                 clients[Workspace.NORWAY]?.sendEvent(
                     customerioState.memberId,
                     mapOf("name" to "TmpSignedInsuranceEvent")
                 )
+                val newState = customerioState.copy(sentTmpSignEvent = true)
+                this.stateRespository.save(newState)
             }
         }
+    }
+
+    private fun timeToUpdate(
+        timeNow: Instant,
+        customerioState: CustomerioState
+    ): Boolean {
+        return timeNow >=
+            customerioState.underwriterSignAttributesStarted.plus(
+                SIGN_EVENT_WINDOWS_SIZE_MINUTES,
+                ChronoUnit.MINUTES
+            )
     }
 }
