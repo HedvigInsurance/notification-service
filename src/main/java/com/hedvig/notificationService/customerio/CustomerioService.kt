@@ -1,6 +1,7 @@
 package com.hedvig.notificationService.customerio
 
 import com.hedvig.customerio.CustomerioClient
+import org.slf4j.LoggerFactory
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -12,6 +13,8 @@ class CustomerioService(
     private val eventCreator: CustomerioEventCreator,
     private val clients: Map<Workspace, CustomerioClient>
 ) {
+
+    private val logger = LoggerFactory.getLogger(CustomerioService::class.java)
 
     init {
         if (this.clients.isEmpty()) {
@@ -68,12 +71,16 @@ class CustomerioService(
         )
         for (customerioState in this.stateRepository.shouldSendTempSignEvent(windowEndTime)) {
 
-            clients[Workspace.NORWAY]?.sendEvent(
-                customerioState.memberId,
-                eventCreator.createTmpSignedInsuranceEvent(customerioState)
-            )
-            val newState = customerioState.copy(sentTmpSignEvent = true)
-            this.stateRepository.save(newState)
+            try {
+                clients[Workspace.NORWAY]?.sendEvent(
+                    customerioState.memberId,
+                    eventCreator.createTmpSignedInsuranceEvent(customerioState)
+                )
+                val newState = customerioState.copy(sentTmpSignEvent = true)
+                this.stateRepository.save(newState)
+            } catch (ex: RuntimeException) {
+                logger.error("Could not send sign event to customerio", ex)
+            }
         }
     }
 }

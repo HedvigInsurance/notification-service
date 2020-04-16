@@ -160,4 +160,22 @@ class NorwaySignHackUpdateCustomerIOTest {
 
         verify(atMost = 1) { noCustomerIoClient.sendEvent("someMemberID", any()) }
     }
+
+    @Test
+    fun `swedish contract causes exception to be thrown`() {
+        val time = Instant.parse("2020-04-15T14:53:40.550493Z")
+
+        repository.save(CustomerioState("someMemberID", time))
+
+        every { productPricingFacade.getContractTypeForMember(any()) } returns listOf(
+            ContractInfo(
+                AgreementType.SwedishApartment,
+                null,
+                null
+            )
+        )
+        sut.sendUpdates(time.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
+
+        verify(inverse = true) { noCustomerIoClient.sendEvent("someMemberID", any()) }
+    }
 }
