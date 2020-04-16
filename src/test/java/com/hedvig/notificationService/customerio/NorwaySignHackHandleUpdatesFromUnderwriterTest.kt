@@ -81,6 +81,17 @@ class NorwaySignHackHandleUpdatesFromUnderwriterTest {
 
         assertThat(repository.data["randomId"]?.underwriterSignAttributesStarted).isEqualTo(updateInstant)
     }
+
+    @Test
+    fun norwegianSecondSignAttributesDoesNotUpdateRepositoryWithTime() {
+        every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
+
+        val updateInstant = Instant.parse("2020-04-15T14:53:40.550493Z")
+        sut.updateCustomerAttributes("randomId", signFromUnderwriterMap(), updateInstant)
+        sut.updateCustomerAttributes("randomId", signFromUnderwriterMap(), updateInstant.plusMillis(1000))
+
+        assertThat(repository.data["randomId"]?.underwriterSignAttributesStarted).isEqualTo(updateInstant)
+    }
 }
 
 private fun signFromUnderwriterMap(): Map<String, Any?> {

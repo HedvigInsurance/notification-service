@@ -8,4 +8,8 @@ class InMemoryCustomerIOStateRepository(var data: Map<String, CustomerioState> =
     override fun allMembers(): Set<CustomerioState> {
         return data.values.toSet()
     }
+
+    override fun findByMemberId(memberId: String): CustomerioState? {
+        return data[memberId]
+    }
 }

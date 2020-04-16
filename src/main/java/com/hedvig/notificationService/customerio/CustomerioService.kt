@@ -40,7 +40,10 @@ class CustomerioService(
                 convertValue.containsKey("switcher_company") ||
                 convertValue.containsKey("sign_source")
             ) {
-                stateRespository.save(CustomerioState(memberId, now))
+                val customerState = stateRespository.findByMemberId(memberId)
+                if (customerState == null) {
+                    stateRespository.save(CustomerioState(memberId, now))
+                }
                 return
             }
         }
