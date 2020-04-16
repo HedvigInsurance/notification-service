@@ -109,4 +109,26 @@ class CreateTmpSignEventTest() {
         assertThat(eventData["is_switcher"]).isEqualTo(true)
         assertThat(eventData["switcher_company"]).isEqualTo("a new company")
     }
+
+    @Test
+    fun `norwegian travel and content`() {
+        every { productPricingFacade.getContractTypeForMember(any()) } returns listOf(
+            ContractInfo(
+                AgreementType.NorwegianTravel,
+                null,
+                null
+            ),
+            ContractInfo(
+                AgreementType.NorwegianHomeContent,
+                null,
+                null
+            )
+        )
+
+        val customerioState = CustomerioState("42", Instant.now(), false)
+
+        val eventData = sut.createTmpSignedInsuranceEvent(customerioState)
+        assertThat(eventData["is_signed_travel"]).isEqualTo(true)
+        assertThat(eventData["is_signed_innbo"]).isEqualTo(true)
+    }
 }
