@@ -8,20 +8,20 @@ import org.junit.Before
 import org.junit.Test
 import java.time.Instant
 
-class CreateTmpSignEventTest {
+class CreateTmpSignEventTest() {
 
     @MockK
     lateinit var productPricingFacade: ProductPricingFacade
+    lateinit var sut: CustomerioEventCreatorImpl
 
     @Before
     fun setup() {
         MockKAnnotations.init(this)
+        sut = CustomerioEventCreatorImpl(productPricingFacade)
     }
 
     @Test
     fun `event name is correct`() {
-
-        val sut = CustomerioEventCreatorImpl(productPricingFacade)
         every { productPricingFacade.getContractTypeForMember(any()) } returns listOf(
             ContractInfo(
                 AgreementType.NorwegianHomeContent,
@@ -39,8 +39,6 @@ class CreateTmpSignEventTest {
 
     @Test
     fun `norwegian home content`() {
-
-        val sut = CustomerioEventCreatorImpl(productPricingFacade)
         every { productPricingFacade.getContractTypeForMember(any()) } returns listOf(
             ContractInfo(
                 AgreementType.NorwegianHomeContent,
@@ -55,5 +53,24 @@ class CreateTmpSignEventTest {
 
         assertThat(eventData["is_signed_innbo"]).isEqualTo(true)
         assertThat(eventData["activation_date_innbo"]).isEqualTo(null)
+    }
+
+    @Test
+    fun `norwegian travel`() {
+        every { productPricingFacade.getContractTypeForMember(any()) } returns listOf(
+            ContractInfo(
+                AgreementType.NorwegianTravel,
+                null,
+                null
+            )
+        )
+
+        val customerioState = CustomerioState("42", Instant.now(), false)
+
+        val eventData = sut.createTmpSignedInsuranceEvent(customerioState)
+
+        assertThat(eventData["is_signed_travel"]).isEqualTo(true)
+        assertThat(eventData["is_signed_innbo"]).isEqualTo(null)
+        assertThat(eventData["activation_date_travel"]).isEqualTo(null)
     }
 }

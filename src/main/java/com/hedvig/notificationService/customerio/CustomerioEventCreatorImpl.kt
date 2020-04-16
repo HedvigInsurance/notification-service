@@ -10,6 +10,9 @@ class CustomerioEventCreatorImpl(private val productPricingFacade: ProductPricin
         if (contracts.first().type == AgreementType.NorwegianHomeContent) {
             returnMap["is_signed_innbo"] = true
             returnMap["activation_date_innbo"] = null
+        } else {
+            returnMap["is_signed_travel"] = true
+            returnMap["activation_date_travel"] = null
         }
 
         return returnMap.toMap()
