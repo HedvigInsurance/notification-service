@@ -1,5 +1,6 @@
-package com.hedvig.notificationService.customerio
+package com.hedvig.notificationService.customerio.repository
 
+import com.hedvig.notificationService.customerio.CustomerioState
 import java.time.Instant
 
 interface CustomerIOStateRepository {

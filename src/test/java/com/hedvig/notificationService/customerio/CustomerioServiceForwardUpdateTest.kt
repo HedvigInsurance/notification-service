@@ -2,6 +2,7 @@ package com.hedvig.notificationService.customerio
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.hedvig.customerio.CustomerioMock
+import com.hedvig.notificationService.customerio.repository.InMemoryCustomerIOStateRepository
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -25,7 +26,8 @@ class CustomerioServiceForwardUpdateTest {
     @MockK
     lateinit var memberServiceImpl: MemberServiceImpl
 
-    private val repository = InMemoryCustomerIOStateRepository()
+    private val repository =
+        InMemoryCustomerIOStateRepository()
 
     @Before
     fun setup() {

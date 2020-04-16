@@ -1,6 +1,7 @@
 package com.hedvig.notificationService.customerio
 
 import com.hedvig.customerio.CustomerioClient
+import com.hedvig.notificationService.customerio.repository.InMemoryCustomerIOStateRepository
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify

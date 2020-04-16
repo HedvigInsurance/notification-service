@@ -1,6 +1,7 @@
 package com.hedvig.notificationService.customerio
 
 import com.hedvig.customerio.CustomerioClient
+import com.hedvig.notificationService.customerio.repository.InMemoryCustomerIOStateRepository
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -35,7 +36,10 @@ class NorwaySignHackHandleUpdatesFromUnderwriterTest {
     fun setup() {
         MockKAnnotations.init(this)
 
-        repository = InMemoryCustomerIOStateRepository(mapOf())
+        repository =
+            InMemoryCustomerIOStateRepository(
+                mapOf()
+            )
 
         sut = CustomerioService(
             workspaceSelector,

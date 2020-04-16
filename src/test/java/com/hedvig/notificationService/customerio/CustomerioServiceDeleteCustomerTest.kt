@@ -1,6 +1,7 @@
 package com.hedvig.notificationService.customerio
 
 import com.hedvig.customerio.CustomerioClient
+import com.hedvig.notificationService.customerio.repository.InMemoryCustomerIOStateRepository
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -10,7 +11,8 @@ class CustomerioServiceDeleteCustomerTest {
 
     private val productPricingFacade = mockk<ProductPricingFacade>()
     private val memberServiceImpl = mockk<MemberServiceImpl>()
-    private val repository = InMemoryCustomerIOStateRepository()
+    private val repository =
+        InMemoryCustomerIOStateRepository()
 
     @Test
     fun deleteCustomerNorway() {

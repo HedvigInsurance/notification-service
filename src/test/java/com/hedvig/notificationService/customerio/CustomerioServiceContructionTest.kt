@@ -1,6 +1,7 @@
 package com.hedvig.notificationService.customerio
 
 import com.hedvig.customerio.CustomerioClient
+import com.hedvig.notificationService.customerio.repository.InMemoryCustomerIOStateRepository
 import io.mockk.MockKAnnotations
 import io.mockk.impl.annotations.MockK
 import org.junit.Before
@@ -22,7 +23,8 @@ class CustomerioServiceContructionTest {
     @MockK
     lateinit var eventCreator: CustomerioEventCreator
 
-    private val repository = InMemoryCustomerIOStateRepository()
+    private val repository =
+        InMemoryCustomerIOStateRepository()
 
     @Before
     fun setup() {
