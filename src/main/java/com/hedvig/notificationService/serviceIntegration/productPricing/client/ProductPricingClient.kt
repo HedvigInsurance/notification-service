@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.PathVariable
 )
 interface ProductPricingClient {
 
+    @GetMapping("/_/contracts/members/{memberId}")
+    fun getContractsForMember(@PathVariable memberId: String): ResponseEntity<List<Contract>>
+
     @GetMapping("/_/contracts/members/{memberId}/contract/market/info")
     fun getContractMarketInfo(@PathVariable memberId: String): ResponseEntity<ContractMarketInfo>
 }
