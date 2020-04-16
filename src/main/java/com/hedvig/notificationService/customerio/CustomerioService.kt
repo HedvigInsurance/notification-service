@@ -2,6 +2,9 @@ package com.hedvig.notificationService.customerio
 
 import com.hedvig.customerio.CustomerioClient
 import java.time.Instant
+import java.time.temporal.ChronoUnit
+
+const val SIGN_EVENT_WINDOWS_SIZE_MINUTES = 5L
 
 class CustomerioService(
     private val workspaceSelector: WorkspaceSelector,
@@ -14,6 +17,8 @@ class CustomerioService(
     ) : this(WorkspaceSelector(productPricingFacade, memberServiceImpl), *clients)
 
     private val clients = mapOf(*clients)
+
+    private var memberSignStartsAt = mapOf<String, Instant>()
 
     init {
         if (this.clients.isEmpty()) {
@@ -39,6 +44,7 @@ class CustomerioService(
                 convertValue.containsKey("switcher_company") ||
                 convertValue.containsKey("sign_source")
             ) {
+                memberSignStartsAt = memberSignStartsAt.plus(memberId to now)
                 return
             }
         }
@@ -57,7 +63,11 @@ class CustomerioService(
         clients[marketForMember]?.sendEvent(memberId, body)
     }
 
-    fun sendUpdates(plus: Instant = Instant.now()) {
-        clients[Workspace.NORWAY]?.sendEvent("1337", mapOf("name" to "TmpSignedInsuranceEvent"))
+    fun sendUpdates(timeNow: Instant = Instant.now()) {
+        for (pair in memberSignStartsAt.entries) {
+            if (timeNow >= pair.value.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES)) {
+                clients[Workspace.NORWAY]?.sendEvent(pair.key, mapOf("name" to "TmpSignedInsuranceEvent"))
+            }
+        }
     }
 }
