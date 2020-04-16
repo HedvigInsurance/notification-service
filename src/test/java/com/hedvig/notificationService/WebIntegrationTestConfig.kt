@@ -3,6 +3,7 @@ package com.hedvig.notificationService
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.hedvig.customerio.CustomerioClient
 import com.hedvig.customerio.CustomerioMock
+import com.hedvig.notificationService.customerio.CustomerioEventCreatorImpl
 import com.hedvig.notificationService.customerio.CustomerioService
 import com.hedvig.notificationService.customerio.FakeProductPricingFacade
 import com.hedvig.notificationService.customerio.InMemoryCustomerIOStateRepository
@@ -32,12 +33,14 @@ class WebIntegrationTestConfig {
     @Bean
     @Primary
     fun customerioServiceTest(customerioMock: CustomerioClient): CustomerioService {
+        val productPricingFacade = productPricingClientTest()
         return CustomerioService(
             WorkspaceSelector(
-                productPricingClientTest(),
+                productPricingFacade,
                 MemberServiceImpl(memberServiceClientTest())
             ),
             InMemoryCustomerIOStateRepository(),
+            CustomerioEventCreatorImpl(productPricingFacade),
             Workspace.SWEDEN to customerioMock,
             Workspace.NORWAY to customerioMock
         )

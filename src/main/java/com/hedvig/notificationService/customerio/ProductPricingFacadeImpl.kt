@@ -23,4 +23,8 @@ class ProductPricingFacadeImpl(private val productPricingClient: ProductPricingC
             Workspace.NOT_FOUND
         }
     }
+
+    override fun getContractTypeForMember(memberId: String): List<ContractInfo> {
+        TODO()
+    }
 }

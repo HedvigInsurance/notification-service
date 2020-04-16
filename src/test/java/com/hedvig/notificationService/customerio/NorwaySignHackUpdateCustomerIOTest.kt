@@ -28,7 +28,7 @@ class NorwaySignHackUpdateCustomerIOTest {
     @MockK(relaxed = true)
     lateinit var noCustomerIoClient: CustomerioClient
 
-    private val EventCreator: CustomerioEventCreator = CustomerioEventCreatorImpl()
+    lateinit var eventCreator: CustomerioEventCreator
 
     private val repository = InMemoryCustomerIOStateRepository()
 
@@ -38,6 +38,7 @@ class NorwaySignHackUpdateCustomerIOTest {
     @Before
     fun setup() {
         MockKAnnotations.init(this)
+        eventCreator = CustomerioEventCreatorImpl(productPricingFacade)
 
         sut = CustomerioService(
             WorkspaceSelector(
@@ -45,6 +46,7 @@ class NorwaySignHackUpdateCustomerIOTest {
                 memberServiceImpl
             ),
             repository,
+            eventCreator,
             Workspace.SWEDEN to seCustomerioClient,
             Workspace.NORWAY to noCustomerIoClient
         )
@@ -64,6 +66,14 @@ class NorwaySignHackUpdateCustomerIOTest {
                 "switcher_company" to null,
                 "is_switcher" to false
             ), updateTime
+        )
+
+        every { productPricingFacade.getContractTypeForMember(any()) } returns listOf(
+            ContractInfo(
+                AgreementType.NorwegianHomeContent,
+                null,
+                null
+            )
         )
 
         sut.sendUpdates(updateTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
@@ -88,6 +98,13 @@ class NorwaySignHackUpdateCustomerIOTest {
             ), updateTime
         )
 
+        every { productPricingFacade.getContractTypeForMember(any()) } returns listOf(
+            ContractInfo(
+                AgreementType.NorwegianHomeContent,
+                null,
+                null
+            )
+        )
         sut.sendUpdates(updateTime.plus(1, ChronoUnit.SECONDS))
 
         verify(inverse = true) { noCustomerIoClient.sendEvent(any(), any()) }
@@ -100,6 +117,13 @@ class NorwaySignHackUpdateCustomerIOTest {
         repository.save(CustomerioState("memberOne", someTime))
         repository.save(CustomerioState("memberTwo", someTime))
 
+        every { productPricingFacade.getContractTypeForMember(any()) } returns listOf(
+            ContractInfo(
+                AgreementType.NorwegianHomeContent,
+                null,
+                null
+            )
+        )
         sut.sendUpdates(someTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
 
         verify { noCustomerIoClient.sendEvent("memberOne", any()) }
@@ -122,6 +146,13 @@ class NorwaySignHackUpdateCustomerIOTest {
 
         repository.save(CustomerioState("someMemberID", time))
 
+        every { productPricingFacade.getContractTypeForMember(any()) } returns listOf(
+            ContractInfo(
+                AgreementType.NorwegianHomeContent,
+                null,
+                null
+            )
+        )
         sut.sendUpdates(time.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
         sut.sendUpdates(time.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
 

@@ -24,6 +24,9 @@ class NorwaySignHackHandleUpdatesFromUnderwriterTest {
     lateinit var noCustomerIoClient: CustomerioClient
 
     @MockK
+    lateinit var eventCreator: CustomerioEventCreator
+
+    @MockK
     lateinit var sut: CustomerioService
 
     lateinit var repository: InMemoryCustomerIOStateRepository
@@ -37,6 +40,7 @@ class NorwaySignHackHandleUpdatesFromUnderwriterTest {
         sut = CustomerioService(
             workspaceSelector,
             repository,
+            eventCreator,
             Workspace.SWEDEN to seCustomerioClient,
             Workspace.NORWAY to noCustomerIoClient
         )

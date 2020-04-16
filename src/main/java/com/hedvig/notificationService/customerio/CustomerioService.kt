@@ -9,10 +9,10 @@ const val SIGN_EVENT_WINDOWS_SIZE_MINUTES = 5L
 class CustomerioService(
     private val workspaceSelector: WorkspaceSelector,
     private val stateRespository: CustomerIOStateRepository,
+    private val eventCreator: CustomerioEventCreator,
     vararg clients: Pair<Workspace, CustomerioClient>
 ) {
     private val clients = mapOf(*clients)
-    private val eventCreator = CustomerioEventCreatorImpl()
 
     init {
         if (this.clients.isEmpty()) {
@@ -70,7 +70,7 @@ class CustomerioService(
 
             clients[Workspace.NORWAY]?.sendEvent(
                 customerioState.memberId,
-                eventCreator.createTmpSignedInsuranceEvent()
+                eventCreator.createTmpSignedInsuranceEvent(customerioState)
             )
             val newState = customerioState.copy(sentTmpSignEvent = true)
             this.stateRespository.save(newState)

@@ -19,6 +19,9 @@ class CustomerioServiceContructionTest {
     @MockK
     lateinit var customerioClient: CustomerioClient
 
+    @MockK
+    lateinit var eventCreator: CustomerioEventCreator
+
     private val repository = InMemoryCustomerIOStateRepository()
 
     @Before
@@ -29,7 +32,7 @@ class CustomerioServiceContructionTest {
     @Test
     fun `Throw if no markets are passed in the contructor`() {
         exceptionRule.expect(IllegalArgumentException::class.java)
-        CustomerioService(workspaceSelector, repository)
+        CustomerioService(workspaceSelector, repository, eventCreator)
     }
 
     @Test
@@ -38,6 +41,7 @@ class CustomerioServiceContructionTest {
         CustomerioService(
             workspaceSelector,
             repository,
+            eventCreator,
             Workspace.SWEDEN to customerioClient
         )
     }
@@ -47,6 +51,7 @@ class CustomerioServiceContructionTest {
         CustomerioService(
             workspaceSelector,
             repository,
+            eventCreator,
             Workspace.SWEDEN to customerioClient,
             Workspace.NORWAY to customerioClient
         )

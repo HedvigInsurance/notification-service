@@ -46,6 +46,7 @@ class CustomerioServiceForwardUpdateTest {
                     memberServiceImpl
                 ),
                 repository,
+                CustomerioEventCreatorImpl(productPricingFacade),
                 Workspace.SWEDEN to customerIOMockSweden,
                 Workspace.NORWAY to customerIOMockNorway
             )
@@ -68,6 +69,7 @@ class CustomerioServiceForwardUpdateTest {
                     memberServiceImpl
                 ),
                 repository,
+                CustomerioEventCreatorImpl(productPricingFacade),
                 Workspace.SWEDEN to customerIOMockSweden,
                 Workspace.NORWAY to customerIOMockNorway
             )
@@ -90,6 +92,7 @@ class CustomerioServiceForwardUpdateTest {
                 memberServiceImpl
             ),
             repository,
+            CustomerioEventCreatorImpl(productPricingFacade),
             Workspace.SWEDEN to customerIOMockSweden,
             Workspace.NORWAY to customerIOMockNorway
         )
@@ -113,6 +116,7 @@ class CustomerioServiceForwardUpdateTest {
                 memberServiceImpl
             ),
             repository,
+            CustomerioEventCreatorImpl(productPricingFacade),
             Workspace.SWEDEN to customerIOMockSweden,
             Workspace.NORWAY to customerIOMockNorway
         )
@@ -136,6 +140,7 @@ class CustomerioServiceForwardUpdateTest {
                 memberServiceImpl
             ),
             repository,
+            CustomerioEventCreatorImpl(productPricingFacade),
             Workspace.SWEDEN to customerIOMockSweden,
             Workspace.NORWAY to customerIOMockNorway
         )

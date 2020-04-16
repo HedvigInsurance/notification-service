@@ -13,10 +13,12 @@ class CustomerioServicePostEventTest {
         val sweClient = mockk<CustomerioClient>(relaxed = true)
         val noClient = mockk<CustomerioClient>(relaxed = true)
         val workspaceSelector = mockk<WorkspaceSelector>()
+        val eventCreator = mockk<CustomerioEventCreator>()
 
         val sut = CustomerioService(
             workspaceSelector,
             InMemoryCustomerIOStateRepository(),
+            eventCreator,
             Workspace.SWEDEN to sweClient,
             Workspace.NORWAY to noClient
         )
@@ -33,10 +35,13 @@ class CustomerioServicePostEventTest {
         val sweClient = mockk<CustomerioClient>(relaxed = true)
         val noClient = mockk<CustomerioClient>(relaxed = true)
         val workspaceSelector = mockk<WorkspaceSelector>()
+        val eventCreator = mockk<CustomerioEventCreator>()
 
         val sut = CustomerioService(
             workspaceSelector,
             InMemoryCustomerIOStateRepository(),
+            eventCreator,
+
             Workspace.SWEDEN to sweClient,
             Workspace.NORWAY to noClient
         )
