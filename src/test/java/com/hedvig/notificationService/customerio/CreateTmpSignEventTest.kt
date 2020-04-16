@@ -5,7 +5,9 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.ExpectedException
 import java.time.Instant
 import java.time.LocalDate
 
@@ -14,6 +16,9 @@ class CreateTmpSignEventTest() {
     @MockK
     lateinit var productPricingFacade: ProductPricingFacade
     lateinit var sut: CustomerioEventCreatorImpl
+
+    @get:Rule
+    var thrown = ExpectedException.none()
 
     @Before
     fun setup() {
@@ -165,5 +170,20 @@ class CreateTmpSignEventTest() {
         val eventData = sut.createTmpSignedInsuranceEvent(customerioState)
         assertThat(eventData["is_signed_reise"]).isEqualTo(true)
         assertThat(eventData["is_signed_innbo"]).isEqualTo(true)
+    }
+
+    @Test
+    fun `swedish house throws exception`() {
+        every { productPricingFacade.getContractTypeForMember(any()) } returns listOf(
+            ContractInfo(
+                AgreementType.SwedishHouse,
+                null,
+                null
+            )
+        )
+
+        val customerioState = CustomerioState("42", Instant.now(), false)
+        thrown.expect(RuntimeException::class.java)
+        val eventData = sut.createTmpSignedInsuranceEvent(customerioState)
     }
 }

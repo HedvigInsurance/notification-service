@@ -13,7 +13,7 @@ class CustomerioEventCreatorImpl(private val productPricingFacade: ProductPricin
             val type = when (contract.type) {
                 AgreementType.NorwegianHomeContent -> "innbo"
                 AgreementType.NorwegianTravel -> "reise"
-                else -> TODO()
+                else -> throw RuntimeException("Unexpected contract type ${contract.type}")
             }
 
             returnMap["is_signed_$type"] = true
