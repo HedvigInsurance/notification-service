@@ -7,6 +7,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
 import java.time.Instant
+import java.time.LocalDate
 
 class CreateTmpSignEventTest() {
 
@@ -74,6 +75,23 @@ class CreateTmpSignEventTest() {
     }
 
     @Test
+    fun `norwegian home content activation date`() {
+        every { productPricingFacade.getContractTypeForMember(any()) } returns listOf(
+            ContractInfo(
+                AgreementType.NorwegianHomeContent,
+                null,
+                LocalDate.of(2020, 3, 13)
+            )
+        )
+
+        val customerioState = CustomerioState("42", Instant.now(), false)
+
+        val eventData = sut.createTmpSignedInsuranceEvent(customerioState)
+
+        assertThat(eventData["activation_date_innbo"]).isEqualTo("2020-03-13")
+    }
+
+    @Test
     fun `norwegian travel`() {
         every { productPricingFacade.getContractTypeForMember(any()) } returns listOf(
             ContractInfo(
@@ -108,6 +126,23 @@ class CreateTmpSignEventTest() {
 
         assertThat(eventData["is_switcher"]).isEqualTo(true)
         assertThat(eventData["switcher_company"]).isEqualTo("a new company")
+    }
+
+    @Test
+    fun `norwegian travel activation date`() {
+        every { productPricingFacade.getContractTypeForMember(any()) } returns listOf(
+            ContractInfo(
+                AgreementType.NorwegianTravel,
+                "a new company",
+                LocalDate.of(2020, 1, 1)
+            )
+        )
+
+        val customerioState = CustomerioState("42", Instant.now(), false)
+
+        val eventData = sut.createTmpSignedInsuranceEvent(customerioState)
+
+        assertThat(eventData["activation_date_travel"]).isEqualTo("2020-01-01")
     }
 
     @Test
