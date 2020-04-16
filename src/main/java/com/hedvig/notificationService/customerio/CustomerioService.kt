@@ -11,10 +11,7 @@ class CustomerioService(
     private val stateRespository: CustomerIOStateRepository,
     vararg clients: Pair<Workspace, CustomerioClient>
 ) {
-
     private val clients = mapOf(*clients)
-
-    private var memberSignStartsAt = mapOf<String, Instant>()
 
     init {
         if (this.clients.isEmpty()) {
