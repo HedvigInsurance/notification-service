@@ -3,11 +3,14 @@ package com.hedvig.notificationService
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.hedvig.customerio.CustomerioClient
 import com.hedvig.customerio.CustomerioMock
+import com.hedvig.notificationService.customerio.CustomerioEventCreatorImpl
 import com.hedvig.notificationService.customerio.CustomerioService
 import com.hedvig.notificationService.customerio.FakeProductPricingFacade
 import com.hedvig.notificationService.customerio.MemberServiceImpl
 import com.hedvig.notificationService.customerio.ProductPricingFacade
 import com.hedvig.notificationService.customerio.Workspace
+import com.hedvig.notificationService.customerio.WorkspaceSelector
+import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import com.hedvig.notificationService.serviceIntegration.memberService.FakeMemberServiceClient
 import com.hedvig.notificationService.serviceIntegration.memberService.MemberServiceClient
 import org.springframework.boot.test.context.TestConfiguration
@@ -30,11 +33,18 @@ class WebIntegrationTestConfig {
     @Bean
     @Primary
     fun customerioServiceTest(customerioMock: CustomerioClient): CustomerioService {
+        val productPricingFacade = productPricingClientTest()
         return CustomerioService(
-            productPricingClientTest(),
-            MemberServiceImpl(memberServiceClientTest()),
-            Workspace.SWEDEN to customerioMock,
-            Workspace.NORWAY to customerioMock
+            WorkspaceSelector(
+                productPricingFacade,
+                MemberServiceImpl(memberServiceClientTest())
+            ),
+            InMemoryCustomerIOStateRepository(),
+            CustomerioEventCreatorImpl(productPricingFacade),
+            mapOf(
+                Workspace.SWEDEN to customerioMock,
+                Workspace.NORWAY to customerioMock
+            )
         )
     }
 }

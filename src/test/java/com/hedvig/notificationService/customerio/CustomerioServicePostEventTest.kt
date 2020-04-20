@@ -1,6 +1,7 @@
 package com.hedvig.notificationService.customerio
 
 import com.hedvig.customerio.CustomerioClient
+import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -13,11 +14,16 @@ class CustomerioServicePostEventTest {
         val sweClient = mockk<CustomerioClient>(relaxed = true)
         val noClient = mockk<CustomerioClient>(relaxed = true)
         val workspaceSelector = mockk<WorkspaceSelector>()
+        val eventCreator = mockk<CustomerioEventCreator>()
 
         val sut = CustomerioService(
             workspaceSelector,
-            Workspace.SWEDEN to sweClient,
-            Workspace.NORWAY to noClient
+            InMemoryCustomerIOStateRepository(),
+            eventCreator,
+            mapOf(
+                Workspace.SWEDEN to sweClient,
+                Workspace.NORWAY to noClient
+            )
         )
 
         every { workspaceSelector.getWorkspaceForMember("8080") } returns Workspace.SWEDEN
@@ -32,11 +38,17 @@ class CustomerioServicePostEventTest {
         val sweClient = mockk<CustomerioClient>(relaxed = true)
         val noClient = mockk<CustomerioClient>(relaxed = true)
         val workspaceSelector = mockk<WorkspaceSelector>()
+        val eventCreator = mockk<CustomerioEventCreator>()
 
         val sut = CustomerioService(
             workspaceSelector,
-            Workspace.SWEDEN to sweClient,
-            Workspace.NORWAY to noClient
+            InMemoryCustomerIOStateRepository(),
+            eventCreator,
+
+            mapOf(
+                Workspace.SWEDEN to sweClient,
+                Workspace.NORWAY to noClient
+            )
         )
 
         every { workspaceSelector.getWorkspaceForMember("8080") } returns Workspace.NORWAY

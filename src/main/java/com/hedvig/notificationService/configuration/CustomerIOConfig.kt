@@ -5,11 +5,14 @@ import com.hedvig.customerio.Customerio
 import com.hedvig.customerio.CustomerioClient
 import com.hedvig.customerio.CustomerioMock
 import com.hedvig.notificationService.customerio.ConfigurationProperties
+import com.hedvig.notificationService.customerio.CustomerioEventCreatorImpl
 import com.hedvig.notificationService.customerio.CustomerioService
 import com.hedvig.notificationService.customerio.MemberServiceImpl
 import com.hedvig.notificationService.customerio.ProductPricingFacade
 import com.hedvig.notificationService.customerio.ProductPricingFacadeImpl
 import com.hedvig.notificationService.customerio.Workspace
+import com.hedvig.notificationService.customerio.WorkspaceSelector
+import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import com.hedvig.notificationService.serviceIntegration.memberService.MemberServiceClient
 import com.hedvig.notificationService.serviceIntegration.productPricing.client.ProductPricingClient
 import okhttp3.OkHttpClient
@@ -17,8 +20,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.scheduling.annotation.EnableScheduling
 
 @Configuration
+@EnableScheduling
 class CustomerIOConfig() {
 
     @Autowired
@@ -47,16 +52,20 @@ class CustomerIOConfig() {
             createClients(objectMapper)
 
         return CustomerioService(
-            productPricingFacade,
-            memberServiceImpl,
-            *clients
+            WorkspaceSelector(
+                productPricingFacade,
+                memberServiceImpl
+            ),
+            InMemoryCustomerIOStateRepository(),
+            CustomerioEventCreatorImpl(productPricingFacade),
+            clients
         )
     }
 
-    private fun createClients(objectMapper: ObjectMapper): Array<Pair<Workspace, CustomerioClient>> {
+    private fun createClients(objectMapper: ObjectMapper): Map<Workspace, CustomerioClient> {
         return if (useFakes) {
             val customerioMock = CustomerioMock(objectMapper)
-            return arrayOf(
+            return mapOf(
                 Workspace.SWEDEN to customerioMock,
                 Workspace.NORWAY to customerioMock
             )
@@ -68,7 +77,7 @@ class CustomerIOConfig() {
                     objectMapper,
                     okHttp
                 )
-            }.toTypedArray()
+            }.toMap()
         }
     }
 }

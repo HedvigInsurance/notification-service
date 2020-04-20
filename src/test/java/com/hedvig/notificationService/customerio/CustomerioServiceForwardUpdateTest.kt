@@ -2,6 +2,7 @@ package com.hedvig.notificationService.customerio
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.hedvig.customerio.CustomerioMock
+import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -25,6 +26,9 @@ class CustomerioServiceForwardUpdateTest {
     @MockK
     lateinit var memberServiceImpl: MemberServiceImpl
 
+    private val repository =
+        InMemoryCustomerIOStateRepository()
+
     @Before
     fun setup() {
         MockKAnnotations.init(this)
@@ -39,10 +43,16 @@ class CustomerioServiceForwardUpdateTest {
 
         val router =
             CustomerioService(
-                productPricingFacade,
-                memberServiceImpl,
-                Workspace.SWEDEN to customerIOMockSweden,
-                Workspace.NORWAY to customerIOMockNorway
+                WorkspaceSelector(
+                    productPricingFacade,
+                    memberServiceImpl
+                ),
+                repository,
+                CustomerioEventCreatorImpl(productPricingFacade),
+                mapOf(
+                    Workspace.SWEDEN to customerIOMockSweden,
+                    Workspace.NORWAY to customerIOMockNorway
+                )
             )
 
         router.updateCustomerAttributes("1337", mapOf())
@@ -58,10 +68,16 @@ class CustomerioServiceForwardUpdateTest {
 
         val router =
             CustomerioService(
-                productPricingFacade,
-                memberServiceImpl,
-                Workspace.SWEDEN to customerIOMockSweden,
-                Workspace.NORWAY to customerIOMockNorway
+                WorkspaceSelector(
+                    productPricingFacade,
+                    memberServiceImpl
+                ),
+                repository,
+                CustomerioEventCreatorImpl(productPricingFacade),
+                mapOf(
+                    Workspace.SWEDEN to customerIOMockSweden,
+                    Workspace.NORWAY to customerIOMockNorway
+                )
             )
 
         router.updateCustomerAttributes("1337", mapOf())
@@ -77,10 +93,16 @@ class CustomerioServiceForwardUpdateTest {
         every { memberServiceImpl.getPickedLocale(any()) } returns Locale("sv", "se")
 
         val router = CustomerioService(
-            productPricingFacade,
-            memberServiceImpl,
-            Workspace.SWEDEN to customerIOMockSweden,
-            Workspace.NORWAY to customerIOMockNorway
+            WorkspaceSelector(
+                productPricingFacade,
+                memberServiceImpl
+            ),
+            repository,
+            CustomerioEventCreatorImpl(productPricingFacade),
+            mapOf(
+                Workspace.SWEDEN to customerIOMockSweden,
+                Workspace.NORWAY to customerIOMockNorway
+            )
         )
 
         router.updateCustomerAttributes("1337", mapOf())
@@ -97,10 +119,16 @@ class CustomerioServiceForwardUpdateTest {
         every { memberServiceImpl.getPickedLocale(any()) } returns Locale("nb", "NO")
 
         val router = CustomerioService(
-            productPricingFacade,
-            memberServiceImpl,
-            Workspace.SWEDEN to customerIOMockSweden,
-            Workspace.NORWAY to customerIOMockNorway
+            WorkspaceSelector(
+                productPricingFacade,
+                memberServiceImpl
+            ),
+            repository,
+            CustomerioEventCreatorImpl(productPricingFacade),
+            mapOf(
+                Workspace.SWEDEN to customerIOMockSweden,
+                Workspace.NORWAY to customerIOMockNorway
+            )
         )
 
         router.updateCustomerAttributes("1337", mapOf())
@@ -117,10 +145,16 @@ class CustomerioServiceForwardUpdateTest {
         every { memberServiceImpl.getPickedLocale(any()) } returns Locale("en", "gb")
 
         val router = CustomerioService(
-            productPricingFacade,
-            memberServiceImpl,
-            Workspace.SWEDEN to customerIOMockSweden,
-            Workspace.NORWAY to customerIOMockNorway
+            WorkspaceSelector(
+                productPricingFacade,
+                memberServiceImpl
+            ),
+            repository,
+            CustomerioEventCreatorImpl(productPricingFacade),
+            mapOf(
+                Workspace.SWEDEN to customerIOMockSweden,
+                Workspace.NORWAY to customerIOMockNorway
+            )
         )
 
         thrown.expect(WorkspaceNotFound::class.java)
