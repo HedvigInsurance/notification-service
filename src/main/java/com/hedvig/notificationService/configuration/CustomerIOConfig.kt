@@ -12,7 +12,7 @@ import com.hedvig.notificationService.customerio.ProductPricingFacade
 import com.hedvig.notificationService.customerio.ProductPricingFacadeImpl
 import com.hedvig.notificationService.customerio.Workspace
 import com.hedvig.notificationService.customerio.WorkspaceSelector
-import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
+import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.serviceIntegration.memberService.MemberServiceClient
 import com.hedvig.notificationService.serviceIntegration.productPricing.client.ProductPricingClient
 import okhttp3.OkHttpClient
@@ -45,7 +45,8 @@ class CustomerIOConfig() {
     fun customerioService(
         productPricingFacade: ProductPricingFacade,
         memberServiceImpl: MemberServiceImpl,
-        objectMapper: ObjectMapper
+        objectMapper: ObjectMapper,
+        repo: CustomerIOStateRepository
     ): CustomerioService {
 
         val clients =
@@ -56,7 +57,7 @@ class CustomerIOConfig() {
                 productPricingFacade,
                 memberServiceImpl
             ),
-            InMemoryCustomerIOStateRepository(),
+            repo,
             CustomerioEventCreatorImpl(productPricingFacade),
             clients
         )
