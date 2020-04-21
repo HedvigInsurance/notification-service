@@ -9,6 +9,8 @@ class CustomerioEventCreatorImpl(private val productPricingFacade: ProductPricin
         val contracts = productPricingFacade.getContractTypeForMember(customerioState.memberId)
 
         val returnMap = mutableMapOf<String, Any?>("name" to "TmpSignedInsuranceEvent")
+        val data = mutableMapOf<String, Any?>()
+        returnMap["data"] = data
         contracts.forEach { contract ->
 
             val type = when (contract.type) {
@@ -17,9 +19,9 @@ class CustomerioEventCreatorImpl(private val productPricingFacade: ProductPricin
                 else -> throw RuntimeException("Unexpected contract type ${contract.type}")
             }
 
-            returnMap["is_signed_$type"] = true
-            updateActivationDate(contract, returnMap, type)
-            updateSwitcherInfo(contract, returnMap, type)
+            data["is_signed_$type"] = true
+            updateActivationDate(contract, data, type)
+            updateSwitcherInfo(contract, data, type)
         }
 
         return returnMap.toMap()
