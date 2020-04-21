@@ -73,7 +73,7 @@ open class CustomerioService(
 
     // @Scheduled functions cannot have any arguments
     // so this is a bit of a hack
-    @Scheduled(fixedDelay = 1000 * 60 * 5)
+    @Scheduled(fixedDelay = 1000 * 30)
     open fun scheduledUpdates() {
         sendUpdates()
     }
