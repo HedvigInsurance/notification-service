@@ -60,4 +60,20 @@ class SendNorwegianContractCreatedEvent {
             "name" to "ContractCreatedEvent"
         )
     }
+
+    @Test
+    fun `only send one ContractCreatedEvent after two updates`() {
+        val startTime = Instant.parse("2020-04-23T09:25:13.597224Z")
+        repo.save(CustomerioState("someMemberId", null, false, startTime))
+
+        sut.sendUpdates(startTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
+        sut.sendUpdates(startTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
+
+        val slot = slot<Map<String, Any?>>()
+        verify(atMost = 1) { noClient.sendEvent(any(), capture(slot)) }
+
+        assertThat(slot.captured).containsAll(
+            "name" to "ContractCreatedEvent"
+        )
+    }
 }

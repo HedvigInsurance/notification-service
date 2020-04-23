@@ -103,6 +103,8 @@ open class CustomerioService(
                 state.memberId,
                 mapOf("name" to "ContractCreatedEvent")
             )
+            val newState = state.copy(contractCreatedAt = null)
+            this.stateRepository.save(newState)
         }
     }
 }
