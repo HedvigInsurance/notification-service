@@ -1,5 +1,9 @@
-package com.hedvig.notificationService.customerio
+package com.hedvig.notificationService.customerio.events
 
+import com.hedvig.notificationService.customerio.AgreementType
+import com.hedvig.notificationService.customerio.ContractInfo
+import com.hedvig.notificationService.customerio.CustomerioEventCreatorImpl
+import com.hedvig.notificationService.customerio.ProductPricingFacade
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import io.mockk.MockKAnnotations
 import io.mockk.every
@@ -24,7 +28,8 @@ class CreateTmpSignEventTest() {
     @Before
     fun setup() {
         MockKAnnotations.init(this)
-        sut = CustomerioEventCreatorImpl(productPricingFacade)
+        sut =
+            CustomerioEventCreatorImpl(productPricingFacade)
     }
 
     @Test
