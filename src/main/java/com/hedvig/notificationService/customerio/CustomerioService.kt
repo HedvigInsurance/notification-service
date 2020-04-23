@@ -3,6 +3,7 @@ package com.hedvig.notificationService.customerio
 import com.hedvig.customerio.CustomerioClient
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.customerio.state.CustomerioState
+import feign.FeignException
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import java.time.Instant
@@ -99,12 +100,16 @@ open class CustomerioService(
         }
 
         for (state in this.stateRepository.shouldSendContractCreatedEvents(windowEndTime)) {
-            clients[Workspace.NORWAY]?.sendEvent(
-                state.memberId,
-                mapOf("name" to "ContractCreatedEvent")
-            )
-            val newState = state.copy(contractCreatedAt = null)
-            this.stateRepository.save(newState)
+            try {
+                clients[Workspace.NORWAY]?.sendEvent(
+                    state.memberId,
+                    mapOf("name" to "ContractCreatedEvent")
+                )
+                val newState = state.copy(contractCreatedAt = null)
+                this.stateRepository.save(newState)
+            } catch (ex: FeignException) {
+                logger.error("Could not send event to customerio", ex)
+            }
         }
     }
 }

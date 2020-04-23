@@ -2,10 +2,13 @@ package com.hedvig.notificationService.customerio
 
 import assertk.assertThat
 import assertk.assertions.containsAll
+import assertk.assertions.isEqualTo
 import com.hedvig.customerio.CustomerioClient
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
+import com.hedvig.notificationService.serviceIntegration.productPricing.FeignExceptionForTest
 import io.mockk.MockKAnnotations
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.slot
 import io.mockk.verify
@@ -75,5 +78,17 @@ class SendNorwegianContractCreatedEvent {
         assertThat(slot.captured).containsAll(
             "name" to "ContractCreatedEvent"
         )
+    }
+
+    @Test
+    fun `exception during sending does not update state`() {
+        val startTime = Instant.parse("2020-04-23T09:25:13.597224Z")
+        repo.save(CustomerioState("someMemberId", null, false, startTime))
+
+        every { noClient.sendEvent(any(), any()) } throws FeignExceptionForTest(500)
+
+        sut.sendUpdates(startTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
+
+        assertThat(repo.data["someMemberId"]?.contractCreatedAt).isEqualTo(startTime)
     }
 }
