@@ -33,6 +33,6 @@ class FakeMemberServiceClient : MemberServiceClient {
     }
 
     override fun pickedLocale(memberId: String): ResponseEntity<PickedLocale> {
-        return ResponseEntity.ok(PickedLocale("sv_SE"))
+        return ResponseEntity.ok(PickedLocale("nb_NO"))
     }
 }
