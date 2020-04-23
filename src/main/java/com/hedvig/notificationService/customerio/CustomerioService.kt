@@ -84,6 +84,8 @@ open class CustomerioService(
             SIGN_EVENT_WINDOWS_SIZE_MINUTES,
             ChronoUnit.MINUTES
         )
+        // This is some duplicated code but the first part here is going away as soon as our new logic works
+        // so this feels ok for now.
         for (customerioState in this.stateRepository.shouldSendTempSignEvent(windowEndTime)) {
 
             try {
@@ -95,7 +97,7 @@ open class CustomerioService(
         }
 
         for (customerioState in this.stateRepository.shouldSendContractCreatedEvents(windowEndTime)) {
-            val event = mapOf("name" to "ContractCreatedEvent")
+            val event = eventCreator.contractSignedEvent(customerioState)
             sendEventAndUpdateState(customerioState, event) { it.copy(contractCreatedAt = null) }
         }
     }

@@ -27,6 +27,10 @@ class CustomerioEventCreatorImpl(private val productPricingFacade: ProductPricin
         return returnMap.toMap()
     }
 
+    override fun contractSignedEvent(customerioState: CustomerioState): Map<String, Any?> {
+        return mapOf("name" to "ContractCreatedEvent")
+    }
+
     private fun updateSwitcherInfo(
         contract: ContractInfo,
         returnMap: MutableMap<String, Any?>,
