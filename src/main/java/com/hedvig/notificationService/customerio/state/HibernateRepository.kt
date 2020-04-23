@@ -17,4 +17,12 @@ interface HibernateRepository : CustomerIOStateRepository, CrudRepository<Custom
     """
     )
     override fun shouldSendTempSignEvent(@Param("byTime") byTime: Instant): Collection<CustomerioState>
+
+    @Query(
+        """
+        FROM CustomerioState cs
+        where cs.contractCreatedAt <= :byTime
+    """
+    )
+    override fun shouldSendContractCreatedEvents(@Param("byTime") byTime: Instant): Collection<CustomerioState>
 }
