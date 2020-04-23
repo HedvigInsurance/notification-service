@@ -8,6 +8,7 @@ import javax.persistence.Id
 data class CustomerioState(
     @Id
     val memberId: String,
-    val underwriterFirstSignAttributesUpdate: Instant,
-    val sentTmpSignEvent: Boolean = false
+    val underwriterFirstSignAttributesUpdate: Instant?,
+    val sentTmpSignEvent: Boolean = false,
+    val contractCreatedAt: Instant? = null
 )

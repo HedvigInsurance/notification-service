@@ -97,5 +97,12 @@ open class CustomerioService(
                 logger.error("Could not send sign event to customerio", ex)
             }
         }
+
+        for (state in this.stateRepository.shouldSendContractCreatedEvents(windowEndTime)) {
+            clients[Workspace.NORWAY]?.sendEvent(
+                state.memberId,
+                mapOf("name" to "ContractCreatedEvent")
+            )
+        }
     }
 }
