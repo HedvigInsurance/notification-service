@@ -3,7 +3,6 @@ package com.hedvig.notificationService.customerio
 import com.hedvig.customerio.CustomerioClient
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.customerio.state.CustomerioState
-import feign.FeignException
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import java.time.Instant
@@ -88,28 +87,32 @@ open class CustomerioService(
         for (customerioState in this.stateRepository.shouldSendTempSignEvent(windowEndTime)) {
 
             try {
-                clients[Workspace.NORWAY]?.sendEvent(
-                    customerioState.memberId,
-                    eventCreator.createTmpSignedInsuranceEvent(customerioState)
-                )
-                val newState = customerioState.copy(sentTmpSignEvent = true)
-                this.stateRepository.save(newState)
+                val event = eventCreator.createTmpSignedInsuranceEvent(customerioState)
+                sendEventAndUpdateState(customerioState, event) { it.copy(sentTmpSignEvent = true) }
             } catch (ex: RuntimeException) {
-                logger.error("Could not send sign event to customerio", ex)
+                logger.error("Could not create event from customerio state")
             }
         }
 
-        for (state in this.stateRepository.shouldSendContractCreatedEvents(windowEndTime)) {
-            try {
-                clients[Workspace.NORWAY]?.sendEvent(
-                    state.memberId,
-                    mapOf("name" to "ContractCreatedEvent")
-                )
-                val newState = state.copy(contractCreatedAt = null)
-                this.stateRepository.save(newState)
-            } catch (ex: FeignException) {
-                logger.error("Could not send event to customerio", ex)
-            }
+        for (customerioState in this.stateRepository.shouldSendContractCreatedEvents(windowEndTime)) {
+            val event = mapOf("name" to "ContractCreatedEvent")
+            sendEventAndUpdateState(customerioState, event) { it.copy(contractCreatedAt = null) }
+        }
+    }
+
+    private fun sendEventAndUpdateState(
+        customerioState: CustomerioState,
+        event: Map<String, Any?>,
+        updateFunction: (CustomerioState) -> (CustomerioState)
+    ) {
+        try {
+            clients[Workspace.NORWAY]?.sendEvent(
+                customerioState.memberId,
+                event
+            )
+            this.stateRepository.save(updateFunction(customerioState))
+        } catch (ex: RuntimeException) {
+            logger.error("Could not send event to customerio", ex)
         }
     }
 }
