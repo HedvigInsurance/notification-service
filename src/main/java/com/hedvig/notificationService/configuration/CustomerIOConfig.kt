@@ -46,11 +46,9 @@ class CustomerIOConfig() {
         productPricingFacade: ProductPricingFacade,
         memberServiceImpl: MemberServiceImpl,
         objectMapper: ObjectMapper,
-        repo: CustomerIOStateRepository
+        repo: CustomerIOStateRepository,
+        clients: Map<Workspace, CustomerioClient>
     ): CustomerioService {
-
-        val clients =
-            createClients(objectMapper)
 
         return CustomerioService(
             WorkspaceSelector(
@@ -63,7 +61,8 @@ class CustomerIOConfig() {
         )
     }
 
-    private fun createClients(objectMapper: ObjectMapper): Map<Workspace, CustomerioClient> {
+    @Bean
+    fun createClients(objectMapper: ObjectMapper): Map<Workspace, CustomerioClient> {
         return if (useFakes) {
             val customerioMock = CustomerioMock(objectMapper)
             return mapOf(
