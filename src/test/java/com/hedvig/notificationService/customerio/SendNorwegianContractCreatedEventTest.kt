@@ -17,7 +17,7 @@ import org.junit.Test
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
-class SendNorwegianContractCreatedEvent {
+class SendNorwegianContractCreatedEventTest {
 
     @MockK
     lateinit var workspaceSelector: WorkspaceSelector
