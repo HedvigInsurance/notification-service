@@ -1,6 +1,7 @@
 package com.hedvig.notificationService.customerio
 
 import com.hedvig.customerio.CustomerioClient
+import com.hedvig.notificationService.customerio.events.CustomerioEventCreator
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import org.slf4j.LoggerFactory

@@ -4,6 +4,7 @@ import assertk.assertThat
 import assertk.assertions.containsAll
 import assertk.assertions.isEqualTo
 import com.hedvig.customerio.CustomerioClient
+import com.hedvig.notificationService.customerio.events.CustomerioEventCreatorImpl
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import com.hedvig.notificationService.serviceIntegration.productPricing.FeignExceptionForTest

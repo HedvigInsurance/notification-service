@@ -1,4 +1,4 @@
-package com.hedvig.notificationService.customerio
+package com.hedvig.notificationService.customerio.events
 
 import com.hedvig.notificationService.customerio.state.CustomerioState
 

@@ -3,13 +3,13 @@ package com.hedvig.notificationService
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.hedvig.customerio.CustomerioClient
 import com.hedvig.customerio.CustomerioMock
-import com.hedvig.notificationService.customerio.CustomerioEventCreatorImpl
 import com.hedvig.notificationService.customerio.CustomerioService
 import com.hedvig.notificationService.customerio.FakeProductPricingFacade
 import com.hedvig.notificationService.customerio.MemberServiceImpl
 import com.hedvig.notificationService.customerio.ProductPricingFacade
 import com.hedvig.notificationService.customerio.Workspace
 import com.hedvig.notificationService.customerio.WorkspaceSelector
+import com.hedvig.notificationService.customerio.events.CustomerioEventCreatorImpl
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import com.hedvig.notificationService.serviceIntegration.memberService.FakeMemberServiceClient
 import com.hedvig.notificationService.serviceIntegration.memberService.MemberServiceClient

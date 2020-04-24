@@ -1,5 +1,8 @@
-package com.hedvig.notificationService.customerio
+package com.hedvig.notificationService.customerio.events
 
+import com.hedvig.notificationService.customerio.AgreementType
+import com.hedvig.notificationService.customerio.ContractInfo
+import com.hedvig.notificationService.customerio.ProductPricingFacade
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import java.time.format.DateTimeFormatter
 
