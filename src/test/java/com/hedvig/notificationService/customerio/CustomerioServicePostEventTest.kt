@@ -16,6 +16,7 @@ class CustomerioServicePostEventTest {
         val noClient = mockk<CustomerioClient>(relaxed = true)
         val workspaceSelector = mockk<WorkspaceSelector>()
         val eventCreator = mockk<CustomerioEventCreator>()
+        val productPricingFacade = mockk<ProductPricingFacade>()
 
         val sut = CustomerioService(
             workspaceSelector,
@@ -24,7 +25,8 @@ class CustomerioServicePostEventTest {
             mapOf(
                 Workspace.SWEDEN to sweClient,
                 Workspace.NORWAY to noClient
-            )
+            ),
+            productPricingFacade
         )
 
         every { workspaceSelector.getWorkspaceForMember("8080") } returns Workspace.SWEDEN
@@ -40,6 +42,7 @@ class CustomerioServicePostEventTest {
         val noClient = mockk<CustomerioClient>(relaxed = true)
         val workspaceSelector = mockk<WorkspaceSelector>()
         val eventCreator = mockk<CustomerioEventCreator>()
+        val productPricingFacade = mockk<ProductPricingFacade>()
 
         val sut = CustomerioService(
             workspaceSelector,
@@ -49,7 +52,8 @@ class CustomerioServicePostEventTest {
             mapOf(
                 Workspace.SWEDEN to sweClient,
                 Workspace.NORWAY to noClient
-            )
+            ),
+            productPricingFacade
         )
 
         every { workspaceSelector.getWorkspaceForMember("8080") } returns Workspace.NORWAY

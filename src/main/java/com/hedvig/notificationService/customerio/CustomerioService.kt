@@ -15,7 +15,8 @@ open class CustomerioService(
     private val workspaceSelector: WorkspaceSelector,
     private val stateRepository: CustomerIOStateRepository,
     private val eventCreator: CustomerioEventCreator,
-    private val clients: Map<Workspace, CustomerioClient>
+    private val clients: Map<Workspace, CustomerioClient>,
+    private val productPricingFacade: ProductPricingFacade
 ) {
 
     private val logger = LoggerFactory.getLogger(CustomerioService::class.java)
@@ -90,7 +91,8 @@ open class CustomerioService(
         for (customerioState in this.stateRepository.shouldSendTempSignEvent(windowEndTime)) {
 
             try {
-                val event = eventCreator.createTmpSignedInsuranceEvent(customerioState, listOf())
+                val contracts = this.productPricingFacade.getContractTypeForMember(customerioState.memberId)
+                val event = eventCreator.createTmpSignedInsuranceEvent(customerioState, contracts)
                 sendEventAndUpdateState(customerioState, event) { it.copy(sentTmpSignEvent = true) }
             } catch (ex: RuntimeException) {
                 logger.error("Could not create event from customerio state")

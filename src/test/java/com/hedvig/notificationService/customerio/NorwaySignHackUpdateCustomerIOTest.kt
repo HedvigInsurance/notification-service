@@ -55,7 +55,8 @@ class NorwaySignHackUpdateCustomerIOTest {
             mapOf(
                 Workspace.SWEDEN to seCustomerioClient,
                 Workspace.NORWAY to noCustomerIoClient
-            )
+            ),
+            productPricingFacade
         )
     }
 

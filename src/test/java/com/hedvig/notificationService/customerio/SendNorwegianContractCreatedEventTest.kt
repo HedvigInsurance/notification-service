@@ -46,7 +46,8 @@ class SendNorwegianContractCreatedEventTest {
             mapOf(
                 Workspace.NORWAY to noClient,
                 Workspace.SWEDEN to seClient
-            )
+            ),
+            productPricingFacade
         )
     }
 

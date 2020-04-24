@@ -57,7 +57,8 @@ class CustomerIOConfig() {
             ),
             repo,
             CustomerioEventCreatorImpl(productPricingFacade),
-            clients
+            clients,
+            productPricingFacade
         )
     }
 

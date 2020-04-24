@@ -12,7 +12,7 @@ class CustomerioEventCreatorImpl(private val productPricingFacade: ProductPricin
         argContracts: Collection<ContractInfo>
     ): Map<String, Any?> {
 
-        val contracts = argContracts.plus(productPricingFacade.getContractTypeForMember(customerioState.memberId))
+        val contracts = argContracts
 
         val returnMap = mutableMapOf<String, Any?>("name" to "TmpSignedInsuranceEvent")
         val data = mutableMapOf<String, Any?>()

@@ -29,7 +29,8 @@ class CustomerioServiceDeleteCustomerTest {
             mapOf(
                 Workspace.SWEDEN to sweClient,
                 Workspace.NORWAY to noClient
-            )
+            ),
+            productPricingFacade
         )
         cut.deleteCustomer("asdad")
         verify { noClient.deleteCustomer(any()) }
@@ -49,7 +50,8 @@ class CustomerioServiceDeleteCustomerTest {
             mapOf(
                 Workspace.SWEDEN to sweClient,
                 Workspace.NORWAY to noClient
-            )
+            ),
+            productPricingFacade
         )
         cut.deleteCustomer("asdad")
         verify { sweClient.deleteCustomer(any()) }

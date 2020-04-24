@@ -29,6 +29,9 @@ class NorwaySignHackHandleUpdatesFromUnderwriterTest {
     lateinit var eventCreator: CustomerioEventCreator
 
     @MockK
+    lateinit var productPricingFacade: ProductPricingFacade
+
+    @MockK
     lateinit var sut: CustomerioService
 
     lateinit var repository: InMemoryCustomerIOStateRepository
@@ -49,7 +52,8 @@ class NorwaySignHackHandleUpdatesFromUnderwriterTest {
             mapOf(
                 Workspace.SWEDEN to seCustomerioClient,
                 Workspace.NORWAY to noCustomerIoClient
-            )
+            ),
+            productPricingFacade
         )
     }
 
