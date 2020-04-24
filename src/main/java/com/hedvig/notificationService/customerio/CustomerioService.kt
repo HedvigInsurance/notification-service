@@ -90,7 +90,7 @@ open class CustomerioService(
         for (customerioState in this.stateRepository.shouldSendTempSignEvent(windowEndTime)) {
 
             try {
-                val event = eventCreator.createTmpSignedInsuranceEvent(customerioState)
+                val event = eventCreator.createTmpSignedInsuranceEvent(customerioState, listOf())
                 sendEventAndUpdateState(customerioState, event) { it.copy(sentTmpSignEvent = true) }
             } catch (ex: RuntimeException) {
                 logger.error("Could not create event from customerio state")

@@ -47,7 +47,7 @@ class CreateTmpSignEventTest() {
             false
         )
 
-        val eventData = sut.createTmpSignedInsuranceEvent(customerioState)
+        val eventData = sut.createTmpSignedInsuranceEvent(customerioState, listOf())
 
         assertThat(eventData["name"]).isEqualTo("TmpSignedInsuranceEvent")
     }
@@ -68,7 +68,7 @@ class CreateTmpSignEventTest() {
             false
         )
 
-        val event = sut.createTmpSignedInsuranceEvent(customerioState)
+        val event = sut.createTmpSignedInsuranceEvent(customerioState, listOf())
         val eventData = event["data"] as Map<String, Any?>
         assertThat(eventData["is_signed_innbo"]).isEqualTo(true)
         assertThat(eventData["activation_date_innbo"]).isEqualTo(null)
@@ -90,7 +90,7 @@ class CreateTmpSignEventTest() {
             false
         )
 
-        val event = sut.createTmpSignedInsuranceEvent(customerioState)
+        val event = sut.createTmpSignedInsuranceEvent(customerioState, listOf())
         val eventData = event["data"] as Map<String, Any?>
         assertThat(eventData["is_switcher_innbo"]).isEqualTo(true)
         assertThat(eventData["switcher_company_innbo"]).isEqualTo("folksam")
@@ -112,7 +112,7 @@ class CreateTmpSignEventTest() {
             false
         )
 
-        val event = sut.createTmpSignedInsuranceEvent(customerioState)
+        val event = sut.createTmpSignedInsuranceEvent(customerioState, listOf())
         val eventData = event["data"] as Map<String, Any?>
         assertThat(eventData["activation_date_innbo"]).isEqualTo("2020-03-13")
     }
@@ -133,7 +133,7 @@ class CreateTmpSignEventTest() {
             false
         )
 
-        val event = sut.createTmpSignedInsuranceEvent(customerioState)
+        val event = sut.createTmpSignedInsuranceEvent(customerioState, listOf())
         val eventData = event["data"] as Map<String, Any?>
 
         assertThat(eventData["is_signed_reise"]).isEqualTo(true)
@@ -157,7 +157,7 @@ class CreateTmpSignEventTest() {
             false
         )
 
-        val event = sut.createTmpSignedInsuranceEvent(customerioState)
+        val event = sut.createTmpSignedInsuranceEvent(customerioState, listOf())
         val eventData = event["data"] as Map<String, Any?>
         assertThat(eventData["is_switcher_reise"]).isEqualTo(true)
         assertThat(eventData["switcher_company_reise"]).isEqualTo("a new company")
@@ -179,7 +179,7 @@ class CreateTmpSignEventTest() {
             false
         )
 
-        val event = sut.createTmpSignedInsuranceEvent(customerioState)
+        val event = sut.createTmpSignedInsuranceEvent(customerioState, listOf())
         val eventData = event["data"] as Map<String, Any?>
         assertThat(eventData["activation_date_reise"]).isEqualTo("2020-01-01")
     }
@@ -205,7 +205,7 @@ class CreateTmpSignEventTest() {
             false
         )
 
-        val event = sut.createTmpSignedInsuranceEvent(customerioState)
+        val event = sut.createTmpSignedInsuranceEvent(customerioState, listOf())
         val eventData = event["data"] as Map<String, Any?>
         assertThat(eventData["is_signed_reise"]).isEqualTo(true)
         assertThat(eventData["is_signed_innbo"]).isEqualTo(true)
@@ -227,6 +227,6 @@ class CreateTmpSignEventTest() {
             false
         )
         thrown.expect(RuntimeException::class.java)
-        sut.createTmpSignedInsuranceEvent(customerioState)
+        sut.createTmpSignedInsuranceEvent(customerioState, listOf())
     }
 }

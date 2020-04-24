@@ -7,9 +7,12 @@ import com.hedvig.notificationService.customerio.state.CustomerioState
 import java.time.format.DateTimeFormatter
 
 class CustomerioEventCreatorImpl(private val productPricingFacade: ProductPricingFacade) : CustomerioEventCreator {
-    override fun createTmpSignedInsuranceEvent(customerioState: CustomerioState): Map<String, Any?> {
+    override fun createTmpSignedInsuranceEvent(
+        customerioState: CustomerioState,
+        argContracts: Collection<ContractInfo>
+    ): Map<String, Any?> {
 
-        val contracts = productPricingFacade.getContractTypeForMember(customerioState.memberId)
+        val contracts = argContracts.plus(productPricingFacade.getContractTypeForMember(customerioState.memberId))
 
         val returnMap = mutableMapOf<String, Any?>("name" to "TmpSignedInsuranceEvent")
         val data = mutableMapOf<String, Any?>()
