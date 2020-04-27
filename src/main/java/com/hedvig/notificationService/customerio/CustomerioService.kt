@@ -87,9 +87,7 @@ open class CustomerioService(
             ChronoUnit.MINUTES
         )
 
-        val sendTempEvents = this.stateRepository.shouldSendTempSignEvent(windowEndTime)
-        val sendContractCreated = this.stateRepository.shouldSendContractCreatedEvents(windowEndTime)
-        for (customerioState in sendTempEvents.plus(sendContractCreated)) {
+        for (customerioState in this.stateRepository.shouldUpdate(windowEndTime)) {
 
             try {
                 val contracts = this.productPricingFacade.getContractTypeForMember(customerioState.memberId)

@@ -2,7 +2,6 @@ package com.hedvig.notificationService.customerio.state
 
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
-import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 import java.time.Instant
 
@@ -12,17 +11,10 @@ interface HibernateRepository : CustomerIOStateRepository, CrudRepository<Custom
     @Query(
         """
         FROM CustomerioState cs
-        where cs.underwriterFirstSignAttributesUpdate <= :byTime and cs.sentTmpSignEvent = false
-        
+        where 
+            (cs.contractCreatedAt IS NOT NULL and cs.contractCreatedAt <= :byTime) OR 
+            (cs.underwriterFirstSignAttributesUpdate <= :byTime and cs.sentTmpSignEvent = false)
     """
     )
-    override fun shouldSendTempSignEvent(@Param("byTime") byTime: Instant): Collection<CustomerioState>
-
-    @Query(
-        """
-        FROM CustomerioState cs
-        where cs.contractCreatedAt IS NOT NULL and cs.contractCreatedAt <= :byTime
-    """
-    )
-    override fun shouldSendContractCreatedEvents(@Param("byTime") byTime: Instant): Collection<CustomerioState>
+    override fun shouldUpdate(byTime: Instant): Collection<CustomerioState>
 }

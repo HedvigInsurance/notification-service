@@ -12,17 +12,12 @@ class InMemoryCustomerIOStateRepository(var data: Map<String, CustomerioState> =
         return data[memberId]
     }
 
-    override fun shouldSendTempSignEvent(byTime: Instant): Collection<CustomerioState> {
+    override fun shouldUpdate(byTime: Instant): Collection<CustomerioState> {
         return data.values.filter {
-            it.underwriterFirstSignAttributesUpdate != null &&
+            (it.underwriterFirstSignAttributesUpdate != null &&
                 it.underwriterFirstSignAttributesUpdate <= byTime &&
-                !it.sentTmpSignEvent
-        }
-    }
-
-    override fun shouldSendContractCreatedEvents(byTime: Instant): Collection<CustomerioState> {
-        return data.values.filter {
-            it.contractCreatedAt != null && it.contractCreatedAt <= byTime
+                !it.sentTmpSignEvent) ||
+                (it.contractCreatedAt != null && it.contractCreatedAt <= byTime)
         }
     }
 }
