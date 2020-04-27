@@ -15,13 +15,13 @@ class EventController(val eventHandler: EventHandler) {
 
     @PostMapping("/contractCreated")
     fun contractCreated(@RequestBody event: ContractCreatedEvent): ResponseEntity<Any> {
-        eventHandler.contractCreatedEvent(event)
+        eventHandler.onContractCreatedEvent(event)
         return ResponseEntity.accepted().build()
     }
 
     @PostMapping("/startDateUpdated")
     fun startDateUpdated(@RequestBody event: StartDateUpdatedEvent): ResponseEntity<Any> {
-        eventHandler.startDateUpdatedEvent(event)
+        eventHandler.onStartDateUpdatedEvent(event)
         return ResponseEntity.accepted().build()
     }
 }

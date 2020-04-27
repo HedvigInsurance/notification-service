@@ -30,7 +30,7 @@ class OnContractCreatedEventTest {
 
         val time = Instant.parse("2020-04-27T09:20:42.815351Z")
 
-        sut.contractCreatedEvent(
+        sut.onContractCreatedEvent(
             ContractCreatedEvent(
                 "someEventId",
                 "1337"
@@ -48,7 +48,7 @@ class OnContractCreatedEventTest {
 
         val time = Instant.parse("2020-04-27T09:20:42.815351Z")
 
-        sut.contractCreatedEvent(
+        sut.onContractCreatedEvent(
             ContractCreatedEvent(
                 "someEventId",
                 "1337"

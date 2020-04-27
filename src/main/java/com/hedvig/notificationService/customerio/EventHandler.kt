@@ -9,7 +9,7 @@ import java.time.Instant
 
 @Service
 class EventHandler(val repo: CustomerIOStateRepository) {
-    fun startDateUpdatedEvent(
+    fun onStartDateUpdatedEvent(
         event: StartDateUpdatedEvent,
         callTime: Instant = Instant.now()
     ) {
@@ -19,7 +19,7 @@ class EventHandler(val repo: CustomerIOStateRepository) {
         }
     }
 
-    fun contractCreatedEvent(contractCreatedEvent: ContractCreatedEvent, callTime: Instant = Instant.now()) {
+    fun onContractCreatedEvent(contractCreatedEvent: ContractCreatedEvent, callTime: Instant = Instant.now()) {
         val state = repo.findByMemberId(contractCreatedEvent.owningMemberId)
         if (state?.contractCreatedAt == null) {
             repo.save(CustomerioState(contractCreatedEvent.owningMemberId, null, false, callTime))

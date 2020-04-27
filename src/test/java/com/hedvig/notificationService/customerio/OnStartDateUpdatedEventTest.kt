@@ -22,7 +22,7 @@ class OnStartDateUpdatedEventTest {
     fun `on start date updated event`() {
         val sut = EventHandler(repo)
         val time = Instant.parse("2020-04-27T14:03:23.337770Z")
-        sut.startDateUpdatedEvent(StartDateUpdatedEvent("aContractId", "aMemberId"), time)
+        sut.onStartDateUpdatedEvent(StartDateUpdatedEvent("aContractId", "aMemberId"), time)
 
         assertThat(repo.data["aMemberId"]?.startDateUpdatedAt).isEqualTo(time)
     }
@@ -35,7 +35,7 @@ class OnStartDateUpdatedEventTest {
 
         repo.save(CustomerioState("aMemberId", null, startDateUpdatedAt = timeOfFirstCall))
 
-        sut.startDateUpdatedEvent(StartDateUpdatedEvent("aContractId", "aMemberId"), timeOfFirstCall.plusMillis(3000))
+        sut.onStartDateUpdatedEvent(StartDateUpdatedEvent("aContractId", "aMemberId"), timeOfFirstCall.plusMillis(3000))
 
         assertThat(repo.data["aMemberId"]?.startDateUpdatedAt).isEqualTo(timeOfFirstCall)
     }
