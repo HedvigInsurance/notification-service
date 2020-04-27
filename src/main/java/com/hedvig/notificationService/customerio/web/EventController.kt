@@ -1,6 +1,7 @@
 package com.hedvig.notificationService.customerio.web
 
 import com.hedvig.notificationService.customerio.CustomerioService
+import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -15,8 +16,3 @@ class EventController(val customerioService: CustomerioService) {
         return ResponseEntity.accepted().build()
     }
 }
-
-data class ContractCreatedEvent(
-    val contractId: String,
-    val owningMemberId: String
-)

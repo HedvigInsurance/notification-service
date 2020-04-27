@@ -1,10 +1,10 @@
 package com.hedvig.notificationService.customerio
 
 import com.hedvig.customerio.CustomerioClient
+import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
 import com.hedvig.notificationService.customerio.events.CustomerioEventCreator
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.customerio.state.CustomerioState
-import com.hedvig.notificationService.customerio.web.ContractCreatedEvent
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import java.time.Instant
@@ -132,6 +132,9 @@ open class CustomerioService(
         event: ContractCreatedEvent,
         timeAtCall: Instant = Instant.now()
     ) {
-        stateRepository.save(CustomerioState(event.owningMemberId, null, false, timeAtCall))
+        val state = stateRepository.findByMemberId(event.owningMemberId)
+        if (state?.contractCreatedAt == null) {
+            stateRepository.save(CustomerioState(event.owningMemberId, null, false, timeAtCall))
+        }
     }
 }
