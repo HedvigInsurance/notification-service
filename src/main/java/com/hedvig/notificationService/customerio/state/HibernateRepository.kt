@@ -21,7 +21,7 @@ interface HibernateRepository : CustomerIOStateRepository, CrudRepository<Custom
     @Query(
         """
         FROM CustomerioState cs
-        where cs.contractCreatedAt <= :byTime
+        where cs.contractCreatedAt IS NOT NULL and cs.contractCreatedAt <= :byTime
     """
     )
     override fun shouldSendContractCreatedEvents(@Param("byTime") byTime: Instant): Collection<CustomerioState>
