@@ -53,4 +53,33 @@ class ActivationDateUpdatedEventTest {
             "switcherCompany" to "companyName"
         )
     }
+
+    @Test
+    fun `two contracts with start date`() {
+        val contracts = listOf(
+            ContractInfo(AgreementType.NorwegianHomeContent, "companyName", LocalDate.of(2020, 5, 1)),
+            ContractInfo(AgreementType.NorwegianTravel, "anotherCompany", LocalDate.of(2020, 5, 13))
+        )
+
+        val callTime = Instant.parse("2020-04-27T18:50:41.760555Z")
+        val customerioState = CustomerioState("amember", null, startDateUpdatedAt = callTime)
+
+        val sut = CustomerioEventCreatorImpl()
+        val eventAndState = sut.execute(customerioState, contracts)
+
+        val hasStartDate = eventAndState.first["contractsWithStartDate"] as List<Map<String, Any?>>?
+        assertThat(hasStartDate)
+            .isNotNull().containsAll(
+                mapOf(
+                    "type" to "innbo",
+                    "startDate" to "2020-05-01",
+                    "switcherCompany" to "companyName"
+                ),
+                mapOf(
+                    "type" to "reise",
+                    "startDate" to "2020-05-13",
+                    "switcherCompany" to "anotherCompany"
+                )
+            )
+    }
 }

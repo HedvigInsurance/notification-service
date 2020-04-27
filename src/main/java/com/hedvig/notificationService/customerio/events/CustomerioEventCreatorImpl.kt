@@ -100,7 +100,7 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
         contracts.forEach {
             contractsWithStartDate.add(
                 mutableMapOf(
-                    "type" to "innbo",
+                    "type" to if (it.type == AgreementType.NorwegianTravel) "reise" else "innbo",
                     "startDate" to it.startDate.toString(),
                     "switcherCompany" to it.switcherCompany
                 )
