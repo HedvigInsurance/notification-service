@@ -4,6 +4,7 @@ import com.hedvig.customerio.CustomerioClient
 import com.hedvig.notificationService.customerio.events.CustomerioEventCreator
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.customerio.state.CustomerioState
+import com.hedvig.notificationService.customerio.web.ContractCreatedEvent
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import java.time.Instant
@@ -125,5 +126,12 @@ open class CustomerioService(
         } catch (ex: RuntimeException) {
             logger.error("Could not send event to customerio", ex)
         }
+    }
+
+    fun contractCreatedEvent(
+        event: ContractCreatedEvent,
+        timeAtCall: Instant = Instant.now()
+    ) {
+        stateRepository.save(CustomerioState(event.owningMemberId, null, false, timeAtCall))
     }
 }
