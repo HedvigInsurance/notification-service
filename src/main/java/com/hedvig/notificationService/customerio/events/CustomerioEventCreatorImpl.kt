@@ -12,10 +12,8 @@ class CustomerioEventCreatorImpl(private val productPricingFacade: ProductPricin
         argContracts: Collection<ContractInfo>
     ): Map<String, Any?> {
 
-        val contracts = argContracts
-
         val returnMap = mutableMapOf<String, Any?>("name" to "TmpSignedInsuranceEvent")
-        createData(returnMap, contracts)
+        createData(returnMap, argContracts)
 
         return returnMap.toMap()
     }
