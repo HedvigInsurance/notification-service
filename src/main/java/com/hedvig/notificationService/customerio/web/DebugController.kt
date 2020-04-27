@@ -1,6 +1,7 @@
-package com.hedvig.notificationService.customerio
+package com.hedvig.notificationService.customerio.web
 
 import com.hedvig.customerio.CustomerioClient
+import com.hedvig.notificationService.customerio.Workspace
 import org.springframework.context.annotation.Profile
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
