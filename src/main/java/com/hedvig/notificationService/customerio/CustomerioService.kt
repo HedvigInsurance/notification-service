@@ -86,25 +86,15 @@ open class CustomerioService(
             SIGN_EVENT_WINDOWS_SIZE_MINUTES,
             ChronoUnit.MINUTES
         )
-        // This is some duplicated code but the first part here is going away as soon as our new logic works
-        // so this feels ok for now.
-        for (customerioState in this.stateRepository.shouldSendTempSignEvent(windowEndTime)) {
+
+        val sendTempEvents = this.stateRepository.shouldSendTempSignEvent(windowEndTime)
+        val sendContractCreated = this.stateRepository.shouldSendContractCreatedEvents(windowEndTime)
+        for (customerioState in sendTempEvents.plus(sendContractCreated)) {
 
             try {
                 val contracts = this.productPricingFacade.getContractTypeForMember(customerioState.memberId)
-                val event = eventCreator.createTmpSignedInsuranceEvent(customerioState, contracts)
-                sendEventAndUpdateState(customerioState, event) { it.copy(sentTmpSignEvent = true) }
-            } catch (ex: RuntimeException) {
-                logger.error("Could not create event from customerio state")
-            }
-        }
-
-        for (customerioState in this.stateRepository.shouldSendContractCreatedEvents(windowEndTime)) {
-
-            try {
-                val contracts = this.productPricingFacade.getContractTypeForMember(customerioState.memberId)
-                val event = eventCreator.contractCreatedEvent(customerioState, contracts)
-                sendEventAndUpdateState(customerioState, event) { it.copy(contractCreatedAt = null) }
+                val eventAndState = eventCreator.execute(customerioState, contracts)
+                sendEventAndUpdateState(customerioState, eventAndState.first) { eventAndState.second }
             } catch (ex: RuntimeException) {
                 logger.error("Could not create event from customerio state")
             }

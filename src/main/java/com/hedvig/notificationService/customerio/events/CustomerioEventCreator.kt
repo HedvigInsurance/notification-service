@@ -11,4 +11,8 @@ CustomerioEventCreator {
     ): Map<String, Any?>
 
     fun contractCreatedEvent(customerioState: CustomerioState, contracts: Collection<ContractInfo>): Map<String, Any?>
+    fun execute(
+        customerioState: CustomerioState,
+        contracts: List<ContractInfo>
+    ): Pair<Map<String, Any?>, CustomerioState>
 }

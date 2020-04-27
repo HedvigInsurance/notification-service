@@ -47,6 +47,23 @@ class CustomerioEventCreatorImpl(private val productPricingFacade: ProductPricin
         return returnMap.toMap()
     }
 
+    override fun execute(
+        customerioState: CustomerioState,
+        contracts: List<ContractInfo>
+    ): Pair<Map<String, Any?>, CustomerioState> {
+        return when {
+            customerioState.underwriterFirstSignAttributesUpdate != null -> this.createTmpSignedInsuranceEvent(
+                customerioState,
+                contracts
+            ) to customerioState.copy(sentTmpSignEvent = true)
+            customerioState.contractCreatedAt != null -> this.contractCreatedEvent(
+                customerioState,
+                contracts
+            ) to customerioState.copy(contractCreatedAt = null)
+            else -> throw RuntimeException("CustomerioState in weird state")
+        }
+    }
+
     private fun updateSwitcherInfo(
         contract: ContractInfo,
         returnMap: MutableMap<String, Any?>,
