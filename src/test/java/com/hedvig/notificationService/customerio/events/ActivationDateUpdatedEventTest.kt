@@ -2,6 +2,7 @@ package com.hedvig.notificationService.customerio.events
 
 import assertk.assertThat
 import assertk.assertions.containsAll
+import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
 import assertk.assertions.isNull
 import com.hedvig.notificationService.customerio.AgreementType
@@ -9,11 +10,17 @@ import com.hedvig.notificationService.customerio.ContractInfo
 import com.hedvig.notificationService.customerio.ProductPricingFacade
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import io.mockk.impl.annotations.MockK
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.ExpectedException
 import java.time.Instant
 import java.time.LocalDate
 
 class ActivationDateUpdatedEventTest {
+
+    @get:Rule
+    val thrown = ExpectedException.none()
+
     @MockK
     lateinit var productPricingFacade: ProductPricingFacade
 
@@ -46,12 +53,14 @@ class ActivationDateUpdatedEventTest {
         val sut = CustomerioEventCreatorImpl()
         val eventAndState = sut.execute(customerioState, contracts)
 
-        val hasStartDate = eventAndState.first["contractsWithStartDate"] as List<Map<String, Any?>>?
+        val data = eventAndState.first["data"] as Map<String, Any?>
+        val hasStartDate = data["contractsWithStartDate"] as List<Map<String, Any?>>?
         assertThat(hasStartDate?.first()).isNotNull().containsAll(
             "type" to "innbo",
             "startDate" to "2020-05-01",
             "switcherCompany" to "companyName"
         )
+        assertThat(eventAndState.first["name"]).isEqualTo("ActivationDateUpdatedEvent")
     }
 
     @Test
@@ -67,7 +76,8 @@ class ActivationDateUpdatedEventTest {
         val sut = CustomerioEventCreatorImpl()
         val eventAndState = sut.execute(customerioState, contracts)
 
-        val hasStartDate = eventAndState.first["contractsWithStartDate"] as List<Map<String, Any?>>?
+        val data = eventAndState.first["data"] as Map<String, Any?>
+        val hasStartDate = data["contractsWithStartDate"] as List<Map<String, Any?>>?
         assertThat(hasStartDate)
             .isNotNull().containsAll(
                 mapOf(
@@ -96,7 +106,8 @@ class ActivationDateUpdatedEventTest {
         val sut = CustomerioEventCreatorImpl()
         val eventAndState = sut.execute(customerioState, contracts)
 
-        val withoutStartDate = eventAndState.first["contractsWithoutStartDate"] as List<Map<String, Any?>>?
+        val data = eventAndState.first["data"] as Map<String, Any?>
+        val withoutStartDate = data["contractsWithoutStartDate"] as List<Map<String, Any?>>?
         assertThat(withoutStartDate)
             .isNotNull().containsAll(
                 mapOf(
@@ -104,5 +115,19 @@ class ActivationDateUpdatedEventTest {
                     "switcherCompany" to "anotherCompany"
                 )
             )
+    }
+
+    @Test
+    fun `no contract with one with start date`() {
+        val contracts = listOf(
+            ContractInfo(AgreementType.NorwegianTravel, "anotherCompany", null)
+        )
+
+        val callTime = Instant.parse("2020-04-27T18:50:41.760555Z")
+        val customerioState = CustomerioState("amember", null, startDateUpdatedAt = callTime)
+
+        val sut = CustomerioEventCreatorImpl()
+        thrown.expectMessage("Cannot create ActivationDateUpdatedEvent no contracts with start date")
+        sut.execute(customerioState, contracts)
     }
 }

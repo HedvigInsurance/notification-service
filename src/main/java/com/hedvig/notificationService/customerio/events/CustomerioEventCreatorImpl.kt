@@ -60,7 +60,6 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
                 contracts
             ) to customerioState.copy(contractCreatedAt = null)
             customerioState.startDateUpdatedAt != null -> startDateUpdatedEvent(
-                customerioState,
                 contracts
             ) to customerioState.copy(
                 startDateUpdatedAt = null
@@ -91,16 +90,25 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
     }
 
     private fun startDateUpdatedEvent(
-        customerioState: CustomerioState,
         contracts: Collection<ContractInfo>
     ): Map<String, Any?> {
-        val returnMap = mutableMapOf<String, Any?>()
+
+        if (contracts.all { it.startDate == null }) {
+            throw RuntimeException("Cannot create ActivationDateUpdatedEvent no contracts with start date")
+        }
+
+        val returnMap = mutableMapOf<String, Any?>(
+            "name" to "ActivationDateUpdatedEvent"
+        )
+
+        val data = mutableMapOf<String, Any?>()
+        returnMap["data"] = data
 
         val contractsWithStartDate = mutableListOf<MutableMap<String, Any?>>()
-        returnMap["contractsWithStartDate"] = contractsWithStartDate
+        data["contractsWithStartDate"] = contractsWithStartDate
 
         val contractsWithoutStartDate = mutableListOf<MutableMap<String, Any?>>()
-        returnMap["contractsWithoutStartDate"] = contractsWithoutStartDate
+        data["contractsWithoutStartDate"] = contractsWithoutStartDate
 
         contracts.forEach {
             if (it.startDate != null) {
