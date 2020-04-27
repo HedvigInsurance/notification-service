@@ -43,7 +43,7 @@ class SendNorwegianContractCreatedEventTest {
         sut = CustomerioService(
             workspaceSelector,
             repo,
-            CustomerioEventCreatorImpl(productPricingFacade),
+            CustomerioEventCreatorImpl(),
             mapOf(
                 Workspace.NORWAY to noClient,
                 Workspace.SWEDEN to seClient

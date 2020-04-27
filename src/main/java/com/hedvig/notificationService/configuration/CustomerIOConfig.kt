@@ -56,7 +56,7 @@ class CustomerIOConfig() {
                 memberServiceImpl
             ),
             repo,
-            CustomerioEventCreatorImpl(productPricingFacade),
+            CustomerioEventCreatorImpl(),
             clients,
             productPricingFacade
         )

@@ -2,11 +2,10 @@ package com.hedvig.notificationService.customerio.events
 
 import com.hedvig.notificationService.customerio.AgreementType
 import com.hedvig.notificationService.customerio.ContractInfo
-import com.hedvig.notificationService.customerio.ProductPricingFacade
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import java.time.format.DateTimeFormatter
 
-class CustomerioEventCreatorImpl(private val productPricingFacade: ProductPricingFacade) : CustomerioEventCreator {
+class CustomerioEventCreatorImpl : CustomerioEventCreator {
     override fun createTmpSignedInsuranceEvent(
         customerioState: CustomerioState,
         argContracts: Collection<ContractInfo>
@@ -60,6 +59,9 @@ class CustomerioEventCreatorImpl(private val productPricingFacade: ProductPricin
                 customerioState,
                 contracts
             ) to customerioState.copy(contractCreatedAt = null)
+            customerioState.startDateUpdatedAt != null -> mapOf<String, Any?>() to customerioState.copy(
+                startDateUpdatedAt = null
+            )
             else -> throw RuntimeException("CustomerioState in weird state")
         }
     }

@@ -46,7 +46,7 @@ class CustomerioServiceForwardUpdateTest {
                 memberServiceImpl
             ),
             repository,
-            CustomerioEventCreatorImpl(productPricingFacade),
+            CustomerioEventCreatorImpl(),
             mapOf(
                 Workspace.SWEDEN to customerIOMockSweden,
                 Workspace.NORWAY to customerIOMockNorway

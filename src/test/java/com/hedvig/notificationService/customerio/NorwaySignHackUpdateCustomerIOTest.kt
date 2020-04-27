@@ -43,7 +43,7 @@ class NorwaySignHackUpdateCustomerIOTest {
     @Before
     fun setup() {
         MockKAnnotations.init(this)
-        eventCreator = CustomerioEventCreatorImpl(productPricingFacade)
+        eventCreator = CustomerioEventCreatorImpl()
 
         sut = CustomerioService(
             WorkspaceSelector(

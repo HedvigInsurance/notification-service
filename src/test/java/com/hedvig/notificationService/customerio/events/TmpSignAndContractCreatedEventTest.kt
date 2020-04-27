@@ -134,7 +134,7 @@ class TmpSignAndContractCreatedEventTest(
     fun setup() {
         MockKAnnotations.init(this)
         sut =
-            CustomerioEventCreatorImpl(productPricingFacade)
+            CustomerioEventCreatorImpl()
     }
 
     @Test
