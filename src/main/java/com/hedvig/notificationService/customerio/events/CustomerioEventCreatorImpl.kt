@@ -59,7 +59,10 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
                 customerioState,
                 contracts
             ) to customerioState.copy(contractCreatedAt = null)
-            customerioState.startDateUpdatedAt != null -> mapOf<String, Any?>() to customerioState.copy(
+            customerioState.startDateUpdatedAt != null -> startDateUpdatedEvent(
+                customerioState,
+                contracts
+            ) to customerioState.copy(
                 startDateUpdatedAt = null
             )
             else -> throw RuntimeException("CustomerioState in weird state")
@@ -85,5 +88,25 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
         if (contract.startDate != null) {
             returnMap["activation_date_$type"] = contract.startDate.format(DateTimeFormatter.ISO_DATE)
         }
+    }
+
+    private fun startDateUpdatedEvent(
+        customerioState: CustomerioState,
+        contracts: Collection<ContractInfo>
+    ): Map<String, Any?> {
+        val returnMap = mutableMapOf<String, Any?>()
+        val contractsWithStartDate = mutableListOf<MutableMap<String, Any?>>()
+        returnMap["contractsWithStartDate"] = contractsWithStartDate
+        contracts.forEach {
+            contractsWithStartDate.add(
+                mutableMapOf(
+                    "type" to "innbo",
+                    "startDate" to it.startDate.toString(),
+                    "switcherCompany" to it.switcherCompany
+                )
+            )
+        }
+
+        return returnMap.toMap()
     }
 }
