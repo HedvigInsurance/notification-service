@@ -2,6 +2,7 @@ package com.hedvig.notificationService.customerio
 
 import com.hedvig.customerio.CustomerioClient
 import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
+import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent
 import com.hedvig.notificationService.customerio.events.CustomerioEventCreator
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.customerio.state.CustomerioState
@@ -136,5 +137,9 @@ open class CustomerioService(
         if (state?.contractCreatedAt == null) {
             stateRepository.save(CustomerioState(event.owningMemberId, null, false, timeAtCall))
         }
+    }
+
+    open fun startDateUpdatedEvent(event: StartDateUpdatedEvent) {
+        EventHandler(stateRepository).startDateUpdatedEvent(event, Instant.now())
     }
 }
