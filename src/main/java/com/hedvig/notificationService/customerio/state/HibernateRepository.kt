@@ -13,7 +13,8 @@ interface HibernateRepository : CustomerIOStateRepository, CrudRepository<Custom
         FROM CustomerioState cs
         where 
             (cs.contractCreatedAt IS NOT NULL and cs.contractCreatedAt <= :byTime) OR 
-            (cs.underwriterFirstSignAttributesUpdate <= :byTime and cs.sentTmpSignEvent = false)
+            (cs.underwriterFirstSignAttributesUpdate <= :byTime and cs.sentTmpSignEvent = false) OR
+            (cs.startDateUpdatedAt IS NOT NULL and cs.startDateUpdatedAt <= :byTime)
     """
     )
     override fun shouldUpdate(byTime: Instant): Collection<CustomerioState>

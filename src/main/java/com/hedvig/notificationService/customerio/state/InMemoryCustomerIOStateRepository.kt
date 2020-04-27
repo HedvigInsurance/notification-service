@@ -17,7 +17,8 @@ class InMemoryCustomerIOStateRepository(var data: Map<String, CustomerioState> =
             (it.underwriterFirstSignAttributesUpdate != null &&
                 it.underwriterFirstSignAttributesUpdate <= byTime &&
                 !it.sentTmpSignEvent) ||
-                (it.contractCreatedAt != null && it.contractCreatedAt <= byTime)
+                (it.contractCreatedAt != null && it.contractCreatedAt <= byTime) ||
+                (it.startDateUpdatedAt != null && it.startDateUpdatedAt <= byTime)
         }
     }
 }
