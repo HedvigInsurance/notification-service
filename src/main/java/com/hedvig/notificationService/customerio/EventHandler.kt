@@ -8,12 +8,15 @@ import org.springframework.stereotype.Service
 import java.time.Instant
 
 @Service
-open class EventHandler(val repo: CustomerIOStateRepository) {
-    open fun startDateUpdatedEvent(
+class EventHandler(val repo: CustomerIOStateRepository) {
+    fun startDateUpdatedEvent(
         event: StartDateUpdatedEvent,
         callTime: Instant = Instant.now()
     ) {
-        repo.save(CustomerioState(event.owningMemberId, null, false, null, startDateUpdatedAt = callTime))
+        val state = repo.findByMemberId(event.owningMemberId)
+        if (state?.startDateUpdatedAt == null) {
+            repo.save(CustomerioState(event.owningMemberId, null, false, null, startDateUpdatedAt = callTime))
+        }
     }
 
     fun contractCreatedEvent(contractCreatedEvent: ContractCreatedEvent, callTime: Instant = Instant.now()) {

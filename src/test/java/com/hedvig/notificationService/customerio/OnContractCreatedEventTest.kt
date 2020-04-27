@@ -11,7 +11,7 @@ import org.junit.Before
 import org.junit.Test
 import java.time.Instant
 
-class OnContractCreatedEvent {
+class OnContractCreatedEventTest {
 
     @MockK
     lateinit var productPricingFacade: ProductPricingFacade
