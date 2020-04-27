@@ -1,15 +1,25 @@
 package com.hedvig.notificationService.customerio
 
+import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
 import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.customerio.state.CustomerioState
+import org.springframework.stereotype.Service
 import java.time.Instant
 
+@Service
 open class EventHandler(val repo: CustomerIOStateRepository) {
     open fun startDateUpdatedEvent(
         event: StartDateUpdatedEvent,
-        callTime: Instant
+        callTime: Instant = Instant.now()
     ) {
         repo.save(CustomerioState(event.owningMemberId, null, false, null, startDateUpdatedAt = callTime))
+    }
+
+    fun contractCreatedEvent(contractCreatedEvent: ContractCreatedEvent, callTime: Instant = Instant.now()) {
+        val state = repo.findByMemberId(contractCreatedEvent.owningMemberId)
+        if (state?.contractCreatedAt == null) {
+            repo.save(CustomerioState(contractCreatedEvent.owningMemberId, null, false, callTime))
+        }
     }
 }

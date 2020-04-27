@@ -2,9 +2,7 @@ package com.hedvig.notificationService.customerio
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import com.hedvig.customerio.CustomerioClient
 import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
-import com.hedvig.notificationService.customerio.events.CustomerioEventCreatorImpl
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import io.mockk.MockKAnnotations
@@ -18,28 +16,13 @@ class OnContractCreatedEvent {
     @MockK
     lateinit var productPricingFacade: ProductPricingFacade
 
-    @MockK
-    lateinit var workspaceSelector: WorkspaceSelector
-
-    @MockK
-    lateinit var customerioClient: CustomerioClient
-
     private val repository = InMemoryCustomerIOStateRepository()
-    lateinit var sut: CustomerioService
+    lateinit var sut: EventHandler
 
     @Before
     fun setup() {
         MockKAnnotations.init(this)
-        sut = CustomerioService(
-            workspaceSelector,
-            repository,
-            CustomerioEventCreatorImpl(productPricingFacade),
-            mapOf(
-                Workspace.SWEDEN to customerioClient,
-                Workspace.NORWAY to customerioClient
-            ),
-            productPricingFacade
-        )
+        sut = EventHandler(repository)
     }
 
     @Test

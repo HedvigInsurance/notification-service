@@ -1,6 +1,6 @@
 package com.hedvig.notificationService.customerio.web
 
-import com.hedvig.notificationService.customerio.CustomerioService
+import com.hedvig.notificationService.customerio.EventHandler
 import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
 import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent
 import org.springframework.http.ResponseEntity
@@ -11,17 +11,17 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/_/events")
-class EventController(val customerioService: CustomerioService) {
+class EventController(val eventHandler: EventHandler) {
 
     @PostMapping("/contractCreated")
     fun contractCreated(@RequestBody event: ContractCreatedEvent): ResponseEntity<Any> {
-        customerioService.contractCreatedEvent(event)
+        eventHandler.contractCreatedEvent(event)
         return ResponseEntity.accepted().build()
     }
 
     @PostMapping("/startDateUpdated")
     fun startDateUpdated(@RequestBody event: StartDateUpdatedEvent): ResponseEntity<Any> {
-        customerioService.startDateUpdatedEvent(event)
+        eventHandler.startDateUpdatedEvent(event)
         return ResponseEntity.accepted().build()
     }
 }
