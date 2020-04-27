@@ -17,7 +17,7 @@ import java.time.Instant
 import java.time.LocalDate
 
 @RunWith(Parameterized::class)
-class CreateSignEventsTest(
+class TmpSignAndContractCreatedEventTest(
     val contracts: List<ContractInfo>,
     val values: Map<String, Any>
 ) {
@@ -167,9 +167,9 @@ class CreateSignEventsTest(
             false
         )
 
-        val event = sut.contractSignedEvent(customerioState, contracts)
+        val event = sut.contractCreatedEvent(customerioState, contracts)
 
-        assertThat(event["name"]).isEqualTo("ContractCreatedEvent")
+        assertThat(event["name"]).isEqualTo("NorwegianContractCreatedEvent")
         val eventData = event["data"] as Map<String, Any?>
         assertThat(eventData["is_signed_innbo"]).isEqualTo(values["is_signed_innbo"])
         assertThat(eventData["activation_date_innbo"]).isEqualTo(values["activation_date_innbo"])

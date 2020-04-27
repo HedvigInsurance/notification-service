@@ -38,11 +38,11 @@ class CustomerioEventCreatorImpl(private val productPricingFacade: ProductPricin
         }
     }
 
-    override fun contractSignedEvent(
+    override fun contractCreatedEvent(
         customerioState: CustomerioState,
         contracts: Collection<ContractInfo>
     ): Map<String, Any?> {
-        val returnMap = mutableMapOf<String, Any?>("name" to "ContractCreatedEvent")
+        val returnMap = mutableMapOf<String, Any?>("name" to "NorwegianContractCreatedEvent")
         createData(returnMap, contracts)
         return returnMap.toMap()
     }

@@ -103,7 +103,7 @@ open class CustomerioService(
 
             try {
                 val contracts = this.productPricingFacade.getContractTypeForMember(customerioState.memberId)
-                val event = eventCreator.contractSignedEvent(customerioState, contracts)
+                val event = eventCreator.contractCreatedEvent(customerioState, contracts)
                 sendEventAndUpdateState(customerioState, event) { it.copy(contractCreatedAt = null) }
             } catch (ex: RuntimeException) {
                 logger.error("Could not create event from customerio state")
