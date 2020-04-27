@@ -15,6 +15,15 @@ class CustomerioEventCreatorImpl(private val productPricingFacade: ProductPricin
         val contracts = argContracts
 
         val returnMap = mutableMapOf<String, Any?>("name" to "TmpSignedInsuranceEvent")
+        createData(returnMap, contracts)
+
+        return returnMap.toMap()
+    }
+
+    private fun createData(
+        returnMap: MutableMap<String, Any?>,
+        contracts: Collection<ContractInfo>
+    ) {
         val data = mutableMapOf<String, Any?>()
         returnMap["data"] = data
         contracts.forEach { contract ->
@@ -29,12 +38,15 @@ class CustomerioEventCreatorImpl(private val productPricingFacade: ProductPricin
             updateActivationDate(contract, data, type)
             updateSwitcherInfo(contract, data, type)
         }
-
-        return returnMap.toMap()
     }
 
-    override fun contractSignedEvent(customerioState: CustomerioState): Map<String, Any?> {
-        return mapOf("name" to "ContractCreatedEvent")
+    override fun contractSignedEvent(
+        customerioState: CustomerioState,
+        contracts: Collection<ContractInfo>
+    ): Map<String, Any?> {
+        val returnMap = mutableMapOf<String, Any?>("name" to "ContractCreatedEvent")
+        createData(returnMap, contracts)
+        return returnMap.toMap()
     }
 
     private fun updateSwitcherInfo(

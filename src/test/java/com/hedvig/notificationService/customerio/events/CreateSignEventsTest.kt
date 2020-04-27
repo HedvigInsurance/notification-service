@@ -160,6 +160,28 @@ class CreateSignEventsTest(
     }
 
     @Test
+    fun `test ContractCreatedEvent`() {
+        val customerioState = CustomerioState(
+            "42",
+            Instant.now(),
+            false
+        )
+
+        val event = sut.contractSignedEvent(customerioState, contracts)
+
+        assertThat(event["name"]).isEqualTo("ContractCreatedEvent")
+        val eventData = event["data"] as Map<String, Any?>
+        assertThat(eventData["is_signed_innbo"]).isEqualTo(values["is_signed_innbo"])
+        assertThat(eventData["activation_date_innbo"]).isEqualTo(values["activation_date_innbo"])
+        assertThat(eventData["is_switcher_innbo"]).isEqualTo(values["is_switcher_innbo"])
+        assertThat(eventData["switcher_company_innbo"]).isEqualTo(values["switcher_company_innbo"])
+        assertThat(eventData["activation_date_innbo"]).isEqualTo(values["activation_date_innbo"])
+        assertThat(eventData["is_switcher_reise"]).isEqualTo(values["is_switcher_reise"])
+        assertThat(eventData["switcher_company_reise"]).isEqualTo(values["switcher_company_reise"])
+        assertThat(eventData["activation_date_reise"]).isEqualTo(values["activation_date_reise"])
+    }
+
+    @Test
     fun `swedish house throws exception`() {
         val customerioState = CustomerioState(
             "42",

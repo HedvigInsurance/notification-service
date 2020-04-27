@@ -100,7 +100,7 @@ open class CustomerioService(
         }
 
         for (customerioState in this.stateRepository.shouldSendContractCreatedEvents(windowEndTime)) {
-            val event = eventCreator.contractSignedEvent(customerioState)
+            val event = eventCreator.contractSignedEvent(customerioState, listOf())
             sendEventAndUpdateState(customerioState, event) { it.copy(contractCreatedAt = null) }
         }
     }
