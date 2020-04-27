@@ -128,7 +128,7 @@ open class CustomerioService(
         }
     }
 
-    fun contractCreatedEvent(
+    open fun contractCreatedEvent(
         event: ContractCreatedEvent,
         timeAtCall: Instant = Instant.now()
     ) {
