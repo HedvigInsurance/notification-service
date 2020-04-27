@@ -1,6 +1,7 @@
 package com.hedvig.notificationService.customerio
 
 import assertk.assertThat
+import assertk.assertions.contains
 import assertk.assertions.containsAll
 import assertk.assertions.isEqualTo
 import com.hedvig.customerio.CustomerioClient
@@ -55,15 +56,18 @@ class SendNorwegianContractCreatedEventTest {
     fun sendContractCreatedEvent() {
         val startTime = Instant.parse("2020-04-23T09:25:13.597224Z")
         repo.save(CustomerioState("someMemberId", null, false, startTime))
+        every { productPricingFacade.getContractTypeForMember(any()) } returns
+            listOf(
+                ContractInfo(AgreementType.NorwegianHomeContent, null, null)
+            )
 
         sut.sendUpdates(startTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
 
         val slot = slot<Map<String, Any?>>()
         verify { noClient.sendEvent(any(), capture(slot)) }
 
-        assertThat(slot.captured).containsAll(
-            "name" to "ContractCreatedEvent"
-        )
+        assertThat(slot.captured["name"]).isEqualTo("ContractCreatedEvent")
+        assertThat(slot.captured["data"] as Map<String, Any>).contains("is_signed_innbo", true)
     }
 
     @Test

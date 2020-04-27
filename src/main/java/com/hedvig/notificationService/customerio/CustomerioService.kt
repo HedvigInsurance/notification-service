@@ -100,8 +100,14 @@ open class CustomerioService(
         }
 
         for (customerioState in this.stateRepository.shouldSendContractCreatedEvents(windowEndTime)) {
-            val event = eventCreator.contractSignedEvent(customerioState, listOf())
-            sendEventAndUpdateState(customerioState, event) { it.copy(contractCreatedAt = null) }
+
+            try {
+                val contracts = this.productPricingFacade.getContractTypeForMember(customerioState.memberId)
+                val event = eventCreator.contractSignedEvent(customerioState, contracts)
+                sendEventAndUpdateState(customerioState, event) { it.copy(contractCreatedAt = null) }
+            } catch (ex: RuntimeException) {
+                logger.error("Could not create event from customerio state")
+            }
         }
     }
 
