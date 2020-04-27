@@ -1,6 +1,7 @@
 package com.hedvig.notificationService.customerio
 
 import com.hedvig.customerio.CustomerioClient
+import com.hedvig.notificationService.customerio.events.CustomerioEventCreatorImpl
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import io.mockk.every
 import io.mockk.mockk
@@ -28,7 +29,8 @@ class CustomerioServiceDeleteCustomerTest {
             mapOf(
                 Workspace.SWEDEN to sweClient,
                 Workspace.NORWAY to noClient
-            )
+            ),
+            productPricingFacade
         )
         cut.deleteCustomer("asdad")
         verify { noClient.deleteCustomer(any()) }
@@ -48,7 +50,8 @@ class CustomerioServiceDeleteCustomerTest {
             mapOf(
                 Workspace.SWEDEN to sweClient,
                 Workspace.NORWAY to noClient
-            )
+            ),
+            productPricingFacade
         )
         cut.deleteCustomer("asdad")
         verify { sweClient.deleteCustomer(any()) }

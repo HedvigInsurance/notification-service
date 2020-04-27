@@ -2,6 +2,7 @@ package com.hedvig.notificationService.customerio
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.hedvig.customerio.CustomerioMock
+import com.hedvig.notificationService.customerio.events.CustomerioEventCreatorImpl
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import io.mockk.MockKAnnotations
 import io.mockk.every
@@ -29,70 +30,17 @@ class CustomerioServiceForwardUpdateTest {
     private val repository =
         InMemoryCustomerIOStateRepository()
 
+    lateinit var customerIOMockNorway: CustomerioMock
+    lateinit var customerIOMockSweden: CustomerioMock
+    lateinit var router: CustomerioService
+
     @Before
     fun setup() {
         MockKAnnotations.init(this)
-    }
+        customerIOMockSweden = CustomerioMock(objectMapper)
+        customerIOMockNorway = CustomerioMock(objectMapper)
 
-    @Test
-    internal fun `route message to swedish workspace`() {
-        val customerIOMockSweden = CustomerioMock(objectMapper)
-        val customerIOMockNorway = CustomerioMock(objectMapper)
-
-        every { productPricingFacade.getWorkspaceForMember(any()) } returns Workspace.SWEDEN
-
-        val router =
-            CustomerioService(
-                WorkspaceSelector(
-                    productPricingFacade,
-                    memberServiceImpl
-                ),
-                repository,
-                CustomerioEventCreatorImpl(productPricingFacade),
-                mapOf(
-                    Workspace.SWEDEN to customerIOMockSweden,
-                    Workspace.NORWAY to customerIOMockNorway
-                )
-            )
-
-        router.updateCustomerAttributes("1337", mapOf())
-        assertEquals("1337", customerIOMockSweden.updates.first().first)
-    }
-
-    @Test
-    internal fun `route message to norwegian workspace`() {
-        val customerIOMockNorway = CustomerioMock(objectMapper)
-        val customerIOMockSweden = CustomerioMock(objectMapper)
-
-        every { productPricingFacade.getWorkspaceForMember(any()) } returns Workspace.NORWAY
-
-        val router =
-            CustomerioService(
-                WorkspaceSelector(
-                    productPricingFacade,
-                    memberServiceImpl
-                ),
-                repository,
-                CustomerioEventCreatorImpl(productPricingFacade),
-                mapOf(
-                    Workspace.SWEDEN to customerIOMockSweden,
-                    Workspace.NORWAY to customerIOMockNorway
-                )
-            )
-
-        router.updateCustomerAttributes("1337", mapOf())
-        assertEquals("1337", customerIOMockNorway.updates.first().first)
-    }
-
-    @Test
-    fun `send to sweden when locale country is se and no market is found`() {
-        val customerIOMockNorway = CustomerioMock(objectMapper)
-        val customerIOMockSweden = CustomerioMock(objectMapper)
-
-        every { productPricingFacade.getWorkspaceForMember(any()) } returns Workspace.NOT_FOUND
-        every { memberServiceImpl.getPickedLocale(any()) } returns Locale("sv", "se")
-
-        val router = CustomerioService(
+        router = CustomerioService(
             WorkspaceSelector(
                 productPricingFacade,
                 memberServiceImpl
@@ -102,8 +50,33 @@ class CustomerioServiceForwardUpdateTest {
             mapOf(
                 Workspace.SWEDEN to customerIOMockSweden,
                 Workspace.NORWAY to customerIOMockNorway
-            )
+            ),
+            productPricingFacade
         )
+    }
+
+    @Test
+    internal fun `route message to swedish workspace`() {
+
+        every { productPricingFacade.getWorkspaceForMember(any()) } returns Workspace.SWEDEN
+
+        router.updateCustomerAttributes("1337", mapOf())
+        assertEquals("1337", customerIOMockSweden.updates.first().first)
+    }
+
+    @Test
+    internal fun `route message to norwegian workspace`() {
+        every { productPricingFacade.getWorkspaceForMember(any()) } returns Workspace.NORWAY
+
+        router.updateCustomerAttributes("1337", mapOf())
+        assertEquals("1337", customerIOMockNorway.updates.first().first)
+    }
+
+    @Test
+    fun `send to sweden when locale country is se and no market is found`() {
+
+        every { productPricingFacade.getWorkspaceForMember(any()) } returns Workspace.NOT_FOUND
+        every { memberServiceImpl.getPickedLocale(any()) } returns Locale("sv", "se")
 
         router.updateCustomerAttributes("1337", mapOf())
 
@@ -112,24 +85,9 @@ class CustomerioServiceForwardUpdateTest {
 
     @Test
     fun `send to norway when locale country is norway and no market is found`() {
-        val customerIOMockNorway = CustomerioMock(objectMapper)
-        val customerIOMockSweden = CustomerioMock(objectMapper)
 
         every { productPricingFacade.getWorkspaceForMember(any()) } returns Workspace.NOT_FOUND
         every { memberServiceImpl.getPickedLocale(any()) } returns Locale("nb", "NO")
-
-        val router = CustomerioService(
-            WorkspaceSelector(
-                productPricingFacade,
-                memberServiceImpl
-            ),
-            repository,
-            CustomerioEventCreatorImpl(productPricingFacade),
-            mapOf(
-                Workspace.SWEDEN to customerIOMockSweden,
-                Workspace.NORWAY to customerIOMockNorway
-            )
-        )
 
         router.updateCustomerAttributes("1337", mapOf())
 
@@ -138,24 +96,9 @@ class CustomerioServiceForwardUpdateTest {
 
     @Test
     fun `throw exception when member-service returns unsupported locale`() {
-        val customerIOMockNorway = CustomerioMock(objectMapper)
-        val customerIOMockSweden = CustomerioMock(objectMapper)
 
         every { productPricingFacade.getWorkspaceForMember(any()) } returns Workspace.NOT_FOUND
         every { memberServiceImpl.getPickedLocale(any()) } returns Locale("en", "gb")
-
-        val router = CustomerioService(
-            WorkspaceSelector(
-                productPricingFacade,
-                memberServiceImpl
-            ),
-            repository,
-            CustomerioEventCreatorImpl(productPricingFacade),
-            mapOf(
-                Workspace.SWEDEN to customerIOMockSweden,
-                Workspace.NORWAY to customerIOMockNorway
-            )
-        )
 
         thrown.expect(WorkspaceNotFound::class.java)
         router.updateCustomerAttributes("21313", mapOf())

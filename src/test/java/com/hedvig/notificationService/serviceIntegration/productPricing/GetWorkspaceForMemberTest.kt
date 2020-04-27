@@ -15,7 +15,7 @@ import org.junit.Test
 import org.springframework.http.ResponseEntity
 import javax.money.Monetary
 
-class FeignExceptionForTest(status: Int = 0) : FeignException(status, "Test")
+class FeignExceptionForTest(status: Int = 0) : FeignException(status, "Feign test exception with status $status")
 
 class GetWorkspaceForMemberTest {
 

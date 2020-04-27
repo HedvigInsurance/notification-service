@@ -1,6 +1,7 @@
 package com.hedvig.notificationService.customerio
 
 import com.hedvig.customerio.CustomerioClient
+import com.hedvig.notificationService.customerio.events.CustomerioEventCreator
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import io.mockk.MockKAnnotations
 import io.mockk.every
@@ -28,6 +29,9 @@ class NorwaySignHackHandleUpdatesFromUnderwriterTest {
     lateinit var eventCreator: CustomerioEventCreator
 
     @MockK
+    lateinit var productPricingFacade: ProductPricingFacade
+
+    @MockK
     lateinit var sut: CustomerioService
 
     lateinit var repository: InMemoryCustomerIOStateRepository
@@ -48,7 +52,8 @@ class NorwaySignHackHandleUpdatesFromUnderwriterTest {
             mapOf(
                 Workspace.SWEDEN to seCustomerioClient,
                 Workspace.NORWAY to noCustomerIoClient
-            )
+            ),
+            productPricingFacade
         )
     }
 

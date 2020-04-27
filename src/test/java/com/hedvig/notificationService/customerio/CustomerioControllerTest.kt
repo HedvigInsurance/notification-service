@@ -1,6 +1,7 @@
 package com.hedvig.notificationService.customerio
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.hedvig.notificationService.customerio.web.CustomerioController
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -36,7 +37,10 @@ class CustomerioControllerTest {
         } throws WorkspaceNotFound("")
 
         val controller =
-            CustomerioController(customerioService, objectMapper)
+            CustomerioController(
+                customerioService,
+                objectMapper
+            )
 
         thrown.expect(ResponseStatusException::class.java)
         controller.post("someMemberID", objectMapper.createObjectNode())
@@ -47,7 +51,10 @@ class CustomerioControllerTest {
         every { customerioService.deleteCustomer(any()) } throws WorkspaceNotFound("")
 
         val controller =
-            CustomerioController(customerioService, objectMapper)
+            CustomerioController(
+                customerioService,
+                objectMapper
+            )
 
         thrown.expect(ResponseStatusException::class.java)
         controller.delete("someMemberID")

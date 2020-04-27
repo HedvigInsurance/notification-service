@@ -1,6 +1,7 @@
 package com.hedvig.notificationService.customerio
 
 import com.hedvig.customerio.CustomerioClient
+import com.hedvig.notificationService.customerio.events.CustomerioEventCreator
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import io.mockk.MockKAnnotations
 import io.mockk.impl.annotations.MockK
@@ -23,6 +24,9 @@ class CustomerioServiceContructionTest {
     @MockK
     lateinit var eventCreator: CustomerioEventCreator
 
+    @MockK
+    lateinit var productPricingFacade: ProductPricingFacade
+
     private val repository =
         InMemoryCustomerIOStateRepository()
 
@@ -34,7 +38,7 @@ class CustomerioServiceContructionTest {
     @Test
     fun `Throw if no markets are passed in the contructor`() {
         exceptionRule.expect(IllegalArgumentException::class.java)
-        CustomerioService(workspaceSelector, repository, eventCreator, mapOf())
+        CustomerioService(workspaceSelector, repository, eventCreator, mapOf(), productPricingFacade)
     }
 
     @Test
@@ -44,7 +48,8 @@ class CustomerioServiceContructionTest {
             workspaceSelector,
             repository,
             eventCreator,
-            mapOf(Workspace.SWEDEN to customerioClient)
+            mapOf(Workspace.SWEDEN to customerioClient),
+            productPricingFacade
         )
     }
 
@@ -57,7 +62,8 @@ class CustomerioServiceContructionTest {
             mapOf(
                 Workspace.SWEDEN to customerioClient,
                 Workspace.NORWAY to customerioClient
-            )
+            ),
+            productPricingFacade
         )
     }
 }

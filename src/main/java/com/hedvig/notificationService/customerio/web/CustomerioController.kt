@@ -1,8 +1,10 @@
-package com.hedvig.notificationService.customerio
+package com.hedvig.notificationService.customerio.web
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.convertValue
+import com.hedvig.notificationService.customerio.CustomerioService
+import com.hedvig.notificationService.customerio.WorkspaceNotFound
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity

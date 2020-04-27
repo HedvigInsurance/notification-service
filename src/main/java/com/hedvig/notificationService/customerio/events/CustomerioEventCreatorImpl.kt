@@ -1,14 +1,27 @@
-package com.hedvig.notificationService.customerio
+package com.hedvig.notificationService.customerio.events
 
+import com.hedvig.notificationService.customerio.AgreementType
+import com.hedvig.notificationService.customerio.ContractInfo
+import com.hedvig.notificationService.customerio.ProductPricingFacade
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import java.time.format.DateTimeFormatter
 
 class CustomerioEventCreatorImpl(private val productPricingFacade: ProductPricingFacade) : CustomerioEventCreator {
-    override fun createTmpSignedInsuranceEvent(customerioState: CustomerioState): Map<String, Any?> {
-
-        val contracts = productPricingFacade.getContractTypeForMember(customerioState.memberId)
+    override fun createTmpSignedInsuranceEvent(
+        customerioState: CustomerioState,
+        argContracts: Collection<ContractInfo>
+    ): Map<String, Any?> {
 
         val returnMap = mutableMapOf<String, Any?>("name" to "TmpSignedInsuranceEvent")
+        createData(returnMap, argContracts)
+
+        return returnMap.toMap()
+    }
+
+    private fun createData(
+        returnMap: MutableMap<String, Any?>,
+        contracts: Collection<ContractInfo>
+    ) {
         val data = mutableMapOf<String, Any?>()
         returnMap["data"] = data
         contracts.forEach { contract ->
@@ -23,7 +36,14 @@ class CustomerioEventCreatorImpl(private val productPricingFacade: ProductPricin
             updateActivationDate(contract, data, type)
             updateSwitcherInfo(contract, data, type)
         }
+    }
 
+    override fun contractSignedEvent(
+        customerioState: CustomerioState,
+        contracts: Collection<ContractInfo>
+    ): Map<String, Any?> {
+        val returnMap = mutableMapOf<String, Any?>("name" to "ContractCreatedEvent")
+        createData(returnMap, contracts)
         return returnMap.toMap()
     }
 
