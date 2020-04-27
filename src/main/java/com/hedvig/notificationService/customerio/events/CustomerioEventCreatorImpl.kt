@@ -95,16 +95,30 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
         contracts: Collection<ContractInfo>
     ): Map<String, Any?> {
         val returnMap = mutableMapOf<String, Any?>()
+
         val contractsWithStartDate = mutableListOf<MutableMap<String, Any?>>()
         returnMap["contractsWithStartDate"] = contractsWithStartDate
+
+        val contractsWithoutStartDate = mutableListOf<MutableMap<String, Any?>>()
+        returnMap["contractsWithoutStartDate"] = contractsWithoutStartDate
+
         contracts.forEach {
-            contractsWithStartDate.add(
-                mutableMapOf(
-                    "type" to if (it.type == AgreementType.NorwegianTravel) "reise" else "innbo",
-                    "startDate" to it.startDate.toString(),
-                    "switcherCompany" to it.switcherCompany
+            if (it.startDate != null) {
+                contractsWithStartDate.add(
+                    mutableMapOf(
+                        "type" to if (it.type == AgreementType.NorwegianTravel) "reise" else "innbo",
+                        "startDate" to it.startDate.toString(),
+                        "switcherCompany" to it.switcherCompany
+                    )
                 )
-            )
+            } else {
+                contractsWithoutStartDate.add(
+                    mutableMapOf(
+                        "type" to if (it.type == AgreementType.NorwegianTravel) "reise" else "innbo",
+                        "switcherCompany" to it.switcherCompany
+                    )
+                )
+            }
         }
 
         return returnMap.toMap()
