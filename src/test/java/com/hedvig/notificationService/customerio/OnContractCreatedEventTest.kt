@@ -10,6 +10,7 @@ import io.mockk.impl.annotations.MockK
 import org.junit.Before
 import org.junit.Test
 import java.time.Instant
+import java.time.LocalDate
 
 class OnContractCreatedEventTest {
 
@@ -33,7 +34,8 @@ class OnContractCreatedEventTest {
         sut.onContractCreatedEvent(
             ContractCreatedEvent(
                 "someEventId",
-                "1337"
+                "1337",
+                null
             ), time
         )
 
@@ -51,10 +53,28 @@ class OnContractCreatedEventTest {
         sut.onContractCreatedEvent(
             ContractCreatedEvent(
                 "someEventId",
-                "1337"
+                "1337",
+                null
             ), time
         )
 
         assertThat(repository.data["1337"]?.contractCreatedAt).isEqualTo(stateCreatedAt)
+    }
+
+    @Test
+    fun `contract with activation date`() {
+
+        val stateCreatedAt = Instant.parse("2020-04-27T09:20:42.815351Z").minusMillis(3000)
+        val time = Instant.parse("2020-04-27T09:20:42.815351Z")
+
+        sut.onContractCreatedEvent(
+            ContractCreatedEvent(
+                "someEventId",
+                "1337",
+                LocalDate.of(2020, 5, 4)
+            ), time
+        )
+
+        assertThat(repository.data["1337"]?.activateFirstContractAt).isEqualTo(LocalDate.of(2020, 5, 4))
     }
 }

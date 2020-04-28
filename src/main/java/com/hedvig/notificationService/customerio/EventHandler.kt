@@ -22,7 +22,15 @@ class EventHandler(val repo: CustomerIOStateRepository) {
     fun onContractCreatedEvent(contractCreatedEvent: ContractCreatedEvent, callTime: Instant = Instant.now()) {
         val state = repo.findByMemberId(contractCreatedEvent.owningMemberId)
         if (state?.contractCreatedAt == null) {
-            repo.save(CustomerioState(contractCreatedEvent.owningMemberId, null, false, callTime))
+            repo.save(
+                CustomerioState(
+                    contractCreatedEvent.owningMemberId,
+                    null,
+                    false,
+                    callTime,
+                    activateFirstContractAt = contractCreatedEvent.startDate
+                )
+            )
         }
     }
 }
