@@ -51,20 +51,18 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
         contracts: List<ContractInfo>
     ): Pair<Map<String, Any?>, CustomerioState> {
         return when {
-            customerioState.underwriterFirstSignAttributesUpdate != null -> this.createTmpSignedInsuranceEvent(
+            customerioState.shouldSendTmpSignedEvent() -> this.createTmpSignedInsuranceEvent(
                 customerioState,
                 contracts
-            ) to customerioState.copy(sentTmpSignEvent = true)
-            customerioState.contractCreatedAt != null -> this.contractCreatedEvent(
+            ) to customerioState.sentTmpSignedEvent()
+            customerioState.shouldSendContractCreatedEvent() -> this.contractCreatedEvent(
                 customerioState,
                 contracts
-            ) to customerioState.copy(contractCreatedAt = null)
-            customerioState.startDateUpdatedAt != null -> startDateUpdatedEvent(
+            ) to customerioState.sentContractCreatedEvent()
+            customerioState.shouldSendStartDateUpdatedEvent() -> startDateUpdatedEvent(
                 contracts
-            ) to customerioState.copy(
-                startDateUpdatedAt = null
-            )
-            customerioState.activateFirstContractAt != null ->
+            ) to customerioState.sentStartDateUpdatedEvent()
+            customerioState.shouldSendActivatesTodayEvent() ->
                 mapOf<String, Any?>() to customerioState.copy(
                     activateFirstContractAt = null
                 )
