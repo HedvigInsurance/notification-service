@@ -63,9 +63,7 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
                 contracts
             ) to customerioState.sentStartDateUpdatedEvent()
             customerioState.shouldSendActivatesTodayEvent() ->
-                mapOf<String, Any?>() to customerioState.copy(
-                    activateFirstContractAt = null
-                )
+                mapOf<String, Any?>() to customerioState.sentActivatesTodayEvent()
             else -> throw RuntimeException("CustomerioState in weird state")
         }
     }

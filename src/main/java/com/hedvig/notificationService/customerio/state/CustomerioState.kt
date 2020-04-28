@@ -6,7 +6,7 @@ import javax.persistence.Entity
 import javax.persistence.Id
 
 @Entity
-data class CustomerioState(
+class CustomerioState(
     @Id
     val memberId: String,
     val underwriterFirstSignAttributesUpdate: Instant?,
@@ -15,6 +15,23 @@ data class CustomerioState(
     val startDateUpdatedAt: Instant? = null,
     val activateFirstContractAt: LocalDate? = null
 ) {
+    private fun copy(
+        underwriterFirstSignAttributesUpdate: Instant? = this.underwriterFirstSignAttributesUpdate,
+        sentTmpSignEvent: Boolean = this.sentTmpSignEvent,
+        contractCreatedAt: Instant? = this.contractCreatedAt,
+        startDateUpdatedAt: Instant? = this.startDateUpdatedAt,
+        activateFirstContractAt: LocalDate? = this.activateFirstContractAt
+    ): CustomerioState {
+        return CustomerioState(
+            memberId = this.memberId,
+            underwriterFirstSignAttributesUpdate = underwriterFirstSignAttributesUpdate,
+            sentTmpSignEvent = sentTmpSignEvent,
+            contractCreatedAt = contractCreatedAt,
+            startDateUpdatedAt = startDateUpdatedAt,
+            activateFirstContractAt = activateFirstContractAt
+        )
+    }
+
     fun shouldSendTmpSignedEvent(): Boolean = underwriterFirstSignAttributesUpdate != null
     fun sentTmpSignedEvent(): CustomerioState = copy(sentTmpSignEvent = true)
 
@@ -23,5 +40,7 @@ data class CustomerioState(
 
     fun shouldSendStartDateUpdatedEvent(): Boolean = startDateUpdatedAt != null
     fun sentStartDateUpdatedEvent(): CustomerioState = copy(startDateUpdatedAt = null)
+
     fun shouldSendActivatesTodayEvent(): Boolean = activateFirstContractAt != null
+    fun sentActivatesTodayEvent(): CustomerioState = copy(activateFirstContractAt = null)
 }
