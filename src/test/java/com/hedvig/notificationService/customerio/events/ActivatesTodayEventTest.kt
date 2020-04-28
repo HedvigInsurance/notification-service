@@ -9,10 +9,14 @@ import assertk.assertions.isNull
 import com.hedvig.notificationService.customerio.AgreementType
 import com.hedvig.notificationService.customerio.ContractInfo
 import com.hedvig.notificationService.customerio.state.CustomerioState
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.ExpectedException
 import java.time.LocalDate
 
 class ActivatesTodayEventTest {
+    @get:Rule
+    val thrown = ExpectedException.none()
 
     @Test
     fun `one contract removed update trigger`() {
@@ -129,5 +133,23 @@ class ActivatesTodayEventTest {
             Contract("", "innbo", null)
         )
         assertThat(result.state.activateFirstContractAt).isEqualTo(null)
+    }
+
+    @Test
+    fun `no contract with activation date today`() {
+        val eventCreatorImpl = CustomerioEventCreatorImpl()
+
+        thrown.expectMessage("Cannot send crete event no contracts with activation date today")
+        val result = eventCreatorImpl.execute(
+            CustomerioState(
+                "aMemberId",
+                activateFirstContractAt = LocalDate.of(2020, 1, 2)
+            ),
+            listOf(
+                ContractInfo(AgreementType.NorwegianTravel, null, LocalDate.of(2020, 1, 3))
+            )
+        )
+
+        val event = result.event as ActivationDateTodayEvent
     }
 }
