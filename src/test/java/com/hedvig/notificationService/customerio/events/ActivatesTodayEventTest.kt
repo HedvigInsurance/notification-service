@@ -86,4 +86,48 @@ class ActivatesTodayEventTest {
         )
         assertThat(result.state.activateFirstContractAt).isEqualTo(LocalDate.of(2020, 1, 3))
     }
+
+    @Test
+    fun `one future activation date one without future activation date`() {
+        val eventCreatorImpl = CustomerioEventCreatorImpl()
+        val result = eventCreatorImpl.execute(
+            CustomerioState(
+                "aMemberId",
+                activateFirstContractAt = LocalDate.of(2020, 1, 2)
+            ),
+            listOf(
+                ContractInfo(AgreementType.NorwegianTravel, null, LocalDate.of(2020, 1, 2)),
+                ContractInfo(AgreementType.NorwegianHomeContent, null, LocalDate.of(2020, 1, 3)),
+                ContractInfo(AgreementType.NorwegianHomeContent, null, null)
+            )
+        )
+
+        val event = result.event as ActivationDateTodayEvent
+        assertThat(event.activeInFuture).containsAll(
+            Contract("", "innbo", null),
+            Contract("", "innbo", null)
+        )
+        assertThat(result.state.activateFirstContractAt).isEqualTo(LocalDate.of(2020, 1, 3))
+    }
+
+    @Test
+    fun `one contract without future activation date`() {
+        val eventCreatorImpl = CustomerioEventCreatorImpl()
+        val result = eventCreatorImpl.execute(
+            CustomerioState(
+                "aMemberId",
+                activateFirstContractAt = LocalDate.of(2020, 1, 2)
+            ),
+            listOf(
+                ContractInfo(AgreementType.NorwegianTravel, null, LocalDate.of(2020, 1, 2)),
+                ContractInfo(AgreementType.NorwegianHomeContent, null, null)
+            )
+        )
+
+        val event = result.event as ActivationDateTodayEvent
+        assertThat(event.activeInFuture).containsAll(
+            Contract("", "innbo", null)
+        )
+        assertThat(result.state.activateFirstContractAt).isEqualTo(null)
+    }
 }
