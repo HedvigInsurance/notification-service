@@ -23,7 +23,7 @@ class DebugController(val clients: Map<Workspace, CustomerioClient>) {
 
         clients[Workspace.NORWAY]?.sendEvent(
             memberId,
-            CustomerioEventCreatorImpl().contractCreatedEvent(
+            CustomerioEventCreatorImpl().createContractCreatedEvent(
                 CustomerioState(memberId, null),
                 listOf(
                     ContractInfo(AgreementType.NorwegianHomeContent, "IF", LocalDate.parse("2020-05-01")),

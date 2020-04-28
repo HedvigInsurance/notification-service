@@ -7,5 +7,5 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming
 data class Contract(
     val id: String,
     val type: String,
-    val switcherCompany: String
+    val switcherCompany: String?
 )

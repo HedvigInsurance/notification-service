@@ -38,7 +38,7 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
         }
     }
 
-    override fun contractCreatedEvent(
+    override fun createContractCreatedEvent(
         customerioState: CustomerioState,
         contracts: Collection<ContractInfo>
     ): Map<String, Any?> {
@@ -59,25 +59,34 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
                 ), customerioState.sentTmpSignedEvent()
             )
             customerioState.shouldSendContractCreatedEvent() -> ExecutionResult(
-                null, this.contractCreatedEvent(
+                null, this.createContractCreatedEvent(
                     customerioState,
                     contracts
                 ), customerioState.sentContractCreatedEvent()
             )
             customerioState.shouldSendStartDateUpdatedEvent() -> ExecutionResult(
-                null, startDateUpdatedEvent(
+                null, this.createStartDateUpdatedEvent(
                     contracts
                 ), customerioState.sentStartDateUpdatedEvent()
             )
             customerioState.shouldSendActivatesTodayEvent() ->
                 ExecutionResult(
-                    ActivationDateTodayEvent(listOf(), listOf()), null, customerioState.sentActivatesTodayEvent()
+                    createActivationDateTodayEvent(customerioState, contracts),
+                    null,
+                    customerioState.sentActivatesTodayEvent()
                 )
             else
             -> throw RuntimeException("CustomerioState in weird state")
         }
         return result
     }
+
+    private fun createActivationDateTodayEvent(customerioState: CustomerioState, contracts: List<ContractInfo>) =
+        ActivationDateTodayEvent(
+            contracts.filter { it.startDate == customerioState.activateFirstContractAt }
+                .map { Contract("", it.type.toString(), it.switcherCompany) },
+            listOf()
+        )
 
     private fun updateSwitcherInfo(
         contract: ContractInfo,
@@ -100,7 +109,7 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
         }
     }
 
-    private fun startDateUpdatedEvent(
+    private fun createStartDateUpdatedEvent(
         contracts: Collection<ContractInfo>
     ): Map<String, Any?> {
 
@@ -144,9 +153,9 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
     }
 }
 
-data class ExecutionResult(val event: Any?, val map: Map<String, Any?>?, val second: CustomerioState) {
+data class ExecutionResult(val event: Any?, val map: Map<String, Any?>?, val state: CustomerioState) {
 
-    val first: Map<String, Any?>
+    val asMap: Map<String, Any?>
         get() {
             if (event == null) {
                 return map!!

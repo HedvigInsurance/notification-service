@@ -36,7 +36,7 @@ class ActivationDateUpdatedEventTest {
 
         val eventAndState = sut.execute(customerioState, contracts)
 
-        assertThat(eventAndState.second.startDateUpdatedAt).isNull()
+        assertThat(eventAndState.state.startDateUpdatedAt).isNull()
     }
 
     @Test
@@ -53,14 +53,14 @@ class ActivationDateUpdatedEventTest {
         val sut = CustomerioEventCreatorImpl()
         val eventAndState = sut.execute(customerioState, contracts)
 
-        val data = eventAndState.first["data"] as Map<String, Any?>
+        val data = eventAndState.asMap["data"] as Map<String, Any?>
         val hasStartDate = data["contractsWithStartDate"] as List<Map<String, Any?>>?
         assertThat(hasStartDate?.first()).isNotNull().containsAll(
             "type" to "innbo",
             "startDate" to "2020-05-01",
             "switcherCompany" to "companyName"
         )
-        assertThat(eventAndState.first["name"]).isEqualTo("ActivationDateUpdatedEvent")
+        assertThat(eventAndState.asMap["name"]).isEqualTo("ActivationDateUpdatedEvent")
     }
 
     @Test
@@ -76,7 +76,7 @@ class ActivationDateUpdatedEventTest {
         val sut = CustomerioEventCreatorImpl()
         val eventAndState = sut.execute(customerioState, contracts)
 
-        val data = eventAndState.first["data"] as Map<String, Any?>
+        val data = eventAndState.asMap["data"] as Map<String, Any?>
         val hasStartDate = data["contractsWithStartDate"] as List<Map<String, Any?>>?
         assertThat(hasStartDate)
             .isNotNull().containsAll(
@@ -106,7 +106,7 @@ class ActivationDateUpdatedEventTest {
         val sut = CustomerioEventCreatorImpl()
         val eventAndState = sut.execute(customerioState, contracts)
 
-        val data = eventAndState.first["data"] as Map<String, Any?>
+        val data = eventAndState.asMap["data"] as Map<String, Any?>
         val withoutStartDate = data["contractsWithoutStartDate"] as List<Map<String, Any?>>?
         assertThat(withoutStartDate)
             .isNotNull().containsAll(

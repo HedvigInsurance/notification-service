@@ -167,7 +167,7 @@ class TmpSignAndContractCreatedEventTest(
             false
         )
 
-        val event = sut.contractCreatedEvent(customerioState, contracts)
+        val event = sut.createContractCreatedEvent(customerioState, contracts)
 
         assertThat(event["name"]).isEqualTo("NorwegianContractCreatedEvent")
         val eventData = event["data"] as Map<String, Any?>

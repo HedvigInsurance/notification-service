@@ -10,7 +10,11 @@ CustomerioEventCreator {
         argContracts: Collection<ContractInfo>
     ): Map<String, Any?>
 
-    fun contractCreatedEvent(customerioState: CustomerioState, contracts: Collection<ContractInfo>): Map<String, Any?>
+    fun createContractCreatedEvent(
+        customerioState: CustomerioState,
+        contracts: Collection<ContractInfo>
+    ): Map<String, Any?>
+
     fun execute(
         customerioState: CustomerioState,
         contracts: List<ContractInfo>

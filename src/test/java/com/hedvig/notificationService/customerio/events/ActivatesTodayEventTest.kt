@@ -2,6 +2,7 @@ package com.hedvig.notificationService.customerio.events
 
 import assertk.assertThat
 import assertk.assertions.contains
+import assertk.assertions.isNotEmpty
 import assertk.assertions.isNull
 import com.hedvig.notificationService.customerio.AgreementType
 import com.hedvig.notificationService.customerio.ContractInfo
@@ -24,11 +25,11 @@ class ActivatesTodayEventTest {
             listOf(ContractInfo(AgreementType.NorwegianHomeContent, null, LocalDate.of(2020, 1, 2)))
         )
 
-        assertThat(result.second.activateFirstContractAt).isNull()
+        assertThat(result.state.activateFirstContractAt).isNull()
     }
 
     @Test
-    fun `one contract sets active contract in event`() {
+    fun `test naming`() {
         val eventCreatorImpl = CustomerioEventCreatorImpl()
         val result = eventCreatorImpl.execute(
             CustomerioState(
@@ -39,6 +40,7 @@ class ActivatesTodayEventTest {
             listOf(ContractInfo(AgreementType.NorwegianTravel, null, LocalDate.of(2020, 1, 2)))
         )
 
-        assertThat(result.first).contains("name", "ActivationDateTodayEvent")
+        assertThat(result.asMap).contains("name", "ActivationDateTodayEvent")
+        assertThat(result.asMap).transform { it["active_today"] as List<Map<String, Any?>> }.isNotEmpty()
     }
 }
