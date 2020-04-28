@@ -1,7 +1,6 @@
 package com.hedvig.notificationService.customerio.events
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.hedvig.notificationService.customerio.AgreementType
 import com.hedvig.notificationService.customerio.ContractInfo
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import java.time.format.DateTimeFormatter
@@ -26,11 +25,7 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
         returnMap["data"] = data
         contracts.forEach { contract ->
 
-            val type = when (contract.type) {
-                AgreementType.NorwegianHomeContent -> "innbo"
-                AgreementType.NorwegianTravel -> "reise"
-                else -> throw RuntimeException("Unexpected contract type ${contract.type}")
-            }
+            val type = contract.type.typeName
 
             data["is_signed_$type"] = true
             updateActivationDate(contract, data, type)
@@ -84,7 +79,7 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
     private fun createActivationDateTodayEvent(customerioState: CustomerioState, contracts: List<ContractInfo>) =
         ActivationDateTodayEvent(
             contracts.filter { it.startDate == customerioState.activateFirstContractAt }
-                .map { Contract("", it.type.toString(), it.switcherCompany) },
+                .map { Contract("", it.type.typeName, it.switcherCompany) },
             listOf()
         )
 
@@ -134,7 +129,7 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
             if (it.startDate != null) {
                 contractsWithStartDate.add(
                     mutableMapOf(
-                        "type" to if (it.type == AgreementType.NorwegianTravel) "reise" else "innbo",
+                        "type" to it.type.typeName,
                         "startDate" to it.startDate.toString(),
                         "switcherCompany" to it.switcherCompany
                     )
@@ -142,7 +137,7 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
             } else {
                 contractsWithoutStartDate.add(
                     mutableMapOf(
-                        "type" to if (it.type == AgreementType.NorwegianTravel) "reise" else "innbo",
+                        "type" to it.type.typeName,
                         "switcherCompany" to it.switcherCompany
                     )
                 )
