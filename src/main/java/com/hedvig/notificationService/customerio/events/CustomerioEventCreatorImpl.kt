@@ -52,22 +52,31 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
         contracts: List<ContractInfo>
     ): ExecutionResult {
         val result = when {
-            customerioState.shouldSendTmpSignedEvent() -> this.createTmpSignedInsuranceEvent(
-                customerioState,
-                contracts
-            ) to customerioState.sentTmpSignedEvent()
-            customerioState.shouldSendContractCreatedEvent() -> this.contractCreatedEvent(
-                customerioState,
-                contracts
-            ) to customerioState.sentContractCreatedEvent()
-            customerioState.shouldSendStartDateUpdatedEvent() -> startDateUpdatedEvent(
-                contracts
-            ) to customerioState.sentStartDateUpdatedEvent()
+            customerioState.shouldSendTmpSignedEvent() -> ExecutionResult(
+                null, this.createTmpSignedInsuranceEvent(
+                    customerioState,
+                    contracts
+                ), customerioState.sentTmpSignedEvent()
+            )
+            customerioState.shouldSendContractCreatedEvent() -> ExecutionResult(
+                null, this.contractCreatedEvent(
+                    customerioState,
+                    contracts
+                ), customerioState.sentContractCreatedEvent()
+            )
+            customerioState.shouldSendStartDateUpdatedEvent() -> ExecutionResult(
+                null, startDateUpdatedEvent(
+                    contracts
+                ), customerioState.sentStartDateUpdatedEvent()
+            )
             customerioState.shouldSendActivatesTodayEvent() ->
-                mapOf<String, Any?>() to customerioState.sentActivatesTodayEvent()
-            else -> throw RuntimeException("CustomerioState in weird state")
+                ExecutionResult(
+                    ActivationDateTodayEvent(listOf(), listOf()), null, customerioState.sentActivatesTodayEvent()
+                )
+            else
+            -> throw RuntimeException("CustomerioState in weird state")
         }
-        return ExecutionResult(null, result.first, result.second)
+        return result
     }
 
     private fun updateSwitcherInfo(
@@ -135,7 +144,7 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
     }
 }
 
-data class ExecutionResult(val event: Any?, val map: Map<String, Any?>, val second: CustomerioState) {
+data class ExecutionResult(val event: Any?, val map: Map<String, Any?>?, val second: CustomerioState) {
 
     val first: Map<String, Any?>
         get() {
