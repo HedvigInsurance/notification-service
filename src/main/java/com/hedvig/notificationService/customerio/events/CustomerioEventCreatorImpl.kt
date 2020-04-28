@@ -1,6 +1,7 @@
 package com.hedvig.notificationService.customerio.events
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.hedvig.notificationService.customerio.AgreementType
 import com.hedvig.notificationService.customerio.ContractInfo
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import java.time.format.DateTimeFormatter
@@ -24,7 +25,9 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
         val data = mutableMapOf<String, Any?>()
         returnMap["data"] = data
         contracts.forEach { contract ->
-
+            if (contract.type == AgreementType.SwedishApartment || contract.type == AgreementType.SwedishHouse) {
+                throw RuntimeException("Unexpected contract type ${contract.type}")
+            }
             val type = contract.type.typeName
 
             data["is_signed_$type"] = true
@@ -90,7 +93,7 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
         return ActivationDateTodayEvent(
             contractsWithActivationDateToday
                 .map { Contract(it.type.typeName, it.switcherCompany, it.startDate) },
-            contracts.filter { it.startDate?.isAfter(customerioState.activateFirstContractAt) == true }
+            contracts.filter { it.startDate == null || it.startDate.isAfter(customerioState.activateFirstContractAt) }
                 .map { Contract(it.type.typeName, it.switcherCompany, it.startDate) }
         )
     }

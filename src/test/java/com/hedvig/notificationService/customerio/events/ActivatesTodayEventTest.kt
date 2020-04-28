@@ -66,7 +66,7 @@ class ActivatesTodayEventTest {
         val event = result.event as ActivationDateTodayEvent
         assertThat(event.activeToday).containsAll(
             Contract(
-                "innbo", null, LocalDate.of(2020, 1, 23)
+                "innbo", null, LocalDate.of(2020, 1, 2)
             ),
             Contract("reise", null, LocalDate.of(2020, 1, 2))
         )
@@ -88,7 +88,7 @@ class ActivatesTodayEventTest {
 
         val event = result.event as ActivationDateTodayEvent
         assertThat(event.activeInFuture).containsAll(
-            Contract("innbo", null, LocalDate.of(2020, 1, 2))
+            Contract("innbo", null, LocalDate.of(2020, 1, 3))
         )
         assertThat(result.state.activateFirstContractAt).isEqualTo(LocalDate.of(2020, 1, 3))
     }
