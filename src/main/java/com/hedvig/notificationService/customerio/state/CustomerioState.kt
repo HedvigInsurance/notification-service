@@ -42,5 +42,6 @@ class CustomerioState(
     fun sentStartDateUpdatedEvent(): CustomerioState = copy(startDateUpdatedAt = null)
 
     fun shouldSendActivatesTodayEvent(): Boolean = activateFirstContractAt != null
-    fun sentActivatesTodayEvent(): CustomerioState = copy(activateFirstContractAt = null)
+    fun sentActivatesTodayEvent(nextActivationDate: LocalDate?): CustomerioState =
+        copy(activateFirstContractAt = nextActivationDate)
 }

@@ -3,6 +3,7 @@ package com.hedvig.notificationService.customerio.events
 import assertk.assertThat
 import assertk.assertions.contains
 import assertk.assertions.containsAll
+import assertk.assertions.isEqualTo
 import assertk.assertions.isNotEmpty
 import assertk.assertions.isNull
 import com.hedvig.notificationService.customerio.AgreementType
@@ -63,5 +64,26 @@ class ActivatesTodayEventTest {
             Contract("", "innbo", null),
             Contract("", "reise", null)
         )
+    }
+
+    @Test
+    fun `one contract with future activation date`() {
+        val eventCreatorImpl = CustomerioEventCreatorImpl()
+        val result = eventCreatorImpl.execute(
+            CustomerioState(
+                "aMemberId",
+                activateFirstContractAt = LocalDate.of(2020, 1, 2)
+            ),
+            listOf(
+                ContractInfo(AgreementType.NorwegianTravel, null, LocalDate.of(2020, 1, 2)),
+                ContractInfo(AgreementType.NorwegianHomeContent, null, LocalDate.of(2020, 1, 3))
+            )
+        )
+
+        val event = result.event as ActivationDateTodayEvent
+        assertThat(event.activeInFuture).containsAll(
+            Contract("", "innbo", null)
+        )
+        assertThat(result.state.activateFirstContractAt).isEqualTo(LocalDate.of(2020, 1, 3))
     }
 }

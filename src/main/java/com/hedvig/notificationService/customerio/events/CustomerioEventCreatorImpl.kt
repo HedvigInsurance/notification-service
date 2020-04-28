@@ -68,7 +68,9 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
                 ExecutionResult(
                     createActivationDateTodayEvent(customerioState, contracts),
                     null,
-                    customerioState.sentActivatesTodayEvent()
+                    customerioState.sentActivatesTodayEvent(nextActivationDate = contracts.map { it.startDate }
+                        .sortedBy { it }
+                        .firstOrNull { it?.isAfter(customerioState.activateFirstContractAt) == true })
                 )
             else
             -> throw RuntimeException("CustomerioState in weird state")
@@ -80,7 +82,8 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
         ActivationDateTodayEvent(
             contracts.filter { it.startDate == customerioState.activateFirstContractAt }
                 .map { Contract("", it.type.typeName, it.switcherCompany) },
-            listOf()
+            contracts.filter { it.startDate?.isAfter(customerioState.activateFirstContractAt) == true }
+                .map { Contract("", it.type.typeName, it.switcherCompany) }
         )
 
     private fun updateSwitcherInfo(
