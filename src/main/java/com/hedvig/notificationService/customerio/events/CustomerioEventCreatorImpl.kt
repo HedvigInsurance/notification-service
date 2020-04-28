@@ -64,6 +64,10 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
             ) to customerioState.copy(
                 startDateUpdatedAt = null
             )
+            customerioState.activateFirstContractAt != null ->
+                mapOf<String, Any?>() to customerioState.copy(
+                    activateFirstContractAt = null
+                )
             else -> throw RuntimeException("CustomerioState in weird state")
         }
     }
