@@ -1,5 +1,6 @@
 package com.hedvig.notificationService.customerio.events
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.hedvig.notificationService.customerio.AgreementType
 import com.hedvig.notificationService.customerio.ContractInfo
 import com.hedvig.notificationService.customerio.state.CustomerioState
@@ -49,8 +50,8 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
     override fun execute(
         customerioState: CustomerioState,
         contracts: List<ContractInfo>
-    ): Pair<Map<String, Any?>, CustomerioState> {
-        return when {
+    ): ExecutionResult {
+        val result = when {
             customerioState.shouldSendTmpSignedEvent() -> this.createTmpSignedInsuranceEvent(
                 customerioState,
                 contracts
@@ -66,6 +67,7 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
                 mapOf<String, Any?>() to customerioState.sentActivatesTodayEvent()
             else -> throw RuntimeException("CustomerioState in weird state")
         }
+        return ExecutionResult(null, result.first, result.second)
     }
 
     private fun updateSwitcherInfo(
@@ -130,5 +132,20 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
         }
 
         return returnMap.toMap()
+    }
+}
+
+data class ExecutionResult(val event: Any?, val map: Map<String, Any?>, val second: CustomerioState) {
+
+    val first: Map<String, Any?>
+        get() {
+            if (event == null) {
+                return map!!
+            }
+            return objectMapper.convertValue(event, Map::class.java)!! as Map<String, Any?>
+        }
+
+    companion object {
+        val objectMapper: ObjectMapper = ObjectMapper()
     }
 }

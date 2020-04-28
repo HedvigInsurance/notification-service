@@ -14,5 +14,5 @@ CustomerioEventCreator {
     fun execute(
         customerioState: CustomerioState,
         contracts: List<ContractInfo>
-    ): Pair<Map<String, Any?>, CustomerioState>
+    ): ExecutionResult
 }
