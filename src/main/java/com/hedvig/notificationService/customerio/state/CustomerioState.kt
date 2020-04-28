@@ -10,5 +10,6 @@ data class CustomerioState(
     val memberId: String,
     val underwriterFirstSignAttributesUpdate: Instant?,
     val sentTmpSignEvent: Boolean = false,
-    val contractCreatedAt: Instant? = null
+    val contractCreatedAt: Instant? = null,
+    val startDateUpdatedAt: Instant? = null
 )

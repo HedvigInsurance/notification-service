@@ -40,7 +40,7 @@ class WebIntegrationTestConfig {
                 MemberServiceImpl(memberServiceClientTest())
             ),
             InMemoryCustomerIOStateRepository(),
-            CustomerioEventCreatorImpl(productPricingFacade),
+            CustomerioEventCreatorImpl(),
             mapOf(
                 Workspace.SWEDEN to customerioMock,
                 Workspace.NORWAY to customerioMock

@@ -43,7 +43,7 @@ class SendNorwegianContractCreatedEventTest {
         sut = CustomerioService(
             workspaceSelector,
             repo,
-            CustomerioEventCreatorImpl(productPricingFacade),
+            CustomerioEventCreatorImpl(),
             mapOf(
                 Workspace.NORWAY to noClient,
                 Workspace.SWEDEN to seClient
@@ -66,7 +66,7 @@ class SendNorwegianContractCreatedEventTest {
         val slot = slot<Map<String, Any?>>()
         verify { noClient.sendEvent(any(), capture(slot)) }
 
-        assertThat(slot.captured["name"]).isEqualTo("ContractCreatedEvent")
+        assertThat(slot.captured["name"]).isEqualTo("NorwegianContractCreatedEvent")
         assertThat(slot.captured["data"] as Map<String, Any>).contains("is_signed_innbo", true)
     }
 
@@ -86,7 +86,7 @@ class SendNorwegianContractCreatedEventTest {
         verify(atMost = 1) { noClient.sendEvent(any(), capture(slot)) }
 
         assertThat(slot.captured).containsAll(
-            "name" to "ContractCreatedEvent"
+            "name" to "NorwegianContractCreatedEvent"
         )
     }
 

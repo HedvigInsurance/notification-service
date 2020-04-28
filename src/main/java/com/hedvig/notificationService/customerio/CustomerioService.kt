@@ -1,7 +1,6 @@
 package com.hedvig.notificationService.customerio
 
 import com.hedvig.customerio.CustomerioClient
-import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
 import com.hedvig.notificationService.customerio.events.CustomerioEventCreator
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.customerio.state.CustomerioState
@@ -87,25 +86,13 @@ open class CustomerioService(
             SIGN_EVENT_WINDOWS_SIZE_MINUTES,
             ChronoUnit.MINUTES
         )
-        // This is some duplicated code but the first part here is going away as soon as our new logic works
-        // so this feels ok for now.
-        for (customerioState in this.stateRepository.shouldSendTempSignEvent(windowEndTime)) {
+
+        for (customerioState in this.stateRepository.shouldUpdate(windowEndTime)) {
 
             try {
                 val contracts = this.productPricingFacade.getContractTypeForMember(customerioState.memberId)
-                val event = eventCreator.createTmpSignedInsuranceEvent(customerioState, contracts)
-                sendEventAndUpdateState(customerioState, event) { it.copy(sentTmpSignEvent = true) }
-            } catch (ex: RuntimeException) {
-                logger.error("Could not create event from customerio state")
-            }
-        }
-
-        for (customerioState in this.stateRepository.shouldSendContractCreatedEvents(windowEndTime)) {
-
-            try {
-                val contracts = this.productPricingFacade.getContractTypeForMember(customerioState.memberId)
-                val event = eventCreator.contractSignedEvent(customerioState, contracts)
-                sendEventAndUpdateState(customerioState, event) { it.copy(contractCreatedAt = null) }
+                val eventAndState = eventCreator.execute(customerioState, contracts)
+                sendEventAndUpdateState(customerioState, eventAndState.first) { eventAndState.second }
             } catch (ex: RuntimeException) {
                 logger.error("Could not create event from customerio state")
             }
@@ -125,16 +112,6 @@ open class CustomerioService(
             this.stateRepository.save(updateFunction(customerioState))
         } catch (ex: RuntimeException) {
             logger.error("Could not send event to customerio", ex)
-        }
-    }
-
-    open fun contractCreatedEvent(
-        event: ContractCreatedEvent,
-        timeAtCall: Instant = Instant.now()
-    ) {
-        val state = stateRepository.findByMemberId(event.owningMemberId)
-        if (state?.contractCreatedAt == null) {
-            stateRepository.save(CustomerioState(event.owningMemberId, null, false, timeAtCall))
         }
     }
 }
