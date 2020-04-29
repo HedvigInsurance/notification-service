@@ -14,14 +14,14 @@ class CustomerioState(
     val sentTmpSignEvent: Boolean = false,
     val contractCreatedAt: Instant? = null,
     val startDateUpdatedAt: Instant? = null,
-    val activateFirstContractAt: LocalDate? = null
+    val firstUpcomingStartDate: LocalDate? = null
 ) {
     private fun copy(
         underwriterFirstSignAttributesUpdate: Instant? = this.underwriterFirstSignAttributesUpdate,
         sentTmpSignEvent: Boolean = this.sentTmpSignEvent,
         contractCreatedAt: Instant? = this.contractCreatedAt,
         startDateUpdatedAt: Instant? = this.startDateUpdatedAt,
-        activateFirstContractAt: LocalDate? = this.activateFirstContractAt
+        firstUpcomingStartDate: LocalDate? = this.firstUpcomingStartDate
     ): CustomerioState {
         return CustomerioState(
             memberId = this.memberId,
@@ -29,7 +29,7 @@ class CustomerioState(
             sentTmpSignEvent = sentTmpSignEvent,
             contractCreatedAt = contractCreatedAt,
             startDateUpdatedAt = startDateUpdatedAt,
-            activateFirstContractAt = activateFirstContractAt
+            firstUpcomingStartDate = firstUpcomingStartDate
         )
     }
 
@@ -42,20 +42,20 @@ class CustomerioState(
     fun shouldSendStartDateUpdatedEvent(): Boolean = startDateUpdatedAt != null
     fun sentStartDateUpdatedEvent(): CustomerioState = copy(startDateUpdatedAt = null)
 
-    fun shouldSendActivatesTodayEvent(): Boolean = activateFirstContractAt != null
+    fun shouldSendActivatesTodayEvent(): Boolean = firstUpcomingStartDate != null
     fun sentActivatesTodayEvent(nextActivationDate: LocalDate?): CustomerioState =
-        copy(activateFirstContractAt = nextActivationDate)
+        copy(firstUpcomingStartDate = nextActivationDate)
 
-    fun updateFirstContractActivationDate(date: LocalDate?): CustomerioState {
-        val newDate = if (date == null || (activateFirstContractAt != null && date.isAfter(activateFirstContractAt))) {
-            activateFirstContractAt
+    fun updateFirstUpcomingStartDate(date: LocalDate?): CustomerioState {
+        val newDate = if (date == null || (firstUpcomingStartDate != null && date.isAfter(firstUpcomingStartDate))) {
+            firstUpcomingStartDate
         } else {
             date
         }
-        return copy(activateFirstContractAt = newDate)
+        return copy(firstUpcomingStartDate = newDate)
     }
 
-    fun updateFirstContractActivationDate(contracts: List<ContractInfo>): CustomerioState {
-        return contracts.foldRight(this) { contract, state -> state.updateFirstContractActivationDate(contract.startDate) }
+    fun updateFirstUpcomingStartDate(contracts: List<ContractInfo>): CustomerioState {
+        return contracts.foldRight(this) { contract, state -> state.updateFirstUpcomingStartDate(contract.startDate) }
     }
 }

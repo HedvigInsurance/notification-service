@@ -26,12 +26,12 @@ class ActivatesTodayEventTest {
             CustomerioState(
                 "aMemberId",
                 null,
-                activateFirstContractAt = LocalDate.of(2020, 1, 2)
+                firstUpcomingStartDate = LocalDate.of(2020, 1, 2)
             ),
             listOf(ContractInfo(AgreementType.NorwegianHomeContent, null, LocalDate.of(2020, 1, 2)))
         )
 
-        assertThat(result.state.activateFirstContractAt).isNull()
+        assertThat(result.state.firstUpcomingStartDate).isNull()
     }
 
     @Test
@@ -40,7 +40,7 @@ class ActivatesTodayEventTest {
         val result = eventCreatorImpl.execute(
             CustomerioState(
                 "aMemberId",
-                activateFirstContractAt = LocalDate.of(2020, 1, 2)
+                firstUpcomingStartDate = LocalDate.of(2020, 1, 2)
             ),
             listOf(ContractInfo(AgreementType.NorwegianTravel, null, LocalDate.of(2020, 1, 2)))
         )
@@ -55,7 +55,7 @@ class ActivatesTodayEventTest {
         val result = eventCreatorImpl.execute(
             CustomerioState(
                 "aMemberId",
-                activateFirstContractAt = LocalDate.of(2020, 1, 2)
+                firstUpcomingStartDate = LocalDate.of(2020, 1, 2)
             ),
             listOf(
                 ContractInfo(AgreementType.NorwegianTravel, null, LocalDate.of(2020, 1, 2)),
@@ -78,7 +78,7 @@ class ActivatesTodayEventTest {
         val result = eventCreatorImpl.execute(
             CustomerioState(
                 "aMemberId",
-                activateFirstContractAt = LocalDate.of(2020, 1, 2)
+                firstUpcomingStartDate = LocalDate.of(2020, 1, 2)
             ),
             listOf(
                 ContractInfo(AgreementType.NorwegianTravel, null, LocalDate.of(2020, 1, 2)),
@@ -90,7 +90,7 @@ class ActivatesTodayEventTest {
         assertThat(event.activeInFuture).containsAll(
             Contract("innbo", null, LocalDate.of(2020, 1, 3))
         )
-        assertThat(result.state.activateFirstContractAt).isEqualTo(LocalDate.of(2020, 1, 3))
+        assertThat(result.state.firstUpcomingStartDate).isEqualTo(LocalDate.of(2020, 1, 3))
     }
 
     @Test
@@ -99,7 +99,7 @@ class ActivatesTodayEventTest {
         val result = eventCreatorImpl.execute(
             CustomerioState(
                 "aMemberId",
-                activateFirstContractAt = LocalDate.of(2020, 1, 2)
+                firstUpcomingStartDate = LocalDate.of(2020, 1, 2)
             ),
             listOf(
                 ContractInfo(AgreementType.NorwegianTravel, null, LocalDate.of(2020, 1, 2)),
@@ -113,7 +113,7 @@ class ActivatesTodayEventTest {
             Contract("innbo", null, LocalDate.of(2020, 1, 3)),
             Contract("innbo", null, null)
         )
-        assertThat(result.state.activateFirstContractAt).isEqualTo(LocalDate.of(2020, 1, 3))
+        assertThat(result.state.firstUpcomingStartDate).isEqualTo(LocalDate.of(2020, 1, 3))
     }
 
     @Test
@@ -122,7 +122,7 @@ class ActivatesTodayEventTest {
         val result = eventCreatorImpl.execute(
             CustomerioState(
                 "aMemberId",
-                activateFirstContractAt = LocalDate.of(2020, 1, 2)
+                firstUpcomingStartDate = LocalDate.of(2020, 1, 2)
             ),
             listOf(
                 ContractInfo(AgreementType.NorwegianTravel, null, LocalDate.of(2020, 1, 2)),
@@ -134,7 +134,7 @@ class ActivatesTodayEventTest {
         assertThat(event.activeInFuture).containsAll(
             Contract("innbo", null, null)
         )
-        assertThat(result.state.activateFirstContractAt).isEqualTo(null)
+        assertThat(result.state.firstUpcomingStartDate).isEqualTo(null)
     }
 
     @Test
@@ -145,7 +145,7 @@ class ActivatesTodayEventTest {
         val result = eventCreatorImpl.execute(
             CustomerioState(
                 "aMemberId",
-                activateFirstContractAt = LocalDate.of(2020, 1, 2)
+                firstUpcomingStartDate = LocalDate.of(2020, 1, 2)
             ),
             listOf(
                 ContractInfo(AgreementType.NorwegianTravel, null, LocalDate.of(2020, 1, 3))

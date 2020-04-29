@@ -75,7 +75,7 @@ class OnContractCreatedEventTest {
             ), time
         )
 
-        assertThat(repository.data["1337"]?.activateFirstContractAt).isEqualTo(LocalDate.of(2020, 5, 4))
+        assertThat(repository.data["1337"]?.firstUpcomingStartDate).isEqualTo(LocalDate.of(2020, 5, 4))
     }
 
     @Test
@@ -86,7 +86,7 @@ class OnContractCreatedEventTest {
             CustomerioState(
                 "1337",
                 contractCreatedAt = stateCreatedAt,
-                activateFirstContractAt =
+                firstUpcomingStartDate =
                 LocalDate.of(2020, 1, 1)
             )
         )
@@ -100,7 +100,7 @@ class OnContractCreatedEventTest {
             ), time
         )
 
-        assertThat(repository.data["1337"]?.activateFirstContractAt).isEqualTo(LocalDate.of(2020, 1, 1))
+        assertThat(repository.data["1337"]?.firstUpcomingStartDate).isEqualTo(LocalDate.of(2020, 1, 1))
     }
 
     @Test
@@ -111,7 +111,7 @@ class OnContractCreatedEventTest {
             CustomerioState(
                 "1337",
                 contractCreatedAt = stateCreatedAt,
-                activateFirstContractAt =
+                firstUpcomingStartDate =
                 LocalDate.of(2020, 5, 2)
             )
         )
@@ -125,6 +125,6 @@ class OnContractCreatedEventTest {
             ), time
         )
 
-        assertThat(repository.data["1337"]?.activateFirstContractAt).isEqualTo(LocalDate.of(2020, 5, 1))
+        assertThat(repository.data["1337"]?.firstUpcomingStartDate).isEqualTo(LocalDate.of(2020, 5, 1))
     }
 }

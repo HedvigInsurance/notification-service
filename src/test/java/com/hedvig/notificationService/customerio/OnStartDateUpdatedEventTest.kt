@@ -60,7 +60,7 @@ class OnStartDateUpdatedEventTest {
             ), timeOfFirstCall.plusMillis(3000)
         )
 
-        assertThat(repo.data["aMemberId"]?.activateFirstContractAt).isEqualTo(LocalDate.of(2020, 4, 3))
+        assertThat(repo.data["aMemberId"]?.firstUpcomingStartDate).isEqualTo(LocalDate.of(2020, 4, 3))
     }
 
     @Test
@@ -77,6 +77,6 @@ class OnStartDateUpdatedEventTest {
             ), timeOfFirstCall.plusMillis(3000)
         )
 
-        assertThat(repo.data["aMemberId"]?.activateFirstContractAt).isEqualTo(LocalDate.of(2020, 4, 3))
+        assertThat(repo.data["aMemberId"]?.firstUpcomingStartDate).isEqualTo(LocalDate.of(2020, 4, 3))
     }
 }

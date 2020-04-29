@@ -22,11 +22,11 @@ class EventHandler(val repo: CustomerIOStateRepository) {
                     false,
                     null,
                     startDateUpdatedAt = callTime,
-                    activateFirstContractAt = event.startDate
+                    firstUpcomingStartDate = event.startDate
                 )
             )
         } else {
-            repo.save(state.updateFirstContractActivationDate(event.startDate))
+            repo.save(state.updateFirstUpcomingStartDate(event.startDate))
         }
     }
 
@@ -39,11 +39,11 @@ class EventHandler(val repo: CustomerIOStateRepository) {
                     null,
                     false,
                     callTime,
-                    activateFirstContractAt = contractCreatedEvent.startDate
+                    firstUpcomingStartDate = contractCreatedEvent.startDate
                 )
             )
         } else {
-            repo.save(state.updateFirstContractActivationDate(contractCreatedEvent.startDate))
+            repo.save(state.updateFirstUpcomingStartDate(contractCreatedEvent.startDate))
         }
     }
 }

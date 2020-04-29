@@ -13,8 +13,8 @@ class UpdateActivationDateTrigger() {
         val sut = CustomerioState("aMemberID")
 
         val contracts = listOf(ContractInfo(AgreementType.NorwegianHomeContent, null, null))
-        val result = sut.updateFirstContractActivationDate(contracts)
+        val result = sut.updateFirstUpcomingStartDate(contracts)
 
-        assertThat(result.activateFirstContractAt).isNull()
+        assertThat(result.firstUpcomingStartDate).isNull()
     }
 }
