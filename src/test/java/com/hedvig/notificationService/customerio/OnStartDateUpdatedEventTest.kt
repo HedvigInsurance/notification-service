@@ -8,6 +8,7 @@ import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRe
 import org.junit.Before
 import org.junit.Test
 import java.time.Instant
+import java.time.LocalDate
 
 class OnStartDateUpdatedEventTest {
 
@@ -22,7 +23,7 @@ class OnStartDateUpdatedEventTest {
     fun `on start date updated event`() {
         val sut = EventHandler(repo)
         val time = Instant.parse("2020-04-27T14:03:23.337770Z")
-        sut.onStartDateUpdatedEvent(StartDateUpdatedEvent("aContractId", "aMemberId"), time)
+        sut.onStartDateUpdatedEvent(StartDateUpdatedEvent("aContractId", "aMemberId", LocalDate.of(2020, 5, 3)), time)
 
         assertThat(repo.data["aMemberId"]?.startDateUpdatedAt).isEqualTo(time)
     }
@@ -35,8 +36,47 @@ class OnStartDateUpdatedEventTest {
 
         repo.save(CustomerioState("aMemberId", null, startDateUpdatedAt = timeOfFirstCall))
 
-        sut.onStartDateUpdatedEvent(StartDateUpdatedEvent("aContractId", "aMemberId"), timeOfFirstCall.plusMillis(3000))
+        sut.onStartDateUpdatedEvent(
+            StartDateUpdatedEvent("aContractId", "aMemberId", LocalDate.of(2020, 5, 3)),
+            timeOfFirstCall.plusMillis(3000)
+        )
 
         assertThat(repo.data["aMemberId"]?.startDateUpdatedAt).isEqualTo(timeOfFirstCall)
+    }
+
+    @Test
+    fun `with existing state set activation date trigger to startdate`() {
+        val sut = EventHandler(repo)
+
+        val timeOfFirstCall = Instant.parse("2020-04-27T14:03:23.337770Z")
+
+        repo.save(CustomerioState("aMemberId", null, startDateUpdatedAt = timeOfFirstCall))
+
+        sut.onStartDateUpdatedEvent(
+            StartDateUpdatedEvent(
+                "aContractId",
+                "aMemberId",
+                LocalDate.of(2020, 4, 3)
+            ), timeOfFirstCall.plusMillis(3000)
+        )
+
+        assertThat(repo.data["aMemberId"]?.activateFirstContractAt).isEqualTo(LocalDate.of(2020, 4, 3))
+    }
+
+    @Test
+    fun `without existing state set activation date trigger to startdate`() {
+        val sut = EventHandler(repo)
+
+        val timeOfFirstCall = Instant.parse("2020-04-27T14:03:23.337770Z")
+
+        sut.onStartDateUpdatedEvent(
+            StartDateUpdatedEvent(
+                "aContractId",
+                "aMemberId",
+                LocalDate.of(2020, 4, 3)
+            ), timeOfFirstCall.plusMillis(3000)
+        )
+
+        assertThat(repo.data["aMemberId"]?.activateFirstContractAt).isEqualTo(LocalDate.of(2020, 4, 3))
     }
 }

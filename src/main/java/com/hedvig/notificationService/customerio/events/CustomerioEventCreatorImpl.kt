@@ -93,7 +93,7 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
         return ActivationDateTodayEvent(
             contractsWithActivationDateToday
                 .map { Contract(it.type.typeName, it.switcherCompany, it.startDate) },
-            contracts.filter { it.startDate == null || it.startDate.isAfter(customerioState.activateFirstContractAt) }
+            contracts.filter { it.startDate == null || it.startDate?.isAfter(customerioState.activateFirstContractAt) }
                 .map { Contract(it.type.typeName, it.switcherCompany, it.startDate) }
         )
     }

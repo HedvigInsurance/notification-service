@@ -15,7 +15,18 @@ class EventHandler(val repo: CustomerIOStateRepository) {
     ) {
         val state = repo.findByMemberId(event.owningMemberId)
         if (state?.startDateUpdatedAt == null) {
-            repo.save(CustomerioState(event.owningMemberId, null, false, null, startDateUpdatedAt = callTime))
+            repo.save(
+                CustomerioState(
+                    event.owningMemberId,
+                    null,
+                    false,
+                    null,
+                    startDateUpdatedAt = callTime,
+                    activateFirstContractAt = event.startDate
+                )
+            )
+        } else {
+            repo.save(state.updateFirstContractActivationDate(event.startDate))
         }
     }
 
