@@ -14,36 +14,20 @@ class EventHandler(val repo: CustomerIOStateRepository) {
         callTime: Instant = Instant.now()
     ) {
         val state = repo.findByMemberId(event.owningMemberId)
-        if (state?.startDateUpdatedAt == null) {
-            repo.save(
-                CustomerioState(
-                    event.owningMemberId,
-                    null,
-                    false,
-                    null,
-                    startDateUpdatedAt = callTime,
-                    firstUpcomingStartDate = event.startDate
-                )
+            ?: CustomerioState(
+                event.owningMemberId,
+                startDateUpdatedAt = callTime
             )
-        } else {
-            repo.save(state.updateFirstUpcomingStartDate(event.startDate))
-        }
+
+        repo.save(state.updateFirstUpcomingStartDate(event.startDate))
     }
 
     fun onContractCreatedEvent(contractCreatedEvent: ContractCreatedEvent, callTime: Instant = Instant.now()) {
-        val state = repo.findByMemberId(contractCreatedEvent.owningMemberId)
-        if (state?.contractCreatedAt == null) {
-            repo.save(
-                CustomerioState(
-                    contractCreatedEvent.owningMemberId,
-                    null,
-                    false,
-                    callTime,
-                    firstUpcomingStartDate = contractCreatedEvent.startDate
-                )
-            )
-        } else {
-            repo.save(state.updateFirstUpcomingStartDate(contractCreatedEvent.startDate))
-        }
+        val state = repo.findByMemberId(contractCreatedEvent.owningMemberId) ?: CustomerioState(
+            contractCreatedEvent.owningMemberId,
+            contractCreatedAt = callTime
+        )
+
+        repo.save(state.updateFirstUpcomingStartDate(contractCreatedEvent.startDate))
     }
 }
