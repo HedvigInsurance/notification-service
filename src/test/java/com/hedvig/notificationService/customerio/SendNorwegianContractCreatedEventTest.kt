@@ -56,6 +56,8 @@ class SendNorwegianContractCreatedEventTest {
     fun sendContractCreatedEvent() {
         val startTime = Instant.parse("2020-04-23T09:25:13.597224Z")
         repo.save(CustomerioState("someMemberId", null, false, startTime))
+
+        every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
         every { productPricingFacade.getContractTypeForMember(any()) } returns
             listOf(
                 ContractInfo(AgreementType.NorwegianHomeContent, null, null)
@@ -71,9 +73,28 @@ class SendNorwegianContractCreatedEventTest {
     }
 
     @Test
+    fun sendContractCreatedEventToSwedishMember() {
+        val startTime = Instant.parse("2020-04-23T09:25:13.597224Z")
+        repo.save(CustomerioState("someMemberId", null, false, startTime))
+
+        every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.SWEDEN
+
+        every { productPricingFacade.getContractTypeForMember(any()) } returns
+            listOf(
+                ContractInfo(AgreementType.NorwegianHomeContent, null, null)
+            )
+
+        sut.sendUpdates(startTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
+
+        val slot = slot<Map<String, Any?>>()
+        verify { seClient.sendEvent(any(), any()) }
+    }
+
+    @Test
     fun `only send one ContractCreatedEvent after two updates`() {
         val startTime = Instant.parse("2020-04-23T09:25:13.597224Z")
         repo.save(CustomerioState("someMemberId", null, false, startTime))
+        every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
         every { productPricingFacade.getContractTypeForMember(any()) } returns
             listOf(
                 ContractInfo(AgreementType.NorwegianHomeContent, null, null)
@@ -95,6 +116,7 @@ class SendNorwegianContractCreatedEventTest {
         val startTime = Instant.parse("2020-04-23T09:25:13.597224Z")
         repo.save(CustomerioState("someMemberId", null, false, startTime))
 
+        every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
         every { noClient.sendEvent(any(), any()) } throws FeignExceptionForTest(500)
 
         sut.sendUpdates(startTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))

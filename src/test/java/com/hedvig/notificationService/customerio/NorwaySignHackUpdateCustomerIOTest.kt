@@ -40,16 +40,16 @@ class NorwaySignHackUpdateCustomerIOTest {
     @MockK
     lateinit var sut: CustomerioService
 
+    @MockK
+    lateinit var workspaceSelector: WorkspaceSelector
+
     @Before
     fun setup() {
         MockKAnnotations.init(this)
         eventCreator = CustomerioEventCreatorImpl()
 
         sut = CustomerioService(
-            WorkspaceSelector(
-                productPricingFacade,
-                memberServiceImpl
-            ),
+            workspaceSelector,
             repository,
             eventCreator,
             mapOf(
@@ -63,7 +63,8 @@ class NorwaySignHackUpdateCustomerIOTest {
     @Test
     fun sendUpdatesAfterWindowsTimeLengthSendsCustomerIOUpdate() {
 
-        every { productPricingFacade.getWorkspaceForMember(any()) } returns Workspace.NORWAY
+        every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
+
         val updateTime = Instant.parse("2020-04-15T14:53:40.550493Z")
 
         sut.updateCustomerAttributes(
@@ -94,7 +95,8 @@ class NorwaySignHackUpdateCustomerIOTest {
     @Test
     fun sendUpdatesBeforeWindowTimeLengthDoesNotSendCustomerIOUpdate() {
 
-        every { productPricingFacade.getWorkspaceForMember(any()) } returns Workspace.NORWAY
+        every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
+
         val updateTime = Instant.parse("2020-04-15T14:53:40.550493Z")
         sut.updateCustomerAttributes(
             "42", mapOf(
@@ -134,7 +136,7 @@ class NorwaySignHackUpdateCustomerIOTest {
                 someTime
             )
         )
-
+        every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
         every { productPricingFacade.getContractTypeForMember(any()) } returns listOf(
             ContractInfo(
                 AgreementType.NorwegianHomeContent,
@@ -152,7 +154,7 @@ class NorwaySignHackUpdateCustomerIOTest {
     fun sendUpdatesWithNothingToUpdateDoesNotCallCustomerio() {
 
         val someTime = Instant.parse("2020-04-15T14:53:40.550493Z")
-
+        every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
         sut.sendUpdates(someTime)
 
         verify(inverse = true) { noCustomerIoClient.sendEvent(any(), any()) }
@@ -168,7 +170,7 @@ class NorwaySignHackUpdateCustomerIOTest {
                 time
             )
         )
-
+        every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
         every { productPricingFacade.getContractTypeForMember(any()) } returns listOf(
             ContractInfo(
                 AgreementType.NorwegianHomeContent,
@@ -193,6 +195,7 @@ class NorwaySignHackUpdateCustomerIOTest {
             )
         )
 
+        every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
         every { productPricingFacade.getContractTypeForMember(any()) } returns listOf(
             ContractInfo(
                 AgreementType.SwedishApartment,

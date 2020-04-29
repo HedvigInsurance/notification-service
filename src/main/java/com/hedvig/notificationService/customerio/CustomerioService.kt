@@ -105,7 +105,8 @@ open class CustomerioService(
         updateFunction: (CustomerioState) -> (CustomerioState)
     ) {
         try {
-            clients[Workspace.NORWAY]?.sendEvent(
+            val workspace = workspaceSelector.getWorkspaceForMember(customerioState.memberId)
+            clients[workspace]?.sendEvent(
                 customerioState.memberId,
                 event
             )
