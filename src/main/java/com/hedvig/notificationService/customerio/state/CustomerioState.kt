@@ -1,5 +1,6 @@
 package com.hedvig.notificationService.customerio.state
 
+import com.hedvig.notificationService.customerio.ContractInfo
 import java.time.Instant
 import java.time.LocalDate
 import javax.persistence.Entity
@@ -52,5 +53,9 @@ class CustomerioState(
             date
         }
         return copy(activateFirstContractAt = newDate)
+    }
+
+    fun updateFirstContractActivationDate(contracts: List<ContractInfo>): CustomerioState {
+        return contracts.foldRight(this) { contract, state -> state.updateFirstContractActivationDate(contract.startDate) }
     }
 }
