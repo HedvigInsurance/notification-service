@@ -44,4 +44,13 @@ class CustomerioState(
     fun shouldSendActivatesTodayEvent(): Boolean = activateFirstContractAt != null
     fun sentActivatesTodayEvent(nextActivationDate: LocalDate?): CustomerioState =
         copy(activateFirstContractAt = nextActivationDate)
+
+    fun updateFirstContractActivationDate(date: LocalDate?): CustomerioState {
+        val newDate = if (date == null || (activateFirstContractAt != null && date.isAfter(activateFirstContractAt))) {
+            activateFirstContractAt
+        } else {
+            date
+        }
+        return copy(activateFirstContractAt = newDate)
+    }
 }

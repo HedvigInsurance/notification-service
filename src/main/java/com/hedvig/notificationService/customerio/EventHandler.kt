@@ -31,6 +31,8 @@ class EventHandler(val repo: CustomerIOStateRepository) {
                     activateFirstContractAt = contractCreatedEvent.startDate
                 )
             )
+        } else {
+            repo.save(state.updateFirstContractActivationDate(contractCreatedEvent.startDate))
         }
     }
 }
