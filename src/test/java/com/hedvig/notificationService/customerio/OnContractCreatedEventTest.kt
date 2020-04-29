@@ -77,4 +77,29 @@ class OnContractCreatedEventTest {
 
         assertThat(repository.data["1337"]?.activateFirstContractAt).isEqualTo(LocalDate.of(2020, 5, 4))
     }
+
+    @Test
+    fun `contract with activation date later than existing activation date`() {
+
+        val stateCreatedAt = Instant.parse("2020-04-27T09:20:42.815351Z").minusMillis(3000)
+        repository.save(
+            CustomerioState(
+                "1337",
+                contractCreatedAt = stateCreatedAt,
+                activateFirstContractAt =
+                LocalDate.of(2020, 1, 1)
+            )
+        )
+        val time = Instant.parse("2020-04-27T09:20:42.815351Z")
+
+        sut.onContractCreatedEvent(
+            ContractCreatedEvent(
+                "someEventId",
+                "1337",
+                LocalDate.of(2020, 5, 4)
+            ), time
+        )
+
+        assertThat(repository.data["1337"]?.activateFirstContractAt).isEqualTo(LocalDate.of(2020, 1, 1))
+    }
 }
