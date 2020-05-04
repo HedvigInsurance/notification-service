@@ -32,11 +32,11 @@ class ActivationDateUpdatedEventTest {
             listOf(ContractInfo(AgreementType.NorwegianHomeContent, "someCompany", LocalDate.parse("2020-03-04")))
 
         val callTime = Instant.parse("2020-04-27T18:50:41.760555Z")
-        val customerioState = CustomerioState("amember", null, startDateUpdatedAt = callTime)
+        val customerioState = CustomerioState("amember", null, startDateUpdatedTriggerAt = callTime)
 
         val eventAndState = sut.execute(customerioState, contracts)
 
-        assertThat(eventAndState.state.startDateUpdatedAt).isNull()
+        assertThat(eventAndState.state.startDateUpdatedTriggerAt).isNull()
     }
 
     @Test
@@ -48,7 +48,7 @@ class ActivationDateUpdatedEventTest {
         )
 
         val callTime = Instant.parse("2020-04-27T18:50:41.760555Z")
-        val customerioState = CustomerioState("amember", null, startDateUpdatedAt = callTime)
+        val customerioState = CustomerioState("amember", null, startDateUpdatedTriggerAt = callTime)
 
         val sut = CustomerioEventCreatorImpl()
         val eventAndState = sut.execute(customerioState, contracts)
@@ -71,7 +71,7 @@ class ActivationDateUpdatedEventTest {
         )
 
         val callTime = Instant.parse("2020-04-27T18:50:41.760555Z")
-        val customerioState = CustomerioState("amember", null, startDateUpdatedAt = callTime)
+        val customerioState = CustomerioState("amember", null, startDateUpdatedTriggerAt = callTime)
 
         val sut = CustomerioEventCreatorImpl()
         val eventAndState = sut.execute(customerioState, contracts)
@@ -101,7 +101,7 @@ class ActivationDateUpdatedEventTest {
         )
 
         val callTime = Instant.parse("2020-04-27T18:50:41.760555Z")
-        val customerioState = CustomerioState("amember", null, startDateUpdatedAt = callTime)
+        val customerioState = CustomerioState("amember", null, startDateUpdatedTriggerAt = callTime)
 
         val sut = CustomerioEventCreatorImpl()
         val eventAndState = sut.execute(customerioState, contracts)
@@ -124,7 +124,7 @@ class ActivationDateUpdatedEventTest {
         )
 
         val callTime = Instant.parse("2020-04-27T18:50:41.760555Z")
-        val customerioState = CustomerioState("amember", null, startDateUpdatedAt = callTime)
+        val customerioState = CustomerioState("amember", null, startDateUpdatedTriggerAt = callTime)
 
         val sut = CustomerioEventCreatorImpl()
         thrown.expectMessage("Cannot create ActivationDateUpdatedEvent no contracts with start date")

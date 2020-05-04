@@ -121,6 +121,6 @@ class SendNorwegianContractCreatedEventTest {
 
         sut.sendUpdates(startTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
 
-        assertThat(repo.data["someMemberId"]?.contractCreatedAt).isEqualTo(startTime)
+        assertThat(repo.data["someMemberId"]?.contractCreatedTriggerAt).isEqualTo(startTime)
     }
 }

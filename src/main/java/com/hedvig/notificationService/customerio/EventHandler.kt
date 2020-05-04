@@ -16,7 +16,7 @@ class EventHandler(val repo: CustomerIOStateRepository) {
         val state = repo.findByMemberId(event.owningMemberId)
             ?: CustomerioState(
                 event.owningMemberId,
-                startDateUpdatedAt = callTime
+                startDateUpdatedTriggerAt = callTime
             )
 
         repo.save(state.updateFirstUpcomingStartDate(event.startDate))
@@ -25,7 +25,7 @@ class EventHandler(val repo: CustomerIOStateRepository) {
     fun onContractCreatedEvent(contractCreatedEvent: ContractCreatedEvent, callTime: Instant = Instant.now()) {
         val state = repo.findByMemberId(contractCreatedEvent.owningMemberId) ?: CustomerioState(
             contractCreatedEvent.owningMemberId,
-            contractCreatedAt = callTime
+            contractCreatedTriggerAt = callTime
         )
 
         repo.save(state.updateFirstUpcomingStartDate(contractCreatedEvent.startDate))

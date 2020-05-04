@@ -73,7 +73,7 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
                     null,
                     customerioState.sentActivatesTodayEvent(nextActivationDate = contracts.map { it.startDate }
                         .sortedBy { it }
-                        .firstOrNull { it?.isAfter(customerioState.firstUpcomingStartDate) == true })
+                        .firstOrNull { it?.isAfter(customerioState.activationDateTriggerAt) == true })
                 )
             else
             -> throw RuntimeException("CustomerioState in weird state")
@@ -86,14 +86,14 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
         contracts: List<ContractInfo>
     ): ActivationDateTodayEvent {
         val contractsWithActivationDateToday =
-            contracts.filter { it.startDate == customerioState.firstUpcomingStartDate }
+            contracts.filter { it.startDate == customerioState.activationDateTriggerAt }
         if (contractsWithActivationDateToday.isEmpty()) {
             throw RuntimeException("Cannot send crete event no contracts with activation date today")
         }
         return ActivationDateTodayEvent(
             contractsWithActivationDateToday
                 .map { Contract(it.type.typeName, it.switcherCompany, it.startDate) },
-            contracts.filter { it.startDate == null || it.startDate?.isAfter(customerioState.firstUpcomingStartDate) }
+            contracts.filter { it.startDate == null || it.startDate?.isAfter(customerioState.activationDateTriggerAt) }
                 .map { Contract(it.type.typeName, it.switcherCompany, it.startDate) }
         )
     }

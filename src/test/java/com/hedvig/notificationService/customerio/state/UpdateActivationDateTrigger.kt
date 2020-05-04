@@ -15,6 +15,6 @@ class UpdateActivationDateTrigger() {
         val contracts = listOf(ContractInfo(AgreementType.NorwegianHomeContent, null, null))
         val result = sut.updateFirstUpcomingStartDate(contracts)
 
-        assertThat(result.firstUpcomingStartDate).isNull()
+        assertThat(result.activationDateTriggerAt).isNull()
     }
 }

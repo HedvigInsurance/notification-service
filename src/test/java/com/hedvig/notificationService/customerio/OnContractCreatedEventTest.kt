@@ -39,7 +39,7 @@ class OnContractCreatedEventTest {
             ), time
         )
 
-        assertThat(repository.data["1337"]?.contractCreatedAt).isEqualTo(time)
+        assertThat(repository.data["1337"]?.contractCreatedTriggerAt).isEqualTo(time)
     }
 
     @Test
@@ -58,7 +58,7 @@ class OnContractCreatedEventTest {
             ), time
         )
 
-        assertThat(repository.data["1337"]?.contractCreatedAt).isEqualTo(stateCreatedAt)
+        assertThat(repository.data["1337"]?.contractCreatedTriggerAt).isEqualTo(stateCreatedAt)
     }
 
     @Test
@@ -75,7 +75,7 @@ class OnContractCreatedEventTest {
             ), time
         )
 
-        assertThat(repository.data["1337"]?.firstUpcomingStartDate).isEqualTo(LocalDate.of(2020, 5, 4))
+        assertThat(repository.data["1337"]?.activationDateTriggerAt).isEqualTo(LocalDate.of(2020, 5, 4))
     }
 
     @Test
@@ -85,8 +85,8 @@ class OnContractCreatedEventTest {
         repository.save(
             CustomerioState(
                 "1337",
-                contractCreatedAt = stateCreatedAt,
-                firstUpcomingStartDate =
+                contractCreatedTriggerAt = stateCreatedAt,
+                activationDateTriggerAt =
                 LocalDate.of(2020, 1, 1)
             )
         )
@@ -100,7 +100,7 @@ class OnContractCreatedEventTest {
             ), time
         )
 
-        assertThat(repository.data["1337"]?.firstUpcomingStartDate).isEqualTo(LocalDate.of(2020, 1, 1))
+        assertThat(repository.data["1337"]?.activationDateTriggerAt).isEqualTo(LocalDate.of(2020, 1, 1))
     }
 
     @Test
@@ -110,8 +110,8 @@ class OnContractCreatedEventTest {
         repository.save(
             CustomerioState(
                 "1337",
-                contractCreatedAt = stateCreatedAt,
-                firstUpcomingStartDate =
+                contractCreatedTriggerAt = stateCreatedAt,
+                activationDateTriggerAt =
                 LocalDate.of(2020, 5, 2)
             )
         )
@@ -125,6 +125,6 @@ class OnContractCreatedEventTest {
             ), time
         )
 
-        assertThat(repository.data["1337"]?.firstUpcomingStartDate).isEqualTo(LocalDate.of(2020, 5, 1))
+        assertThat(repository.data["1337"]?.activationDateTriggerAt).isEqualTo(LocalDate.of(2020, 5, 1))
     }
 }

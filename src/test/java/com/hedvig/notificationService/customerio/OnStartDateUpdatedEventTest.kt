@@ -25,7 +25,7 @@ class OnStartDateUpdatedEventTest {
         val time = Instant.parse("2020-04-27T14:03:23.337770Z")
         sut.onStartDateUpdatedEvent(StartDateUpdatedEvent("aContractId", "aMemberId", LocalDate.of(2020, 5, 3)), time)
 
-        assertThat(repo.data["aMemberId"]?.startDateUpdatedAt).isEqualTo(time)
+        assertThat(repo.data["aMemberId"]?.startDateUpdatedTriggerAt).isEqualTo(time)
     }
 
     @Test
@@ -34,14 +34,14 @@ class OnStartDateUpdatedEventTest {
 
         val timeOfFirstCall = Instant.parse("2020-04-27T14:03:23.337770Z")
 
-        repo.save(CustomerioState("aMemberId", null, startDateUpdatedAt = timeOfFirstCall))
+        repo.save(CustomerioState("aMemberId", null, startDateUpdatedTriggerAt = timeOfFirstCall))
 
         sut.onStartDateUpdatedEvent(
             StartDateUpdatedEvent("aContractId", "aMemberId", LocalDate.of(2020, 5, 3)),
             timeOfFirstCall.plusMillis(3000)
         )
 
-        assertThat(repo.data["aMemberId"]?.startDateUpdatedAt).isEqualTo(timeOfFirstCall)
+        assertThat(repo.data["aMemberId"]?.startDateUpdatedTriggerAt).isEqualTo(timeOfFirstCall)
     }
 
     @Test
@@ -50,7 +50,7 @@ class OnStartDateUpdatedEventTest {
 
         val timeOfFirstCall = Instant.parse("2020-04-27T14:03:23.337770Z")
 
-        repo.save(CustomerioState("aMemberId", null, startDateUpdatedAt = timeOfFirstCall))
+        repo.save(CustomerioState("aMemberId", null, startDateUpdatedTriggerAt = timeOfFirstCall))
 
         sut.onStartDateUpdatedEvent(
             StartDateUpdatedEvent(
@@ -60,7 +60,7 @@ class OnStartDateUpdatedEventTest {
             ), timeOfFirstCall.plusMillis(3000)
         )
 
-        assertThat(repo.data["aMemberId"]?.firstUpcomingStartDate).isEqualTo(LocalDate.of(2020, 4, 3))
+        assertThat(repo.data["aMemberId"]?.activationDateTriggerAt).isEqualTo(LocalDate.of(2020, 4, 3))
     }
 
     @Test
@@ -77,6 +77,6 @@ class OnStartDateUpdatedEventTest {
             ), timeOfFirstCall.plusMillis(3000)
         )
 
-        assertThat(repo.data["aMemberId"]?.firstUpcomingStartDate).isEqualTo(LocalDate.of(2020, 4, 3))
+        assertThat(repo.data["aMemberId"]?.activationDateTriggerAt).isEqualTo(LocalDate.of(2020, 4, 3))
     }
 }
