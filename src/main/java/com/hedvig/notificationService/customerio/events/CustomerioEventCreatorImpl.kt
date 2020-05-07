@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.hedvig.notificationService.customerio.AgreementType
 import com.hedvig.notificationService.customerio.ContractInfo
 import com.hedvig.notificationService.customerio.state.CustomerioState
-import java.time.format.DateTimeFormatter
 
 class CustomerioEventCreatorImpl : CustomerioEventCreator {
     override fun createTmpSignedInsuranceEvent(
@@ -20,7 +19,7 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
         contracts: Collection<ContractInfo>
     ): NorwegianContractCreatedEvent {
 
-        var data = createContractCreatedData(contracts)
+        val data = createContractCreatedData(contracts)
 
         return NorwegianContractCreatedEvent(data)
     }
@@ -109,30 +108,9 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
         return ActivationDateTodayEvent(
             contractsWithActivationDateToday
                 .map { Contract(it.type.typeName, it.switcherCompany, it.startDate?.toString()) },
-            contracts.filter { it.startDate == null || it.startDate?.isAfter(customerioState.activationDateTriggerAt) }
+            contracts.filter { it.startDate == null || it.startDate.isAfter(customerioState.activationDateTriggerAt) }
                 .map { Contract(it.type.typeName, it.switcherCompany, it.startDate?.toString()) }
         )
-    }
-
-    private fun updateSwitcherInfo(
-        contract: ContractInfo,
-        returnMap: MutableMap<String, Any?>,
-        type: String
-    ) {
-        if (contract.switcherCompany != null) {
-            returnMap["is_switcher_$type"] = true
-            returnMap["switcher_company_$type"] = contract.switcherCompany
-        }
-    }
-
-    private fun updateActivationDate(
-        contract: ContractInfo,
-        returnMap: MutableMap<String, Any?>,
-        type: String
-    ) {
-        if (contract.startDate != null) {
-            returnMap["activation_date_$type"] = contract.startDate.format(DateTimeFormatter.ISO_DATE)
-        }
     }
 
     private fun createStartDateUpdatedEvent(
@@ -152,7 +130,7 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
                     Contract(
                         it.type.typeName,
                         it.switcherCompany,
-                        it.startDate?.toString()
+                        it.startDate.toString()
                     )
                 )
             } else {
@@ -175,13 +153,11 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
     }
 }
 
-data class ExecutionResult(val event: Any?, val map: Map<String, Any?>?, val state: CustomerioState) {
+data class ExecutionResult(val event: Any, val map: Map<String, Any?>?, val state: CustomerioState) {
 
     val asMap: Map<String, Any?>
         get() {
-            if (event == null) {
-                return map!!
-            }
+            @Suppress("UNCHECKED_CAST")
             return objectMapper.convertValue(event, Map::class.java)!! as Map<String, Any?>
         }
 
