@@ -1,24 +1,19 @@
 package com.hedvig.notificationService.customerio.web
 
 import com.hedvig.customerio.CustomerioClient
-import com.hedvig.notificationService.customerio.AgreementType
-import com.hedvig.notificationService.customerio.ContractInfo
 import com.hedvig.notificationService.customerio.Workspace
-import com.hedvig.notificationService.customerio.events.CustomerioEventCreatorImpl
-import com.hedvig.notificationService.customerio.state.CustomerioState
 import org.springframework.context.annotation.Profile
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import java.time.LocalDate
 
 @RestController
 @RequestMapping("/_/customerio/debug")
 @Profile("development")
 class DebugController(val clients: Map<Workspace, CustomerioClient>) {
 
-    @PostMapping("{memberId}/sendSignEvent")
+    /*@PostMapping("{memberId}/sendSignEvent")
     fun sendSignEvent(@PathVariable memberId: String) {
 
         clients[Workspace.NORWAY]?.sendEvent(
@@ -31,7 +26,7 @@ class DebugController(val clients: Map<Workspace, CustomerioClient>) {
                 )
             )
         )
-    }
+    }*/
 
     @PostMapping("{memberId}/activationDateUpdatedEvent")
     fun activationDateUpdatedEvent(@PathVariable memberId: String) {

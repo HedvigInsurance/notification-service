@@ -39,10 +39,39 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
     override fun createContractCreatedEvent(
         customerioState: CustomerioState,
         contracts: Collection<ContractInfo>
-    ): Map<String, Any?> {
-        val returnMap = mutableMapOf<String, Any?>("name" to "NorwegianContractCreatedEvent")
-        createData(returnMap, contracts)
-        return returnMap.toMap()
+    ): NorwegianContractCreatedEvent {
+
+        var data = NorwegianContractCreatedEvent.Data(
+            null, false, false, null,
+            null,
+            false,
+            false,
+            null
+        )
+
+        contracts.forEach { contract ->
+            when (contract.type) {
+                AgreementType.NorwegianHomeContent ->
+                    data = data.copy(
+                        isSignedInnbo = true,
+                        activationDateInnbo = contract.startDate?.toString(),
+                        isSwitcherInnbo = contract.switcherCompany != null,
+                        switcherCompanyInnbo = contract.switcherCompany
+                    )
+                AgreementType.NorwegianTravel ->
+                    data = data.copy(
+                        isSignedReise = true,
+                        activationDateReise = contract.startDate?.toString(),
+                        isSwitcherReise = contract.switcherCompany != null,
+                        switcherCompanyReise = contract.switcherCompany
+                    )
+                AgreementType.SwedishApartment,
+                AgreementType.SwedishHouse ->
+                    throw RuntimeException("Unexpected contract type ${contract.type}")
+            }
+        }
+
+        return NorwegianContractCreatedEvent(data)
     }
 
     override fun execute(
@@ -57,10 +86,10 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
                 ), customerioState.sentTmpSignedEvent()
             )
             customerioState.shouldSendContractCreatedEvent() -> ExecutionResult(
-                null, this.createContractCreatedEvent(
+                this.createContractCreatedEvent(
                     customerioState,
                     contracts
-                ), customerioState.sentContractCreatedEvent()
+                ), null, customerioState.sentContractCreatedEvent()
             )
             customerioState.shouldSendStartDateUpdatedEvent() -> ExecutionResult(
                 this.createStartDateUpdatedEvent(

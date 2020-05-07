@@ -13,7 +13,7 @@ CustomerioEventCreator {
     fun createContractCreatedEvent(
         customerioState: CustomerioState,
         contracts: Collection<ContractInfo>
-    ): Map<String, Any?>
+    ): NorwegianContractCreatedEvent
 
     fun execute(
         customerioState: CustomerioState,
