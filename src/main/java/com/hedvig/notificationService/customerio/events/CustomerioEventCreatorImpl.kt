@@ -10,30 +10,9 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
     override fun createTmpSignedInsuranceEvent(
         customerioState: CustomerioState,
         argContracts: Collection<ContractInfo>
-    ): Map<String, Any?> {
+    ): TmpSignedInsuranceEvent {
 
-        val returnMap = mutableMapOf<String, Any?>("name" to "TmpSignedInsuranceEvent")
-        createData(returnMap, argContracts)
-
-        return returnMap.toMap()
-    }
-
-    private fun createData(
-        returnMap: MutableMap<String, Any?>,
-        contracts: Collection<ContractInfo>
-    ) {
-        val data = mutableMapOf<String, Any?>()
-        returnMap["data"] = data
-        contracts.forEach { contract ->
-            if (contract.type == AgreementType.SwedishApartment || contract.type == AgreementType.SwedishHouse) {
-                throw RuntimeException("Unexpected contract type ${contract.type}")
-            }
-            val type = contract.type.typeName
-
-            data["is_signed_$type"] = true
-            updateActivationDate(contract, data, type)
-            updateSwitcherInfo(contract, data, type)
-        }
+        return TmpSignedInsuranceEvent(createContractCreatedData(argContracts))
     }
 
     override fun createContractCreatedEvent(
@@ -41,12 +20,21 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
         contracts: Collection<ContractInfo>
     ): NorwegianContractCreatedEvent {
 
+        var data = createContractCreatedData(contracts)
+
+        return NorwegianContractCreatedEvent(data)
+    }
+
+    private fun createContractCreatedData(contracts: Collection<ContractInfo>): NorwegianContractCreatedEvent.Data {
         var data = NorwegianContractCreatedEvent.Data(
-            null, false, false, null,
             null,
-            false,
-            false,
-            null
+            isSignedInnbo = false,
+            isSwitcherInnbo = false,
+            switcherCompanyInnbo = null,
+            activationDateReise = null,
+            isSignedReise = false,
+            isSwitcherReise = false,
+            switcherCompanyReise = null
         )
 
         contracts.forEach { contract ->
@@ -70,29 +58,29 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
                     throw RuntimeException("Unexpected contract type ${contract.type}")
             }
         }
-
-        return NorwegianContractCreatedEvent(data)
+        return data
     }
 
     override fun execute(
         customerioState: CustomerioState,
         contracts: List<ContractInfo>
     ): ExecutionResult {
-        val result = when {
+        return when {
             customerioState.shouldSendTmpSignedEvent() -> ExecutionResult(
-                null, this.createTmpSignedInsuranceEvent(
+                createTmpSignedInsuranceEvent(
                     customerioState,
                     contracts
-                ), customerioState.sentTmpSignedEvent()
+                ), null, customerioState.sentTmpSignedEvent()
             )
-            customerioState.shouldSendContractCreatedEvent() -> ExecutionResult(
-                this.createContractCreatedEvent(
+            customerioState.shouldSendContractCreatedEvent()
+            -> ExecutionResult(
+                createContractCreatedEvent(
                     customerioState,
                     contracts
                 ), null, customerioState.sentContractCreatedEvent()
             )
             customerioState.shouldSendStartDateUpdatedEvent() -> ExecutionResult(
-                this.createStartDateUpdatedEvent(
+                createStartDateUpdatedEvent(
                     contracts
                 ), null, customerioState.sentStartDateUpdatedEvent()
             )
@@ -107,7 +95,6 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
             else
             -> throw RuntimeException("CustomerioState in weird state")
         }
-        return result
     }
 
     private fun createActivationDateTodayEvent(

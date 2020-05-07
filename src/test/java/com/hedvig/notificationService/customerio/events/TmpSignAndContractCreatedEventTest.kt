@@ -158,13 +158,13 @@ class TmpSignAndContractCreatedEventTest(
         val eventData = event["data"] as Map<String, Any?>
 
         assertAttributeWithValues(eventData, "is_signed_innbo")
-        assertThat(eventData["activation_date_innbo"]).isEqualTo(values["activation_date_innbo"])
-        assertThat(eventData["is_switcher_innbo"]).isEqualTo(values["is_switcher_innbo"])
-        assertThat(eventData["switcher_company_innbo"]).isEqualTo(values["switcher_company_innbo"])
-        assertThat(eventData["activation_date_innbo"]).isEqualTo(values["activation_date_innbo"])
-        assertThat(eventData["is_switcher_reise"]).isEqualTo(values["is_switcher_reise"])
-        assertThat(eventData["switcher_company_reise"]).isEqualTo(values["switcher_company_reise"])
-        assertThat(eventData["activation_date_reise"]).isEqualTo(values["activation_date_reise"])
+        assertAttributeWithValues(eventData, "activation_date_innbo")
+        assertAttributeWithValues(eventData, "is_switcher_innbo")
+        assertAttributeWithValues(eventData, "switcher_company_innbo")
+        assertAttributeWithValues(eventData, "activation_date_innbo")
+        assertAttributeWithValues(eventData, "is_switcher_reise")
+        assertAttributeWithValues(eventData, "switcher_company_reise")
+        assertAttributeWithValues(eventData, "activation_date_reise")
     }
 
     @Test

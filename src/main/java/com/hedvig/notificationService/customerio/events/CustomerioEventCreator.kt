@@ -8,7 +8,7 @@ CustomerioEventCreator {
     fun createTmpSignedInsuranceEvent(
         customerioState: CustomerioState,
         argContracts: Collection<ContractInfo>
-    ): Map<String, Any?>
+    ): TmpSignedInsuranceEvent
 
     fun createContractCreatedEvent(
         customerioState: CustomerioState,
