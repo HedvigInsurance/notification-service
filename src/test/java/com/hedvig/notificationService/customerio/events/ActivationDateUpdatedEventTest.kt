@@ -54,11 +54,11 @@ class ActivationDateUpdatedEventTest {
         val eventAndState = sut.execute(customerioState, contracts)
 
         val data = eventAndState.asMap["data"] as Map<String, Any?>
-        val hasStartDate = data["contractsWithStartDate"] as List<Map<String, Any?>>?
+        val hasStartDate = data["contracts_with_start_date"] as List<Map<String, Any?>>?
         assertThat(hasStartDate?.first()).isNotNull().containsAll(
             "type" to "innbo",
-            "startDate" to "2020-05-01",
-            "switcherCompany" to "companyName"
+            "start_date" to "2020-05-01",
+            "switcher_company" to "companyName"
         )
         assertThat(eventAndState.asMap["name"]).isEqualTo("ActivationDateUpdatedEvent")
     }
@@ -77,18 +77,18 @@ class ActivationDateUpdatedEventTest {
         val eventAndState = sut.execute(customerioState, contracts)
 
         val data = eventAndState.asMap["data"] as Map<String, Any?>
-        val hasStartDate = data["contractsWithStartDate"] as List<Map<String, Any?>>?
+        val hasStartDate = data["contracts_with_start_date"] as List<Map<String, Any?>>?
         assertThat(hasStartDate)
             .isNotNull().containsAll(
                 mapOf(
                     "type" to "innbo",
-                    "startDate" to "2020-05-01",
-                    "switcherCompany" to "companyName"
+                    "start_date" to "2020-05-01",
+                    "switcher_company" to "companyName"
                 ),
                 mapOf(
                     "type" to "reise",
-                    "startDate" to "2020-05-13",
-                    "switcherCompany" to "anotherCompany"
+                    "start_date" to "2020-05-13",
+                    "switcher_company" to "anotherCompany"
                 )
             )
     }
@@ -107,12 +107,12 @@ class ActivationDateUpdatedEventTest {
         val eventAndState = sut.execute(customerioState, contracts)
 
         val data = eventAndState.asMap["data"] as Map<String, Any?>
-        val withoutStartDate = data["contractsWithoutStartDate"] as List<Map<String, Any?>>?
+        val withoutStartDate = data["contracts_without_start_date"] as List<Map<String, Any?>>?
         assertThat(withoutStartDate)
             .isNotNull().containsAll(
                 mapOf(
                     "type" to "reise",
-                    "switcherCompany" to "anotherCompany"
+                    "switcher_company" to "anotherCompany"
                 )
             )
     }

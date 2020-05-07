@@ -66,9 +66,9 @@ class ActivatesTodayEventTest {
         val event = result.event as ActivationDateTodayEvent
         assertThat(event.activeToday).containsAll(
             Contract(
-                "innbo", null, LocalDate.of(2020, 1, 2)
+                "innbo", null, LocalDate.of(2020, 1, 2).toString()
             ),
-            Contract("reise", null, LocalDate.of(2020, 1, 2))
+            Contract("reise", null, LocalDate.of(2020, 1, 2).toString())
         )
     }
 
@@ -88,7 +88,7 @@ class ActivatesTodayEventTest {
 
         val event = result.event as ActivationDateTodayEvent
         assertThat(event.activeInFuture).containsAll(
-            Contract("innbo", null, LocalDate.of(2020, 1, 3))
+            Contract("innbo", null, LocalDate.of(2020, 1, 3).toString())
         )
         assertThat(result.state.activationDateTriggerAt).isEqualTo(LocalDate.of(2020, 1, 3))
     }
@@ -110,7 +110,7 @@ class ActivatesTodayEventTest {
 
         val event = result.event as ActivationDateTodayEvent
         assertThat(event.activeInFuture).containsAll(
-            Contract("innbo", null, LocalDate.of(2020, 1, 3)),
+            Contract("innbo", null, LocalDate.of(2020, 1, 3).toString()),
             Contract("innbo", null, null)
         )
         assertThat(result.state.activationDateTriggerAt).isEqualTo(LocalDate.of(2020, 1, 3))

@@ -1,12 +1,14 @@
 package com.hedvig.notificationService.customerio.events
 
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonInclude.Include
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.databind.annotation.JsonNaming
-import java.time.LocalDate
 
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy::class)
+@JsonInclude(Include.NON_NULL)
 data class Contract(
     val type: String,
     val switcherCompany: String?,
-    val startDate: LocalDate?
+    val startDate: String?
 )

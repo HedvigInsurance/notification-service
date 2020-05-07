@@ -63,9 +63,9 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
                 ), customerioState.sentContractCreatedEvent()
             )
             customerioState.shouldSendStartDateUpdatedEvent() -> ExecutionResult(
-                null, this.createStartDateUpdatedEvent(
+                this.createStartDateUpdatedEvent(
                     contracts
-                ), customerioState.sentStartDateUpdatedEvent()
+                ), null, customerioState.sentStartDateUpdatedEvent()
             )
             customerioState.shouldSendActivatesTodayEvent() ->
                 ExecutionResult(
@@ -92,9 +92,9 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
         }
         return ActivationDateTodayEvent(
             contractsWithActivationDateToday
-                .map { Contract(it.type.typeName, it.switcherCompany, it.startDate) },
+                .map { Contract(it.type.typeName, it.switcherCompany, it.startDate?.toString()) },
             contracts.filter { it.startDate == null || it.startDate?.isAfter(customerioState.activationDateTriggerAt) }
-                .map { Contract(it.type.typeName, it.switcherCompany, it.startDate) }
+                .map { Contract(it.type.typeName, it.switcherCompany, it.startDate?.toString()) }
         )
     }
 
@@ -121,45 +121,41 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
 
     private fun createStartDateUpdatedEvent(
         contracts: Collection<ContractInfo>
-    ): Map<String, Any?> {
+    ): ActivationDateUpdatedEvent {
 
         if (contracts.all { it.startDate == null }) {
             throw RuntimeException("Cannot create ActivationDateUpdatedEvent no contracts with start date")
         }
 
-        val returnMap = mutableMapOf<String, Any?>(
-            "name" to "ActivationDateUpdatedEvent"
-        )
-
-        val data = mutableMapOf<String, Any?>()
-        returnMap["data"] = data
-
-        val contractsWithStartDate = mutableListOf<MutableMap<String, Any?>>()
-        data["contractsWithStartDate"] = contractsWithStartDate
-
-        val contractsWithoutStartDate = mutableListOf<MutableMap<String, Any?>>()
-        data["contractsWithoutStartDate"] = contractsWithoutStartDate
+        val contractsWithStartDate = mutableListOf<Contract>()
+        val contractsWithoutStartDate = mutableListOf<Contract>()
 
         contracts.forEach {
             if (it.startDate != null) {
                 contractsWithStartDate.add(
-                    mutableMapOf(
-                        "type" to it.type.typeName,
-                        "startDate" to it.startDate.toString(),
-                        "switcherCompany" to it.switcherCompany
+                    Contract(
+                        it.type.typeName,
+                        it.switcherCompany,
+                        it.startDate?.toString()
                     )
                 )
             } else {
                 contractsWithoutStartDate.add(
-                    mutableMapOf(
-                        "type" to it.type.typeName,
-                        "switcherCompany" to it.switcherCompany
+                    Contract(
+                        it.type.typeName,
+                        it.switcherCompany,
+                        it.startDate?.toString()
                     )
                 )
             }
         }
 
-        return returnMap.toMap()
+        return ActivationDateUpdatedEvent(
+            ActivationDateUpdatedEvent.DataObject(
+                contractsWithStartDate.toList(),
+                contractsWithoutStartDate.toList()
+            )
+        )
     }
 }
 
