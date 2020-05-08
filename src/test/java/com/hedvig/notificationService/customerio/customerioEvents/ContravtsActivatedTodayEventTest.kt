@@ -4,7 +4,6 @@ import assertk.assertThat
 import assertk.assertions.contains
 import assertk.assertions.containsAll
 import assertk.assertions.isEqualTo
-import assertk.assertions.isNotEmpty
 import assertk.assertions.isNull
 import com.hedvig.notificationService.customerio.AgreementType
 import com.hedvig.notificationService.customerio.ContractInfo
@@ -14,7 +13,7 @@ import org.junit.Test
 import org.junit.rules.ExpectedException
 import java.time.LocalDate
 
-class ActivatesTodayEventTest {
+class ContravtsActivatedTodayEventTest {
     @get:Rule
     val thrown = ExpectedException.none()
 
@@ -45,8 +44,7 @@ class ActivatesTodayEventTest {
             listOf(ContractInfo(AgreementType.NorwegianTravel, null, LocalDate.of(2020, 1, 2)))
         )
 
-        assertThat(result.asMap).contains("name", "ActivationDateTodayEvent")
-        assertThat(result.asMap).transform { it["active_today"] as List<Map<String, Any?>> }.isNotEmpty()
+        assertThat(result.asMap).contains("name", "ContractsActivatedTodayEvent")
     }
 
     @Test
@@ -63,8 +61,8 @@ class ActivatesTodayEventTest {
             )
         )
 
-        val event = result.event as ActivationDateTodayEvent
-        assertThat(event.activeToday).containsAll(
+        val event = result.event as ContractsActivatedTodayEvent
+        assertThat(event.data.activeToday).containsAll(
             Contract(
                 "innbo", null, LocalDate.of(2020, 1, 2).toString()
             ),
@@ -86,8 +84,8 @@ class ActivatesTodayEventTest {
             )
         )
 
-        val event = result.event as ActivationDateTodayEvent
-        assertThat(event.activeInFuture).containsAll(
+        val event = result.event as ContractsActivatedTodayEvent
+        assertThat(event.data.activeInFuture).containsAll(
             Contract("innbo", null, LocalDate.of(2020, 1, 3).toString())
         )
         assertThat(result.state.activationDateTriggerAt).isEqualTo(LocalDate.of(2020, 1, 3))
@@ -108,8 +106,8 @@ class ActivatesTodayEventTest {
             )
         )
 
-        val event = result.event as ActivationDateTodayEvent
-        assertThat(event.activeInFuture).containsAll(
+        val event = result.event as ContractsActivatedTodayEvent
+        assertThat(event.data.activeInFuture).containsAll(
             Contract("innbo", null, LocalDate.of(2020, 1, 3).toString()),
             Contract("innbo", null, null)
         )
@@ -130,8 +128,8 @@ class ActivatesTodayEventTest {
             )
         )
 
-        val event = result.event as ActivationDateTodayEvent
-        assertThat(event.activeInFuture).containsAll(
+        val event = result.event as ContractsActivatedTodayEvent
+        assertThat(event.data.activeInFuture).containsAll(
             Contract("innbo", null, null)
         )
         assertThat(result.state.activationDateTriggerAt).isEqualTo(null)
@@ -152,6 +150,6 @@ class ActivatesTodayEventTest {
             )
         )
 
-        val event = result.event as ActivationDateTodayEvent
+        val event = result.event as ContractsActivatedTodayEvent
     }
 }
