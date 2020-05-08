@@ -2,6 +2,7 @@ package com.hedvig.notificationService.customerio.web
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import assertk.assertions.isNull
 import com.hedvig.notificationService.customerio.EventHandler
 import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
 import com.hedvig.notificationService.customerio.hedvigfacades.ProductPricingFacade
@@ -128,5 +129,27 @@ class OnContractCreatedEventTest {
         )
 
         assertThat(repository.data["1337"]?.activationDateTriggerAt).isEqualTo(LocalDate.of(2020, 5, 1))
+    }
+
+    @Test
+    fun `do not send duplicates emails if norwegian sign hack is triggered`() {
+        val stateCreatedAt = Instant.parse("2020-04-27T09:20:42.815351Z").minusMillis(3000)
+        repository.save(
+            CustomerioState(
+                "1337",
+                underwriterFirstSignAttributesUpdate = stateCreatedAt
+            )
+        )
+
+        val time = Instant.parse("2020-04-27T09:20:42.815351Z")
+        sut.onContractCreatedEvent(
+            ContractCreatedEvent(
+                "someEventId",
+                "1337",
+                LocalDate.of(2020, 5, 1)
+            ), time
+        )
+
+        assertThat(repository.data["1337"]?.activationDateTriggerAt).isNull()
     }
 }

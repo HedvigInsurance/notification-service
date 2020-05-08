@@ -28,6 +28,9 @@ class EventHandler(val repo: CustomerIOStateRepository) {
             contractCreatedTriggerAt = callTime
         )
 
+        if (state.underwriterFirstSignAttributesUpdate != null)
+            return // This should only happen when we go live or if we rollback to earlier versions
+
         repo.save(state.updateFirstUpcomingStartDate(contractCreatedEvent.startDate))
     }
 }

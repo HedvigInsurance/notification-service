@@ -82,7 +82,7 @@ class NorwaySignHackHandleUpdatesFromUnderwriterTest {
         every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.SWEDEN
 
         sut.updateCustomerAttributes(
-            "1337", signFromUnderwriterMap(), Instant.parse("2020-04-15T14:53:40.550493Z")
+            "1337", makeSignFromUnderwriterMap(), Instant.parse("2020-04-15T14:53:40.550493Z")
         )
 
         verify { seCustomerioClient.updateCustomer("1337", any()) }
@@ -93,9 +93,9 @@ class NorwaySignHackHandleUpdatesFromUnderwriterTest {
         every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
 
         val updateInstant = Instant.parse("2020-04-15T14:53:40.550493Z")
-        sut.updateCustomerAttributes("randomId", signFromUnderwriterMap(), updateInstant)
+        sut.updateCustomerAttributes("randomId", makeSignFromUnderwriterMap(), updateInstant)
 
-        assertThat(repository.data["randomId"]?.underwriterFirstSignAttributesUpdate).isEqualTo(updateInstant)
+        assertThat(repository.data["randomId"]?.underwriterFirstSignAttributesUpdate).isNull()
     }
 
     @Test
@@ -103,10 +103,10 @@ class NorwaySignHackHandleUpdatesFromUnderwriterTest {
         every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
 
         val updateInstant = Instant.parse("2020-04-15T14:53:40.550493Z")
-        sut.updateCustomerAttributes("randomId", signFromUnderwriterMap(), updateInstant)
-        sut.updateCustomerAttributes("randomId", signFromUnderwriterMap(), updateInstant.plusMillis(1000))
+        sut.updateCustomerAttributes("randomId", makeSignFromUnderwriterMap(), updateInstant)
+        sut.updateCustomerAttributes("randomId", makeSignFromUnderwriterMap(), updateInstant.plusMillis(1000))
 
-        assertThat(repository.data["randomId"]?.underwriterFirstSignAttributesUpdate).isEqualTo(updateInstant)
+        assertThat(repository.data["randomId"]?.underwriterFirstSignAttributesUpdate).isNull()
     }
 
     @Test
@@ -118,7 +118,7 @@ class NorwaySignHackHandleUpdatesFromUnderwriterTest {
     }
 }
 
-private fun signFromUnderwriterMap(): Map<String, Any?> {
+private fun makeSignFromUnderwriterMap(): Map<String, Any?> {
     return mapOf<String, Any?>(
         "partner_code" to "campaigncode",
         "sign_source" to "RAPIO",

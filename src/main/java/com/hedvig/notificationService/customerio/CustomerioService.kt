@@ -42,15 +42,7 @@ open class CustomerioService(
         val marketForMember = workspaceSelector.getWorkspaceForMember(memberId)
 
         if (marketForMember == Workspace.NORWAY && isSignUpdateFromUnderwriter(attributes)) {
-            val customerState = stateRepository.findByMemberId(memberId)
-            if (customerState == null) {
-                stateRepository.save(
-                    CustomerioState(
-                        memberId,
-                        now
-                    )
-                )
-            }
+            // Ignore signs from underwriter for now
             return
         }
 
