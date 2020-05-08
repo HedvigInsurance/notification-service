@@ -16,7 +16,7 @@ import org.junit.rules.ExpectedException
 import java.time.Instant
 import java.time.LocalDate
 
-class ActivationDateUpdatedEventTest {
+class ContractsActivationDateUpdatedEventTest {
 
     @get:Rule
     val thrown = ExpectedException.none()
@@ -60,7 +60,7 @@ class ActivationDateUpdatedEventTest {
             "start_date" to "2020-05-01",
             "switcher_company" to "companyName"
         )
-        assertThat(eventAndState.asMap["name"]).isEqualTo("ActivationDateUpdatedEvent")
+        assertThat(eventAndState.asMap["name"]).isEqualTo("ContractsActivationDateUpdatedEvent")
     }
 
     @Test

@@ -99,13 +99,13 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
     private fun createActivationDateTodayEvent(
         customerioState: CustomerioState,
         contracts: List<ContractInfo>
-    ): ActivationDateTodayEvent {
+    ): ContractsActivatedTodayEvent {
         val contractsWithActivationDateToday =
             contracts.filter { it.startDate == customerioState.activationDateTriggerAt }
         if (contractsWithActivationDateToday.isEmpty()) {
             throw RuntimeException("Cannot send crete event no contracts with activation date today")
         }
-        return ActivationDateTodayEvent(
+        return ContractsActivatedTodayEvent(
             contractsWithActivationDateToday
                 .map { Contract(it.type.typeName, it.switcherCompany, it.startDate?.toString()) },
             contracts.filter { it.startDate == null || it.startDate.isAfter(customerioState.activationDateTriggerAt) }
@@ -115,7 +115,7 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
 
     private fun createStartDateUpdatedEvent(
         contracts: Collection<ContractInfo>
-    ): ActivationDateUpdatedEvent {
+    ): ContractsActivationDateUpdatedEvent {
 
         if (contracts.all { it.startDate == null }) {
             throw RuntimeException("Cannot create ActivationDateUpdatedEvent no contracts with start date")
@@ -144,8 +144,8 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
             }
         }
 
-        return ActivationDateUpdatedEvent(
-            ActivationDateUpdatedEvent.DataObject(
+        return ContractsActivationDateUpdatedEvent(
+            ContractsActivationDateUpdatedEvent.DataObject(
                 contractsWithStartDate.toList(),
                 contractsWithoutStartDate.toList()
             )
