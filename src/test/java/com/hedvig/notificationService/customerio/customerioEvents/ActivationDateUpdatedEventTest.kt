@@ -1,4 +1,4 @@
-package com.hedvig.notificationService.customerio.events
+package com.hedvig.notificationService.customerio.customerioEvents
 
 import assertk.assertThat
 import assertk.assertions.containsAll
@@ -7,7 +7,7 @@ import assertk.assertions.isNotNull
 import assertk.assertions.isNull
 import com.hedvig.notificationService.customerio.AgreementType
 import com.hedvig.notificationService.customerio.ContractInfo
-import com.hedvig.notificationService.customerio.ProductPricingFacade
+import com.hedvig.notificationService.customerio.hedvigfacades.ProductPricingFacade
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import io.mockk.impl.annotations.MockK
 import org.junit.Rule

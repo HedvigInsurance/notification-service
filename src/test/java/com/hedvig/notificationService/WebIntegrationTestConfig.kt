@@ -4,12 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.hedvig.customerio.CustomerioClient
 import com.hedvig.customerio.CustomerioMock
 import com.hedvig.notificationService.customerio.CustomerioService
-import com.hedvig.notificationService.customerio.FakeProductPricingFacade
-import com.hedvig.notificationService.customerio.MemberServiceImpl
-import com.hedvig.notificationService.customerio.ProductPricingFacade
 import com.hedvig.notificationService.customerio.Workspace
 import com.hedvig.notificationService.customerio.WorkspaceSelector
-import com.hedvig.notificationService.customerio.events.CustomerioEventCreatorImpl
+import com.hedvig.notificationService.customerio.customerioEvents.CustomerioEventCreatorImpl
+import com.hedvig.notificationService.customerio.hedvigfacades.FakeProductPricingFacade
+import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
+import com.hedvig.notificationService.customerio.hedvigfacades.ProductPricingFacade
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import com.hedvig.notificationService.serviceIntegration.memberService.FakeMemberServiceClient
 import com.hedvig.notificationService.serviceIntegration.memberService.MemberServiceClient
@@ -26,7 +26,8 @@ class WebIntegrationTestConfig {
         return CustomerioMock(objectMapper)
     }
 
-    fun productPricingClientTest(): ProductPricingFacade = FakeProductPricingFacade()
+    fun productPricingClientTest(): ProductPricingFacade =
+        FakeProductPricingFacade()
 
     fun memberServiceClientTest(): MemberServiceClient = FakeMemberServiceClient()
 
@@ -37,7 +38,9 @@ class WebIntegrationTestConfig {
         return CustomerioService(
             WorkspaceSelector(
                 productPricingFacade,
-                MemberServiceImpl(memberServiceClientTest())
+                MemberServiceImpl(
+                    memberServiceClientTest()
+                )
             ),
             InMemoryCustomerIOStateRepository(),
             CustomerioEventCreatorImpl(),

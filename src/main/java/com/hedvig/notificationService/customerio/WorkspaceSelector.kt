@@ -1,5 +1,8 @@
 package com.hedvig.notificationService.customerio
 
+import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
+import com.hedvig.notificationService.customerio.hedvigfacades.ProductPricingFacade
+
 class WorkspaceSelector(
     private val productPricingFacade: ProductPricingFacade,
     private val memberServiceImpl: MemberServiceImpl

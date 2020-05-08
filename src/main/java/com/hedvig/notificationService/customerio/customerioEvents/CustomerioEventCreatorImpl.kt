@@ -1,4 +1,4 @@
-package com.hedvig.notificationService.customerio.events
+package com.hedvig.notificationService.customerio.customerioEvents
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.hedvig.notificationService.customerio.AgreementType

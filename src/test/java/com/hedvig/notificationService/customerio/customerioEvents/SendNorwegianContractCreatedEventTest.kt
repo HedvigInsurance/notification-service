@@ -1,11 +1,17 @@
-package com.hedvig.notificationService.customerio
+package com.hedvig.notificationService.customerio.customerioEvents
 
 import assertk.assertThat
 import assertk.assertions.contains
 import assertk.assertions.containsAll
 import assertk.assertions.isEqualTo
 import com.hedvig.customerio.CustomerioClient
-import com.hedvig.notificationService.customerio.events.CustomerioEventCreatorImpl
+import com.hedvig.notificationService.customerio.AgreementType
+import com.hedvig.notificationService.customerio.ContractInfo
+import com.hedvig.notificationService.customerio.CustomerioService
+import com.hedvig.notificationService.customerio.SIGN_EVENT_WINDOWS_SIZE_MINUTES
+import com.hedvig.notificationService.customerio.Workspace
+import com.hedvig.notificationService.customerio.WorkspaceSelector
+import com.hedvig.notificationService.customerio.hedvigfacades.ProductPricingFacade
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import com.hedvig.notificationService.serviceIntegration.productPricing.FeignExceptionForTest
@@ -60,7 +66,11 @@ class SendNorwegianContractCreatedEventTest {
         every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
         every { productPricingFacade.getContractTypeForMember(any()) } returns
             listOf(
-                ContractInfo(AgreementType.NorwegianHomeContent, null, null)
+                ContractInfo(
+                    AgreementType.NorwegianHomeContent,
+                    null,
+                    null
+                )
             )
 
         sut.sendUpdates(startTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
@@ -81,7 +91,11 @@ class SendNorwegianContractCreatedEventTest {
 
         every { productPricingFacade.getContractTypeForMember(any()) } returns
             listOf(
-                ContractInfo(AgreementType.NorwegianHomeContent, null, null)
+                ContractInfo(
+                    AgreementType.NorwegianHomeContent,
+                    null,
+                    null
+                )
             )
 
         sut.sendUpdates(startTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
@@ -97,7 +111,11 @@ class SendNorwegianContractCreatedEventTest {
         every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
         every { productPricingFacade.getContractTypeForMember(any()) } returns
             listOf(
-                ContractInfo(AgreementType.NorwegianHomeContent, null, null)
+                ContractInfo(
+                    AgreementType.NorwegianHomeContent,
+                    null,
+                    null
+                )
             )
 
         sut.sendUpdates(startTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))

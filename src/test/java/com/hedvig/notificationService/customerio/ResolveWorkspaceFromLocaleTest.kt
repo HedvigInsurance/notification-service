@@ -4,10 +4,10 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.util.Locale
 
-class WorkspaceGetFromLocaleTest {
+class ResolveWorkspaceFromLocaleTest {
 
     @Test
-    fun getMarketFromLocaleTest() {
+    fun `return sweden give se as country`() {
         assertThat(Workspace.getWorkspaceFromLocale(Locale("sv", "se"))).isEqualTo(
             Workspace.SWEDEN
         )

@@ -1,7 +1,8 @@
-package com.hedvig.notificationService.customerio
+package com.hedvig.notificationService.customerio.web
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import com.hedvig.notificationService.customerio.EventHandler
 import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
