@@ -1,6 +1,7 @@
 package com.hedvig.notificationService.customerio.state
 
 import java.time.Instant
+import java.time.ZoneId
 
 class InMemoryCustomerIOStateRepository(var data: Map<String, CustomerioState> = mapOf()) :
     CustomerIOStateRepository {
@@ -17,8 +18,10 @@ class InMemoryCustomerIOStateRepository(var data: Map<String, CustomerioState> =
             (it.underwriterFirstSignAttributesUpdate != null &&
                 it.underwriterFirstSignAttributesUpdate <= byTime &&
                 !it.sentTmpSignEvent) ||
-                (it.contractCreatedAt != null && it.contractCreatedAt <= byTime) ||
-                (it.startDateUpdatedAt != null && it.startDateUpdatedAt <= byTime)
+                (it.contractCreatedTriggerAt != null && it.contractCreatedTriggerAt <= byTime) ||
+                (it.startDateUpdatedTriggerAt != null && it.startDateUpdatedTriggerAt <= byTime) ||
+                (it.activationDateTriggerAt != null && it.activationDateTriggerAt <=
+                    byTime.atZone(ZoneId.of("Europe/Stockholm")).toLocalDate())
         }
     }
 }

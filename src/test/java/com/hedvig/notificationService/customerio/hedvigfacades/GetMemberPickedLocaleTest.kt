@@ -1,4 +1,4 @@
-package com.hedvig.notificationService.customerio
+package com.hedvig.notificationService.customerio.hedvigfacades
 
 import com.hedvig.notificationService.serviceIntegration.memberService.MemberServiceClient
 import com.hedvig.notificationService.serviceIntegration.memberService.PickedLocale
@@ -33,7 +33,8 @@ class GetMemberPickedLocaleTest(val pickedLocale: String, val parsedLocale: Loca
         val memberService = mockk<MemberServiceClient>()
         every { memberService.pickedLocale(any()) } returns ResponseEntity.ok(PickedLocale(pickedLocale))
 
-        val cut = MemberServiceImpl(memberService)
+        val cut =
+            MemberServiceImpl(memberService)
         assertThat(cut.getPickedLocale("1231")).isEqualTo(parsedLocale)
     }
 }

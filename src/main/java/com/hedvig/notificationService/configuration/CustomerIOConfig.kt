@@ -6,12 +6,12 @@ import com.hedvig.customerio.CustomerioClient
 import com.hedvig.customerio.CustomerioMock
 import com.hedvig.notificationService.customerio.ConfigurationProperties
 import com.hedvig.notificationService.customerio.CustomerioService
-import com.hedvig.notificationService.customerio.MemberServiceImpl
-import com.hedvig.notificationService.customerio.ProductPricingFacade
-import com.hedvig.notificationService.customerio.ProductPricingFacadeImpl
 import com.hedvig.notificationService.customerio.Workspace
 import com.hedvig.notificationService.customerio.WorkspaceSelector
-import com.hedvig.notificationService.customerio.events.CustomerioEventCreatorImpl
+import com.hedvig.notificationService.customerio.customerioEvents.CustomerioEventCreatorImpl
+import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
+import com.hedvig.notificationService.customerio.hedvigfacades.ProductPricingFacade
+import com.hedvig.notificationService.customerio.hedvigfacades.ProductPricingFacadeImpl
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.serviceIntegration.memberService.MemberServiceClient
 import com.hedvig.notificationService.serviceIntegration.productPricing.client.ProductPricingClient
@@ -36,10 +36,13 @@ class CustomerIOConfig() {
 
     @Bean()
     fun productPricingFacade(productPricingClient: ProductPricingClient) =
-        ProductPricingFacadeImpl(productPricingClient)
+        ProductPricingFacadeImpl(
+            productPricingClient
+        )
 
     @Bean()
-    fun memberServiceFacade(memberServiceClient: MemberServiceClient) = MemberServiceImpl(memberServiceClient)
+    fun memberServiceFacade(memberServiceClient: MemberServiceClient) =
+        MemberServiceImpl(memberServiceClient)
 
     @Bean
     fun customerioService(

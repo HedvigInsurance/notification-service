@@ -1,4 +1,4 @@
-package com.hedvig.notificationService.customerio
+package com.hedvig.notificationService.customerio.hedvigfacades
 
 import com.hedvig.notificationService.serviceIntegration.memberService.MemberServiceClient
 import java.util.Locale

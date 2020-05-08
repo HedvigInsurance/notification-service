@@ -1,10 +1,14 @@
-package com.hedvig.notificationService.customerio
+package com.hedvig.notificationService.customerio.hedvigfacades
 
+import com.hedvig.notificationService.customerio.AgreementType
+import com.hedvig.notificationService.customerio.ContractInfo
+import com.hedvig.notificationService.customerio.Workspace
 import com.hedvig.notificationService.serviceIntegration.productPricing.client.ProductPricingClient
 import feign.FeignException
 import org.slf4j.LoggerFactory
 
-class ProductPricingFacadeImpl(private val productPricingClient: ProductPricingClient) : ProductPricingFacade {
+class ProductPricingFacadeImpl(private val productPricingClient: ProductPricingClient) :
+    ProductPricingFacade {
 
     val log = LoggerFactory.getLogger(ProductPricingFacadeImpl::class.java)
 
@@ -14,7 +18,9 @@ class ProductPricingFacadeImpl(private val productPricingClient: ProductPricingC
             val response = productPricingClient.getContractMarketInfo(memberId)
 
             val market = response.body!!.market
-            Workspace.getWorkspaceFromMarket(market)
+            Workspace.getWorkspaceFromMarket(
+                market
+            )
         } catch (ex: FeignException) {
             if (ex.status() != 404) {
                 log.error("Could not get contractMarketInfo for member $memberId", ex)

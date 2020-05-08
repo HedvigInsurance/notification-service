@@ -1,5 +1,6 @@
-package com.hedvig.notificationService.customerio
+package com.hedvig.notificationService.customerio.hedvigfacades
 
+import com.hedvig.notificationService.customerio.AgreementType
 import com.hedvig.notificationService.serviceIntegration.productPricing.client.Address
 import com.hedvig.notificationService.serviceIntegration.productPricing.client.Agreement
 import com.hedvig.notificationService.serviceIntegration.productPricing.client.AgreementStatus
@@ -41,7 +42,10 @@ class ProductPricingFacadeGetContractsTest {
             )
         )
 
-        val sut = ProductPricingFacadeImpl(productPricingClient)
+        val sut =
+            ProductPricingFacadeImpl(
+                productPricingClient
+            )
 
         val contractInfo = sut.getContractTypeForMember("someId")
         assertThat(contractInfo.first().type).isEqualTo(AgreementType.NorwegianHomeContent)
@@ -58,7 +62,10 @@ class ProductPricingFacadeGetContractsTest {
             )
         )
 
-        val sut = ProductPricingFacadeImpl(productPricingClient)
+        val sut =
+            ProductPricingFacadeImpl(
+                productPricingClient
+            )
 
         val contractInfo = sut.getContractTypeForMember("someId")
         assertThat(contractInfo.first().type).isEqualTo(AgreementType.NorwegianHomeContent)

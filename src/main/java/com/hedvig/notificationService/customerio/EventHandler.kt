@@ -14,15 +14,23 @@ class EventHandler(val repo: CustomerIOStateRepository) {
         callTime: Instant = Instant.now()
     ) {
         val state = repo.findByMemberId(event.owningMemberId)
-        if (state?.startDateUpdatedAt == null) {
-            repo.save(CustomerioState(event.owningMemberId, null, false, null, startDateUpdatedAt = callTime))
-        }
+            ?: CustomerioState(
+                event.owningMemberId,
+                startDateUpdatedTriggerAt = callTime
+            )
+
+        repo.save(state.updateFirstUpcomingStartDate(event.startDate))
     }
 
     fun onContractCreatedEvent(contractCreatedEvent: ContractCreatedEvent, callTime: Instant = Instant.now()) {
-        val state = repo.findByMemberId(contractCreatedEvent.owningMemberId)
-        if (state?.contractCreatedAt == null) {
-            repo.save(CustomerioState(contractCreatedEvent.owningMemberId, null, false, callTime))
-        }
+        val state = repo.findByMemberId(contractCreatedEvent.owningMemberId) ?: CustomerioState(
+            contractCreatedEvent.owningMemberId,
+            contractCreatedTriggerAt = callTime
+        )
+
+        if (state.underwriterFirstSignAttributesUpdate != null)
+            return // This should only happen when we go live or if we rollback to earlier versions
+
+        repo.save(state.updateFirstUpcomingStartDate(contractCreatedEvent.startDate))
     }
 }

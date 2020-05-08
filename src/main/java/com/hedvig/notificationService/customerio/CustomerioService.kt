@@ -1,7 +1,8 @@
 package com.hedvig.notificationService.customerio
 
 import com.hedvig.customerio.CustomerioClient
-import com.hedvig.notificationService.customerio.events.CustomerioEventCreator
+import com.hedvig.notificationService.customerio.customerioEvents.CustomerioEventCreator
+import com.hedvig.notificationService.customerio.hedvigfacades.ProductPricingFacade
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import org.slf4j.LoggerFactory
@@ -41,15 +42,7 @@ open class CustomerioService(
         val marketForMember = workspaceSelector.getWorkspaceForMember(memberId)
 
         if (marketForMember == Workspace.NORWAY && isSignUpdateFromUnderwriter(attributes)) {
-            val customerState = stateRepository.findByMemberId(memberId)
-            if (customerState == null) {
-                stateRepository.save(
-                    CustomerioState(
-                        memberId,
-                        now
-                    )
-                )
-            }
+            // Ignore signs from underwriter for now
             return
         }
 
@@ -92,7 +85,7 @@ open class CustomerioService(
             try {
                 val contracts = this.productPricingFacade.getContractTypeForMember(customerioState.memberId)
                 val eventAndState = eventCreator.execute(customerioState, contracts)
-                sendEventAndUpdateState(customerioState, eventAndState.first) { eventAndState.second }
+                sendEventAndUpdateState(customerioState, eventAndState.asMap) { eventAndState.state }
             } catch (ex: RuntimeException) {
                 logger.error("Could not create event from customerio state")
             }
@@ -105,7 +98,8 @@ open class CustomerioService(
         updateFunction: (CustomerioState) -> (CustomerioState)
     ) {
         try {
-            clients[Workspace.NORWAY]?.sendEvent(
+            val workspace = workspaceSelector.getWorkspaceForMember(customerioState.memberId)
+            clients[workspace]?.sendEvent(
                 customerioState.memberId,
                 event
             )

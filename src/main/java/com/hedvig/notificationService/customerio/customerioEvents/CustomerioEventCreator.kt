@@ -1,4 +1,4 @@
-package com.hedvig.notificationService.customerio.events
+package com.hedvig.notificationService.customerio.customerioEvents
 
 import com.hedvig.notificationService.customerio.ContractInfo
 import com.hedvig.notificationService.customerio.state.CustomerioState
@@ -8,11 +8,15 @@ CustomerioEventCreator {
     fun createTmpSignedInsuranceEvent(
         customerioState: CustomerioState,
         argContracts: Collection<ContractInfo>
-    ): Map<String, Any?>
+    ): TmpSignedInsuranceEvent
 
-    fun contractCreatedEvent(customerioState: CustomerioState, contracts: Collection<ContractInfo>): Map<String, Any?>
+    fun createContractCreatedEvent(
+        customerioState: CustomerioState,
+        contracts: Collection<ContractInfo>
+    ): NorwegianContractCreatedEvent
+
     fun execute(
         customerioState: CustomerioState,
         contracts: List<ContractInfo>
-    ): Pair<Map<String, Any?>, CustomerioState>
+    ): ExecutionResult
 }

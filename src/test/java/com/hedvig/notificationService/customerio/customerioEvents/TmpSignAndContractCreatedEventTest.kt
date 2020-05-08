@@ -1,8 +1,9 @@
-package com.hedvig.notificationService.customerio.events
+package com.hedvig.notificationService.customerio.customerioEvents
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.hedvig.notificationService.customerio.AgreementType
 import com.hedvig.notificationService.customerio.ContractInfo
-import com.hedvig.notificationService.customerio.ProductPricingFacade
+import com.hedvig.notificationService.customerio.hedvigfacades.ProductPricingFacade
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import io.mockk.MockKAnnotations
 import io.mockk.impl.annotations.MockK
@@ -30,6 +31,12 @@ class TmpSignAndContractCreatedEventTest(
     var thrown = ExpectedException.none()
 
     companion object {
+        fun asMap(any: Any): Map<String, Any?> {
+            return objectMapper.convertValue(any, Map::class.java)!! as Map<String, Any?>
+        }
+
+        val objectMapper: ObjectMapper = ObjectMapper()
+
         @JvmStatic
         @Parameterized.Parameters
         fun data() = listOf(
@@ -145,18 +152,19 @@ class TmpSignAndContractCreatedEventTest(
             false
         )
 
-        val event = sut.createTmpSignedInsuranceEvent(customerioState, contracts)
+        val event = asMap(sut.createTmpSignedInsuranceEvent(customerioState, contracts))
 
         assertThat(event["name"]).isEqualTo("TmpSignedInsuranceEvent")
         val eventData = event["data"] as Map<String, Any?>
-        assertThat(eventData["is_signed_innbo"]).isEqualTo(values["is_signed_innbo"])
-        assertThat(eventData["activation_date_innbo"]).isEqualTo(values["activation_date_innbo"])
-        assertThat(eventData["is_switcher_innbo"]).isEqualTo(values["is_switcher_innbo"])
-        assertThat(eventData["switcher_company_innbo"]).isEqualTo(values["switcher_company_innbo"])
-        assertThat(eventData["activation_date_innbo"]).isEqualTo(values["activation_date_innbo"])
-        assertThat(eventData["is_switcher_reise"]).isEqualTo(values["is_switcher_reise"])
-        assertThat(eventData["switcher_company_reise"]).isEqualTo(values["switcher_company_reise"])
-        assertThat(eventData["activation_date_reise"]).isEqualTo(values["activation_date_reise"])
+
+        assertAttributeWithValues(eventData, "is_signed_innbo")
+        assertAttributeWithValues(eventData, "activation_date_innbo")
+        assertAttributeWithValues(eventData, "is_switcher_innbo")
+        assertAttributeWithValues(eventData, "switcher_company_innbo")
+        assertAttributeWithValues(eventData, "activation_date_innbo")
+        assertAttributeWithValues(eventData, "is_switcher_reise")
+        assertAttributeWithValues(eventData, "switcher_company_reise")
+        assertAttributeWithValues(eventData, "activation_date_reise")
     }
 
     @Test
@@ -167,18 +175,26 @@ class TmpSignAndContractCreatedEventTest(
             false
         )
 
-        val event = sut.contractCreatedEvent(customerioState, contracts)
+        val event = asMap(sut.createContractCreatedEvent(customerioState, contracts))
 
         assertThat(event["name"]).isEqualTo("NorwegianContractCreatedEvent")
         val eventData = event["data"] as Map<String, Any?>
-        assertThat(eventData["is_signed_innbo"]).isEqualTo(values["is_signed_innbo"])
-        assertThat(eventData["activation_date_innbo"]).isEqualTo(values["activation_date_innbo"])
-        assertThat(eventData["is_switcher_innbo"]).isEqualTo(values["is_switcher_innbo"])
-        assertThat(eventData["switcher_company_innbo"]).isEqualTo(values["switcher_company_innbo"])
-        assertThat(eventData["activation_date_innbo"]).isEqualTo(values["activation_date_innbo"])
-        assertThat(eventData["is_switcher_reise"]).isEqualTo(values["is_switcher_reise"])
-        assertThat(eventData["switcher_company_reise"]).isEqualTo(values["switcher_company_reise"])
-        assertThat(eventData["activation_date_reise"]).isEqualTo(values["activation_date_reise"])
+        assertAttributeWithValues(eventData, "is_signed_innbo")
+        assertAttributeWithValues(eventData, "activation_date_innbo")
+        assertAttributeWithValues(eventData, "is_switcher_innbo")
+        assertAttributeWithValues(eventData, "switcher_company_innbo")
+        assertAttributeWithValues(eventData, "activation_date_innbo")
+        assertAttributeWithValues(eventData, "is_switcher_reise")
+        assertAttributeWithValues(eventData, "switcher_company_reise")
+        assertAttributeWithValues(eventData, "activation_date_reise")
+    }
+
+    private fun assertAttributeWithValues(
+        eventData: Map<String, Any?>,
+        attributename: String
+    ) {
+        if (values[attributename] != null)
+            assertThat(eventData[attributename]).isEqualTo(values[attributename])
     }
 
     @Test
