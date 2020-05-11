@@ -16,11 +16,10 @@ class EventHandler(
         event: StartDateUpdatedEvent,
         callTime: Instant = Instant.now()
     ) {
-        val state = repo.findByMemberId(event.owningMemberId)
-            ?: CustomerioState(
-                event.owningMemberId,
-                startDateUpdatedTriggerAt = callTime
-            )
+        var state = repo.findByMemberId(event.owningMemberId)
+            ?: CustomerioState(event.owningMemberId)
+
+        state = state.triggerStartDateUpdated(callTime)
 
         if (!configuration.useNorwayHack)
             repo.save(state.updateFirstUpcomingStartDate(event.startDate))

@@ -19,17 +19,17 @@ class CustomerioState(
     private fun copy(
         underwriterFirstSignAttributesUpdate: Instant? = this.underwriterFirstSignAttributesUpdate,
         sentTmpSignEvent: Boolean = this.sentTmpSignEvent,
-        contractCreatedAt: Instant? = this.contractCreatedTriggerAt,
-        startDateUpdatedAt: Instant? = this.startDateUpdatedTriggerAt,
-        firstUpcomingStartDate: LocalDate? = this.activationDateTriggerAt
+        contractCreatedTriggerAt: Instant? = this.contractCreatedTriggerAt,
+        startDateUpdatedTriggerAt: Instant? = this.startDateUpdatedTriggerAt,
+        activationDateTriggerAt: LocalDate? = this.activationDateTriggerAt
     ): CustomerioState {
         return CustomerioState(
             memberId = this.memberId,
             underwriterFirstSignAttributesUpdate = underwriterFirstSignAttributesUpdate,
             sentTmpSignEvent = sentTmpSignEvent,
-            contractCreatedTriggerAt = contractCreatedAt,
-            startDateUpdatedTriggerAt = startDateUpdatedAt,
-            activationDateTriggerAt = firstUpcomingStartDate
+            contractCreatedTriggerAt = contractCreatedTriggerAt,
+            startDateUpdatedTriggerAt = startDateUpdatedTriggerAt,
+            activationDateTriggerAt = activationDateTriggerAt
         )
     }
 
@@ -37,14 +37,14 @@ class CustomerioState(
     fun sentTmpSignedEvent(): CustomerioState = copy(sentTmpSignEvent = true)
 
     fun shouldSendContractCreatedEvent(): Boolean = contractCreatedTriggerAt != null
-    fun sentContractCreatedEvent(): CustomerioState = copy(contractCreatedAt = null)
+    fun sentContractCreatedEvent(): CustomerioState = copy(contractCreatedTriggerAt = null)
 
     fun shouldSendStartDateUpdatedEvent(): Boolean = startDateUpdatedTriggerAt != null
-    fun sentStartDateUpdatedEvent(): CustomerioState = copy(startDateUpdatedAt = null)
+    fun sentStartDateUpdatedEvent(): CustomerioState = copy(startDateUpdatedTriggerAt = null)
 
     fun shouldSendActivatesTodayEvent(): Boolean = activationDateTriggerAt != null
     fun sentActivatesTodayEvent(nextActivationDate: LocalDate?): CustomerioState =
-        copy(firstUpcomingStartDate = nextActivationDate)
+        copy(activationDateTriggerAt = nextActivationDate)
 
     fun updateFirstUpcomingStartDate(newDate: LocalDate?): CustomerioState {
         val newFirstUpcomingStartDate =
@@ -53,10 +53,14 @@ class CustomerioState(
             } else {
                 newDate
             }
-        return copy(firstUpcomingStartDate = newFirstUpcomingStartDate)
+        return copy(activationDateTriggerAt = newFirstUpcomingStartDate)
     }
 
     fun updateFirstUpcomingStartDate(contracts: List<ContractInfo>): CustomerioState {
         return contracts.foldRight(this) { contract, state -> state.updateFirstUpcomingStartDate(contract.startDate) }
+    }
+
+    fun triggerStartDateUpdated(callTime: Instant): CustomerioState {
+        return this.copy(startDateUpdatedTriggerAt = callTime)
     }
 }

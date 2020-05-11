@@ -30,6 +30,7 @@ class OnStartDateUpdatedEventTest {
         sut.onStartDateUpdatedEvent(StartDateUpdatedEvent("aContractId", "aMemberId", LocalDate.of(2020, 5, 3)), time)
 
         assertThat(repo.data["aMemberId"]?.startDateUpdatedTriggerAt).isEqualTo(time)
+        assertThat(repo.data["aMemberId"]?.activationDateTriggerAt).isEqualTo(LocalDate.of(2020, 5, 3))
     }
 
     @Test
@@ -56,19 +57,26 @@ class OnStartDateUpdatedEventTest {
         configuration.useNorwayHack = false
         val sut = EventHandler(repo, configuration)
 
-        val timeOfFirstCall = Instant.parse("2020-04-27T14:03:23.337770Z")
+        repo.save(
+            CustomerioState(
+                memberId = "aMemberId",
+                underwriterFirstSignAttributesUpdate = null,
+                startDateUpdatedTriggerAt = null,
+                activationDateTriggerAt = LocalDate.of(2020, 4, 1)
+            )
+        )
 
-        repo.save(CustomerioState("aMemberId", null, startDateUpdatedTriggerAt = timeOfFirstCall))
-
+        val timeOfCall = Instant.parse("2020-04-27T14:03:23.337770Z")
         sut.onStartDateUpdatedEvent(
             StartDateUpdatedEvent(
                 "aContractId",
                 "aMemberId",
                 LocalDate.of(2020, 4, 3)
-            ), timeOfFirstCall.plusMillis(3000)
+            ), timeOfCall
         )
 
-        assertThat(repo.data["aMemberId"]?.activationDateTriggerAt).isEqualTo(LocalDate.of(2020, 4, 3))
+        assertThat(repo.data["aMemberId"]?.startDateUpdatedTriggerAt).isEqualTo(timeOfCall)
+        assertThat(repo.data["aMemberId"]?.activationDateTriggerAt).isEqualTo(LocalDate.of(2020, 4, 1))
     }
 
     @Test
