@@ -3,6 +3,7 @@ package com.hedvig.notificationService.customerio.web
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNull
+import com.hedvig.notificationService.customerio.ConfigurationProperties
 import com.hedvig.notificationService.customerio.EventHandler
 import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
 import com.hedvig.notificationService.customerio.hedvigfacades.ProductPricingFacade
@@ -26,7 +27,9 @@ class OnContractCreatedEventTest {
     @Before
     fun setup() {
         MockKAnnotations.init(this)
-        sut = EventHandler(repository)
+        val configuration = ConfigurationProperties()
+        configuration.useNorwayHack = false
+        sut = EventHandler(repository, configuration)
     }
 
     @Test
