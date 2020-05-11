@@ -27,7 +27,8 @@ class CustomerioServicePostEventTest {
                 Workspace.SWEDEN to sweClient,
                 Workspace.NORWAY to noClient
             ),
-            productPricingFacade
+            productPricingFacade,
+            true
         )
 
         every { workspaceSelector.getWorkspaceForMember("8080") } returns Workspace.SWEDEN
@@ -54,7 +55,8 @@ class CustomerioServicePostEventTest {
                 Workspace.SWEDEN to sweClient,
                 Workspace.NORWAY to noClient
             ),
-            productPricingFacade
+            productPricingFacade,
+            true
         )
 
         every { workspaceSelector.getWorkspaceForMember("8080") } returns Workspace.NORWAY

@@ -54,7 +54,8 @@ class NorwaySignHackHandleUpdatesFromUnderwriterTest {
                 Workspace.SWEDEN to seCustomerioClient,
                 Workspace.NORWAY to noCustomerIoClient
             ),
-            productPricingFacade
+            productPricingFacade,
+            true
         )
     }
 
@@ -95,7 +96,7 @@ class NorwaySignHackHandleUpdatesFromUnderwriterTest {
         val updateInstant = Instant.parse("2020-04-15T14:53:40.550493Z")
         sut.updateCustomerAttributes("randomId", makeSignFromUnderwriterMap(), updateInstant)
 
-        assertThat(repository.data["randomId"]?.underwriterFirstSignAttributesUpdate).isNull()
+        assertThat(repository.data["randomId"]?.underwriterFirstSignAttributesUpdate).isEqualTo(updateInstant)
     }
 
     @Test
@@ -106,7 +107,7 @@ class NorwaySignHackHandleUpdatesFromUnderwriterTest {
         sut.updateCustomerAttributes("randomId", makeSignFromUnderwriterMap(), updateInstant)
         sut.updateCustomerAttributes("randomId", makeSignFromUnderwriterMap(), updateInstant.plusMillis(1000))
 
-        assertThat(repository.data["randomId"]?.underwriterFirstSignAttributesUpdate).isNull()
+        assertThat(repository.data["randomId"]?.underwriterFirstSignAttributesUpdate).isEqualTo(updateInstant)
     }
 
     @Test
@@ -118,7 +119,7 @@ class NorwaySignHackHandleUpdatesFromUnderwriterTest {
     }
 }
 
-private fun makeSignFromUnderwriterMap(): Map<String, Any?> {
+fun makeSignFromUnderwriterMap(): Map<String, Any?> {
     return mapOf<String, Any?>(
         "partner_code" to "campaigncode",
         "sign_source" to "RAPIO",

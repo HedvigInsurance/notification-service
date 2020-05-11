@@ -54,7 +54,8 @@ class SendNorwegianContractCreatedEventTest {
                 Workspace.NORWAY to noClient,
                 Workspace.SWEDEN to seClient
             ),
-            productPricingFacade
+            productPricingFacade,
+            true
         )
     }
 

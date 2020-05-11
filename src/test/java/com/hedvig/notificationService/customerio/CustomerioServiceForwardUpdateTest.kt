@@ -53,7 +53,8 @@ class CustomerioServiceForwardUpdateTest {
                 Workspace.SWEDEN to customerIOMockSweden,
                 Workspace.NORWAY to customerIOMockNorway
             ),
-            productPricingFacade
+            productPricingFacade,
+            true
         )
     }
 

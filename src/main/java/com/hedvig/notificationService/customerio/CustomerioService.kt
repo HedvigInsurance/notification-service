@@ -17,7 +17,8 @@ open class CustomerioService(
     private val stateRepository: CustomerIOStateRepository,
     private val eventCreator: CustomerioEventCreator,
     private val clients: Map<Workspace, CustomerioClient>,
-    private val productPricingFacade: ProductPricingFacade
+    private val productPricingFacade: ProductPricingFacade,
+    private val useNorwayHack: Boolean
 ) {
 
     private val logger = LoggerFactory.getLogger(CustomerioService::class.java)
@@ -42,7 +43,17 @@ open class CustomerioService(
         val marketForMember = workspaceSelector.getWorkspaceForMember(memberId)
 
         if (marketForMember == Workspace.NORWAY && isSignUpdateFromUnderwriter(attributes)) {
-            // Ignore signs from underwriter for now
+            if (this.useNorwayHack) {
+                val customerState = stateRepository.findByMemberId(memberId)
+                if (customerState == null) {
+                    stateRepository.save(
+                        CustomerioState(
+                            memberId,
+                            now
+                        )
+                    )
+                }
+            }
             return
         }
 
