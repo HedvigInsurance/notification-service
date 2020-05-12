@@ -16,7 +16,7 @@ data class Contract(
     companion object {
         fun from(contractInfo: ContractInfo): Contract = Contract(
             contractInfo.type.typeName,
-            contractInfo.switcherCompany,
+            contractInfo.switcherCompany?.replace(" NO\$".toRegex(), ""),
             contractInfo.startDate?.toString()
         )
     }
