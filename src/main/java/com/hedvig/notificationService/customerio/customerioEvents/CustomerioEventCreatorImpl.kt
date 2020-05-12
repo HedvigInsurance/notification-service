@@ -107,9 +107,9 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
         }
         return ActivationDateTodayEvent(
             contractsWithActivationDateToday
-                .map { Contract(it.type.typeName, it.switcherCompany, it.startDate?.toString()) },
+                .map { Contract.from(it) },
             contracts.filter { it.startDate == null || it.startDate.isAfter(customerioState.activationDateTriggerAt) }
-                .map { Contract(it.type.typeName, it.switcherCompany, it.startDate?.toString()) }
+                .map { Contract.from(it) }
         )
     }
 
@@ -127,19 +127,11 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
         contracts.forEach {
             if (it.startDate != null) {
                 contractsWithStartDate.add(
-                    Contract(
-                        it.type.typeName,
-                        it.switcherCompany,
-                        it.startDate.toString()
-                    )
+                    Contract.from(it)
                 )
             } else {
                 contractsWithoutStartDate.add(
-                    Contract(
-                        it.type.typeName,
-                        it.switcherCompany,
-                        it.startDate?.toString()
-                    )
+                    Contract.from(it)
                 )
             }
         }
