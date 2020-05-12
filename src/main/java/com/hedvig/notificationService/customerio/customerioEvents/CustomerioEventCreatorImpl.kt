@@ -6,16 +6,14 @@ import com.hedvig.notificationService.customerio.ContractInfo
 import com.hedvig.notificationService.customerio.state.CustomerioState
 
 class CustomerioEventCreatorImpl : CustomerioEventCreator {
-    override fun createTmpSignedInsuranceEvent(
-        customerioState: CustomerioState,
+    fun createTmpSignedInsuranceEvent(
         argContracts: Collection<ContractInfo>
     ): TmpSignedInsuranceEvent {
 
         return TmpSignedInsuranceEvent(createContractCreatedData(argContracts))
     }
 
-    override fun createContractCreatedEvent(
-        customerioState: CustomerioState,
+    fun createContractCreatedEvent(
         contracts: Collection<ContractInfo>
     ): NorwegianContractCreatedEvent {
 
@@ -67,14 +65,12 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
         return when {
             customerioState.shouldSendTmpSignedEvent() -> ExecutionResult(
                 createTmpSignedInsuranceEvent(
-                    customerioState,
                     contracts
                 ), null, customerioState.sentTmpSignedEvent()
             )
             customerioState.shouldSendContractCreatedEvent()
             -> ExecutionResult(
                 createContractCreatedEvent(
-                    customerioState,
                     contracts
                 ), null, customerioState.sentContractCreatedEvent()
             )
