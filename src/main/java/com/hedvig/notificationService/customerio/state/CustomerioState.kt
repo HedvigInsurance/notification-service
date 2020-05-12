@@ -61,10 +61,16 @@ class CustomerioState(
     }
 
     fun triggerStartDateUpdated(callTime: Instant): CustomerioState {
-        return this.copy(startDateUpdatedTriggerAt = callTime)
+        return if (this.startDateUpdatedTriggerAt == null)
+            this.copy(startDateUpdatedTriggerAt = callTime)
+        else
+            this
     }
 
     fun triggerContractCreated(callTime: Instant): CustomerioState {
-        return this.copy(contractCreatedTriggerAt = callTime)
+        return if (this.contractCreatedTriggerAt == null)
+            this.copy(contractCreatedTriggerAt = callTime)
+        else
+            this
     }
 }
