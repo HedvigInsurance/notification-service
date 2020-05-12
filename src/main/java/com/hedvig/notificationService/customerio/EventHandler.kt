@@ -16,25 +16,27 @@ class EventHandler(
         event: StartDateUpdatedEvent,
         callTime: Instant = Instant.now()
     ) {
-        var state = repo.findByMemberId(event.owningMemberId)
+        val state = repo.findByMemberId(event.owningMemberId)
             ?: CustomerioState(event.owningMemberId)
 
-        state = state.triggerStartDateUpdated(callTime)
-
-        if (!configuration.useNorwayHack)
-            repo.save(state.updateFirstUpcomingStartDate(event.startDate))
+        if (!configuration.useNorwayHack) {
+            repo.save(state)
+            state.triggerStartDateUpdated(callTime)
+            state.updateFirstUpcomingStartDate(event.startDate)
+        }
     }
 
     fun onContractCreatedEvent(contractCreatedEvent: ContractCreatedEvent, callTime: Instant = Instant.now()) {
-        var state = repo.findByMemberId(contractCreatedEvent.owningMemberId)
+        val state = repo.findByMemberId(contractCreatedEvent.owningMemberId)
             ?: CustomerioState(contractCreatedEvent.owningMemberId)
-
-        state = state.triggerContractCreated(callTime)
 
         if (state.underwriterFirstSignAttributesUpdate != null)
             return // This should only happen when we go live or if we rollback to earlier versions
 
-        if (!configuration.useNorwayHack)
-            repo.save(state.updateFirstUpcomingStartDate(contractCreatedEvent.startDate))
+        if (!configuration.useNorwayHack) {
+            state.triggerContractCreated(callTime)
+            state.updateFirstUpcomingStartDate(contractCreatedEvent.startDate)
+            repo.save(state)
+        }
     }
 }

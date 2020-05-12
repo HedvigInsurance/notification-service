@@ -8,69 +8,69 @@ import javax.persistence.Id
 
 @Entity
 class CustomerioState(
-    @Id
+    @field:Id
     val memberId: String,
-    val underwriterFirstSignAttributesUpdate: Instant? = null,
-    val sentTmpSignEvent: Boolean = false,
-    val contractCreatedTriggerAt: Instant? = null,
-    val startDateUpdatedTriggerAt: Instant? = null,
-    val activationDateTriggerAt: LocalDate? = null
+    underwriterFirstSignAttributesUpdate: Instant? = null,
+    sentTmpSignEvent: Boolean = false,
+    contractCreatedTriggerAt: Instant? = null,
+    startDateUpdatedTriggerAt: Instant? = null,
+    activationDateTriggerAt: LocalDate? = null
 ) {
-    private fun copy(
-        underwriterFirstSignAttributesUpdate: Instant? = this.underwriterFirstSignAttributesUpdate,
-        sentTmpSignEvent: Boolean = this.sentTmpSignEvent,
-        contractCreatedTriggerAt: Instant? = this.contractCreatedTriggerAt,
-        startDateUpdatedTriggerAt: Instant? = this.startDateUpdatedTriggerAt,
-        activationDateTriggerAt: LocalDate? = this.activationDateTriggerAt
-    ): CustomerioState {
-        return CustomerioState(
-            memberId = this.memberId,
-            underwriterFirstSignAttributesUpdate = underwriterFirstSignAttributesUpdate,
-            sentTmpSignEvent = sentTmpSignEvent,
-            contractCreatedTriggerAt = contractCreatedTriggerAt,
-            startDateUpdatedTriggerAt = startDateUpdatedTriggerAt,
-            activationDateTriggerAt = activationDateTriggerAt
-        )
-    }
+    var underwriterFirstSignAttributesUpdate: Instant? = underwriterFirstSignAttributesUpdate
+        private set
+    var sentTmpSignEvent: Boolean = sentTmpSignEvent
+        private set
+    var contractCreatedTriggerAt: Instant? = contractCreatedTriggerAt
+        private set
+    var startDateUpdatedTriggerAt: Instant? = startDateUpdatedTriggerAt
+        private set
+    var activationDateTriggerAt: LocalDate? = activationDateTriggerAt
+        private set
 
     fun shouldSendTmpSignedEvent(): Boolean = underwriterFirstSignAttributesUpdate != null
-    fun sentTmpSignedEvent(): CustomerioState = copy(sentTmpSignEvent = true)
+    fun sentTmpSignedEvent() {
+        this.sentTmpSignEvent = true
+    }
 
     fun shouldSendContractCreatedEvent(): Boolean = contractCreatedTriggerAt != null
-    fun sentContractCreatedEvent(): CustomerioState = copy(contractCreatedTriggerAt = null)
+    fun sentContractCreatedEvent() {
+        this.contractCreatedTriggerAt = null
+    }
 
     fun shouldSendStartDateUpdatedEvent(): Boolean = startDateUpdatedTriggerAt != null
-    fun sentStartDateUpdatedEvent(): CustomerioState = copy(startDateUpdatedTriggerAt = null)
+    fun sentStartDateUpdatedEvent() {
+        this.startDateUpdatedTriggerAt = null
+    }
 
     fun shouldSendActivatesTodayEvent(): Boolean = activationDateTriggerAt != null
-    fun sentActivatesTodayEvent(nextActivationDate: LocalDate?): CustomerioState =
-        copy(activationDateTriggerAt = nextActivationDate)
+    fun sentActivatesTodayEvent(nextActivationDate: LocalDate?) {
+        this.activationDateTriggerAt = nextActivationDate
+    }
 
-    fun updateFirstUpcomingStartDate(newDate: LocalDate?): CustomerioState {
+    fun updateFirstUpcomingStartDate(newDate: LocalDate?) {
         val newFirstUpcomingStartDate =
             if (newDate == null || (activationDateTriggerAt != null && newDate.isAfter(activationDateTriggerAt))) {
                 activationDateTriggerAt
             } else {
                 newDate
             }
-        return copy(activationDateTriggerAt = newFirstUpcomingStartDate)
+        this.activationDateTriggerAt = newFirstUpcomingStartDate
     }
 
-    fun updateFirstUpcomingStartDate(contracts: List<ContractInfo>): CustomerioState {
-        return contracts.foldRight(this) { contract, state -> state.updateFirstUpcomingStartDate(contract.startDate) }
+    fun updateFirstUpcomingStartDate(contracts: List<ContractInfo>) {
+        for (contract in contracts) {
+            this.updateFirstUpcomingStartDate(contract.startDate)
+        }
     }
 
-    fun triggerStartDateUpdated(callTime: Instant): CustomerioState {
-        return if (this.startDateUpdatedTriggerAt == null)
-            this.copy(startDateUpdatedTriggerAt = callTime)
-        else
-            this
+    fun triggerStartDateUpdated(callTime: Instant) {
+        if (this.startDateUpdatedTriggerAt == null) {
+            this.startDateUpdatedTriggerAt = callTime
+        }
     }
 
-    fun triggerContractCreated(callTime: Instant): CustomerioState {
-        return if (this.contractCreatedTriggerAt == null)
-            this.copy(contractCreatedTriggerAt = callTime)
-        else
-            this
+    fun triggerContractCreated(callTime: Instant) {
+        if (this.contractCreatedTriggerAt == null)
+            this.contractCreatedTriggerAt = callTime
     }
 }

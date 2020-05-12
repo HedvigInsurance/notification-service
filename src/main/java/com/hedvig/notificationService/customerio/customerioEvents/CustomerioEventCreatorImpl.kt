@@ -63,30 +63,29 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
         contracts: List<ContractInfo>
     ): ExecutionResult {
         return when {
-            customerioState.shouldSendTmpSignedEvent() -> ExecutionResult(
-                createTmpSignedInsuranceEvent(
-                    contracts
-                ), null, customerioState.sentTmpSignedEvent()
-            )
+            customerioState.shouldSendTmpSignedEvent() -> {
+                val event = createTmpSignedInsuranceEvent(contracts)
+                customerioState.sentTmpSignedEvent()
+                ExecutionResult(event)
+            }
             customerioState.shouldSendContractCreatedEvent()
-            -> ExecutionResult(
-                createContractCreatedEvent(
-                    contracts
-                ), null, customerioState.sentContractCreatedEvent()
-            )
-            customerioState.shouldSendStartDateUpdatedEvent() -> ExecutionResult(
-                createStartDateUpdatedEvent(
-                    contracts
-                ), null, customerioState.sentStartDateUpdatedEvent()
-            )
-            customerioState.shouldSendActivatesTodayEvent() ->
-                ExecutionResult(
-                    createActivationDateTodayEvent(customerioState, contracts),
-                    null,
-                    customerioState.sentActivatesTodayEvent(nextActivationDate = contracts.map { it.startDate }
-                        .sortedBy { it }
-                        .firstOrNull { it?.isAfter(customerioState.activationDateTriggerAt) == true })
-                )
+            -> {
+                val event = createContractCreatedEvent(contracts)
+                customerioState.sentContractCreatedEvent()
+                ExecutionResult(event)
+            }
+            customerioState.shouldSendStartDateUpdatedEvent() -> {
+                val event = createStartDateUpdatedEvent(contracts)
+                customerioState.sentStartDateUpdatedEvent()
+                ExecutionResult(event)
+            }
+            customerioState.shouldSendActivatesTodayEvent() -> {
+                val event = createActivationDateTodayEvent(customerioState, contracts)
+                customerioState.sentActivatesTodayEvent(nextActivationDate = contracts.map { it.startDate }
+                    .sortedBy { it }
+                    .firstOrNull { it?.isAfter(customerioState.activationDateTriggerAt) == true })
+                ExecutionResult(event)
+            }
             else
             -> throw RuntimeException("CustomerioState in weird state")
         }
@@ -141,7 +140,7 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
     }
 }
 
-data class ExecutionResult(val event: Any, val map: Map<String, Any?>?, val state: CustomerioState) {
+data class ExecutionResult(val event: Any) {
 
     val asMap: Map<String, Any?>
         get() {

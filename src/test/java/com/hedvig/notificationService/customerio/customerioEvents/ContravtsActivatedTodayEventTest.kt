@@ -21,16 +21,17 @@ class ContravtsActivatedTodayEventTest {
     fun `one contract removed update trigger`() {
 
         val eventCreatorImpl = CustomerioEventCreatorImpl()
-        val result = eventCreatorImpl.execute(
-            CustomerioState(
-                "aMemberId",
-                null,
-                activationDateTriggerAt = LocalDate.of(2020, 1, 2)
-            ),
+        val customerioState = CustomerioState(
+            "aMemberId",
+            null,
+            activationDateTriggerAt = LocalDate.of(2020, 1, 2)
+        )
+        eventCreatorImpl.execute(
+            customerioState,
             listOf(ContractInfo(AgreementType.NorwegianHomeContent, null, LocalDate.of(2020, 1, 2)))
         )
 
-        assertThat(result.state.activationDateTriggerAt).isNull()
+        assertThat(customerioState.activationDateTriggerAt).isNull()
     }
 
     @Test
@@ -73,11 +74,12 @@ class ContravtsActivatedTodayEventTest {
     @Test
     fun `one contract with future activation date`() {
         val eventCreatorImpl = CustomerioEventCreatorImpl()
+        val customerioState = CustomerioState(
+            "aMemberId",
+            activationDateTriggerAt = LocalDate.of(2020, 1, 2)
+        )
         val result = eventCreatorImpl.execute(
-            CustomerioState(
-                "aMemberId",
-                activationDateTriggerAt = LocalDate.of(2020, 1, 2)
-            ),
+            customerioState,
             listOf(
                 ContractInfo(AgreementType.NorwegianTravel, null, LocalDate.of(2020, 1, 2)),
                 ContractInfo(AgreementType.NorwegianHomeContent, null, LocalDate.of(2020, 1, 3))
@@ -88,17 +90,18 @@ class ContravtsActivatedTodayEventTest {
         assertThat(event.data.activeInFuture).containsAll(
             Contract("innbo", null, LocalDate.of(2020, 1, 3).toString())
         )
-        assertThat(result.state.activationDateTriggerAt).isEqualTo(LocalDate.of(2020, 1, 3))
+        assertThat(customerioState.activationDateTriggerAt).isEqualTo(LocalDate.of(2020, 1, 3))
     }
 
     @Test
     fun `one future activation date one without future activation date`() {
         val eventCreatorImpl = CustomerioEventCreatorImpl()
+        val customerioState = CustomerioState(
+            "aMemberId",
+            activationDateTriggerAt = LocalDate.of(2020, 1, 2)
+        )
         val result = eventCreatorImpl.execute(
-            CustomerioState(
-                "aMemberId",
-                activationDateTriggerAt = LocalDate.of(2020, 1, 2)
-            ),
+            customerioState,
             listOf(
                 ContractInfo(AgreementType.NorwegianTravel, null, LocalDate.of(2020, 1, 2)),
                 ContractInfo(AgreementType.NorwegianHomeContent, null, LocalDate.of(2020, 1, 3)),
@@ -111,17 +114,18 @@ class ContravtsActivatedTodayEventTest {
             Contract("innbo", null, LocalDate.of(2020, 1, 3).toString()),
             Contract("innbo", null, null)
         )
-        assertThat(result.state.activationDateTriggerAt).isEqualTo(LocalDate.of(2020, 1, 3))
+        assertThat(customerioState.activationDateTriggerAt).isEqualTo(LocalDate.of(2020, 1, 3))
     }
 
     @Test
     fun `one contract without future activation date`() {
         val eventCreatorImpl = CustomerioEventCreatorImpl()
+        val customerioState = CustomerioState(
+            "aMemberId",
+            activationDateTriggerAt = LocalDate.of(2020, 1, 2)
+        )
         val result = eventCreatorImpl.execute(
-            CustomerioState(
-                "aMemberId",
-                activationDateTriggerAt = LocalDate.of(2020, 1, 2)
-            ),
+            customerioState,
             listOf(
                 ContractInfo(AgreementType.NorwegianTravel, null, LocalDate.of(2020, 1, 2)),
                 ContractInfo(AgreementType.NorwegianHomeContent, null, null)
@@ -132,7 +136,7 @@ class ContravtsActivatedTodayEventTest {
         assertThat(event.data.activeInFuture).containsAll(
             Contract("innbo", null, null)
         )
-        assertThat(result.state.activationDateTriggerAt).isEqualTo(null)
+        assertThat(customerioState.activationDateTriggerAt).isEqualTo(null)
     }
 
     @Test
@@ -150,6 +154,6 @@ class ContravtsActivatedTodayEventTest {
             )
         )
 
-        val event = result.event as ContractsActivatedTodayEvent
+        result.event as ContractsActivatedTodayEvent
     }
 }

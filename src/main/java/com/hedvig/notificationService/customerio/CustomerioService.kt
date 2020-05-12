@@ -96,7 +96,7 @@ open class CustomerioService(
             try {
                 val contracts = this.productPricingFacade.getContractTypeForMember(customerioState.memberId)
                 val eventAndState = eventCreator.execute(customerioState, contracts)
-                sendEventAndUpdateState(customerioState, eventAndState.asMap) { eventAndState.state }
+                sendEventAndUpdateState(customerioState, eventAndState.asMap)
             } catch (ex: RuntimeException) {
                 logger.error("Could not create event from customerio state", ex)
             }
@@ -105,8 +105,7 @@ open class CustomerioService(
 
     private fun sendEventAndUpdateState(
         customerioState: CustomerioState,
-        event: Map<String, Any?>,
-        updateFunction: (CustomerioState) -> (CustomerioState)
+        event: Map<String, Any?>
     ) {
         try {
             logger.info("Sending event ${event["name"]} to member ${customerioState.memberId}")
@@ -115,7 +114,7 @@ open class CustomerioService(
                 customerioState.memberId,
                 event
             )
-            this.stateRepository.save(updateFunction(customerioState))
+            this.stateRepository.save(customerioState)
         } catch (ex: RuntimeException) {
             logger.error("Could not send event to customerio", ex)
         }
