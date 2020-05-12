@@ -20,9 +20,9 @@ class EventHandler(
             ?: CustomerioState(event.owningMemberId)
 
         if (!configuration.useNorwayHack) {
-            repo.save(state)
             state.triggerStartDateUpdated(callTime)
             state.updateFirstUpcomingStartDate(event.startDate)
+            repo.save(state)
         }
     }
 
