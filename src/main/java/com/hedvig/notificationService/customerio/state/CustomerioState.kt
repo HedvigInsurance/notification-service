@@ -63,4 +63,8 @@ class CustomerioState(
     fun triggerStartDateUpdated(callTime: Instant): CustomerioState {
         return this.copy(startDateUpdatedTriggerAt = callTime)
     }
+
+    fun triggerContractCreated(callTime: Instant): CustomerioState {
+        return this.copy(contractCreatedTriggerAt = callTime)
+    }
 }

@@ -52,7 +52,14 @@ class OnContractCreatedEventTest {
     fun `contract already created`() {
 
         val stateCreatedAt = Instant.parse("2020-04-27T09:20:42.815351Z").minusMillis(3000)
-        repository.save(CustomerioState("1337", null, false, stateCreatedAt))
+        repository.save(
+            CustomerioState(
+                memberId = "1337",
+                underwriterFirstSignAttributesUpdate = null,
+                sentTmpSignEvent = false,
+                contractCreatedTriggerAt = stateCreatedAt
+            )
+        )
 
         val time = Instant.parse("2020-04-27T09:20:42.815351Z")
 
@@ -65,6 +72,29 @@ class OnContractCreatedEventTest {
         )
 
         assertThat(repository.data["1337"]?.contractCreatedTriggerAt).isEqualTo(stateCreatedAt)
+    }
+
+    @Test
+    fun `state already exists`() {
+
+        repository.save(
+            CustomerioState(
+                memberId = "1337",
+                contractCreatedTriggerAt = null
+            )
+        )
+
+        val callTime = Instant.parse("2020-04-27T09:20:42.815351Z")
+
+        sut.onContractCreatedEvent(
+            ContractCreatedEvent(
+                "someEventId",
+                "1337",
+                null
+            ), callTime
+        )
+
+        assertThat(repository.data["1337"]?.contractCreatedTriggerAt).isEqualTo(callTime)
     }
 
     @Test

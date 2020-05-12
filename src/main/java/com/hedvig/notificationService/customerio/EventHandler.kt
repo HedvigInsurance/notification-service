@@ -26,10 +26,10 @@ class EventHandler(
     }
 
     fun onContractCreatedEvent(contractCreatedEvent: ContractCreatedEvent, callTime: Instant = Instant.now()) {
-        val state = repo.findByMemberId(contractCreatedEvent.owningMemberId) ?: CustomerioState(
-            contractCreatedEvent.owningMemberId,
-            contractCreatedTriggerAt = callTime
-        )
+        var state = repo.findByMemberId(contractCreatedEvent.owningMemberId)
+            ?: CustomerioState(contractCreatedEvent.owningMemberId)
+
+        state = state.triggerContractCreated(callTime)
 
         if (state.underwriterFirstSignAttributesUpdate != null)
             return // This should only happen when we go live or if we rollback to earlier versions
