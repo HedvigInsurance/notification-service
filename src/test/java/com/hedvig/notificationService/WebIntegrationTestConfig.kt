@@ -48,7 +48,8 @@ class WebIntegrationTestConfig {
                 Workspace.SWEDEN to customerioMock,
                 Workspace.NORWAY to customerioMock
             ),
-            productPricingFacade
+            productPricingFacade,
+            true
         )
     }
 }

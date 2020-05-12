@@ -152,7 +152,7 @@ class TmpSignAndContractCreatedEventTest(
             false
         )
 
-        val event = asMap(sut.createTmpSignedInsuranceEvent(customerioState, contracts))
+        val event = asMap(sut.createTmpSignedInsuranceEvent(contracts))
 
         assertThat(event["name"]).isEqualTo("TmpSignedInsuranceEvent")
         val eventData = event["data"] as Map<String, Any?>
@@ -175,7 +175,7 @@ class TmpSignAndContractCreatedEventTest(
             false
         )
 
-        val event = asMap(sut.createContractCreatedEvent(customerioState, contracts))
+        val event = asMap(sut.createContractCreatedEvent(contracts))
 
         assertThat(event["name"]).isEqualTo("NorwegianContractCreatedEvent")
         val eventData = event["data"] as Map<String, Any?>
@@ -215,6 +215,6 @@ class TmpSignAndContractCreatedEventTest(
         val java = RuntimeException::class.java
         thrown.expect(java)
 
-        sut.createTmpSignedInsuranceEvent(customerioState, contracts)
+        sut.createTmpSignedInsuranceEvent(contracts)
     }
 }

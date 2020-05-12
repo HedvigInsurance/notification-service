@@ -16,11 +16,11 @@ class InMemoryCustomerIOStateRepository(var data: Map<String, CustomerioState> =
     override fun shouldUpdate(byTime: Instant): Collection<CustomerioState> {
         return data.values.filter {
             (it.underwriterFirstSignAttributesUpdate != null &&
-                it.underwriterFirstSignAttributesUpdate <= byTime &&
+                it.underwriterFirstSignAttributesUpdate!! <= byTime &&
                 !it.sentTmpSignEvent) ||
-                (it.contractCreatedTriggerAt != null && it.contractCreatedTriggerAt <= byTime) ||
-                (it.startDateUpdatedTriggerAt != null && it.startDateUpdatedTriggerAt <= byTime) ||
-                (it.activationDateTriggerAt != null && it.activationDateTriggerAt <=
+                (it.contractCreatedTriggerAt != null && it.contractCreatedTriggerAt!! <= byTime) ||
+                (it.startDateUpdatedTriggerAt != null && it.startDateUpdatedTriggerAt!! <= byTime) ||
+                (it.activationDateTriggerAt != null && it.activationDateTriggerAt!! <=
                     byTime.atZone(ZoneId.of("Europe/Stockholm")).toLocalDate())
         }
     }

@@ -34,9 +34,9 @@ class ContractsActivationDateUpdatedEventTest {
         val callTime = Instant.parse("2020-04-27T18:50:41.760555Z")
         val customerioState = CustomerioState("amember", null, startDateUpdatedTriggerAt = callTime)
 
-        val eventAndState = sut.execute(customerioState, contracts)
+        sut.execute(customerioState, contracts)
 
-        assertThat(eventAndState.state.startDateUpdatedTriggerAt).isNull()
+        assertThat(customerioState.startDateUpdatedTriggerAt).isNull()
     }
 
     @Test

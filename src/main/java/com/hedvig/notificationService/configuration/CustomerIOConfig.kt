@@ -61,7 +61,8 @@ class CustomerIOConfig() {
             repo,
             CustomerioEventCreatorImpl(),
             clients,
-            productPricingFacade
+            productPricingFacade,
+            configuration.useNorwayHack
         )
     }
 

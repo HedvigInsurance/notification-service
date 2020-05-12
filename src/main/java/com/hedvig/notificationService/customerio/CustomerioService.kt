@@ -17,7 +17,8 @@ open class CustomerioService(
     private val stateRepository: CustomerIOStateRepository,
     private val eventCreator: CustomerioEventCreator,
     private val clients: Map<Workspace, CustomerioClient>,
-    private val productPricingFacade: ProductPricingFacade
+    private val productPricingFacade: ProductPricingFacade,
+    private val useNorwayHack: Boolean
 ) {
 
     private val logger = LoggerFactory.getLogger(CustomerioService::class.java)
@@ -42,7 +43,17 @@ open class CustomerioService(
         val marketForMember = workspaceSelector.getWorkspaceForMember(memberId)
 
         if (marketForMember == Workspace.NORWAY && isSignUpdateFromUnderwriter(attributes)) {
-            // Ignore signs from underwriter for now
+            if (this.useNorwayHack) {
+                val customerState = stateRepository.findByMemberId(memberId)
+                if (customerState == null) {
+                    stateRepository.save(
+                        CustomerioState(
+                            memberId,
+                            now
+                        )
+                    )
+                }
+            }
             return
         }
 
@@ -85,7 +96,7 @@ open class CustomerioService(
             try {
                 val contracts = this.productPricingFacade.getContractTypeForMember(customerioState.memberId)
                 val eventAndState = eventCreator.execute(customerioState, contracts)
-                sendEventAndUpdateState(customerioState, eventAndState.asMap) { eventAndState.state }
+                sendEventAndUpdateState(customerioState, eventAndState.asMap)
             } catch (ex: RuntimeException) {
                 logger.error("Could not create event from customerio state", ex)
             }
@@ -94,8 +105,7 @@ open class CustomerioService(
 
     private fun sendEventAndUpdateState(
         customerioState: CustomerioState,
-        event: Map<String, Any?>,
-        updateFunction: (CustomerioState) -> (CustomerioState)
+        event: Map<String, Any?>
     ) {
         try {
             logger.info("Sending event ${event["name"]} to member ${customerioState.memberId}")
@@ -104,7 +114,7 @@ open class CustomerioService(
                 customerioState.memberId,
                 event
             )
-            this.stateRepository.save(updateFunction(customerioState))
+            this.stateRepository.save(customerioState)
         } catch (ex: RuntimeException) {
             logger.error("Could not send event to customerio", ex)
         }

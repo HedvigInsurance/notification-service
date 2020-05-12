@@ -6,16 +6,14 @@ import com.hedvig.notificationService.customerio.ContractInfo
 import com.hedvig.notificationService.customerio.state.CustomerioState
 
 class CustomerioEventCreatorImpl : CustomerioEventCreator {
-    override fun createTmpSignedInsuranceEvent(
-        customerioState: CustomerioState,
+    fun createTmpSignedInsuranceEvent(
         argContracts: Collection<ContractInfo>
     ): TmpSignedInsuranceEvent {
 
         return TmpSignedInsuranceEvent(createContractCreatedData(argContracts))
     }
 
-    override fun createContractCreatedEvent(
-        customerioState: CustomerioState,
+    fun createContractCreatedEvent(
         contracts: Collection<ContractInfo>
     ): NorwegianContractCreatedEvent {
 
@@ -65,32 +63,29 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
         contracts: List<ContractInfo>
     ): ExecutionResult {
         return when {
-            customerioState.shouldSendTmpSignedEvent() -> ExecutionResult(
-                createTmpSignedInsuranceEvent(
-                    customerioState,
-                    contracts
-                ), null, customerioState.sentTmpSignedEvent()
-            )
+            customerioState.shouldSendTmpSignedEvent() -> {
+                val event = createTmpSignedInsuranceEvent(contracts)
+                customerioState.sentTmpSignedEvent()
+                ExecutionResult(event)
+            }
             customerioState.shouldSendContractCreatedEvent()
-            -> ExecutionResult(
-                createContractCreatedEvent(
-                    customerioState,
-                    contracts
-                ), null, customerioState.sentContractCreatedEvent()
-            )
-            customerioState.shouldSendStartDateUpdatedEvent() -> ExecutionResult(
-                createStartDateUpdatedEvent(
-                    contracts
-                ), null, customerioState.sentStartDateUpdatedEvent()
-            )
-            customerioState.shouldSendActivatesTodayEvent() ->
-                ExecutionResult(
-                    createActivationDateTodayEvent(customerioState, contracts),
-                    null,
-                    customerioState.sentActivatesTodayEvent(nextActivationDate = contracts.map { it.startDate }
-                        .sortedBy { it }
-                        .firstOrNull { it?.isAfter(customerioState.activationDateTriggerAt) == true })
-                )
+            -> {
+                val event = createContractCreatedEvent(contracts)
+                customerioState.sentContractCreatedEvent()
+                ExecutionResult(event)
+            }
+            customerioState.shouldSendStartDateUpdatedEvent() -> {
+                val event = createStartDateUpdatedEvent(contracts)
+                customerioState.sentStartDateUpdatedEvent()
+                ExecutionResult(event)
+            }
+            customerioState.shouldSendActivatesTodayEvent() -> {
+                val event = createActivationDateTodayEvent(customerioState, contracts)
+                customerioState.sentActivatesTodayEvent(nextActivationDate = contracts.map { it.startDate }
+                    .sortedBy { it }
+                    .firstOrNull { it?.isAfter(customerioState.activationDateTriggerAt) == true })
+                ExecutionResult(event)
+            }
             else
             -> throw RuntimeException("CustomerioState in weird state")
         }
@@ -107,9 +102,9 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
         }
         return ContractsActivatedTodayEvent(
             contractsWithActivationDateToday
-                .map { Contract(it.type.typeName, it.switcherCompany, it.startDate?.toString()) },
+                .map { Contract.from(it) },
             contracts.filter { it.startDate == null || it.startDate.isAfter(customerioState.activationDateTriggerAt) }
-                .map { Contract(it.type.typeName, it.switcherCompany, it.startDate?.toString()) }
+                .map { Contract.from(it) }
         )
     }
 
@@ -127,19 +122,11 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
         contracts.forEach {
             if (it.startDate != null) {
                 contractsWithStartDate.add(
-                    Contract(
-                        it.type.typeName,
-                        it.switcherCompany,
-                        it.startDate.toString()
-                    )
+                    Contract.from(it)
                 )
             } else {
                 contractsWithoutStartDate.add(
-                    Contract(
-                        it.type.typeName,
-                        it.switcherCompany,
-                        it.startDate?.toString()
-                    )
+                    Contract.from(it)
                 )
             }
         }
@@ -153,7 +140,7 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
     }
 }
 
-data class ExecutionResult(val event: Any, val map: Map<String, Any?>?, val state: CustomerioState) {
+data class ExecutionResult(val event: Any) {
 
     val asMap: Map<String, Any?>
         get() {

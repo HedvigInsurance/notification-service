@@ -39,7 +39,7 @@ class CustomerioServiceContructionTest {
     @Test
     fun `Throw if no markets are passed in the contructor`() {
         exceptionRule.expect(IllegalArgumentException::class.java)
-        CustomerioService(workspaceSelector, repository, eventCreator, mapOf(), productPricingFacade)
+        CustomerioService(workspaceSelector, repository, eventCreator, mapOf(), productPricingFacade, true)
     }
 
     @Test
@@ -50,7 +50,8 @@ class CustomerioServiceContructionTest {
             repository,
             eventCreator,
             mapOf(Workspace.SWEDEN to customerioClient),
-            productPricingFacade
+            productPricingFacade,
+            true
         )
     }
 
@@ -64,7 +65,8 @@ class CustomerioServiceContructionTest {
                 Workspace.SWEDEN to customerioClient,
                 Workspace.NORWAY to customerioClient
             ),
-            productPricingFacade
+            productPricingFacade,
+            true
         )
     }
 }

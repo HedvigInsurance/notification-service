@@ -12,6 +12,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.slot
 import io.mockk.verify
+import org.assertj.core.api.Assertions
 import org.junit.Before
 import org.junit.Test
 import java.time.Instant
@@ -57,7 +58,8 @@ class NorwaySignHackUpdateCustomerIOTest {
                 Workspace.SWEDEN to seCustomerioClient,
                 Workspace.NORWAY to noCustomerIoClient
             ),
-            productPricingFacade
+            productPricingFacade,
+            true
         )
     }
 
@@ -89,7 +91,8 @@ class NorwaySignHackUpdateCustomerIOTest {
         sut.sendUpdates(updateTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
 
         val eventDataSlot = slot<Map<String, Any>>()
-        verify(inverse = true) { noCustomerIoClient.sendEvent("1337", any()) }
+        verify { noCustomerIoClient.sendEvent("1337", capture(eventDataSlot)) }
+        Assertions.assertThat(eventDataSlot.captured).containsEntry("name", "TmpSignedInsuranceEvent")
     }
 
     @Test
