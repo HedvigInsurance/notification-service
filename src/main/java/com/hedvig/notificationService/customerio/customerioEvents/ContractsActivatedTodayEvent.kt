@@ -6,8 +6,14 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming
 
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy::class)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "name", visible = true)
-data class ActivationDateUpdatedEvent(val data: DataObject) {
+data class ContractsActivatedTodayEvent(
+    val data: DataObject
+) {
+    constructor(
+        activeToday: List<Contract>,
+        activeInFuture: List<Contract>
+    ) : this(DataObject(activeToday, activeInFuture))
 
     @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy::class)
-    data class DataObject(val contractsWithStartDate: List<Contract>, val contractsWithoutStartDate: List<Contract>)
+    data class DataObject(val activeToday: List<Contract>, val activeInFuture: List<Contract>)
 }

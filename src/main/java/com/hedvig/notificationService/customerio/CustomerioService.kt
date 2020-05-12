@@ -92,13 +92,13 @@ open class CustomerioService(
         )
 
         for (customerioState in this.stateRepository.shouldUpdate(windowEndTime)) {
-
+            logger.info("Running update for ${customerioState.memberId}")
             try {
                 val contracts = this.productPricingFacade.getContractTypeForMember(customerioState.memberId)
                 val eventAndState = eventCreator.execute(customerioState, contracts)
                 sendEventAndUpdateState(customerioState, eventAndState.asMap) { eventAndState.state }
             } catch (ex: RuntimeException) {
-                logger.error("Could not create event from customerio state")
+                logger.error("Could not create event from customerio state", ex)
             }
         }
     }
@@ -109,6 +109,7 @@ open class CustomerioService(
         updateFunction: (CustomerioState) -> (CustomerioState)
     ) {
         try {
+            logger.info("Sending event ${event["name"]} to member ${customerioState.memberId}")
             val workspace = workspaceSelector.getWorkspaceForMember(customerioState.memberId)
             clients[workspace]?.sendEvent(
                 customerioState.memberId,
