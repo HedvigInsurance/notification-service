@@ -7,8 +7,7 @@ import com.google.firebase.messaging.Aps
 import com.google.firebase.messaging.ApsAlert
 import com.google.firebase.messaging.FirebaseMessagingException
 import com.google.firebase.messaging.Message
-import com.hedvig.localization.service.LocalizationService
-import com.hedvig.localization.service.TextKeysLocaleResolver
+import com.hedvig.common.localization.LocalizationService
 import com.hedvig.notificationService.entities.FirebaseRepository
 import com.hedvig.notificationService.entities.FirebaseToken
 import com.hedvig.notificationService.service.TextKeys.CLAIM_PAID_BODY
@@ -26,19 +25,19 @@ import com.hedvig.notificationService.service.TextKeys.PAYMENT_FAILED_TITLE
 import com.hedvig.notificationService.service.TextKeys.REFERRAL_SUCCESS_BODY
 import com.hedvig.notificationService.service.firebase.FirebaseMessager
 import com.hedvig.notificationService.serviceIntegration.memberService.MemberServiceClient
+import com.hedvig.resolver.LocaleResolver
+import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Service
 import java.util.Optional
 import javax.money.MonetaryAmount
 import javax.transaction.Transactional
-import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Service
 
 @Service
 open class FirebaseNotificationServiceImpl(
     private val firebaseRepository: FirebaseRepository,
     private val firebaseMessaging: FirebaseMessager,
     private val localizationService: LocalizationService,
-    private val memberService: MemberServiceClient,
-    private val textKeysLocaleResolver: TextKeysLocaleResolver
+    private val memberService: MemberServiceClient
 ) : FirebaseNotificationService {
 
     override fun sendNewMessageNotification(memberId: String) {
@@ -364,12 +363,12 @@ open class FirebaseNotificationServiceImpl(
 
     private fun resolveTitleAndBody(memberId: String, titleTextKey: String, bodyTextKey: String): Pair<String, String> {
         val acceptLanguage = memberService.profile(memberId).body?.acceptLanguage
-        val locale = textKeysLocaleResolver.resolveLocale(acceptLanguage)
+        val locale = LocaleResolver.resolveLocale(acceptLanguage)
 
         val title =
-            localizationService.getText(locale, titleTextKey) ?: throw Error("Could not find text key $titleTextKey")
+            localizationService.getTranslation(titleTextKey, locale) ?: throw Error("Could not find text key $titleTextKey")
         val body =
-            localizationService.getText(locale, bodyTextKey) ?: throw Error("Could not find text key $bodyTextKey")
+            localizationService.getTranslation(bodyTextKey, locale) ?: throw Error("Could not find text key $bodyTextKey")
 
         return Pair(title, body)
     }
