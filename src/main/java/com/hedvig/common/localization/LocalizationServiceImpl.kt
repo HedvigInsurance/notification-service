@@ -8,7 +8,7 @@ import java.util.Locale
 
 @Component
 class LocalizationServiceImpl(
-    @Value("\${lokalise.useFakes:false}")
+    @Value("\${lokalise.useFakes}")
     private val useFakes: Boolean
 ) : LocalizationService {
 
