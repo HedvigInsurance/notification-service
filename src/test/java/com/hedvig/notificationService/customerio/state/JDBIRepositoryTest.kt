@@ -8,13 +8,15 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit4.SpringRunner
 
 @RunWith(SpringRunner::class)
-@DataJdbcTest
+@DataJdbcTest()
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ActiveProfiles("test")
 @ContextConfiguration(
     classes = [JDBIConfiguration::class],
@@ -26,12 +28,25 @@ class JDBIRepositoryTest {
     lateinit var jdbi: Jdbi
 
     @Test
-    fun test() {
+    fun `simple jdbi query test`() {
         val result = jdbi.withHandle<Integer, RuntimeException> { it ->
             it.createQuery("select 1 as number")
                 .mapTo(Integer::class.java).findOnly()
         }
 
         assertThat(result).isEqualTo(1)
+    }
+
+    @Test
+    fun test2() {
+        val repository = JDBIRepository(jdbi)
+
+        repository.save(CustomerioState("aMemberId"))
+
+        var rows = jdbi.withHandle<Integer, java.lang.RuntimeException> {
+            it.createQuery("select count(*) from customerio_state").mapTo(Integer::class.java).first()
+        }
+
+        assertThat(rows).isEqualTo(1)
     }
 }
