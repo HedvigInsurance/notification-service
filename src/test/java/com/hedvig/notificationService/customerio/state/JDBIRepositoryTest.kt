@@ -38,7 +38,7 @@ class JDBIRepositoryTest {
     }
 
     @Test
-    fun test2() {
+    fun `simple insert`() {
         val repository = JDBIRepository(jdbi)
 
         repository.save(CustomerioState("aMemberId"))
