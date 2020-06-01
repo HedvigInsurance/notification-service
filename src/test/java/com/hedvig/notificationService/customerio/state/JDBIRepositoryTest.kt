@@ -110,6 +110,11 @@ class JDBIRepositoryTest(@Autowired val jdbi: Jdbi) {
                     "sent_tmp_sign_event",
                     false,
                     makeCustomerioState(sentTmpSignEvent = false)
+                ),
+                Arguments.of(
+                    "start_date_updated_trigger_at",
+                    Instant.parse("2020-06-01T13:41:39.739783Z"),
+                    makeCustomerioState(startDateUpdatedTriggerAt = Instant.parse("2020-06-01T13:41:39.739783Z"))
                 )
             )
         }
@@ -143,13 +148,15 @@ fun makeCustomerioState(
     activationDateTriggerAt: LocalDate? = null,
     contractCreatedTriggerAt: Instant? = null,
     underwriterFirstSignAttributesUpdate: Instant? = null,
-    sentTmpSignEvent: Boolean = false
+    sentTmpSignEvent: Boolean = false,
+    startDateUpdatedTriggerAt: Instant? = null
 ): CustomerioState {
     return CustomerioState(
         memberId,
         activationDateTriggerAt = activationDateTriggerAt,
         contractCreatedTriggerAt = contractCreatedTriggerAt,
         underwriterFirstSignAttributesUpdate = underwriterFirstSignAttributesUpdate,
-        sentTmpSignEvent = sentTmpSignEvent
+        sentTmpSignEvent = sentTmpSignEvent,
+        startDateUpdatedTriggerAt = startDateUpdatedTriggerAt
     )
 }
