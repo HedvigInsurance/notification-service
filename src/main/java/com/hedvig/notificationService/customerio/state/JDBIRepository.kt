@@ -1,6 +1,8 @@
 package com.hedvig.notificationService.customerio.state
 
 import org.jdbi.v3.core.Jdbi
+import org.jdbi.v3.core.kotlin.withHandleUnchecked
+import org.jdbi.v3.core.mapper.reflect.FieldMapper
 import java.time.Instant
 
 class JDBIRepository(
@@ -42,7 +44,17 @@ INSERT INTO customerio_state (
     }
 
     override fun findByMemberId(memberId: String): CustomerioState? {
-        TODO("Not yet implemented")
+        return jdbi.withHandleUnchecked {
+            it.registerRowMapper(FieldMapper.factory(CustomerioState::class.java))
+            it.createQuery(
+                """
+                SELECT * from customerio_state where member_id = :memberId
+            """.trimIndent()
+            )
+                .bind("memberId", memberId)
+                .mapTo(CustomerioState::class.java)
+                .findFirst()
+        }.orElse(null)
     }
 
     override fun shouldUpdate(byTime: Instant): Collection<CustomerioState> {

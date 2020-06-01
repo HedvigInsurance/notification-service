@@ -1,7 +1,9 @@
 package com.hedvig.notificationService.customerio.state
 
+import assertk.all
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import assertk.assertions.isNotNull
 import com.hedvig.notificationService.configuration.JDBIConfiguration
 import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.core.kotlin.withHandleUnchecked
@@ -74,6 +76,30 @@ class JDBIRepositoryTest(@Autowired val jdbi: Jdbi) {
         }
 
         assertThat(rows).isEqualTo(1)
+    }
+
+    @Test
+    fun `save and load`() {
+        val state = makeCustomerioState(
+            "aMemberId",
+            activationDateTriggerAt = LocalDate.of(2020, 1, 1),
+            startDateUpdatedTriggerAt = Instant.parse("2020-06-01T13:41:39.739783Z"),
+            contractCreatedTriggerAt = Instant.parse("2020-05-01T13:41:39.739783Z"),
+            sentTmpSignEvent = true,
+            underwriterFirstSignAttributesUpdate = Instant.parse("2020-04-01T13:41:39.739783Z")
+        )
+        repository.save(state)
+
+        val customerioState = repository.findByMemberId("aMemberId")
+
+        assertThat(customerioState).isNotNull().all {
+            transform { it.memberId }.isEqualTo("aMemberId")
+            transform { it.activationDateTriggerAt }.isEqualTo(LocalDate.of(2020, 1, 1))
+            transform { it.startDateUpdatedTriggerAt }.isEqualTo(Instant.parse("2020-06-01T13:41:39.739783Z"))
+            transform { it.contractCreatedTriggerAt }.isEqualTo(Instant.parse("2020-05-01T13:41:39.739783Z"))
+            transform { it.sentTmpSignEvent }.isEqualTo(true)
+            transform { it.underwriterFirstSignAttributesUpdate }.isEqualTo(Instant.parse("2020-04-01T13:41:39.739783Z"))
+        }
     }
 
     companion object {
