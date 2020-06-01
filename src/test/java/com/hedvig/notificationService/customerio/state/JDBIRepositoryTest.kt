@@ -76,19 +76,6 @@ class JDBIRepositoryTest(@Autowired val jdbi: Jdbi) {
         assertThat(rows).isEqualTo(1)
     }
 
-    @Test
-    fun `verify memberId is persisted`() {
-
-        val state = makeCustomerioState("1337")
-        repository.save(state)
-
-        val memberId = jdbi.withHandle<String, RuntimeException> {
-            it.createQuery("select member_id from customerio_state").mapTo(String::class.java).first()
-        }
-
-        assertThat(memberId).isEqualTo("1337")
-    }
-
     companion object {
         @JvmStatic
         fun makeTestData(): Stream<Arguments> {
@@ -108,6 +95,21 @@ class JDBIRepositoryTest(@Autowired val jdbi: Jdbi) {
                     "contract_created_trigger_at",
                     Instant.parse("2020-06-01T13:41:39.739783Z"),
                     makeCustomerioState(contractCreatedTriggerAt = Instant.parse("2020-06-01T13:41:39.739783Z"))
+                ),
+                Arguments.of(
+                    "underwriter_first_sign_attributes_update",
+                    Instant.parse("2020-06-01T13:41:39.739783Z"),
+                    makeCustomerioState(underwriterFirstSignAttributesUpdate = Instant.parse("2020-06-01T13:41:39.739783Z"))
+                ),
+                Arguments.of(
+                    "sent_tmp_sign_event",
+                    true,
+                    makeCustomerioState(sentTmpSignEvent = true)
+                ),
+                Arguments.of(
+                    "sent_tmp_sign_event",
+                    false,
+                    makeCustomerioState(sentTmpSignEvent = false)
                 )
             )
         }
@@ -139,11 +141,15 @@ class JDBIRepositoryTest(@Autowired val jdbi: Jdbi) {
 fun makeCustomerioState(
     memberId: String = "1338",
     activationDateTriggerAt: LocalDate? = null,
-    contractCreatedTriggerAt: Instant? = null
+    contractCreatedTriggerAt: Instant? = null,
+    underwriterFirstSignAttributesUpdate: Instant? = null,
+    sentTmpSignEvent: Boolean = false
 ): CustomerioState {
     return CustomerioState(
         memberId,
         activationDateTriggerAt = activationDateTriggerAt,
-        contractCreatedTriggerAt = contractCreatedTriggerAt
+        contractCreatedTriggerAt = contractCreatedTriggerAt,
+        underwriterFirstSignAttributesUpdate = underwriterFirstSignAttributesUpdate,
+        sentTmpSignEvent = sentTmpSignEvent
     )
 }
