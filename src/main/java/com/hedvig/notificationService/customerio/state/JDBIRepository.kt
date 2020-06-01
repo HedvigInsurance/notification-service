@@ -10,9 +10,13 @@ class JDBIRepository(
 
         jdbi.withHandle<Int, RuntimeException> {
             val stmt = """INSERT INTO customerio_state 
-                |VALUES (:memberId, 
+                |VALUES (:memberId,
                 |:sentTmpSignEvent,
-                |:underwriterFirstSignAttributesUpdate)""".trimMargin()
+                |:underwriterFirstSignAttributesUpdate)
+                |ON CONFLICT (member_id) DO
+                |UPDATE
+                |SET sent_tmp_sign_event = :sentTmpSignEvent 
+                |""".trimMargin()
             val update = it.createUpdate(stmt)
             update.bindBean(customerioState)
 

@@ -38,7 +38,7 @@ class JDBIRepositoryTest {
     }
 
     @Test
-    fun `simple insert`() {
+    fun `after insert repo row count is 1`() {
         val repository = JDBIRepository(jdbi)
 
         repository.save(CustomerioState("aMemberId"))
@@ -49,4 +49,29 @@ class JDBIRepositoryTest {
 
         assertThat(rows).isEqualTo(1)
     }
+
+    @Test
+    fun `after insert two saves repo row count is 1`() {
+        val repository = JDBIRepository(jdbi)
+
+        val state = CustomerioState("aMemberId")
+        repository.save(state)
+        repository.save(state)
+
+        var rows = jdbi.withHandle<Integer, java.lang.RuntimeException> {
+            it.createQuery("select count(*) from customerio_state").mapTo(Integer::class.java).first()
+        }
+
+        assertThat(rows).isEqualTo(1)
+    }
+
+    /**
+     *
+     * save == load
+     * save assigns id
+     * dedicated save vs update
+     * Later
+     * implement unsaved type for ID field
+     *
+     */
 }
