@@ -8,6 +8,9 @@ import org.jdbi.v3.core.kotlin.withHandleUnchecked
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
@@ -15,7 +18,9 @@ import org.springframework.boot.test.context.ConfigFileApplicationContextInitial
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import java.time.Instant
 import java.time.LocalDate
+import java.util.stream.Stream
 
 @ExtendWith(SpringExtension::class)
 @DataJdbcTest()
@@ -84,17 +89,41 @@ class JDBIRepositoryTest(@Autowired val jdbi: Jdbi) {
         assertThat(memberId).isEqualTo("1337")
     }
 
-    @Test
-    fun `verify other field activationDateTriggerAt persisted`() {
-        val state = makeCustomerioState(localDate = LocalDate.of(2020, 5, 31))
+    companion object {
+        @JvmStatic
+        fun makeTestData(): Stream<Arguments> {
+            return Stream.of(
+                Arguments.of("member_id", "1337", makeCustomerioState("1337")),
+                Arguments.of(
+                    "activation_date_trigger_at",
+                    LocalDate.of(2020, 5, 31),
+                    makeCustomerioState(activationDateTriggerAt = LocalDate.of(2020, 5, 31))
+                ),
+                Arguments.of(
+                    "activation_date_trigger_at",
+                    LocalDate.of(2020, 5, 31),
+                    makeCustomerioState(activationDateTriggerAt = LocalDate.of(2020, 5, 31))
+                ),
+                Arguments.of(
+                    "contract_created_trigger_at",
+                    Instant.parse("2020-06-01T13:41:39.739783Z"),
+                    makeCustomerioState(contractCreatedTriggerAt = Instant.parse("2020-06-01T13:41:39.739783Z"))
+                )
+            )
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("makeTestData")
+    fun `verify field activationDateTriggerAt persisted`(coliumnName: String, value: Any, state: CustomerioState) {
+
         repository.save(state)
 
-        val activation_date = jdbi.withHandleUnchecked {
-            it.createQuery("select activation_date_trigger_at from customerio_state").mapTo(LocalDate::class.java)
-                .first()
+        val dbValue = jdbi.withHandleUnchecked {
+            it.createQuery("select $coliumnName from customerio_state").mapTo(value::class.java)
         }
 
-        assertThat(activation_date).isEqualTo(state.activationDateTriggerAt)
+        assertThat(dbValue.first()).isEqualTo(value)
     }
     /**
      *
@@ -107,6 +136,14 @@ class JDBIRepositoryTest(@Autowired val jdbi: Jdbi) {
      */
 }
 
-fun makeCustomerioState(memberId: String = "1338", localDate: LocalDate? = null): CustomerioState {
-    return CustomerioState(memberId, activationDateTriggerAt = localDate)
+fun makeCustomerioState(
+    memberId: String = "1338",
+    activationDateTriggerAt: LocalDate? = null,
+    contractCreatedTriggerAt: Instant? = null
+): CustomerioState {
+    return CustomerioState(
+        memberId,
+        activationDateTriggerAt = activationDateTriggerAt,
+        contractCreatedTriggerAt = contractCreatedTriggerAt
+    )
 }

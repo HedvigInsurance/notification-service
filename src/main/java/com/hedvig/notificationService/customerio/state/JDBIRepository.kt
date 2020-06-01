@@ -15,17 +15,20 @@ INSERT INTO customerio_state (
     |member_id, 
     |sent_tmp_sign_event, 
     |underwriter_first_sign_attributes_update,
-    |activation_date_trigger_at
+    |activation_date_trigger_at,
+    |contract_created_trigger_at
 |)
 |VALUES (:memberId,
         |:sentTmpSignEvent,
         |:underwriterFirstSignAttributesUpdate,
-        |:activationDateTriggerAt
+        |:activationDateTriggerAt,
+        |:contractCreatedTriggerAt
 |)
 |ON CONFLICT (member_id) DO
         |UPDATE
         |SET sent_tmp_sign_event = :sentTmpSignEvent,
-        |activation_date_trigger_at = :activationDateTriggerAt
+        |activation_date_trigger_at = :activationDateTriggerAt,
+        |contract_created_trigger_at = :contractCreatedTriggerAt
 |""".trimMargin()
 
             val update = it.createUpdate(stmt)
