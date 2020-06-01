@@ -63,7 +63,7 @@ class JDBIRepositoryTest(@Autowired val jdbi: Jdbi) {
     }
 
     @Test
-    fun `after insert two saves repo row count is 1`() {
+    fun `after two saves with same object row count is 1`() {
 
         val state = makeCustomerioState()
         repository.save(state)
@@ -135,9 +135,8 @@ class JDBIRepositoryTest(@Autowired val jdbi: Jdbi) {
     /**
      *
      * save == load
-     * save assigns id
-     * dedicated save vs update
      * Later
+     * dedicated save vs update
      * implement unsaved type for ID field
      *
      */
