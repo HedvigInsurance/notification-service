@@ -4,6 +4,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import com.hedvig.notificationService.configuration.JDBIConfiguration
 import org.jdbi.v3.core.Jdbi
+import org.jdbi.v3.core.kotlin.withHandleUnchecked
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -14,6 +15,7 @@ import org.springframework.boot.test.context.ConfigFileApplicationContextInitial
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import java.time.LocalDate
 
 @ExtendWith(SpringExtension::class)
 @DataJdbcTest()
@@ -81,6 +83,19 @@ class JDBIRepositoryTest(@Autowired val jdbi: Jdbi) {
 
         assertThat(memberId).isEqualTo("1337")
     }
+
+    @Test
+    fun `verify other field activationDateTriggerAt persisted`() {
+        val state = makeCustomerioState(localDate = LocalDate.of(2020, 5, 31))
+        repository.save(state)
+
+        val activation_date = jdbi.withHandleUnchecked {
+            it.createQuery("select activation_date_trigger_at from customerio_state").mapTo(LocalDate::class.java)
+                .first()
+        }
+
+        assertThat(activation_date).isEqualTo(state.activationDateTriggerAt)
+    }
     /**
      *
      * save == load
@@ -92,6 +107,6 @@ class JDBIRepositoryTest(@Autowired val jdbi: Jdbi) {
      */
 }
 
-fun makeCustomerioState(memberId: String = "1338"): CustomerioState {
-    return CustomerioState(memberId)
+fun makeCustomerioState(memberId: String = "1338", localDate: LocalDate? = null): CustomerioState {
+    return CustomerioState(memberId, activationDateTriggerAt = localDate)
 }
