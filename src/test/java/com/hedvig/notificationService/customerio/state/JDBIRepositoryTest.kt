@@ -65,6 +65,19 @@ class JDBIRepositoryTest {
         assertThat(rows).isEqualTo(1)
     }
 
+    @Test
+    fun `verify memberId is persisted`() {
+        val repository = JDBIRepository(jdbi)
+
+        val state = CustomerioState("1337")
+        repository.save(state)
+
+        var memberId = jdbi.withHandle<String, RuntimeException> {
+            it.createQuery("select member_id from customerio_state").mapTo(String::class.java).first()
+        }
+
+        assertThat(memberId).isEqualTo(state.memberId)
+    }
     /**
      *
      * save == load
