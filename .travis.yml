@@ -7,8 +7,10 @@ services:
   - postgresql
 
 before_script:
-  - psql -c 'create database notification-service;' -U johan
+  - psql -c 'create database notification-service;' -U postgres
 
+env:
+  SPRING_DATASOURCE_USERNAME: postgres
 
 after_success:
   - bin/docker_push.sh
