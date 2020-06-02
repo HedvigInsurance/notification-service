@@ -19,6 +19,8 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
 
 @ExtendWith(SpringExtension::class)
 @DataJdbcTest()
@@ -187,6 +189,40 @@ class JDBIRepositoryFindTriggersToUpdateTest(@Autowired val jdbi: Jdbi) {
                             startDateUpdatedTriggerAt = timestamp
                         ),
                         timestamp.plusMillis(1),
+                        1
+                    )
+                },
+                // activationDateTriggerAt
+                run {
+                    val timestamp = LocalDate.of(2020, 6, 1)
+                    Arguments.of(
+                        CustomerioState(
+                            "1337",
+                            activationDateTriggerAt = timestamp
+                        ),
+                        timestamp.minusDays(1).atStartOfDay(ZoneId.of("UTC")).toInstant(),
+                        0
+                    )
+                },
+                run {
+                    val timestamp = LocalDate.of(2020, 6, 1)
+                    Arguments.of(
+                        CustomerioState(
+                            "1337",
+                            activationDateTriggerAt = timestamp
+                        ),
+                        timestamp.atStartOfDay(ZoneId.of("UTC")).toInstant(),
+                        1
+                    )
+                },
+                run {
+                    val timestamp = LocalDate.of(2020, 6, 1)
+                    Arguments.of(
+                        CustomerioState(
+                            "1337",
+                            activationDateTriggerAt = timestamp
+                        ),
+                        timestamp.plusDays(1).atStartOfDay(ZoneId.of("UTC")).toInstant(),
                         1
                     )
                 }
