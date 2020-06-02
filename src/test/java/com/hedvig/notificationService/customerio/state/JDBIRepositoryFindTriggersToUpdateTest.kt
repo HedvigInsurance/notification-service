@@ -19,7 +19,6 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.time.Instant
-import java.util.stream.Stream
 
 @ExtendWith(SpringExtension::class)
 @DataJdbcTest()
@@ -29,7 +28,7 @@ import java.util.stream.Stream
     classes = [JDBIConfiguration::class],
     initializers = [ConfigFileApplicationContextInitializer::class]
 )
-class JDBIRepositoryFindStatesToUpdateTest(@Autowired val jdbi: Jdbi) {
+class JDBIRepositoryFindTriggersToUpdateTest(@Autowired val jdbi: Jdbi) {
 
     val repository = JDBIRepository(jdbi = jdbi)
 
@@ -37,56 +36,6 @@ class JDBIRepositoryFindStatesToUpdateTest(@Autowired val jdbi: Jdbi) {
     internal fun `findStatesToUpdate with empty db`() {
         val result = repository.shouldUpdate(Instant.parse("2020-06-01T13:41:39.739783Z"))
         assertThat(result).isEmpty()
-    }
-
-    @Test
-    internal fun `find one contract created trigger with bytime equals`() {
-
-        val contractCreatedTriggerAt = Instant.parse("2020-06-01T13:41:39.739783Z")
-        repository.save(CustomerioState("1337", contractCreatedTriggerAt = contractCreatedTriggerAt))
-
-        val result = repository.shouldUpdate(contractCreatedTriggerAt)
-        assertThat(result).all {
-            hasSize(1)
-        }
-    }
-
-    @Test
-    internal fun `find one contract created trigger with bytime bigger`() {
-
-        val contractCreatedTriggerAt = Instant.parse("2020-06-01T13:41:39.739783Z")
-        repository.save(CustomerioState("1337", contractCreatedTriggerAt = contractCreatedTriggerAt))
-
-        val result = repository.shouldUpdate(contractCreatedTriggerAt.plusMillis(1))
-        assertThat(result).all {
-            hasSize(1)
-        }
-    }
-
-    @Test
-    internal fun `find one contract created trigger with bytime smaller`() {
-
-        val contractCreatedTriggerAt = Instant.parse("2020-06-01T13:41:39.739783Z")
-        repository.save(CustomerioState("1337", contractCreatedTriggerAt = contractCreatedTriggerAt))
-
-        val result = repository.shouldUpdate(contractCreatedTriggerAt.minusMillis(1))
-        assertThat(result).all {
-            hasSize(0)
-        }
-    }
-
-    @Test
-    internal fun `find one contract created trigger with contract created at null`() {
-
-        val contractCreatedTriggerAt = Instant.parse("2020-06-01T13:41:39.739783Z")
-        repository.save(
-            CustomerioState("1337", contractCreatedTriggerAt = null)
-        )
-
-        val result = repository.shouldUpdate(contractCreatedTriggerAt)
-        assertThat(result).all {
-            hasSize(0)
-        }
     }
 
     @ParameterizedTest
@@ -103,16 +52,16 @@ class JDBIRepositoryFindStatesToUpdateTest(@Autowired val jdbi: Jdbi) {
 
     companion object {
         @JvmStatic
-        fun makeData(): Stream<Arguments> {
-            return Stream.of(
-                {
+        fun makeData(): List<Arguments> {
+            return listOf(
+                run {
                     Arguments.of(
                         CustomerioState("1337", contractCreatedTriggerAt = null),
                         Instant.parse("2020-06-01T13:41:39.739783Z"),
                         0
                     )
                 },
-                {
+                run {
                     val contractCreatedTriggerAt = Instant.parse("2020-06-01T13:41:39.739783Z")
                     Arguments.of(
                         CustomerioState("1337", contractCreatedTriggerAt = contractCreatedTriggerAt),
@@ -120,7 +69,7 @@ class JDBIRepositoryFindStatesToUpdateTest(@Autowired val jdbi: Jdbi) {
                         1
                     )
                 },
-                {
+                run {
                     val contractCreatedTriggerAt = Instant.parse("2020-06-01T13:41:39.739783Z")
                     Arguments.of(
                         CustomerioState("1337", contractCreatedTriggerAt = contractCreatedTriggerAt),
@@ -128,7 +77,7 @@ class JDBIRepositoryFindStatesToUpdateTest(@Autowired val jdbi: Jdbi) {
                         1
                     )
                 },
-                {
+                run {
                     val contractCreatedTriggerAt = Instant.parse("2020-06-01T13:41:39.739783Z")
                     Arguments.of(
                         CustomerioState("1337", contractCreatedTriggerAt = contractCreatedTriggerAt),
@@ -137,7 +86,6 @@ class JDBIRepositoryFindStatesToUpdateTest(@Autowired val jdbi: Jdbi) {
                     )
                 }
             )
-                .map { it() }
         }
     }
 }
