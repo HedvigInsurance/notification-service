@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import java.time.Instant
 import java.time.temporal.ChronoUnit
+import javax.transaction.Transactional
 
 const val SIGN_EVENT_WINDOWS_SIZE_MINUTES = 10L
 
@@ -80,6 +81,7 @@ open class CustomerioService(
     // @Scheduled functions cannot have any arguments
     // so this is a bit of a hack
     @Scheduled(fixedDelay = 1000 * 30)
+    @Transactional
     open fun scheduledUpdates() {
         sendUpdates()
     }
