@@ -58,6 +58,13 @@ INSERT INTO customerio_state (
     }
 
     override fun shouldUpdate(byTime: Instant): Collection<CustomerioState> {
-        TODO("Not yet implemented")
+        return jdbi.withHandleUnchecked {
+            it.registerRowMapper(FieldMapper.factory(CustomerioState::class.java))
+            it.createQuery(
+                """
+                    SELECT * FROM customerio_state
+                """.trimIndent()
+            ).mapTo(CustomerioState::class.java)
+        }.toList()
     }
 }
