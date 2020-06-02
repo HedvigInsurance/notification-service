@@ -3,8 +3,10 @@ package com.hedvig.notificationService.customerio.state
 import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.core.kotlin.withHandleUnchecked
 import org.jdbi.v3.core.mapper.reflect.FieldMapper
+import org.springframework.stereotype.Repository
 import java.time.Instant
 
+@Repository
 class JDBIRepository(
     private val jdbi: Jdbi
 ) : CustomerIOStateRepository {
