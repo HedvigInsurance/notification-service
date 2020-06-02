@@ -6,7 +6,7 @@ import org.jdbi.v3.core.mapper.reflect.FieldMapper
 import java.time.Instant
 
 class JDBIRepository(
-    val jdbi: Jdbi
+    private val jdbi: Jdbi
 ) : CustomerIOStateRepository {
     override fun save(customerioState: CustomerioState) {
 
@@ -60,11 +60,14 @@ INSERT INTO customerio_state (
     override fun shouldUpdate(byTime: Instant): Collection<CustomerioState> {
         return jdbi.withHandleUnchecked {
             it.registerRowMapper(FieldMapper.factory(CustomerioState::class.java))
-            it.createQuery(
-                """
-                    SELECT * FROM customerio_state
+                .createQuery(
+                    """
+                    SELECT * FROM customerio_state WHERE
+                    (contract_created_trigger_at <= :byTime)
                 """.trimIndent()
-            ).mapTo(CustomerioState::class.java)
+                )
+                .bind("byTime", byTime)
+                .mapTo(CustomerioState::class.java)
         }.toList()
     }
 }
