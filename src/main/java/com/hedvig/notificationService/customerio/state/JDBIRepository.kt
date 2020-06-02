@@ -62,14 +62,16 @@ ON CONFLICT (member_id) DO
             it.registerRowMapper(FieldMapper.factory(CustomerioState::class.java))
                 .createQuery(
                     """
-                    SELECT * FROM customerio_state WHERE
-                    (contract_created_trigger_at <= :byTime)
+                    SELECT * 
+                    FROM customerio_state 
+                    WHERE
+                        (contract_created_trigger_at <= :byTime)
                     OR 
-                    (underwriter_first_sign_attributes_update <= :byTime AND sent_tmp_sign_event = false)
+                        (underwriter_first_sign_attributes_update <= :byTime AND sent_tmp_sign_event = false)
                     OR 
-                    (start_date_updated_trigger_at <= :byTime)
+                        (start_date_updated_trigger_at <= :byTime)
                     OR
-                    (activation_date_trigger_at <= :byTime)
+                        (activation_date_trigger_at <= :byTime)
                 """.trimIndent()
                 )
                 .bind("byTime", byTime)
