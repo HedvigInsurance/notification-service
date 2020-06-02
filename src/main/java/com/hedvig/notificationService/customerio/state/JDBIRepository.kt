@@ -64,6 +64,8 @@ ON CONFLICT (member_id) DO
                     """
                     SELECT * FROM customerio_state WHERE
                     (contract_created_trigger_at <= :byTime)
+                    OR 
+                    (underwriter_first_sign_attributes_update <= :byTime AND sent_tmp_sign_event = false)
                 """.trimIndent()
                 )
                 .bind("byTime", byTime)

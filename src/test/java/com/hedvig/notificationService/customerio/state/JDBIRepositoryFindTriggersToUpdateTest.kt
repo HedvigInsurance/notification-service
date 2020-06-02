@@ -84,6 +84,78 @@ class JDBIRepositoryFindTriggersToUpdateTest(@Autowired val jdbi: Jdbi) {
                         contractCreatedTriggerAt.minusMillis(1),
                         0
                     )
+                },
+                run {
+                    val timestamp = Instant.parse("2020-06-01T13:41:39.739783Z")
+                    Arguments.of(
+                        CustomerioState(
+                            "1337",
+                            underwriterFirstSignAttributesUpdate = timestamp,
+                            sentTmpSignEvent = false
+                        ),
+                        timestamp.minusMillis(1),
+                        0
+                    )
+                },
+                run {
+                    val timestamp = Instant.parse("2020-06-01T13:41:39.739783Z")
+                    Arguments.of(
+                        CustomerioState(
+                            "1337",
+                            underwriterFirstSignAttributesUpdate = timestamp,
+                            sentTmpSignEvent = false
+                        ),
+                        timestamp,
+                        1
+                    )
+                },
+                run {
+                    val timestamp = Instant.parse("2020-06-01T13:41:39.739783Z")
+                    Arguments.of(
+                        CustomerioState(
+                            "1337",
+                            underwriterFirstSignAttributesUpdate = timestamp,
+                            sentTmpSignEvent = false
+                        ),
+                        timestamp.plusMillis(1),
+                        1
+                    )
+                },
+                run {
+                    val timestamp = Instant.parse("2020-06-01T13:41:39.739783Z")
+                    Arguments.of(
+                        CustomerioState(
+                            "1337",
+                            underwriterFirstSignAttributesUpdate = timestamp,
+                            sentTmpSignEvent = true
+                        ),
+                        timestamp.minusMillis(1),
+                        0
+                    )
+                },
+                run {
+                    val timestamp = Instant.parse("2020-06-01T13:41:39.739783Z")
+                    Arguments.of(
+                        CustomerioState(
+                            "1337",
+                            underwriterFirstSignAttributesUpdate = timestamp,
+                            sentTmpSignEvent = true
+                        ),
+                        timestamp,
+                        0
+                    )
+                },
+                run {
+                    val timestamp = Instant.parse("2020-06-01T13:41:39.739783Z")
+                    Arguments.of(
+                        CustomerioState(
+                            "1337",
+                            underwriterFirstSignAttributesUpdate = timestamp,
+                            sentTmpSignEvent = true
+                        ),
+                        timestamp.plusMillis(1),
+                        0
+                    )
                 }
             )
         }
