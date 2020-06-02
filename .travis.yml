@@ -1,11 +1,19 @@
 language: java
 jdk: openjdk11
 sudo: required
+
 services:
-- docker
+  - docker
+  - postgresql
+
+before_script:
+  - psql -c 'create database notification-service;' -U johan
+
+
 after_success:
-- bin/docker_push.sh
-- bin/kubernetes_deploy.sh
+  - bin/docker_push.sh
+  - bin/kubernetes_deploy.sh
+
 cache:
   directories:
-  - $HOME/.m2
+    - $HOME/.m2
