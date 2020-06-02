@@ -156,6 +156,39 @@ class JDBIRepositoryFindTriggersToUpdateTest(@Autowired val jdbi: Jdbi) {
                         timestamp.plusMillis(1),
                         0
                     )
+                },
+                run {
+                    val timestamp = Instant.parse("2020-06-01T13:41:39.739783Z")
+                    Arguments.of(
+                        CustomerioState(
+                            "1337",
+                            startDateUpdatedTriggerAt = timestamp
+                        ),
+                        timestamp.minusMillis(1),
+                        0
+                    )
+                },
+                run {
+                    val timestamp = Instant.parse("2020-06-01T13:41:39.739783Z")
+                    Arguments.of(
+                        CustomerioState(
+                            "1337",
+                            startDateUpdatedTriggerAt = timestamp
+                        ),
+                        timestamp,
+                        1
+                    )
+                },
+                run {
+                    val timestamp = Instant.parse("2020-06-01T13:41:39.739783Z")
+                    Arguments.of(
+                        CustomerioState(
+                            "1337",
+                            startDateUpdatedTriggerAt = timestamp
+                        ),
+                        timestamp.plusMillis(1),
+                        1
+                    )
                 }
             )
         }

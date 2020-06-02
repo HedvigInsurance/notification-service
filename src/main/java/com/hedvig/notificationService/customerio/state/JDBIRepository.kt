@@ -66,6 +66,8 @@ ON CONFLICT (member_id) DO
                     (contract_created_trigger_at <= :byTime)
                     OR 
                     (underwriter_first_sign_attributes_update <= :byTime AND sent_tmp_sign_event = false)
+                    OR 
+                    (start_date_updated_trigger_at <= :byTime)
                 """.trimIndent()
                 )
                 .bind("byTime", byTime)
