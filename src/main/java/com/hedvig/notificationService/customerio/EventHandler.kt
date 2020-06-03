@@ -34,9 +34,7 @@ class EventHandler(
             return // This should only happen when we go live or if we rollback to earlier versions
 
         if (!configuration.useNorwayHack) {
-            state.triggerContractCreated(callTime)
-            state.updateFirstUpcomingStartDate(contractCreatedEvent.startDate)
-            state.createContract(contractCreatedEvent.contractId)
+            state.createContract(contractCreatedEvent.contractId, callTime, contractCreatedEvent.startDate)
             repo.save(state)
         }
     }

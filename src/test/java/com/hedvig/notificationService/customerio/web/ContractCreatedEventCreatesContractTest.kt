@@ -44,7 +44,11 @@ class ContractCreatedEventCreatesContractTest {
     internal fun `after contract created with another existing contract the new contract exists`() {
 
         val customerioState = CustomerioState("aMemberId")
-        customerioState.createContract("theFirstContractId")
+        customerioState.createContract(
+            "theFirstContractId",
+            Instant.parse("2020-06-02T08:02:39.403803Z"),
+            null
+        )
         repo.save(customerioState)
 
         sut.onContractCreatedEvent(
@@ -63,7 +67,11 @@ class ContractCreatedEventCreatesContractTest {
     internal fun `after contract created with the same contract existing only one of that contract exists`() {
 
         val customerioState = CustomerioState("aMemberId")
-        customerioState.createContract("theFirstContractId")
+        customerioState.createContract(
+            "theFirstContractId",
+            Instant.parse("2020-06-02T08:02:39.403803Z"),
+            null
+        )
         repo.save(customerioState)
 
         sut.onContractCreatedEvent(
