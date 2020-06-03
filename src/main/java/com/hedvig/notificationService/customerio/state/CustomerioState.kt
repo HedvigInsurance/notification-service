@@ -77,6 +77,8 @@ class CustomerioState(
     }
 
     fun createContract(contractId: String) {
-        this.contracts = contracts.plus(ContractState(contractId))
+        if (this.contracts.none { it.contractId == contractId }) {
+            this.contracts = contracts.plus(ContractState(contractId))
+        }
     }
 }
