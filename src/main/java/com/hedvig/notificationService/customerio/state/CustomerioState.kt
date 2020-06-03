@@ -26,6 +26,8 @@ class CustomerioState(
         private set
     var activationDateTriggerAt: LocalDate? = activationDateTriggerAt
         private set
+    var contracts: List<ContractState> = listOf()
+        private set
 
     fun shouldSendTmpSignedEvent(): Boolean = underwriterFirstSignAttributesUpdate != null
     fun sentTmpSignedEvent() {
@@ -72,5 +74,9 @@ class CustomerioState(
     fun triggerContractCreated(callTime: Instant) {
         if (this.contractCreatedTriggerAt == null)
             this.contractCreatedTriggerAt = callTime
+    }
+
+    fun createContract(contractId: String) {
+        this.contracts = contracts.plus(ContractState(contractId))
     }
 }

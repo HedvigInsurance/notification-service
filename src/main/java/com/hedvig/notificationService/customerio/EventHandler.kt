@@ -36,6 +36,7 @@ class EventHandler(
         if (!configuration.useNorwayHack) {
             state.triggerContractCreated(callTime)
             state.updateFirstUpcomingStartDate(contractCreatedEvent.startDate)
+            state.createContract(contractCreatedEvent.contractId)
             repo.save(state)
         }
     }
