@@ -13,7 +13,7 @@ import org.junit.Test
 import org.junit.rules.ExpectedException
 import java.time.LocalDate
 
-class ContravtsActivatedTodayEventTest {
+class ContractsActivatedTodayEventTest {
     @get:Rule
     val thrown = ExpectedException.none()
 
@@ -28,7 +28,14 @@ class ContravtsActivatedTodayEventTest {
         )
         eventCreatorImpl.execute(
             customerioState,
-            listOf(ContractInfo(AgreementType.NorwegianHomeContent, null, LocalDate.of(2020, 1, 2)))
+            listOf(
+                ContractInfo(
+                    AgreementType.NorwegianHomeContent,
+                    null,
+                    LocalDate.of(2020, 1, 2),
+                    "HEDVIG"
+                )
+            )
         )
 
         assertThat(customerioState.activationDateTriggerAt).isNull()
@@ -42,7 +49,14 @@ class ContravtsActivatedTodayEventTest {
                 "aMemberId",
                 activationDateTriggerAt = LocalDate.of(2020, 1, 2)
             ),
-            listOf(ContractInfo(AgreementType.NorwegianTravel, null, LocalDate.of(2020, 1, 2)))
+            listOf(
+                ContractInfo(
+                    AgreementType.NorwegianTravel,
+                    null,
+                    LocalDate.of(2020, 1, 2),
+                    "HEDVIG"
+                )
+            )
         )
 
         assertThat(result.asMap).contains("name", "ContractsActivatedTodayEvent")
@@ -57,8 +71,18 @@ class ContravtsActivatedTodayEventTest {
                 activationDateTriggerAt = LocalDate.of(2020, 1, 2)
             ),
             listOf(
-                ContractInfo(AgreementType.NorwegianTravel, null, LocalDate.of(2020, 1, 2)),
-                ContractInfo(AgreementType.NorwegianHomeContent, null, LocalDate.of(2020, 1, 2))
+                ContractInfo(
+                    AgreementType.NorwegianTravel,
+                    null,
+                    LocalDate.of(2020, 1, 2),
+                    "HEDVIG"
+                ),
+                ContractInfo(
+                    AgreementType.NorwegianHomeContent,
+                    null,
+                    LocalDate.of(2020, 1, 2),
+                    "HEDVIG"
+                )
             )
         )
 
@@ -81,8 +105,18 @@ class ContravtsActivatedTodayEventTest {
         val result = eventCreatorImpl.execute(
             customerioState,
             listOf(
-                ContractInfo(AgreementType.NorwegianTravel, null, LocalDate.of(2020, 1, 2)),
-                ContractInfo(AgreementType.NorwegianHomeContent, null, LocalDate.of(2020, 1, 3))
+                ContractInfo(
+                    AgreementType.NorwegianTravel,
+                    null,
+                    LocalDate.of(2020, 1, 2),
+                    "HEDVIG"
+                ),
+                ContractInfo(
+                    AgreementType.NorwegianHomeContent,
+                    null,
+                    LocalDate.of(2020, 1, 3),
+                    "HEDVIG"
+                )
             )
         )
 
@@ -103,9 +137,24 @@ class ContravtsActivatedTodayEventTest {
         val result = eventCreatorImpl.execute(
             customerioState,
             listOf(
-                ContractInfo(AgreementType.NorwegianTravel, null, LocalDate.of(2020, 1, 2)),
-                ContractInfo(AgreementType.NorwegianHomeContent, null, LocalDate.of(2020, 1, 3)),
-                ContractInfo(AgreementType.NorwegianHomeContent, null, null)
+                ContractInfo(
+                    AgreementType.NorwegianTravel,
+                    null,
+                    LocalDate.of(2020, 1, 2),
+                    "HEDVIG"
+                ),
+                ContractInfo(
+                    AgreementType.NorwegianHomeContent,
+                    null,
+                    LocalDate.of(2020, 1, 3),
+                    "HEDVIG"
+                ),
+                ContractInfo(
+                    AgreementType.NorwegianHomeContent,
+                    null,
+                    null,
+                    "HEDVIG"
+                )
             )
         )
 
@@ -127,8 +176,18 @@ class ContravtsActivatedTodayEventTest {
         val result = eventCreatorImpl.execute(
             customerioState,
             listOf(
-                ContractInfo(AgreementType.NorwegianTravel, null, LocalDate.of(2020, 1, 2)),
-                ContractInfo(AgreementType.NorwegianHomeContent, null, null)
+                ContractInfo(
+                    AgreementType.NorwegianTravel,
+                    null,
+                    LocalDate.of(2020, 1, 2),
+                    "HEDVIG"
+                ),
+                ContractInfo(
+                    AgreementType.NorwegianHomeContent,
+                    null,
+                    null,
+                    "HEDVIG"
+                )
             )
         )
 
@@ -150,7 +209,12 @@ class ContravtsActivatedTodayEventTest {
                 activationDateTriggerAt = LocalDate.of(2020, 1, 2)
             ),
             listOf(
-                ContractInfo(AgreementType.NorwegianTravel, null, LocalDate.of(2020, 1, 3))
+                ContractInfo(
+                    AgreementType.NorwegianTravel,
+                    null,
+                    LocalDate.of(2020, 1, 3),
+                    "HEDVIG"
+                )
             )
         )
 

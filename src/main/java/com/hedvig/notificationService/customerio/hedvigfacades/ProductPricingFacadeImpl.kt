@@ -37,7 +37,8 @@ class ProductPricingFacadeImpl(private val productPricingClient: ProductPricingC
             ContractInfo(
                 AgreementType.valueOf(it.agreements.first()::class.java.simpleName),
                 it.switchedFrom,
-                it.masterInception
+                it.masterInception,
+                it.signSource
             )
         }
     }

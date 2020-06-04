@@ -70,7 +70,8 @@ class SendNorwegianContractCreatedEventTest {
                 ContractInfo(
                     AgreementType.NorwegianHomeContent,
                     null,
-                    null
+                    null,
+                    "HEDVIG"
                 )
             )
 
@@ -95,7 +96,8 @@ class SendNorwegianContractCreatedEventTest {
                 ContractInfo(
                     AgreementType.NorwegianHomeContent,
                     null,
-                    null
+                    null,
+                    "HEDVIG"
                 )
             )
 
@@ -115,7 +117,8 @@ class SendNorwegianContractCreatedEventTest {
                 ContractInfo(
                     AgreementType.NorwegianHomeContent,
                     null,
-                    null
+                    null,
+                    "HEDVIG"
                 )
             )
 

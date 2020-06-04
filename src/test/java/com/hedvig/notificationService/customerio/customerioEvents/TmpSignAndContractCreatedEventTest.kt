@@ -45,7 +45,8 @@ class TmpSignAndContractCreatedEventTest(
                     ContractInfo(
                         AgreementType.NorwegianHomeContent,
                         null,
-                        null
+                        null,
+                        "HEDVIG"
                     )
                 ),
                 mapOf("is_signed_innbo" to true)
@@ -55,7 +56,8 @@ class TmpSignAndContractCreatedEventTest(
                     ContractInfo(
                         AgreementType.NorwegianHomeContent,
                         "folksam",
-                        null
+                        null,
+                        "HEDVIG"
                     )
                 ), mapOf(
                     "is_signed_innbo" to true,
@@ -68,7 +70,8 @@ class TmpSignAndContractCreatedEventTest(
                     ContractInfo(
                         AgreementType.NorwegianHomeContent,
                         null,
-                        LocalDate.of(2020, 3, 13)
+                        LocalDate.of(2020, 3, 13),
+                        "HEDVIG"
                     )
                 ),
                 mapOf(
@@ -81,7 +84,8 @@ class TmpSignAndContractCreatedEventTest(
                     ContractInfo(
                         AgreementType.NorwegianTravel,
                         null,
-                        null
+                        null,
+                        "HEDVIG"
                     )
                 ), mapOf(
                     "is_signed_reise" to true
@@ -92,7 +96,8 @@ class TmpSignAndContractCreatedEventTest(
                     ContractInfo(
                         AgreementType.NorwegianTravel,
                         "a new company",
-                        null
+                        null,
+                        "HEDVIG"
                     )
                 ),
                 mapOf(
@@ -106,7 +111,8 @@ class TmpSignAndContractCreatedEventTest(
                     ContractInfo(
                         AgreementType.NorwegianTravel,
                         "a new company",
-                        LocalDate.of(2020, 1, 1)
+                        LocalDate.of(2020, 1, 1),
+                        "HEDVIG"
                     )
                 ),
                 mapOf(
@@ -121,12 +127,14 @@ class TmpSignAndContractCreatedEventTest(
                     ContractInfo(
                         AgreementType.NorwegianTravel,
                         null,
-                        null
+                        null,
+                        "HEDVIG"
                     ),
                     ContractInfo(
                         AgreementType.NorwegianHomeContent,
                         null,
-                        null
+                        null,
+                        "HEDVIG"
                     )
                 ),
                 mapOf(
@@ -208,7 +216,8 @@ class TmpSignAndContractCreatedEventTest(
             ContractInfo(
                 AgreementType.SwedishHouse,
                 null,
-                null
+                null,
+                "HEDVIG"
             )
         )
 

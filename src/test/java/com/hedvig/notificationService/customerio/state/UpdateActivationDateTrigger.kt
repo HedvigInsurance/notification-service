@@ -12,7 +12,14 @@ class UpdateActivationDateTrigger() {
     fun `no previous activation date`() {
         val sut = CustomerioState("aMemberID")
 
-        val contracts = listOf(ContractInfo(AgreementType.NorwegianHomeContent, null, null))
+        val contracts = listOf(
+            ContractInfo(
+                AgreementType.NorwegianHomeContent,
+                null,
+                null,
+                "HEDVIG"
+            )
+        )
         sut.updateFirstUpcomingStartDate(contracts)
 
         assertThat(sut.activationDateTriggerAt).isNull()

@@ -11,14 +11,28 @@ class NiceSwitcherCompanyNames {
 
     @Test
     fun `remove NO from company name`() {
-        val contract = Contract.from(ContractInfo(AgreementType.NorwegianTravel, "Gjensidige NO", null))
+        val contract = Contract.from(
+            ContractInfo(
+                AgreementType.NorwegianTravel,
+                "Gjensidige NO",
+                null,
+                "HEDVIG"
+            )
+        )
 
         assertThat(contract.switcherCompany).isNotNull().isEqualTo("Gjensidige")
     }
 
     @Test
     fun `keep name as is`() {
-        val contract = Contract.from(ContractInfo(AgreementType.NorwegianTravel, "Fremtind", null))
+        val contract = Contract.from(
+            ContractInfo(
+                AgreementType.NorwegianTravel,
+                "Fremtind",
+                null,
+                "HEDVIG"
+            )
+        )
 
         assertThat(contract.switcherCompany).isNotNull().isEqualTo("Fremtind")
     }

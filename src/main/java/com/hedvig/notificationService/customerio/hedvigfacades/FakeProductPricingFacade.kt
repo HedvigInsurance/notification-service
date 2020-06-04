@@ -15,7 +15,8 @@ class FakeProductPricingFacade :
             ContractInfo(
                 AgreementType.NorwegianHomeContent,
                 null,
-                null
+                null,
+                "HEDVIG"
             )
         )
     }

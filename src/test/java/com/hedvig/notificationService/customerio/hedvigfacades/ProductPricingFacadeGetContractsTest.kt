@@ -72,6 +72,23 @@ class ProductPricingFacadeGetContractsTest {
         assertThat(contractInfo.first().switcherCompany).isEqualTo("someName")
     }
 
+    @Test
+    fun `sets sign source`() {
+        every { productPricingClient.getContractsForMember(any()) } returns ResponseEntity.ok(
+            listOf(
+                makeContract(makeNorwegianHomeContentAgreement(), signSource = "RAPIO")
+            )
+        )
+
+        val sut =
+            ProductPricingFacadeImpl(
+                productPricingClient
+            )
+
+        val contractInfo = sut.getContractTypeForMember("someId")
+        assertThat(contractInfo.first().signSource).isEqualTo("RAPIO")
+    }
+
     private fun makeNorwegianHomeContentAgreement(): Agreement.NorwegianHomeContent {
         return Agreement.NorwegianHomeContent(
             UUID.randomUUID(),
@@ -86,7 +103,8 @@ class ProductPricingFacadeGetContractsTest {
 
     private fun makeContract(
         vararg agreements: Agreement,
-        switchedFrom: String? = null
+        switchedFrom: String? = null,
+        signSource: String? = null
     ): Contract {
         return Contract(
             UUID.randomUUID(),
@@ -104,7 +122,7 @@ class ProductPricingFacadeGetContractsTest {
             false,
             Monetary.getCurrency("SEK"),
             Market.NORWAY,
-            null,
+            signSource,
             "",
             Instant.now()
         )

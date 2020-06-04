@@ -29,7 +29,14 @@ class ContractsActivationDateUpdatedEventTest {
         val sut = CustomerioEventCreatorImpl()
 
         val contracts =
-            listOf(ContractInfo(AgreementType.NorwegianHomeContent, "someCompany", LocalDate.parse("2020-03-04")))
+            listOf(
+                ContractInfo(
+                    AgreementType.NorwegianHomeContent,
+                    "someCompany",
+                    LocalDate.parse("2020-03-04"),
+                    "HEDVIG"
+                )
+            )
 
         val callTime = Instant.parse("2020-04-27T18:50:41.760555Z")
         val customerioState = CustomerioState("amember", null, startDateUpdatedTriggerAt = callTime)
@@ -43,7 +50,10 @@ class ContractsActivationDateUpdatedEventTest {
     fun `one contract with start date`() {
         val contracts = listOf(
             ContractInfo(
-                AgreementType.NorwegianHomeContent, "companyName", LocalDate.of(2020, 5, 1)
+                AgreementType.NorwegianHomeContent,
+                "companyName",
+                LocalDate.of(2020, 5, 1),
+                "HEDVIG"
             )
         )
 
@@ -66,8 +76,18 @@ class ContractsActivationDateUpdatedEventTest {
     @Test
     fun `two contracts with start date`() {
         val contracts = listOf(
-            ContractInfo(AgreementType.NorwegianHomeContent, "companyName", LocalDate.of(2020, 5, 1)),
-            ContractInfo(AgreementType.NorwegianTravel, "anotherCompany", LocalDate.of(2020, 5, 13))
+            ContractInfo(
+                AgreementType.NorwegianHomeContent,
+                "companyName",
+                LocalDate.of(2020, 5, 1),
+                "HEDVIG"
+            ),
+            ContractInfo(
+                AgreementType.NorwegianTravel,
+                "anotherCompany",
+                LocalDate.of(2020, 5, 13),
+                "HEDVIG"
+            )
         )
 
         val callTime = Instant.parse("2020-04-27T18:50:41.760555Z")
@@ -96,8 +116,18 @@ class ContractsActivationDateUpdatedEventTest {
     @Test
     fun `one contract with one without start date`() {
         val contracts = listOf(
-            ContractInfo(AgreementType.NorwegianHomeContent, "companyName", LocalDate.of(2020, 5, 1)),
-            ContractInfo(AgreementType.NorwegianTravel, "anotherCompany", null)
+            ContractInfo(
+                AgreementType.NorwegianHomeContent,
+                "companyName",
+                LocalDate.of(2020, 5, 1),
+                "HEDVIG"
+            ),
+            ContractInfo(
+                AgreementType.NorwegianTravel,
+                "anotherCompany",
+                null,
+                "HEDVIG"
+            )
         )
 
         val callTime = Instant.parse("2020-04-27T18:50:41.760555Z")
@@ -120,7 +150,12 @@ class ContractsActivationDateUpdatedEventTest {
     @Test
     fun `no contract with one with start date`() {
         val contracts = listOf(
-            ContractInfo(AgreementType.NorwegianTravel, "anotherCompany", null)
+            ContractInfo(
+                AgreementType.NorwegianTravel,
+                "anotherCompany",
+                null,
+                "HEDVIG"
+            )
         )
 
         val callTime = Instant.parse("2020-04-27T18:50:41.760555Z")

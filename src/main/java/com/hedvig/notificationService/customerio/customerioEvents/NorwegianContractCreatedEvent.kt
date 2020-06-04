@@ -25,7 +25,8 @@ data class NorwegianContractCreatedEvent(
         val isSignedReise: Boolean,
         @get:JsonProperty("is_switcher_reise")
         val isSwitcherReise: Boolean,
-        val switcherCompanyReise: String?
+        val switcherCompanyReise: String?,
 
+        val signSource: String?
     )
 }

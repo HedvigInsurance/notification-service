@@ -84,7 +84,8 @@ class NorwaySignHackUpdateCustomerIOTest {
             ContractInfo(
                 AgreementType.NorwegianHomeContent,
                 null,
-                null
+                null,
+                "HEDVIG"
             )
         )
 
@@ -115,7 +116,8 @@ class NorwaySignHackUpdateCustomerIOTest {
             ContractInfo(
                 AgreementType.NorwegianHomeContent,
                 null,
-                null
+                null,
+                "HEDVIG"
             )
         )
         sut.sendUpdates(updateTime.plus(1, ChronoUnit.SECONDS))
@@ -144,7 +146,8 @@ class NorwaySignHackUpdateCustomerIOTest {
             ContractInfo(
                 AgreementType.NorwegianHomeContent,
                 null,
-                null
+                null,
+                "HEDVIG"
             )
         )
         sut.sendUpdates(someTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
@@ -178,7 +181,8 @@ class NorwaySignHackUpdateCustomerIOTest {
             ContractInfo(
                 AgreementType.NorwegianHomeContent,
                 null,
-                null
+                null,
+                "HEDVIG"
             )
         )
         sut.sendUpdates(time.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
@@ -203,7 +207,8 @@ class NorwaySignHackUpdateCustomerIOTest {
             ContractInfo(
                 AgreementType.SwedishApartment,
                 null,
-                null
+                null,
+                "HEDVIG"
             )
         )
         sut.sendUpdates(time.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
