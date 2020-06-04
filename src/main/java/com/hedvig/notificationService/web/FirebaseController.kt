@@ -4,7 +4,6 @@ import com.hedvig.notificationService.dto.ReferralsSuccessSendNotificationReques
 import com.hedvig.notificationService.service.FirebaseNotificationService
 import com.hedvig.notificationService.web.dto.ClaimPaidNotificationRequest
 import com.hedvig.notificationService.web.dto.GenericCommunicationNotificationRequest
-import javax.validation.Valid
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -13,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import javax.validation.Valid
 
 @RestController
 @RequestMapping("/_/notifications")
@@ -115,6 +115,12 @@ class FirebaseController(private val firebaseNotificationService: FirebaseNotifi
     @PostMapping("/{memberId}/push/insurance-renewed/send")
     fun sendInsuranceRenewedNotification(@PathVariable memberId: String): ResponseEntity<Void> {
         firebaseNotificationService.sendInsuranceRenewedNotification(memberId)
+        return ResponseEntity.noContent().build()
+    }
+
+    @PostMapping("/{memberId}/push/referralsEnabled/send")
+    fun sendHedvigReferralsEnabledNotification(@PathVariable memberId: String): ResponseEntity<Void> {
+        firebaseNotificationService.sendHedvigReferralsEnabledNotification(memberId)
         return ResponseEntity.noContent().build()
     }
 

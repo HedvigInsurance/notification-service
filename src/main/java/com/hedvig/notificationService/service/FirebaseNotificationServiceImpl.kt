@@ -22,6 +22,8 @@ import com.hedvig.notificationService.service.TextKeys.INSURANCE_RENEWED_TITLE
 import com.hedvig.notificationService.service.TextKeys.NEW_MESSAGE_BODY
 import com.hedvig.notificationService.service.TextKeys.PAYMENT_FAILED_BODY
 import com.hedvig.notificationService.service.TextKeys.PAYMENT_FAILED_TITLE
+import com.hedvig.notificationService.service.TextKeys.REFERRALS_ENABLED_BODY
+import com.hedvig.notificationService.service.TextKeys.REFERRALS_ENABLED_TITLE
 import com.hedvig.notificationService.service.TextKeys.REFERRAL_SUCCESS_BODY
 import com.hedvig.notificationService.service.firebase.FirebaseMessager
 import com.hedvig.notificationService.serviceIntegration.memberService.MemberServiceClient
@@ -247,6 +249,33 @@ open class FirebaseNotificationServiceImpl(
         sendNotification(INSURANCE_RENEWED, memberId, message)
     }
 
+    override fun sendHedvigReferralsEnabledNotification(memberId: String) {
+        val firebaseToken = firebaseRepository.findById(memberId)
+
+        val message = Message
+            .builder()
+            .putData(TYPE, REFERRALS_ENABLED)
+            .setApnsConfig(
+                createApnsConfig(
+                    memberId = memberId,
+                    titleTextKey = REFERRALS_ENABLED_TITLE,
+                    bodyTextKey = REFERRALS_ENABLED_BODY
+                ).build()
+            )
+            .setAndroidConfig(
+                createAndroidConfigBuilder(
+                    memberId = memberId,
+                    titleTextKey = REFERRALS_ENABLED_TITLE,
+                    bodyTextKey = REFERRALS_ENABLED_BODY,
+                    type = REFERRALS_ENABLED
+                ).build()
+            )
+            .setToken(firebaseToken.get().token)
+            .build()
+
+        sendNotification(REFERRALS_ENABLED, memberId, message)
+    }
+
     override fun sendGenericCommunicationNotification(memberId: String, titleTextKey: String, bodyTextKey: String) {
         val firebaseToken = firebaseRepository.findById(memberId)
 
@@ -382,6 +411,7 @@ open class FirebaseNotificationServiceImpl(
         const val CLAIM_PAID = "CLAIM_PAID"
         const val INSURANCE_POLICY_UPDATED = "INSURANCE_POLICY_UPDATED"
         const val INSURANCE_RENEWED = "INSURANCE_RENEWED"
+        const val REFERRALS_ENABLED = "REFERRALS_ENABLED"
         const val GENERIC_COMMUNICATION = "GENERIC_COMMUNICATION"
 
         const val DATA_MESSAGE_TITLE = "DATA_MESSAGE_TITLE"

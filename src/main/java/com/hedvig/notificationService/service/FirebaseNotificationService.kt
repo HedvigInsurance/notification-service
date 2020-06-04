@@ -32,4 +32,6 @@ interface FirebaseNotificationService {
     fun sendGenericCommunicationNotification(memberId: String, titleTextKey: String, bodyTextKey: String)
 
     fun sendTerminatedFailedChargesNotification(memberId: String)
+
+    fun sendHedvigReferralsEnabledNotification(memberId: String)
 }
