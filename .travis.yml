@@ -1,11 +1,22 @@
 language: java
 jdk: openjdk11
 sudo: required
+
 services:
-- docker
+  - docker
+  - postgresql
+
+before_script:
+  - psql -c 'create database notification_service;' -U postgres
+
+env:
+  SPRING_DATASOURCE_USERNAME: postgres
+  SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/notification_service
+
 after_success:
-- bin/docker_push.sh
-- bin/kubernetes_deploy.sh
+  - bin/docker_push.sh
+  - bin/kubernetes_deploy.sh
+
 cache:
   directories:
-  - $HOME/.m2
+    - $HOME/.m2
