@@ -45,7 +45,8 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
                         switcherCompanyInnbo = contract.switcherCompany,
                         signSource = contract.signSource
                     )
-                AgreementType.NorwegianTravel ->
+                AgreementType.NorwegianTravel
+                ->
                     data = data.copy(
                         isSignedReise = true,
                         activationDateReise = contract.startDate?.toString(),

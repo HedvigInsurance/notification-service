@@ -1,19 +1,18 @@
-package com.hedvig.notificationService.customerio
+package com.hedvig.notificationService.customerio.customerioEvents
 
 import assertk.all
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
-import com.hedvig.notificationService.customerio.customerioEvents.CustomerioEventCreatorImpl
-import com.hedvig.notificationService.customerio.customerioEvents.NorwegianContractCreatedEvent
+import com.hedvig.notificationService.customerio.AgreementType
+import com.hedvig.notificationService.customerio.ContractInfo
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import org.junit.jupiter.api.Test
 import java.time.Instant
 
-class UseStateContractsForContractCreatedEventTest {
-
+class IncludeSignSourceInNorwegianContractCreatedEventTest {
     @Test
-    internal fun `a first test`() {
+    internal fun `one contract signsource is same`() {
 
         val sut = CustomerioEventCreatorImpl()
 
