@@ -57,32 +57,18 @@ open class FirebaseNotificationServiceImpl(
     ) {
         val firebaseToken = firebaseRepository.findById(memberId)
 
-        val message = Message
-            .builder()
-            .putData(TYPE, REFERRAL_SUCCESS)
-            .setApnsConfig(
-                createApnsConfig(
-                    memberId = memberId,
-                    titleTextKey = DEFAULT_TITLE,
-                    bodyTextKey = REFERRAL_SUCCESS_BODY
-                ).putCustomData(DATA_MESSAGE_REFERRED_SUCCESS_NAME, referredName)
-                    .putCustomData(DATA_MESSAGE_REFERRED_SUCCESS_INCENTIVE_AMOUNT, incentiveAmount)
-                    .putCustomData(DATA_MESSAGE_REFERRED_SUCCESS_INCENTIVE_CURRENCY, incentiveCurrency)
-                    .build()
+        val message = createMessage(
+            memberId,
+            firebaseToken,
+            REFERRAL_SUCCESS,
+            DEFAULT_TITLE,
+            REFERRAL_SUCCESS_BODY,
+            mapOf(
+                DATA_MESSAGE_REFERRED_SUCCESS_NAME to referredName,
+                DATA_MESSAGE_REFERRED_SUCCESS_INCENTIVE_AMOUNT to incentiveAmount,
+                DATA_MESSAGE_REFERRED_SUCCESS_INCENTIVE_CURRENCY to incentiveCurrency
             )
-            .setAndroidConfig(
-                createAndroidConfigBuilder(
-                    memberId = memberId,
-                    titleTextKey = DEFAULT_TITLE,
-                    bodyTextKey = REFERRAL_SUCCESS_BODY,
-                    type = REFERRAL_SUCCESS
-                ).putData(DATA_MESSAGE_REFERRED_SUCCESS_NAME, referredName)
-                    .putData(DATA_MESSAGE_REFERRED_SUCCESS_INCENTIVE_AMOUNT, incentiveAmount)
-                    .putData(DATA_MESSAGE_REFERRED_SUCCESS_INCENTIVE_CURRENCY, incentiveCurrency)
-                    .build()
-            )
-            .setToken(firebaseToken.get().token)
-            .build()
+        )
 
         sendNotification(REFERRAL_SUCCESS, memberId, message)
     }
@@ -122,7 +108,13 @@ open class FirebaseNotificationServiceImpl(
     override fun sendInsurancePolicyUpdatedNotification(memberId: String) {
         val firebaseToken = firebaseRepository.findById(memberId)
 
-        val message = createMessage(memberId, firebaseToken, INSURANCE_POLICY_UPDATED, INSURANCE_POLICY_UPDATED_TITLE, INSURANCE_POLICY_UPDATED_BODY)
+        val message = createMessage(
+            memberId,
+            firebaseToken,
+            INSURANCE_POLICY_UPDATED,
+            INSURANCE_POLICY_UPDATED_TITLE,
+            INSURANCE_POLICY_UPDATED_BODY
+        )
 
         sendNotification(INSURANCE_POLICY_UPDATED, memberId, message)
     }
@@ -130,7 +122,8 @@ open class FirebaseNotificationServiceImpl(
     override fun sendInsuranceRenewedNotification(memberId: String) {
         val firebaseToken = firebaseRepository.findById(memberId)
 
-        val message = createMessage(memberId, firebaseToken, INSURANCE_RENEWED, INSURANCE_RENEWED_TITLE, INSURANCE_RENEWED_BODY)
+        val message =
+            createMessage(memberId, firebaseToken, INSURANCE_RENEWED, INSURANCE_RENEWED_TITLE, INSURANCE_RENEWED_BODY)
 
         sendNotification(INSURANCE_RENEWED, memberId, message)
     }
@@ -138,7 +131,8 @@ open class FirebaseNotificationServiceImpl(
     override fun sendHedvigReferralsEnabledNotification(memberId: String) {
         val firebaseToken = firebaseRepository.findById(memberId)
 
-        val message = createMessage(memberId, firebaseToken, REFERRALS_ENABLED, REFERRALS_ENABLED_TITLE, REFERRALS_ENABLED_BODY)
+        val message =
+            createMessage(memberId, firebaseToken, REFERRALS_ENABLED, REFERRALS_ENABLED_TITLE, REFERRALS_ENABLED_BODY)
 
         sendNotification(REFERRALS_ENABLED, memberId, message)
     }
@@ -170,27 +164,37 @@ open class FirebaseNotificationServiceImpl(
         firebaseToken: Optional<FirebaseToken>,
         dataType: String,
         titleTextKey: String,
-        bodyTextKey: String
-    ) = Message
-            .builder()
+        bodyTextKey: String,
+        customData: Map<String, String>? = null
+    ): Message {
+        val apsConfig = createApnsConfig(
+            memberId = memberId,
+            titleTextKey = titleTextKey,
+            bodyTextKey = bodyTextKey
+        )
+
+        customData?.let {
+            apsConfig.putAllCustomData(it)
+        }
+
+        val androidConfig = createAndroidConfigBuilder(
+            memberId = memberId,
+            titleTextKey = titleTextKey,
+            bodyTextKey = bodyTextKey,
+            type = dataType
+        )
+
+        customData?.let {
+            androidConfig.putAllData(it)
+        }
+
+        return Message.builder()
             .putData(TYPE, dataType)
-            .setApnsConfig(
-                createApnsConfig(
-                    memberId = memberId,
-                    titleTextKey = titleTextKey,
-                    bodyTextKey = bodyTextKey
-                ).build()
-            )
-            .setAndroidConfig(
-                createAndroidConfigBuilder(
-                    memberId = memberId,
-                    titleTextKey = titleTextKey,
-                    bodyTextKey = bodyTextKey,
-                    type = dataType
-                ).build()
-            )
+            .setApnsConfig(apsConfig.build())
+            .setAndroidConfig(androidConfig.build())
             .setToken(firebaseToken.get().token)
             .build()
+    }
 
     @Transactional
     override fun getFirebaseToken(memberId: String): Optional<FirebaseToken> {
@@ -271,9 +275,11 @@ open class FirebaseNotificationServiceImpl(
         val locale = LocaleResolver.resolveLocale(acceptLanguage)
 
         val title =
-            localizationService.getTranslation(titleTextKey, locale) ?: throw Error("Could not find text key $titleTextKey")
+            localizationService.getTranslation(titleTextKey, locale)
+                ?: throw Error("Could not find text key $titleTextKey")
         val body =
-            localizationService.getTranslation(bodyTextKey, locale) ?: throw Error("Could not find text key $bodyTextKey")
+            localizationService.getTranslation(bodyTextKey, locale)
+                ?: throw Error("Could not find text key $bodyTextKey")
 
         return Pair(title, body)
     }

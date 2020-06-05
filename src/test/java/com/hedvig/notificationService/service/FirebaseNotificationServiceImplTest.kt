@@ -23,7 +23,6 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.util.ReflectionTestUtils
 import java.util.Optional
 
-
 @ExtendWith(MockKExtension::class)
 @ActiveProfiles("test")
 internal class FirebaseNotificationServiceImplTest {
@@ -78,7 +77,6 @@ internal class FirebaseNotificationServiceImplTest {
         )
 
         every { memberService.profile(any()) } returns ResponseEntity.ok(member)
-
 
         messages.clear()
         every { firebaseMessaging.send(capture(messages)) } answers { "" }
