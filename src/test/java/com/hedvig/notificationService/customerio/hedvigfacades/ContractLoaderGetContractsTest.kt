@@ -47,7 +47,7 @@ class ContractLoaderGetContractsTest {
                 productPricingClient
             )
 
-        val contractInfo = sut.getContractTypeForMember("someId")
+        val contractInfo = sut.getContractInfoForMember("someId")
         assertThat(contractInfo.first().type).isEqualTo(AgreementType.NorwegianHomeContent)
         assertThat(contractInfo.first().startDate).isEqualTo(LocalDate.of(2020, 2, 28))
         assertThat(contractInfo.first().switcherCompany).isNull()
@@ -67,7 +67,7 @@ class ContractLoaderGetContractsTest {
                 productPricingClient
             )
 
-        val contractInfo = sut.getContractTypeForMember("someId")
+        val contractInfo = sut.getContractInfoForMember("someId")
         assertThat(contractInfo.first().type).isEqualTo(AgreementType.NorwegianHomeContent)
         assertThat(contractInfo.first().switcherCompany).isEqualTo("someName")
     }
@@ -85,7 +85,7 @@ class ContractLoaderGetContractsTest {
                 productPricingClient
             )
 
-        val contractInfo = sut.getContractTypeForMember("someId")
+        val contractInfo = sut.getContractInfoForMember("someId")
         assertThat(contractInfo.first().signSource).isEqualTo("RAPIO")
     }
 

@@ -30,7 +30,7 @@ class ContractLoaderImpl(private val productPricingClient: ProductPricingClient)
         }
     }
 
-    override fun getContractTypeForMember(memberId: String): List<ContractInfo> {
+    override fun getContractInfoForMember(memberId: String): List<ContractInfo> {
         val response = productPricingClient.getContractsForMember(memberId)
 
         return response.body.map {

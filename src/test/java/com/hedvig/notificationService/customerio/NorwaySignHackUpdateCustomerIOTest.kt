@@ -80,7 +80,7 @@ class NorwaySignHackUpdateCustomerIOTest {
             ), updateTime
         )
 
-        every { contractLoader.getContractTypeForMember(any()) } returns listOf(
+        every { contractLoader.getContractInfoForMember(any()) } returns listOf(
             ContractInfo(
                 AgreementType.NorwegianHomeContent,
                 null,
@@ -112,7 +112,7 @@ class NorwaySignHackUpdateCustomerIOTest {
             ), updateTime
         )
 
-        every { contractLoader.getContractTypeForMember(any()) } returns listOf(
+        every { contractLoader.getContractInfoForMember(any()) } returns listOf(
             ContractInfo(
                 AgreementType.NorwegianHomeContent,
                 null,
@@ -142,7 +142,7 @@ class NorwaySignHackUpdateCustomerIOTest {
             )
         )
         every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
-        every { contractLoader.getContractTypeForMember(any()) } returns listOf(
+        every { contractLoader.getContractInfoForMember(any()) } returns listOf(
             ContractInfo(
                 AgreementType.NorwegianHomeContent,
                 null,
@@ -177,7 +177,7 @@ class NorwaySignHackUpdateCustomerIOTest {
             )
         )
         every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
-        every { contractLoader.getContractTypeForMember(any()) } returns listOf(
+        every { contractLoader.getContractInfoForMember(any()) } returns listOf(
             ContractInfo(
                 AgreementType.NorwegianHomeContent,
                 null,
@@ -203,7 +203,7 @@ class NorwaySignHackUpdateCustomerIOTest {
         )
 
         every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
-        every { contractLoader.getContractTypeForMember(any()) } returns listOf(
+        every { contractLoader.getContractInfoForMember(any()) } returns listOf(
             ContractInfo(
                 AgreementType.SwedishApartment,
                 null,

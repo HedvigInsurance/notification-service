@@ -10,7 +10,7 @@ class FakeContractLoader :
         return Workspace.NORWAY
     }
 
-    override fun getContractTypeForMember(memberId: String): List<ContractInfo> {
+    override fun getContractInfoForMember(memberId: String): List<ContractInfo> {
         return listOf(
             ContractInfo(
                 AgreementType.NorwegianHomeContent,

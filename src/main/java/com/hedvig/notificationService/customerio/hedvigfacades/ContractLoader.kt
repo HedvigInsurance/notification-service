@@ -5,5 +5,5 @@ import com.hedvig.notificationService.customerio.Workspace
 
 interface ContractLoader {
     fun getWorkspaceForMember(memberId: String): Workspace
-    fun getContractTypeForMember(memberId: String): List<ContractInfo>
+    fun getContractInfoForMember(memberId: String): List<ContractInfo>
 }

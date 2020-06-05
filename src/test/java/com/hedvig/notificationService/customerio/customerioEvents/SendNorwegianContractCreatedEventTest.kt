@@ -65,7 +65,7 @@ class SendNorwegianContractCreatedEventTest {
         repo.save(CustomerioState("someMemberId", null, false, startTime))
 
         every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
-        every { contractLoader.getContractTypeForMember(any()) } returns
+        every { contractLoader.getContractInfoForMember(any()) } returns
             listOf(
                 ContractInfo(
                     AgreementType.NorwegianHomeContent,
@@ -91,7 +91,7 @@ class SendNorwegianContractCreatedEventTest {
 
         every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.SWEDEN
 
-        every { contractLoader.getContractTypeForMember(any()) } returns
+        every { contractLoader.getContractInfoForMember(any()) } returns
             listOf(
                 ContractInfo(
                     AgreementType.NorwegianHomeContent,
@@ -112,7 +112,7 @@ class SendNorwegianContractCreatedEventTest {
         val startTime = Instant.parse("2020-04-23T09:25:13.597224Z")
         repo.save(CustomerioState("someMemberId", null, false, startTime))
         every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
-        every { contractLoader.getContractTypeForMember(any()) } returns
+        every { contractLoader.getContractInfoForMember(any()) } returns
             listOf(
                 ContractInfo(
                     AgreementType.NorwegianHomeContent,

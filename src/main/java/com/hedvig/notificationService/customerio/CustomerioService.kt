@@ -96,7 +96,7 @@ open class CustomerioService(
         for (customerioState in this.stateRepository.shouldUpdate(windowEndTime)) {
             logger.info("Running update for ${customerioState.memberId}")
             try {
-                val contracts = this.contractLoader.getContractTypeForMember(customerioState.memberId)
+                val contracts = this.contractLoader.getContractInfoForMember(customerioState.memberId)
                 val eventAndState = eventCreator.execute(customerioState, contracts)
                 sendEventAndUpdateState(customerioState, eventAndState.asMap)
             } catch (ex: RuntimeException) {
