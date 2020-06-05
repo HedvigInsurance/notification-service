@@ -31,7 +31,6 @@ import com.hedvig.resolver.LocaleResolver
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.util.Optional
-import javax.money.MonetaryAmount
 import javax.transaction.Transactional
 
 @Service
@@ -45,25 +44,7 @@ open class FirebaseNotificationServiceImpl(
     override fun sendNewMessageNotification(memberId: String) {
         val firebaseToken = firebaseRepository.findById(memberId)
 
-        val message = Message.builder()
-            .putData(TYPE, NEW_MESSAGE)
-            .setApnsConfig(
-                createApnsConfig(
-                    memberId = memberId,
-                    titleTextKey = DEFAULT_TITLE,
-                    bodyTextKey = NEW_MESSAGE_BODY
-                ).build()
-            )
-            .setAndroidConfig(
-                createAndroidConfigBuilder(
-                    memberId = memberId,
-                    titleTextKey = DEFAULT_TITLE,
-                    bodyTextKey = NEW_MESSAGE_BODY,
-                    type = NEW_MESSAGE
-                ).build()
-            )
-            .setToken(firebaseToken.get().token)
-            .build()
+        val message = createMessage(memberId, firebaseToken, NEW_MESSAGE, DEFAULT_TITLE, NEW_MESSAGE_BODY)
 
         sendNotification(NEW_MESSAGE, memberId, message)
     }
@@ -109,26 +90,7 @@ open class FirebaseNotificationServiceImpl(
     override fun sendConnectDirectDebitNotification(memberId: String) {
         val firebaseToken = firebaseRepository.findById(memberId)
 
-        val message = Message
-            .builder()
-            .putData(TYPE, CONNECT_DIRECT_DEBIT)
-            .setApnsConfig(
-                createApnsConfig(
-                    memberId = memberId,
-                    titleTextKey = CONNECT_DD_TITLE,
-                    bodyTextKey = CONNECT_DD_BODY
-                ).build()
-            )
-            .setAndroidConfig(
-                createAndroidConfigBuilder(
-                    memberId = memberId,
-                    titleTextKey = CONNECT_DD_TITLE,
-                    bodyTextKey = CONNECT_DD_BODY,
-                    type = CONNECT_DIRECT_DEBIT
-                ).build()
-            )
-            .setToken(firebaseToken.get().token)
-            .build()
+        val message = createMessage(memberId, firebaseToken, CONNECT_DIRECT_DEBIT, CONNECT_DD_TITLE, CONNECT_DD_BODY)
 
         sendNotification(CONNECT_DIRECT_DEBIT, memberId, message)
     }
@@ -136,26 +98,7 @@ open class FirebaseNotificationServiceImpl(
     override fun sendPaymentFailedNotification(memberId: String) {
         val firebaseToken = firebaseRepository.findById(memberId)
 
-        val message = Message
-            .builder()
-            .putData(TYPE, PAYMENT_FAILED)
-            .setApnsConfig(
-                createApnsConfig(
-                    memberId = memberId,
-                    titleTextKey = PAYMENT_FAILED_TITLE,
-                    bodyTextKey = PAYMENT_FAILED_BODY
-                ).build()
-            )
-            .setAndroidConfig(
-                createAndroidConfigBuilder(
-                    memberId = memberId,
-                    titleTextKey = PAYMENT_FAILED_TITLE,
-                    bodyTextKey = PAYMENT_FAILED_BODY,
-                    type = PAYMENT_FAILED
-                ).build()
-            )
-            .setToken(firebaseToken.get().token)
-            .build()
+        val message = createMessage(memberId, firebaseToken, PAYMENT_FAILED, PAYMENT_FAILED_TITLE, PAYMENT_FAILED_BODY)
 
         sendNotification(PAYMENT_FAILED, memberId, message)
     }
@@ -168,29 +111,10 @@ open class FirebaseNotificationServiceImpl(
         )
     }
 
-    override fun sendClaimPaidNotification(memberId: String, amount: MonetaryAmount) {
+    override fun sendClaimPaidNotification(memberId: String) {
         val firebaseToken = firebaseRepository.findById(memberId)
 
-        val message = Message
-            .builder()
-            .putData(TYPE, CLAIM_PAID)
-            .setApnsConfig(
-                createApnsConfig(
-                    memberId = memberId,
-                    titleTextKey = CLAIM_PAID_TITLE,
-                    bodyTextKey = CLAIM_PAID_BODY
-                ).build()
-            )
-            .setAndroidConfig(
-                createAndroidConfigBuilder(
-                    memberId = memberId,
-                    titleTextKey = CLAIM_PAID_TITLE,
-                    bodyTextKey = CLAIM_PAID_BODY,
-                    type = CLAIM_PAID
-                ).build()
-            )
-            .setToken(firebaseToken.get().token)
-            .build()
+        val message = createMessage(memberId, firebaseToken, CLAIM_PAID, CLAIM_PAID_TITLE, CLAIM_PAID_BODY)
 
         sendNotification(CLAIM_PAID, memberId, message)
     }
@@ -198,26 +122,7 @@ open class FirebaseNotificationServiceImpl(
     override fun sendInsurancePolicyUpdatedNotification(memberId: String) {
         val firebaseToken = firebaseRepository.findById(memberId)
 
-        val message = Message
-            .builder()
-            .putData(TYPE, INSURANCE_POLICY_UPDATED)
-            .setApnsConfig(
-                createApnsConfig(
-                    memberId = memberId,
-                    titleTextKey = INSURANCE_POLICY_UPDATED_TITLE,
-                    bodyTextKey = INSURANCE_POLICY_UPDATED_BODY
-                ).build()
-            )
-            .setAndroidConfig(
-                createAndroidConfigBuilder(
-                    memberId = memberId,
-                    titleTextKey = INSURANCE_POLICY_UPDATED_TITLE,
-                    bodyTextKey = INSURANCE_POLICY_UPDATED_BODY,
-                    type = INSURANCE_POLICY_UPDATED
-                ).build()
-            )
-            .setToken(firebaseToken.get().token)
-            .build()
+        val message = createMessage(memberId, firebaseToken, INSURANCE_POLICY_UPDATED, INSURANCE_POLICY_UPDATED_TITLE, INSURANCE_POLICY_UPDATED_BODY)
 
         sendNotification(INSURANCE_POLICY_UPDATED, memberId, message)
     }
@@ -225,26 +130,7 @@ open class FirebaseNotificationServiceImpl(
     override fun sendInsuranceRenewedNotification(memberId: String) {
         val firebaseToken = firebaseRepository.findById(memberId)
 
-        val message = Message
-            .builder()
-            .putData(TYPE, INSURANCE_RENEWED)
-            .setApnsConfig(
-                createApnsConfig(
-                    memberId = memberId,
-                    titleTextKey = INSURANCE_RENEWED_TITLE,
-                    bodyTextKey = INSURANCE_RENEWED_BODY
-                ).build()
-            )
-            .setAndroidConfig(
-                createAndroidConfigBuilder(
-                    memberId = memberId,
-                    titleTextKey = INSURANCE_RENEWED_TITLE,
-                    bodyTextKey = INSURANCE_RENEWED_BODY,
-                    type = INSURANCE_RENEWED
-                ).build()
-            )
-            .setToken(firebaseToken.get().token)
-            .build()
+        val message = createMessage(memberId, firebaseToken, INSURANCE_RENEWED, INSURANCE_RENEWED_TITLE, INSURANCE_RENEWED_BODY)
 
         sendNotification(INSURANCE_RENEWED, memberId, message)
     }
@@ -252,26 +138,7 @@ open class FirebaseNotificationServiceImpl(
     override fun sendHedvigReferralsEnabledNotification(memberId: String) {
         val firebaseToken = firebaseRepository.findById(memberId)
 
-        val message = Message
-            .builder()
-            .putData(TYPE, REFERRALS_ENABLED)
-            .setApnsConfig(
-                createApnsConfig(
-                    memberId = memberId,
-                    titleTextKey = REFERRALS_ENABLED_TITLE,
-                    bodyTextKey = REFERRALS_ENABLED_BODY
-                ).build()
-            )
-            .setAndroidConfig(
-                createAndroidConfigBuilder(
-                    memberId = memberId,
-                    titleTextKey = REFERRALS_ENABLED_TITLE,
-                    bodyTextKey = REFERRALS_ENABLED_BODY,
-                    type = REFERRALS_ENABLED
-                ).build()
-            )
-            .setToken(firebaseToken.get().token)
-            .build()
+        val message = createMessage(memberId, firebaseToken, REFERRALS_ENABLED, REFERRALS_ENABLED_TITLE, REFERRALS_ENABLED_BODY)
 
         sendNotification(REFERRALS_ENABLED, memberId, message)
     }
@@ -279,25 +146,7 @@ open class FirebaseNotificationServiceImpl(
     override fun sendGenericCommunicationNotification(memberId: String, titleTextKey: String, bodyTextKey: String) {
         val firebaseToken = firebaseRepository.findById(memberId)
 
-        val message = Message
-            .builder()
-            .putData(TYPE, GENERIC_COMMUNICATION)
-            .setApnsConfig(
-                createApnsConfig(
-                    memberId = memberId,
-                    titleTextKey = titleTextKey,
-                    bodyTextKey = bodyTextKey
-                ).build()
-            )
-            .setAndroidConfig(
-                createAndroidConfigBuilder(
-                    memberId = memberId,
-                    titleTextKey = titleTextKey,
-                    bodyTextKey = bodyTextKey,
-                    type = GENERIC_COMMUNICATION
-                ).build()
-            ).setToken(firebaseToken.get().token)
-            .build()
+        val message = createMessage(memberId, firebaseToken, GENERIC_COMMUNICATION, titleTextKey, bodyTextKey)
 
         sendNotification(GENERIC_COMMUNICATION, memberId, message)
     }
@@ -315,6 +164,33 @@ open class FirebaseNotificationServiceImpl(
             )
         }
     }
+
+    private fun createMessage(
+        memberId: String,
+        firebaseToken: Optional<FirebaseToken>,
+        dataType: String,
+        titleTextKey: String,
+        bodyTextKey: String
+    ) = Message
+            .builder()
+            .putData(TYPE, dataType)
+            .setApnsConfig(
+                createApnsConfig(
+                    memberId = memberId,
+                    titleTextKey = titleTextKey,
+                    bodyTextKey = bodyTextKey
+                ).build()
+            )
+            .setAndroidConfig(
+                createAndroidConfigBuilder(
+                    memberId = memberId,
+                    titleTextKey = titleTextKey,
+                    bodyTextKey = bodyTextKey,
+                    type = dataType
+                ).build()
+            )
+            .setToken(firebaseToken.get().token)
+            .build()
 
     @Transactional
     override fun getFirebaseToken(memberId: String): Optional<FirebaseToken> {

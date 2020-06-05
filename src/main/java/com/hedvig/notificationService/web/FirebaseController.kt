@@ -102,7 +102,7 @@ class FirebaseController(private val firebaseNotificationService: FirebaseNotifi
         @PathVariable memberId: String,
         @RequestBody body: ClaimPaidNotificationRequest
     ): ResponseEntity<Void> {
-        firebaseNotificationService.sendClaimPaidNotification(memberId, body.amount)
+        firebaseNotificationService.sendClaimPaidNotification(memberId)
         return ResponseEntity.noContent().build()
     }
 

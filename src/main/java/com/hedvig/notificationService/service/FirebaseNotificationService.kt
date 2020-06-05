@@ -19,7 +19,7 @@ interface FirebaseNotificationService {
 
     fun sendPaymentFailedNotification(memberId: String)
 
-    fun sendClaimPaidNotification(memberId: String, amount: MonetaryAmount)
+    fun sendClaimPaidNotification(memberId: String)
 
     fun sendInsurancePolicyUpdatedNotification(memberId: String)
 
