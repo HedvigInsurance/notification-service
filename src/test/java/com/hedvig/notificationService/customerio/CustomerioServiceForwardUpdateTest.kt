@@ -3,8 +3,8 @@ package com.hedvig.notificationService.customerio
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.hedvig.customerio.CustomerioMock
 import com.hedvig.notificationService.customerio.customerioEvents.CustomerioEventCreatorImpl
+import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
-import com.hedvig.notificationService.customerio.hedvigfacades.ProductPricingFacade
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import io.mockk.MockKAnnotations
 import io.mockk.every
@@ -24,7 +24,7 @@ class CustomerioServiceForwardUpdateTest {
     val thrown = ExpectedException.none()
 
     @MockK
-    lateinit var productPricingFacade: ProductPricingFacade
+    lateinit var contractLoader: ContractLoader
 
     @MockK
     lateinit var memberServiceImpl: MemberServiceImpl
@@ -44,7 +44,7 @@ class CustomerioServiceForwardUpdateTest {
 
         router = CustomerioService(
             WorkspaceSelector(
-                productPricingFacade,
+                contractLoader,
                 memberServiceImpl
             ),
             repository,
@@ -53,7 +53,7 @@ class CustomerioServiceForwardUpdateTest {
                 Workspace.SWEDEN to customerIOMockSweden,
                 Workspace.NORWAY to customerIOMockNorway
             ),
-            productPricingFacade,
+            contractLoader,
             true
         )
     }
@@ -61,7 +61,7 @@ class CustomerioServiceForwardUpdateTest {
     @Test
     internal fun `route message to swedish workspace`() {
 
-        every { productPricingFacade.getWorkspaceForMember(any()) } returns Workspace.SWEDEN
+        every { contractLoader.getWorkspaceForMember(any()) } returns Workspace.SWEDEN
 
         router.updateCustomerAttributes("1337", mapOf())
         assertEquals("1337", customerIOMockSweden.updates.first().first)
@@ -69,7 +69,7 @@ class CustomerioServiceForwardUpdateTest {
 
     @Test
     internal fun `route message to norwegian workspace`() {
-        every { productPricingFacade.getWorkspaceForMember(any()) } returns Workspace.NORWAY
+        every { contractLoader.getWorkspaceForMember(any()) } returns Workspace.NORWAY
 
         router.updateCustomerAttributes("1337", mapOf())
         assertEquals("1337", customerIOMockNorway.updates.first().first)
@@ -78,7 +78,7 @@ class CustomerioServiceForwardUpdateTest {
     @Test
     fun `send to sweden when locale country is se and no market is found`() {
 
-        every { productPricingFacade.getWorkspaceForMember(any()) } returns Workspace.NOT_FOUND
+        every { contractLoader.getWorkspaceForMember(any()) } returns Workspace.NOT_FOUND
         every { memberServiceImpl.getPickedLocale(any()) } returns Locale("sv", "se")
 
         router.updateCustomerAttributes("1337", mapOf())
@@ -89,7 +89,7 @@ class CustomerioServiceForwardUpdateTest {
     @Test
     fun `send to norway when locale country is norway and no market is found`() {
 
-        every { productPricingFacade.getWorkspaceForMember(any()) } returns Workspace.NOT_FOUND
+        every { contractLoader.getWorkspaceForMember(any()) } returns Workspace.NOT_FOUND
         every { memberServiceImpl.getPickedLocale(any()) } returns Locale("nb", "NO")
 
         router.updateCustomerAttributes("1337", mapOf())
@@ -100,7 +100,7 @@ class CustomerioServiceForwardUpdateTest {
     @Test
     fun `throw exception when member-service returns unsupported locale`() {
 
-        every { productPricingFacade.getWorkspaceForMember(any()) } returns Workspace.NOT_FOUND
+        every { contractLoader.getWorkspaceForMember(any()) } returns Workspace.NOT_FOUND
         every { memberServiceImpl.getPickedLocale(any()) } returns Locale("en", "gb")
 
         thrown.expect(WorkspaceNotFound::class.java)

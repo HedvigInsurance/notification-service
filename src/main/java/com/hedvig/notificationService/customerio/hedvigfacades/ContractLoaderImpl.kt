@@ -7,10 +7,10 @@ import com.hedvig.notificationService.serviceIntegration.productPricing.client.P
 import feign.FeignException
 import org.slf4j.LoggerFactory
 
-class ProductPricingFacadeImpl(private val productPricingClient: ProductPricingClient) :
-    ProductPricingFacade {
+class ContractLoaderImpl(private val productPricingClient: ProductPricingClient) :
+    ContractLoader {
 
-    val log = LoggerFactory.getLogger(ProductPricingFacadeImpl::class.java)
+    val log = LoggerFactory.getLogger(ContractLoaderImpl::class.java)
 
     override fun getWorkspaceForMember(memberId: String): Workspace {
 

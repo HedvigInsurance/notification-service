@@ -7,7 +7,7 @@ import assertk.assertions.isNotNull
 import assertk.assertions.isNull
 import com.hedvig.notificationService.customerio.AgreementType
 import com.hedvig.notificationService.customerio.ContractInfo
-import com.hedvig.notificationService.customerio.hedvigfacades.ProductPricingFacade
+import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import io.mockk.impl.annotations.MockK
 import org.junit.Rule
@@ -22,7 +22,7 @@ class ContractsActivationDateUpdatedEventTest {
     val thrown = ExpectedException.none()
 
     @MockK
-    lateinit var productPricingFacade: ProductPricingFacade
+    lateinit var contractLoader: ContractLoader
 
     @Test
     fun `execute removes startDateUpdatedAt`() {

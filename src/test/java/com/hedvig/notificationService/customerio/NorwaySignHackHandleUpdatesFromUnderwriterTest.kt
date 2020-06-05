@@ -2,7 +2,7 @@ package com.hedvig.notificationService.customerio
 
 import com.hedvig.customerio.CustomerioClient
 import com.hedvig.notificationService.customerio.customerioEvents.CustomerioEventCreator
-import com.hedvig.notificationService.customerio.hedvigfacades.ProductPricingFacade
+import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import io.mockk.MockKAnnotations
 import io.mockk.every
@@ -30,7 +30,7 @@ class NorwaySignHackHandleUpdatesFromUnderwriterTest {
     lateinit var eventCreator: CustomerioEventCreator
 
     @MockK
-    lateinit var productPricingFacade: ProductPricingFacade
+    lateinit var contractLoader: ContractLoader
 
     @MockK
     lateinit var sut: CustomerioService
@@ -54,7 +54,7 @@ class NorwaySignHackHandleUpdatesFromUnderwriterTest {
                 Workspace.SWEDEN to seCustomerioClient,
                 Workspace.NORWAY to noCustomerIoClient
             ),
-            productPricingFacade,
+            contractLoader,
             true
         )
     }

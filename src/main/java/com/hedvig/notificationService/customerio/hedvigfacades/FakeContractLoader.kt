@@ -4,8 +4,8 @@ import com.hedvig.notificationService.customerio.AgreementType
 import com.hedvig.notificationService.customerio.ContractInfo
 import com.hedvig.notificationService.customerio.Workspace
 
-class FakeProductPricingFacade :
-    ProductPricingFacade {
+class FakeContractLoader :
+    ContractLoader {
     override fun getWorkspaceForMember(memberId: String): Workspace {
         return Workspace.NORWAY
     }

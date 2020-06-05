@@ -2,8 +2,8 @@ package com.hedvig.notificationService.customerio
 
 import com.hedvig.customerio.CustomerioClient
 import com.hedvig.notificationService.customerio.customerioEvents.CustomerioEventCreatorImpl
+import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
-import com.hedvig.notificationService.customerio.hedvigfacades.ProductPricingFacade
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import io.mockk.every
 import io.mockk.mockk
@@ -12,7 +12,7 @@ import org.junit.Test
 
 class CustomerioServiceDeleteCustomerTest {
 
-    private val productPricingFacade = mockk<ProductPricingFacade>()
+    private val productPricingFacade = mockk<ContractLoader>()
     private val memberServiceImpl = mockk<MemberServiceImpl>()
     private val repository =
         InMemoryCustomerIOStateRepository()

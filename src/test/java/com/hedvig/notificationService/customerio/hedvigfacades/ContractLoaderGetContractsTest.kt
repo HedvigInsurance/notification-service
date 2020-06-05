@@ -23,7 +23,7 @@ import java.time.LocalDate
 import java.util.UUID
 import javax.money.Monetary
 
-class ProductPricingFacadeGetContractsTest {
+class ContractLoaderGetContractsTest {
 
     @MockK
     lateinit var productPricingClient: ProductPricingClient
@@ -43,7 +43,7 @@ class ProductPricingFacadeGetContractsTest {
         )
 
         val sut =
-            ProductPricingFacadeImpl(
+            ContractLoaderImpl(
                 productPricingClient
             )
 
@@ -63,7 +63,7 @@ class ProductPricingFacadeGetContractsTest {
         )
 
         val sut =
-            ProductPricingFacadeImpl(
+            ContractLoaderImpl(
                 productPricingClient
             )
 
@@ -81,7 +81,7 @@ class ProductPricingFacadeGetContractsTest {
         )
 
         val sut =
-            ProductPricingFacadeImpl(
+            ContractLoaderImpl(
                 productPricingClient
             )
 

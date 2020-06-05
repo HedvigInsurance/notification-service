@@ -11,7 +11,7 @@ import com.hedvig.notificationService.customerio.CustomerioService
 import com.hedvig.notificationService.customerio.SIGN_EVENT_WINDOWS_SIZE_MINUTES
 import com.hedvig.notificationService.customerio.Workspace
 import com.hedvig.notificationService.customerio.WorkspaceSelector
-import com.hedvig.notificationService.customerio.hedvigfacades.ProductPricingFacade
+import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import com.hedvig.notificationService.serviceIntegration.productPricing.FeignExceptionForTest
@@ -31,7 +31,7 @@ class SendNorwegianContractCreatedEventTest {
     lateinit var workspaceSelector: WorkspaceSelector
 
     @MockK
-    lateinit var productPricingFacade: ProductPricingFacade
+    lateinit var contractLoader: ContractLoader
 
     val repo = InMemoryCustomerIOStateRepository()
 
@@ -54,7 +54,7 @@ class SendNorwegianContractCreatedEventTest {
                 Workspace.NORWAY to noClient,
                 Workspace.SWEDEN to seClient
             ),
-            productPricingFacade,
+            contractLoader,
             true
         )
     }
@@ -65,7 +65,7 @@ class SendNorwegianContractCreatedEventTest {
         repo.save(CustomerioState("someMemberId", null, false, startTime))
 
         every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
-        every { productPricingFacade.getContractTypeForMember(any()) } returns
+        every { contractLoader.getContractTypeForMember(any()) } returns
             listOf(
                 ContractInfo(
                     AgreementType.NorwegianHomeContent,
@@ -91,7 +91,7 @@ class SendNorwegianContractCreatedEventTest {
 
         every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.SWEDEN
 
-        every { productPricingFacade.getContractTypeForMember(any()) } returns
+        every { contractLoader.getContractTypeForMember(any()) } returns
             listOf(
                 ContractInfo(
                     AgreementType.NorwegianHomeContent,
@@ -112,7 +112,7 @@ class SendNorwegianContractCreatedEventTest {
         val startTime = Instant.parse("2020-04-23T09:25:13.597224Z")
         repo.save(CustomerioState("someMemberId", null, false, startTime))
         every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
-        every { productPricingFacade.getContractTypeForMember(any()) } returns
+        every { contractLoader.getContractTypeForMember(any()) } returns
             listOf(
                 ContractInfo(
                     AgreementType.NorwegianHomeContent,

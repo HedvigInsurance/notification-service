@@ -1,7 +1,7 @@
 package com.hedvig.notificationService.serviceIntegration.productPricing
 
 import com.hedvig.notificationService.customerio.Workspace
-import com.hedvig.notificationService.customerio.hedvigfacades.ProductPricingFacadeImpl
+import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoaderImpl
 import com.hedvig.notificationService.serviceIntegration.productPricing.client.ContractMarketInfo
 import com.hedvig.notificationService.serviceIntegration.productPricing.client.Market
 import com.hedvig.notificationService.serviceIntegration.productPricing.client.ProductPricingClient
@@ -37,7 +37,7 @@ class GetWorkspaceForMemberTest {
             )
         )
 
-        val cut = ProductPricingFacadeImpl(
+        val cut = ContractLoaderImpl(
             productPricingClient
         )
         assertThat(cut.getWorkspaceForMember("13131")).isEqualTo(Workspace.NORWAY)
@@ -53,7 +53,7 @@ class GetWorkspaceForMemberTest {
             )
         )
 
-        val cut = ProductPricingFacadeImpl(
+        val cut = ContractLoaderImpl(
             productPricingClient
         )
         assertThat(cut.getWorkspaceForMember("13131")).isEqualTo(Workspace.SWEDEN)
@@ -64,7 +64,7 @@ class GetWorkspaceForMemberTest {
 
         every { productPricingClient.getContractMarketInfo(any()) } throws FeignExceptionForTest(404)
 
-        val cut = ProductPricingFacadeImpl(
+        val cut = ContractLoaderImpl(
             productPricingClient
         )
 
@@ -76,7 +76,7 @@ class GetWorkspaceForMemberTest {
 
         every { productPricingClient.getContractMarketInfo(any()) } throws FeignExceptionForTest()
 
-        val cut = ProductPricingFacadeImpl(
+        val cut = ContractLoaderImpl(
             productPricingClient
         )
 

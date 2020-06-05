@@ -3,7 +3,7 @@ package com.hedvig.notificationService.customerio.customerioEvents
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.hedvig.notificationService.customerio.AgreementType
 import com.hedvig.notificationService.customerio.ContractInfo
-import com.hedvig.notificationService.customerio.hedvigfacades.ProductPricingFacade
+import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import io.mockk.MockKAnnotations
 import io.mockk.impl.annotations.MockK
@@ -24,7 +24,7 @@ class TmpSignAndContractCreatedEventTest(
 ) {
 
     @MockK
-    lateinit var productPricingFacade: ProductPricingFacade
+    lateinit var contractLoader: ContractLoader
     lateinit var sut: CustomerioEventCreatorImpl
 
     @get:Rule

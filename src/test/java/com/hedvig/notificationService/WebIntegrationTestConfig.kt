@@ -7,9 +7,9 @@ import com.hedvig.notificationService.customerio.CustomerioService
 import com.hedvig.notificationService.customerio.Workspace
 import com.hedvig.notificationService.customerio.WorkspaceSelector
 import com.hedvig.notificationService.customerio.customerioEvents.CustomerioEventCreatorImpl
-import com.hedvig.notificationService.customerio.hedvigfacades.FakeProductPricingFacade
+import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
+import com.hedvig.notificationService.customerio.hedvigfacades.FakeContractLoader
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
-import com.hedvig.notificationService.customerio.hedvigfacades.ProductPricingFacade
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import com.hedvig.notificationService.serviceIntegration.memberService.FakeMemberServiceClient
 import com.hedvig.notificationService.serviceIntegration.memberService.MemberServiceClient
@@ -26,8 +26,8 @@ class WebIntegrationTestConfig {
         return CustomerioMock(objectMapper)
     }
 
-    fun productPricingClientTest(): ProductPricingFacade =
-        FakeProductPricingFacade()
+    fun productPricingClientTest(): ContractLoader =
+        FakeContractLoader()
 
     fun memberServiceClientTest(): MemberServiceClient = FakeMemberServiceClient()
 
