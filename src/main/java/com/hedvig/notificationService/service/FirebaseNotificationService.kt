@@ -2,7 +2,6 @@ package com.hedvig.notificationService.service
 
 import com.hedvig.notificationService.entities.FirebaseToken
 import java.util.Optional
-import javax.money.MonetaryAmount
 
 interface FirebaseNotificationService {
 
@@ -19,7 +18,7 @@ interface FirebaseNotificationService {
 
     fun sendPaymentFailedNotification(memberId: String)
 
-    fun sendClaimPaidNotification(memberId: String, amount: MonetaryAmount)
+    fun sendClaimPaidNotification(memberId: String)
 
     fun sendInsurancePolicyUpdatedNotification(memberId: String)
 
@@ -32,4 +31,6 @@ interface FirebaseNotificationService {
     fun sendGenericCommunicationNotification(memberId: String, titleTextKey: String, bodyTextKey: String)
 
     fun sendTerminatedFailedChargesNotification(memberId: String)
+
+    fun sendHedvigReferralsEnabledNotification(memberId: String)
 }
