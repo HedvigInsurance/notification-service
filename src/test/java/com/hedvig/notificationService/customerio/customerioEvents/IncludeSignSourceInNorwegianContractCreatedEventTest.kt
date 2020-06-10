@@ -21,7 +21,13 @@ class IncludeSignSourceInNorwegianContractCreatedEventTest {
 
         val result = sut.execute(
             customerioState, listOf(
-                ContractInfo(AgreementType.NorwegianTravel, null, startDate = null, signSource = "RAPIO")
+                ContractInfo(
+                    AgreementType.NorwegianTravel,
+                    null,
+                    startDate = null,
+                    signSource = "RAPIO",
+                    partnerCode = "HEDIVG"
+                )
             )
         )
 

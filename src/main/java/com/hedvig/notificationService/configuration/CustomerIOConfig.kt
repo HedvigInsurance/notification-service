@@ -15,6 +15,7 @@ import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.serviceIntegration.memberService.MemberServiceClient
 import com.hedvig.notificationService.serviceIntegration.productPricing.client.ProductPricingClient
+import com.hedvig.notificationService.serviceIntegration.underwriter.UnderwriterClient
 import okhttp3.OkHttpClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -35,9 +36,10 @@ class CustomerIOConfig() {
     private val okHttp: OkHttpClient = OkHttpClient()
 
     @Bean()
-    fun productPricingFacade(productPricingClient: ProductPricingClient) =
+    fun productPricingFacade(productPricingClient: ProductPricingClient, underwriterClient: UnderwriterClient) =
         ContractLoaderImpl(
-            productPricingClient
+            productPricingClient,
+            underwriterClient
         )
 
     @Bean()

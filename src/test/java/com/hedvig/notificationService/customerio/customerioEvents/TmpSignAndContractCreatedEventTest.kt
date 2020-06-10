@@ -46,6 +46,7 @@ class TmpSignAndContractCreatedEventTest(
                         AgreementType.NorwegianHomeContent,
                         null,
                         null,
+                        "IOS",
                         "HEDVIG"
                     )
                 ),
@@ -57,6 +58,7 @@ class TmpSignAndContractCreatedEventTest(
                         AgreementType.NorwegianHomeContent,
                         "folksam",
                         null,
+                        "IOS",
                         "HEDVIG"
                     )
                 ), mapOf(
@@ -71,6 +73,7 @@ class TmpSignAndContractCreatedEventTest(
                         AgreementType.NorwegianHomeContent,
                         null,
                         LocalDate.of(2020, 3, 13),
+                        "IOS",
                         "HEDVIG"
                     )
                 ),
@@ -85,6 +88,7 @@ class TmpSignAndContractCreatedEventTest(
                         AgreementType.NorwegianTravel,
                         null,
                         null,
+                        "IOS",
                         "HEDVIG"
                     )
                 ), mapOf(
@@ -97,6 +101,7 @@ class TmpSignAndContractCreatedEventTest(
                         AgreementType.NorwegianTravel,
                         "a new company",
                         null,
+                        "IOS",
                         "HEDVIG"
                     )
                 ),
@@ -112,6 +117,7 @@ class TmpSignAndContractCreatedEventTest(
                         AgreementType.NorwegianTravel,
                         "a new company",
                         LocalDate.of(2020, 1, 1),
+                        "IOS",
                         "HEDVIG"
                     )
                 ),
@@ -128,12 +134,14 @@ class TmpSignAndContractCreatedEventTest(
                         AgreementType.NorwegianTravel,
                         null,
                         null,
+                        "IOS",
                         "HEDVIG"
                     ),
                     ContractInfo(
                         AgreementType.NorwegianHomeContent,
                         null,
                         null,
+                        "IOS",
                         "HEDVIG"
                     )
                 ),
@@ -217,6 +225,7 @@ class TmpSignAndContractCreatedEventTest(
                 AgreementType.SwedishHouse,
                 null,
                 null,
+                "IOS",
                 "HEDVIG"
             )
         )

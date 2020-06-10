@@ -85,6 +85,7 @@ class NorwaySignHackUpdateCustomerIOTest {
                 AgreementType.NorwegianHomeContent,
                 null,
                 null,
+                "IOS",
                 "HEDVIG"
             )
         )
@@ -117,6 +118,7 @@ class NorwaySignHackUpdateCustomerIOTest {
                 AgreementType.NorwegianHomeContent,
                 null,
                 null,
+                "IOS",
                 "HEDVIG"
             )
         )
@@ -147,6 +149,7 @@ class NorwaySignHackUpdateCustomerIOTest {
                 AgreementType.NorwegianHomeContent,
                 null,
                 null,
+                "IOS",
                 "HEDVIG"
             )
         )
@@ -182,6 +185,7 @@ class NorwaySignHackUpdateCustomerIOTest {
                 AgreementType.NorwegianHomeContent,
                 null,
                 null,
+                "IOS",
                 "HEDVIG"
             )
         )
@@ -208,6 +212,7 @@ class NorwaySignHackUpdateCustomerIOTest {
                 AgreementType.SwedishApartment,
                 null,
                 null,
+                "IOS",
                 "HEDVIG"
             )
         )

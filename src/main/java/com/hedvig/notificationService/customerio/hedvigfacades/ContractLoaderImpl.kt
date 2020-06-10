@@ -4,10 +4,14 @@ import com.hedvig.notificationService.customerio.AgreementType
 import com.hedvig.notificationService.customerio.ContractInfo
 import com.hedvig.notificationService.customerio.Workspace
 import com.hedvig.notificationService.serviceIntegration.productPricing.client.ProductPricingClient
+import com.hedvig.notificationService.serviceIntegration.underwriter.UnderwriterClient
 import feign.FeignException
 import org.slf4j.LoggerFactory
 
-class ContractLoaderImpl(private val productPricingClient: ProductPricingClient) :
+class ContractLoaderImpl(
+    private val productPricingClient: ProductPricingClient,
+    private val underwriterClient: UnderwriterClient
+) :
     ContractLoader {
 
     val log = LoggerFactory.getLogger(ContractLoaderImpl::class.java)
@@ -31,14 +35,16 @@ class ContractLoaderImpl(private val productPricingClient: ProductPricingClient)
     }
 
     override fun getContractInfoForMember(memberId: String): List<ContractInfo> {
-        val response = productPricingClient.getContractsForMember(memberId)
+        val productPricingReponse = productPricingClient.getContractsForMember(memberId)
 
-        return response.body.map {
+        return productPricingReponse.body.map {
+            val underwriterResponse = underwriterClient.getQuoteFromContractId(it.id.toString()).body
             ContractInfo(
                 AgreementType.valueOf(it.agreements.first()::class.java.simpleName),
                 it.switchedFrom,
                 it.masterInception,
-                it.signSource
+                it.signSource,
+                underwriterResponse.attributedTo
             )
         }
     }

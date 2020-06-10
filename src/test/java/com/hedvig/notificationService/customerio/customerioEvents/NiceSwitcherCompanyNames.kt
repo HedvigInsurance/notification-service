@@ -16,6 +16,7 @@ class NiceSwitcherCompanyNames {
                 AgreementType.NorwegianTravel,
                 "Gjensidige NO",
                 null,
+                "IOS",
                 "HEDVIG"
             )
         )
@@ -30,6 +31,7 @@ class NiceSwitcherCompanyNames {
                 AgreementType.NorwegianTravel,
                 "Fremtind",
                 null,
+                "IOS",
                 "HEDVIG"
             )
         )

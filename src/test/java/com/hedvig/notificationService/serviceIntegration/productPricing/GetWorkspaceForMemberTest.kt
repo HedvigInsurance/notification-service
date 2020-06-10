@@ -5,6 +5,7 @@ import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoaderImp
 import com.hedvig.notificationService.serviceIntegration.productPricing.client.ContractMarketInfo
 import com.hedvig.notificationService.serviceIntegration.productPricing.client.Market
 import com.hedvig.notificationService.serviceIntegration.productPricing.client.ProductPricingClient
+import com.hedvig.notificationService.serviceIntegration.underwriter.UnderwriterClient
 import feign.FeignException
 import io.mockk.MockKAnnotations
 import io.mockk.every
@@ -22,6 +23,9 @@ class GetWorkspaceForMemberTest {
     @MockK
     lateinit var productPricingClient: ProductPricingClient
 
+    @MockK
+    lateinit var underwriterClient: UnderwriterClient
+
     @Before
     fun setup() {
         MockKAnnotations.init(this)
@@ -38,7 +42,8 @@ class GetWorkspaceForMemberTest {
         )
 
         val cut = ContractLoaderImpl(
-            productPricingClient
+            productPricingClient,
+            underwriterClient
         )
         assertThat(cut.getWorkspaceForMember("13131")).isEqualTo(Workspace.NORWAY)
     }
@@ -54,7 +59,8 @@ class GetWorkspaceForMemberTest {
         )
 
         val cut = ContractLoaderImpl(
-            productPricingClient
+            productPricingClient,
+            underwriterClient
         )
         assertThat(cut.getWorkspaceForMember("13131")).isEqualTo(Workspace.SWEDEN)
     }
@@ -65,7 +71,8 @@ class GetWorkspaceForMemberTest {
         every { productPricingClient.getContractMarketInfo(any()) } throws FeignExceptionForTest(404)
 
         val cut = ContractLoaderImpl(
-            productPricingClient
+            productPricingClient,
+            underwriterClient
         )
 
         assertThat(cut.getWorkspaceForMember("12345")).isEqualTo(Workspace.NOT_FOUND)
@@ -77,7 +84,8 @@ class GetWorkspaceForMemberTest {
         every { productPricingClient.getContractMarketInfo(any()) } throws FeignExceptionForTest()
 
         val cut = ContractLoaderImpl(
-            productPricingClient
+            productPricingClient,
+            underwriterClient
         )
 
         assertThat(cut.getWorkspaceForMember("12345")).isEqualTo(Workspace.NOT_FOUND)

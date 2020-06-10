@@ -17,6 +17,7 @@ class UpdateActivationDateTrigger() {
                 AgreementType.NorwegianHomeContent,
                 null,
                 null,
+                "IOS",
                 "HEDVIG"
             )
         )

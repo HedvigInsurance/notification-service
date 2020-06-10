@@ -34,6 +34,7 @@ class ContractsActivationDateUpdatedEventTest {
                     AgreementType.NorwegianHomeContent,
                     "someCompany",
                     LocalDate.parse("2020-03-04"),
+                    "IOS",
                     "HEDVIG"
                 )
             )
@@ -53,6 +54,7 @@ class ContractsActivationDateUpdatedEventTest {
                 AgreementType.NorwegianHomeContent,
                 "companyName",
                 LocalDate.of(2020, 5, 1),
+                "IOS",
                 "HEDVIG"
             )
         )
@@ -80,12 +82,14 @@ class ContractsActivationDateUpdatedEventTest {
                 AgreementType.NorwegianHomeContent,
                 "companyName",
                 LocalDate.of(2020, 5, 1),
+                "IOS",
                 "HEDVIG"
             ),
             ContractInfo(
                 AgreementType.NorwegianTravel,
                 "anotherCompany",
                 LocalDate.of(2020, 5, 13),
+                "IOS",
                 "HEDVIG"
             )
         )
@@ -120,12 +124,14 @@ class ContractsActivationDateUpdatedEventTest {
                 AgreementType.NorwegianHomeContent,
                 "companyName",
                 LocalDate.of(2020, 5, 1),
+                "IOS",
                 "HEDVIG"
             ),
             ContractInfo(
                 AgreementType.NorwegianTravel,
                 "anotherCompany",
                 null,
+                "IOS",
                 "HEDVIG"
             )
         )
@@ -154,6 +160,7 @@ class ContractsActivationDateUpdatedEventTest {
                 AgreementType.NorwegianTravel,
                 "anotherCompany",
                 null,
+                "IOS",
                 "HEDVIG"
             )
         )

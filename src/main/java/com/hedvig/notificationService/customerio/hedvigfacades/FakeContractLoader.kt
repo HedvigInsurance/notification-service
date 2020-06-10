@@ -16,6 +16,7 @@ class FakeContractLoader :
                 AgreementType.NorwegianHomeContent,
                 null,
                 null,
+                "IOS",
                 "HEDVIG"
             )
         )

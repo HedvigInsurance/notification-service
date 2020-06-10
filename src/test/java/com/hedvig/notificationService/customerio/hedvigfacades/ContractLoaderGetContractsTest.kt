@@ -9,6 +9,8 @@ import com.hedvig.notificationService.serviceIntegration.productPricing.client.C
 import com.hedvig.notificationService.serviceIntegration.productPricing.client.Market
 import com.hedvig.notificationService.serviceIntegration.productPricing.client.NorwegianHomeContentLineOfBusiness
 import com.hedvig.notificationService.serviceIntegration.productPricing.client.ProductPricingClient
+import com.hedvig.notificationService.serviceIntegration.productPricing.underwriter.makeQuoteDto
+import com.hedvig.notificationService.serviceIntegration.underwriter.UnderwriterClient
 import com.neovisionaries.i18n.CountryCode
 import io.mockk.MockKAnnotations
 import io.mockk.every
@@ -28,6 +30,9 @@ class ContractLoaderGetContractsTest {
     @MockK
     lateinit var productPricingClient: ProductPricingClient
 
+    @MockK
+    lateinit var underwriterClient: UnderwriterClient
+
     @Before
     fun setup() {
         MockKAnnotations.init(this)
@@ -41,10 +46,12 @@ class ContractLoaderGetContractsTest {
                 makeContract(makeNorwegianHomeContentAgreement())
             )
         )
+        every { underwriterClient.getQuoteFromContractId(any()) } returns ResponseEntity.ok(makeQuoteDto())
 
         val sut =
             ContractLoaderImpl(
-                productPricingClient
+                productPricingClient,
+                underwriterClient
             )
 
         val contractInfo = sut.getContractInfoForMember("someId")
@@ -61,10 +68,12 @@ class ContractLoaderGetContractsTest {
                 makeContract(makeNorwegianHomeContentAgreement(), switchedFrom = "someName")
             )
         )
+        every { underwriterClient.getQuoteFromContractId(any()) } returns ResponseEntity.ok(makeQuoteDto())
 
         val sut =
             ContractLoaderImpl(
-                productPricingClient
+                productPricingClient,
+                underwriterClient
             )
 
         val contractInfo = sut.getContractInfoForMember("someId")
@@ -74,19 +83,24 @@ class ContractLoaderGetContractsTest {
 
     @Test
     fun `sets sign source`() {
+        val contractId = UUID.fromString("b43a96b2-a70c-11ea-ac39-3af9d3902f96")
         every { productPricingClient.getContractsForMember(any()) } returns ResponseEntity.ok(
             listOf(
-                makeContract(makeNorwegianHomeContentAgreement(), signSource = "RAPIO")
+                makeContract(makeNorwegianHomeContentAgreement(), signSource = "RAPIO", contractId = contractId)
             )
         )
 
+        val quote = makeQuoteDto("A_PARTNER")
+        every { underwriterClient.getQuoteFromContractId(contractId.toString()) } returns ResponseEntity.ok(quote)
+
         val sut =
             ContractLoaderImpl(
-                productPricingClient
+                productPricingClient,
+                underwriterClient
             )
 
         val contractInfo = sut.getContractInfoForMember("someId")
-        assertThat(contractInfo.first().signSource).isEqualTo("RAPIO")
+        assertThat(contractInfo.first().partnerCode).isEqualTo("A_PARTNER")
     }
 
     private fun makeNorwegianHomeContentAgreement(): Agreement.NorwegianHomeContent {
@@ -104,10 +118,11 @@ class ContractLoaderGetContractsTest {
     private fun makeContract(
         vararg agreements: Agreement,
         switchedFrom: String? = null,
-        signSource: String? = null
+        signSource: String? = null,
+        contractId: UUID = UUID.randomUUID()
     ): Contract {
         return Contract(
-            UUID.randomUUID(),
+            contractId,
             "1337",
             switchedFrom,
             LocalDate.of(2020, 2, 28),
