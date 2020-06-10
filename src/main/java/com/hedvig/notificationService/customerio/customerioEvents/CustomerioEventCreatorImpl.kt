@@ -32,7 +32,8 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
             isSignedReise = false,
             isSwitcherReise = false,
             switcherCompanyReise = null,
-            signSource = null
+            signSource = null,
+            partnerCode = null
         )
 
         contracts.forEach { contract ->
@@ -43,7 +44,8 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
                         activationDateInnbo = contract.startDate?.toString(),
                         isSwitcherInnbo = contract.switcherCompany != null,
                         switcherCompanyInnbo = contract.switcherCompany,
-                        signSource = contract.signSource
+                        signSource = contract.signSource,
+                        partnerCode = contract.partnerCode
                     )
                 AgreementType.NorwegianTravel
                 ->
@@ -52,7 +54,8 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
                         activationDateReise = contract.startDate?.toString(),
                         isSwitcherReise = contract.switcherCompany != null,
                         switcherCompanyReise = contract.switcherCompany,
-                        signSource = contract.signSource
+                        signSource = contract.signSource,
+                        partnerCode = contract.partnerCode
                     )
                 AgreementType.SwedishApartment,
                 AgreementType.SwedishHouse ->

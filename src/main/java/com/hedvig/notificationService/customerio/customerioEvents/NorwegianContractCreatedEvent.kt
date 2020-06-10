@@ -27,7 +27,7 @@ data class NorwegianContractCreatedEvent(
         val isSwitcherReise: Boolean,
         val switcherCompanyReise: String?,
 
-        val signSource: String? // ,
-        // val partnerCode: String?
+        val signSource: String?,
+        val partnerCode: String?
     )
 }
