@@ -6,7 +6,7 @@ import assertk.assertions.isNull
 import com.hedvig.notificationService.customerio.ConfigurationProperties
 import com.hedvig.notificationService.customerio.EventHandler
 import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
-import com.hedvig.notificationService.customerio.hedvigfacades.ProductPricingFacade
+import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import io.mockk.MockKAnnotations
@@ -19,7 +19,7 @@ import java.time.LocalDate
 class OnContractCreatedEventTest {
 
     @MockK
-    lateinit var productPricingFacade: ProductPricingFacade
+    lateinit var contractLoader: ContractLoader
 
     private val repository = InMemoryCustomerIOStateRepository()
     lateinit var sut: EventHandler

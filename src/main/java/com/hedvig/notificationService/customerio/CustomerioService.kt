@@ -2,7 +2,7 @@ package com.hedvig.notificationService.customerio
 
 import com.hedvig.customerio.CustomerioClient
 import com.hedvig.notificationService.customerio.customerioEvents.CustomerioEventCreator
-import com.hedvig.notificationService.customerio.hedvigfacades.ProductPricingFacade
+import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import org.slf4j.LoggerFactory
@@ -18,7 +18,7 @@ open class CustomerioService(
     private val stateRepository: CustomerIOStateRepository,
     private val eventCreator: CustomerioEventCreator,
     private val clients: Map<Workspace, CustomerioClient>,
-    private val productPricingFacade: ProductPricingFacade,
+    private val contractLoader: ContractLoader,
     private val useNorwayHack: Boolean
 ) {
 
@@ -96,7 +96,7 @@ open class CustomerioService(
         for (customerioState in this.stateRepository.shouldUpdate(windowEndTime)) {
             logger.info("Running update for ${customerioState.memberId}")
             try {
-                val contracts = this.productPricingFacade.getContractTypeForMember(customerioState.memberId)
+                val contracts = this.contractLoader.getContractInfoForMember(customerioState.memberId)
                 val eventAndState = eventCreator.execute(customerioState, contracts)
                 sendEventAndUpdateState(customerioState, eventAndState.asMap)
             } catch (ex: RuntimeException) {

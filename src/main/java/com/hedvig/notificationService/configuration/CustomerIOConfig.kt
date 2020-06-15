@@ -9,12 +9,13 @@ import com.hedvig.notificationService.customerio.CustomerioService
 import com.hedvig.notificationService.customerio.Workspace
 import com.hedvig.notificationService.customerio.WorkspaceSelector
 import com.hedvig.notificationService.customerio.customerioEvents.CustomerioEventCreatorImpl
+import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
+import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoaderImpl
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
-import com.hedvig.notificationService.customerio.hedvigfacades.ProductPricingFacade
-import com.hedvig.notificationService.customerio.hedvigfacades.ProductPricingFacadeImpl
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.serviceIntegration.memberService.MemberServiceClient
 import com.hedvig.notificationService.serviceIntegration.productPricing.client.ProductPricingClient
+import com.hedvig.notificationService.serviceIntegration.underwriter.UnderwriterClient
 import okhttp3.OkHttpClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -35,9 +36,10 @@ class CustomerIOConfig() {
     private val okHttp: OkHttpClient = OkHttpClient()
 
     @Bean()
-    fun productPricingFacade(productPricingClient: ProductPricingClient) =
-        ProductPricingFacadeImpl(
-            productPricingClient
+    fun productPricingFacade(productPricingClient: ProductPricingClient, underwriterClient: UnderwriterClient) =
+        ContractLoaderImpl(
+            productPricingClient,
+            underwriterClient
         )
 
     @Bean()
@@ -46,7 +48,7 @@ class CustomerIOConfig() {
 
     @Bean
     fun customerioService(
-        productPricingFacade: ProductPricingFacade,
+        contractLoader: ContractLoader,
         memberServiceImpl: MemberServiceImpl,
         objectMapper: ObjectMapper,
         repo: CustomerIOStateRepository,
@@ -55,13 +57,13 @@ class CustomerIOConfig() {
 
         return CustomerioService(
             WorkspaceSelector(
-                productPricingFacade,
+                contractLoader,
                 memberServiceImpl
             ),
             repo,
             CustomerioEventCreatorImpl(),
             clients,
-            productPricingFacade,
+            contractLoader,
             configuration.useNorwayHack
         )
     }

@@ -1,10 +1,11 @@
 package com.hedvig.notificationService.serviceIntegration.productPricing
 
 import com.hedvig.notificationService.customerio.Workspace
-import com.hedvig.notificationService.customerio.hedvigfacades.ProductPricingFacadeImpl
+import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoaderImpl
 import com.hedvig.notificationService.serviceIntegration.productPricing.client.ContractMarketInfo
 import com.hedvig.notificationService.serviceIntegration.productPricing.client.Market
 import com.hedvig.notificationService.serviceIntegration.productPricing.client.ProductPricingClient
+import com.hedvig.notificationService.serviceIntegration.underwriter.UnderwriterClient
 import feign.FeignException
 import io.mockk.MockKAnnotations
 import io.mockk.every
@@ -22,6 +23,9 @@ class GetWorkspaceForMemberTest {
     @MockK
     lateinit var productPricingClient: ProductPricingClient
 
+    @MockK
+    lateinit var underwriterClient: UnderwriterClient
+
     @Before
     fun setup() {
         MockKAnnotations.init(this)
@@ -37,8 +41,9 @@ class GetWorkspaceForMemberTest {
             )
         )
 
-        val cut = ProductPricingFacadeImpl(
-            productPricingClient
+        val cut = ContractLoaderImpl(
+            productPricingClient,
+            underwriterClient
         )
         assertThat(cut.getWorkspaceForMember("13131")).isEqualTo(Workspace.NORWAY)
     }
@@ -53,8 +58,9 @@ class GetWorkspaceForMemberTest {
             )
         )
 
-        val cut = ProductPricingFacadeImpl(
-            productPricingClient
+        val cut = ContractLoaderImpl(
+            productPricingClient,
+            underwriterClient
         )
         assertThat(cut.getWorkspaceForMember("13131")).isEqualTo(Workspace.SWEDEN)
     }
@@ -64,8 +70,9 @@ class GetWorkspaceForMemberTest {
 
         every { productPricingClient.getContractMarketInfo(any()) } throws FeignExceptionForTest(404)
 
-        val cut = ProductPricingFacadeImpl(
-            productPricingClient
+        val cut = ContractLoaderImpl(
+            productPricingClient,
+            underwriterClient
         )
 
         assertThat(cut.getWorkspaceForMember("12345")).isEqualTo(Workspace.NOT_FOUND)
@@ -76,8 +83,9 @@ class GetWorkspaceForMemberTest {
 
         every { productPricingClient.getContractMarketInfo(any()) } throws FeignExceptionForTest()
 
-        val cut = ProductPricingFacadeImpl(
-            productPricingClient
+        val cut = ContractLoaderImpl(
+            productPricingClient,
+            underwriterClient
         )
 
         assertThat(cut.getWorkspaceForMember("12345")).isEqualTo(Workspace.NOT_FOUND)

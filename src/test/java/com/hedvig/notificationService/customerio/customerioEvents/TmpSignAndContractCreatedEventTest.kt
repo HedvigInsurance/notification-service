@@ -3,7 +3,7 @@ package com.hedvig.notificationService.customerio.customerioEvents
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.hedvig.notificationService.customerio.AgreementType
 import com.hedvig.notificationService.customerio.ContractInfo
-import com.hedvig.notificationService.customerio.hedvigfacades.ProductPricingFacade
+import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import io.mockk.MockKAnnotations
 import io.mockk.impl.annotations.MockK
@@ -24,7 +24,7 @@ class TmpSignAndContractCreatedEventTest(
 ) {
 
     @MockK
-    lateinit var productPricingFacade: ProductPricingFacade
+    lateinit var contractLoader: ContractLoader
     lateinit var sut: CustomerioEventCreatorImpl
 
     @get:Rule
@@ -45,7 +45,9 @@ class TmpSignAndContractCreatedEventTest(
                     ContractInfo(
                         AgreementType.NorwegianHomeContent,
                         null,
-                        null
+                        null,
+                        "IOS",
+                        "HEDVIG"
                     )
                 ),
                 mapOf("is_signed_innbo" to true)
@@ -55,7 +57,9 @@ class TmpSignAndContractCreatedEventTest(
                     ContractInfo(
                         AgreementType.NorwegianHomeContent,
                         "folksam",
-                        null
+                        null,
+                        "IOS",
+                        "HEDVIG"
                     )
                 ), mapOf(
                     "is_signed_innbo" to true,
@@ -68,7 +72,9 @@ class TmpSignAndContractCreatedEventTest(
                     ContractInfo(
                         AgreementType.NorwegianHomeContent,
                         null,
-                        LocalDate.of(2020, 3, 13)
+                        LocalDate.of(2020, 3, 13),
+                        "IOS",
+                        "HEDVIG"
                     )
                 ),
                 mapOf(
@@ -81,7 +87,9 @@ class TmpSignAndContractCreatedEventTest(
                     ContractInfo(
                         AgreementType.NorwegianTravel,
                         null,
-                        null
+                        null,
+                        "IOS",
+                        "HEDVIG"
                     )
                 ), mapOf(
                     "is_signed_reise" to true
@@ -92,7 +100,9 @@ class TmpSignAndContractCreatedEventTest(
                     ContractInfo(
                         AgreementType.NorwegianTravel,
                         "a new company",
-                        null
+                        null,
+                        "IOS",
+                        "HEDVIG"
                     )
                 ),
                 mapOf(
@@ -106,7 +116,9 @@ class TmpSignAndContractCreatedEventTest(
                     ContractInfo(
                         AgreementType.NorwegianTravel,
                         "a new company",
-                        LocalDate.of(2020, 1, 1)
+                        LocalDate.of(2020, 1, 1),
+                        "IOS",
+                        "HEDVIG"
                     )
                 ),
                 mapOf(
@@ -121,12 +133,16 @@ class TmpSignAndContractCreatedEventTest(
                     ContractInfo(
                         AgreementType.NorwegianTravel,
                         null,
-                        null
+                        null,
+                        "IOS",
+                        "HEDVIG"
                     ),
                     ContractInfo(
                         AgreementType.NorwegianHomeContent,
                         null,
-                        null
+                        null,
+                        "IOS",
+                        "HEDVIG"
                     )
                 ),
                 mapOf(
@@ -208,7 +224,9 @@ class TmpSignAndContractCreatedEventTest(
             ContractInfo(
                 AgreementType.SwedishHouse,
                 null,
-                null
+                null,
+                "IOS",
+                "HEDVIG"
             )
         )
 

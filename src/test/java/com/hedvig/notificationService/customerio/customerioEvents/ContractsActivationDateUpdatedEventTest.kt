@@ -7,7 +7,7 @@ import assertk.assertions.isNotNull
 import assertk.assertions.isNull
 import com.hedvig.notificationService.customerio.AgreementType
 import com.hedvig.notificationService.customerio.ContractInfo
-import com.hedvig.notificationService.customerio.hedvigfacades.ProductPricingFacade
+import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import io.mockk.impl.annotations.MockK
 import org.junit.Rule
@@ -22,14 +22,22 @@ class ContractsActivationDateUpdatedEventTest {
     val thrown = ExpectedException.none()
 
     @MockK
-    lateinit var productPricingFacade: ProductPricingFacade
+    lateinit var contractLoader: ContractLoader
 
     @Test
     fun `execute removes startDateUpdatedAt`() {
         val sut = CustomerioEventCreatorImpl()
 
         val contracts =
-            listOf(ContractInfo(AgreementType.NorwegianHomeContent, "someCompany", LocalDate.parse("2020-03-04")))
+            listOf(
+                ContractInfo(
+                    AgreementType.NorwegianHomeContent,
+                    "someCompany",
+                    LocalDate.parse("2020-03-04"),
+                    "IOS",
+                    "HEDVIG"
+                )
+            )
 
         val callTime = Instant.parse("2020-04-27T18:50:41.760555Z")
         val customerioState = CustomerioState("amember", null, startDateUpdatedTriggerAt = callTime)
@@ -43,7 +51,11 @@ class ContractsActivationDateUpdatedEventTest {
     fun `one contract with start date`() {
         val contracts = listOf(
             ContractInfo(
-                AgreementType.NorwegianHomeContent, "companyName", LocalDate.of(2020, 5, 1)
+                AgreementType.NorwegianHomeContent,
+                "companyName",
+                LocalDate.of(2020, 5, 1),
+                "IOS",
+                "HEDVIG"
             )
         )
 
@@ -66,8 +78,20 @@ class ContractsActivationDateUpdatedEventTest {
     @Test
     fun `two contracts with start date`() {
         val contracts = listOf(
-            ContractInfo(AgreementType.NorwegianHomeContent, "companyName", LocalDate.of(2020, 5, 1)),
-            ContractInfo(AgreementType.NorwegianTravel, "anotherCompany", LocalDate.of(2020, 5, 13))
+            ContractInfo(
+                AgreementType.NorwegianHomeContent,
+                "companyName",
+                LocalDate.of(2020, 5, 1),
+                "IOS",
+                "HEDVIG"
+            ),
+            ContractInfo(
+                AgreementType.NorwegianTravel,
+                "anotherCompany",
+                LocalDate.of(2020, 5, 13),
+                "IOS",
+                "HEDVIG"
+            )
         )
 
         val callTime = Instant.parse("2020-04-27T18:50:41.760555Z")
@@ -96,8 +120,20 @@ class ContractsActivationDateUpdatedEventTest {
     @Test
     fun `one contract with one without start date`() {
         val contracts = listOf(
-            ContractInfo(AgreementType.NorwegianHomeContent, "companyName", LocalDate.of(2020, 5, 1)),
-            ContractInfo(AgreementType.NorwegianTravel, "anotherCompany", null)
+            ContractInfo(
+                AgreementType.NorwegianHomeContent,
+                "companyName",
+                LocalDate.of(2020, 5, 1),
+                "IOS",
+                "HEDVIG"
+            ),
+            ContractInfo(
+                AgreementType.NorwegianTravel,
+                "anotherCompany",
+                null,
+                "IOS",
+                "HEDVIG"
+            )
         )
 
         val callTime = Instant.parse("2020-04-27T18:50:41.760555Z")
@@ -120,7 +156,13 @@ class ContractsActivationDateUpdatedEventTest {
     @Test
     fun `no contract with one with start date`() {
         val contracts = listOf(
-            ContractInfo(AgreementType.NorwegianTravel, "anotherCompany", null)
+            ContractInfo(
+                AgreementType.NorwegianTravel,
+                "anotherCompany",
+                null,
+                "IOS",
+                "HEDVIG"
+            )
         )
 
         val callTime = Instant.parse("2020-04-27T18:50:41.760555Z")

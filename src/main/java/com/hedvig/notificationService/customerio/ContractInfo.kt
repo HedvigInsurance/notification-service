@@ -5,7 +5,9 @@ import java.time.LocalDate
 data class ContractInfo(
     val type: AgreementType,
     val switcherCompany: String?,
-    val startDate: LocalDate?
+    val startDate: LocalDate?,
+    val signSource: String?,
+    val partnerCode: String?
 )
 
 enum class AgreementType {

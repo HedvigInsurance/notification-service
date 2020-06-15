@@ -27,6 +27,10 @@ class CustomerioState(
     var activationDateTriggerAt: LocalDate? = activationDateTriggerAt
         private set
 
+    @Transient // Lets fool hibernate until we can drop the @Entity attribute
+    var contracts: List<ContractState> = listOf()
+        private set
+
     fun shouldSendTmpSignedEvent(): Boolean = underwriterFirstSignAttributesUpdate != null
     fun sentTmpSignedEvent() {
         this.sentTmpSignEvent = true
@@ -69,8 +73,16 @@ class CustomerioState(
         }
     }
 
-    fun triggerContractCreated(callTime: Instant) {
+    private fun triggerContractCreated(callTime: Instant) {
         if (this.contractCreatedTriggerAt == null)
             this.contractCreatedTriggerAt = callTime
+    }
+
+    fun createContract(contractId: String, calltime: Instant, startDate: LocalDate?) {
+        triggerContractCreated(calltime)
+        updateFirstUpcomingStartDate(startDate)
+        if (this.contracts.none { it.contractId == contractId }) {
+            this.contracts = contracts.plus(ContractState(contractId))
+        }
     }
 }

@@ -3,8 +3,8 @@ package com.hedvig.notificationService.customerio
 import com.hedvig.customerio.CustomerioClient
 import com.hedvig.notificationService.customerio.customerioEvents.CustomerioEventCreator
 import com.hedvig.notificationService.customerio.customerioEvents.CustomerioEventCreatorImpl
+import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
-import com.hedvig.notificationService.customerio.hedvigfacades.ProductPricingFacade
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import io.mockk.MockKAnnotations
@@ -23,7 +23,7 @@ import java.time.temporal.ChronoUnit
 class NorwaySignHackUpdateCustomerIOTest {
 
     @MockK
-    lateinit var productPricingFacade: ProductPricingFacade
+    lateinit var contractLoader: ContractLoader
 
     @MockK
     lateinit var memberServiceImpl: MemberServiceImpl
@@ -58,7 +58,7 @@ class NorwaySignHackUpdateCustomerIOTest {
                 Workspace.SWEDEN to seCustomerioClient,
                 Workspace.NORWAY to noCustomerIoClient
             ),
-            productPricingFacade,
+            contractLoader,
             true
         )
     }
@@ -80,11 +80,13 @@ class NorwaySignHackUpdateCustomerIOTest {
             ), updateTime
         )
 
-        every { productPricingFacade.getContractTypeForMember(any()) } returns listOf(
+        every { contractLoader.getContractInfoForMember(any()) } returns listOf(
             ContractInfo(
                 AgreementType.NorwegianHomeContent,
                 null,
-                null
+                null,
+                "IOS",
+                "HEDVIG"
             )
         )
 
@@ -111,11 +113,13 @@ class NorwaySignHackUpdateCustomerIOTest {
             ), updateTime
         )
 
-        every { productPricingFacade.getContractTypeForMember(any()) } returns listOf(
+        every { contractLoader.getContractInfoForMember(any()) } returns listOf(
             ContractInfo(
                 AgreementType.NorwegianHomeContent,
                 null,
-                null
+                null,
+                "IOS",
+                "HEDVIG"
             )
         )
         sut.sendUpdates(updateTime.plus(1, ChronoUnit.SECONDS))
@@ -140,11 +144,13 @@ class NorwaySignHackUpdateCustomerIOTest {
             )
         )
         every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
-        every { productPricingFacade.getContractTypeForMember(any()) } returns listOf(
+        every { contractLoader.getContractInfoForMember(any()) } returns listOf(
             ContractInfo(
                 AgreementType.NorwegianHomeContent,
                 null,
-                null
+                null,
+                "IOS",
+                "HEDVIG"
             )
         )
         sut.sendUpdates(someTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
@@ -174,11 +180,13 @@ class NorwaySignHackUpdateCustomerIOTest {
             )
         )
         every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
-        every { productPricingFacade.getContractTypeForMember(any()) } returns listOf(
+        every { contractLoader.getContractInfoForMember(any()) } returns listOf(
             ContractInfo(
                 AgreementType.NorwegianHomeContent,
                 null,
-                null
+                null,
+                "IOS",
+                "HEDVIG"
             )
         )
         sut.sendUpdates(time.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
@@ -199,11 +207,13 @@ class NorwaySignHackUpdateCustomerIOTest {
         )
 
         every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
-        every { productPricingFacade.getContractTypeForMember(any()) } returns listOf(
+        every { contractLoader.getContractInfoForMember(any()) } returns listOf(
             ContractInfo(
                 AgreementType.SwedishApartment,
                 null,
-                null
+                null,
+                "IOS",
+                "HEDVIG"
             )
         )
         sut.sendUpdates(time.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))

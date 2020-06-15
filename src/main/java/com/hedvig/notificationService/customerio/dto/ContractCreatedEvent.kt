@@ -5,5 +5,6 @@ import java.time.LocalDate
 data class ContractCreatedEvent(
     val contractId: String,
     val owningMemberId: String,
-    val startDate: LocalDate?
+    val startDate: LocalDate?,
+    val signSource: String? = null
 )

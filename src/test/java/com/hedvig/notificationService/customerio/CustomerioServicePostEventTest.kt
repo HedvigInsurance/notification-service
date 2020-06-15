@@ -2,7 +2,7 @@ package com.hedvig.notificationService.customerio
 
 import com.hedvig.customerio.CustomerioClient
 import com.hedvig.notificationService.customerio.customerioEvents.CustomerioEventCreator
-import com.hedvig.notificationService.customerio.hedvigfacades.ProductPricingFacade
+import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import io.mockk.every
 import io.mockk.mockk
@@ -17,7 +17,7 @@ class CustomerioServicePostEventTest {
         val noClient = mockk<CustomerioClient>(relaxed = true)
         val workspaceSelector = mockk<WorkspaceSelector>()
         val eventCreator = mockk<CustomerioEventCreator>()
-        val productPricingFacade = mockk<ProductPricingFacade>()
+        val productPricingFacade = mockk<ContractLoader>()
 
         val sut = CustomerioService(
             workspaceSelector,
@@ -44,7 +44,7 @@ class CustomerioServicePostEventTest {
         val noClient = mockk<CustomerioClient>(relaxed = true)
         val workspaceSelector = mockk<WorkspaceSelector>()
         val eventCreator = mockk<CustomerioEventCreator>()
-        val productPricingFacade = mockk<ProductPricingFacade>()
+        val productPricingFacade = mockk<ContractLoader>()
 
         val sut = CustomerioService(
             workspaceSelector,
