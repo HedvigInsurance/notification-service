@@ -84,9 +84,11 @@ class CustomerioState(
     }
 
     fun queueContractRenewal(contractId: String, callTime: Instant) {
-        val contract = (this.contracts.find { it.contractId == contractId }
-            ?: throw IllegalStateException("Cannot find contract id $contractId in member's state [MemberId: $memberId]")
-            )
+        var contract = this.contracts.find { it.contractId == contractId }
+        if (contract == null) {
+            contract = ContractState(contractId)
+            contracts.add(contract)
+        }
 
         if (contract.contractRenewalQueuedTriggerAt == null) {
             contract.contractRenewalQueuedTriggerAt = callTime

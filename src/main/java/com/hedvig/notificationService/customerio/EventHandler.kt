@@ -42,7 +42,7 @@ class EventHandler(
 
     fun onContractRenewalQueued(event: ContractRenewalQueuedEvent, callTime: Instant = Instant.now()) {
         val state = repo.findByMemberId(event.memberId)
-            ?: throw IllegalStateException("Could not find customerio state for memberId ${event.memberId} while handling ${event.javaClass.simpleName}")
+            ?: CustomerioState(event.memberId)
 
         state.queueContractRenewal(event.contractId, callTime)
         repo.save(state)
