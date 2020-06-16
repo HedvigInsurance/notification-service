@@ -31,5 +31,4 @@ class EventController(val eventHandler: EventHandler) {
         eventHandler.onContractRenewalQueued(event)
         return ResponseEntity.accepted().build()
     }
-
 }

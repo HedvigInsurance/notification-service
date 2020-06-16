@@ -1,6 +1,7 @@
 package com.hedvig.notificationService.customerio.state
 
 import assertk.assertThat
+import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
 import com.hedvig.notificationService.configuration.JDBIConfiguration
 import org.jdbi.v3.core.Jdbi
@@ -20,25 +21,38 @@ import java.time.Instant
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ActiveProfiles("test")
 @ContextConfiguration(
-  classes = [JDBIConfiguration::class],
-  initializers = [ConfigFileApplicationContextInitializer::class]
+    classes = [JDBIConfiguration::class],
+    initializers = [ConfigFileApplicationContextInitializer::class]
 )
 class MultipleContractsWithJDBITest(@Autowired val jdbi: Jdbi) {
 
-  val repository = JDBIRepository(jdbi = jdbi)
+    val repository = JDBIRepository(jdbi = jdbi)
 
-  @Test
-  fun `multiple contracts`() {
+    @Test
+    fun `multiple contracts`() {
 
-    val state = makeCustomerioState()
-    state.createContract("FirstContract", Instant.now(), null)
-    state.createContract("SercondContract", Instant.now(), null)
-    repository.save(state)
+        val state = makeCustomerioState()
+        state.createContract("FirstContract", Instant.now(), null)
+        state.createContract("SercondContract", Instant.now(), null)
+        repository.save(state)
 
-    val rows = jdbi.withHandle<Int, java.lang.RuntimeException> {
-      it.createQuery("select count(1) from contract_state").mapTo(Int::class.java).first()
+        val rows = jdbi.withHandle<Int, java.lang.RuntimeException> {
+            it.createQuery("select count(1) from contract_state").mapTo(Int::class.java).first()
+        }
+
+        assertThat(rows).isEqualTo(2)
     }
 
-    assertThat(rows).isEqualTo(2)
-  }
+    @Test
+    fun `loads multiple contracts`() {
+
+        val state = makeCustomerioState()
+        state.createContract("FirstContract", Instant.now(), null)
+        state.createContract("SercondContract", Instant.now(), null)
+        repository.save(state)
+
+        val newState = repository.findByMemberId(state.memberId)
+
+        assertThat(newState!!.contracts).hasSize(2)
+    }
 }

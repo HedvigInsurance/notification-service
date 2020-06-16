@@ -3,7 +3,6 @@ package com.hedvig.notificationService.customerio.customerioEvents
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.hedvig.notificationService.customerio.AgreementType
 import com.hedvig.notificationService.customerio.ContractInfo
-import com.hedvig.notificationService.customerio.dto.ContractRenewalQueuedEvent
 import com.hedvig.notificationService.customerio.state.CustomerioState
 
 class CustomerioEventCreatorImpl : CustomerioEventCreator {
@@ -93,7 +92,7 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
                     .sortedBy { it }
                     .firstOrNull { it?.isAfter(customerioState.activationDateTriggerAt) == true })
                 ExecutionResult(event)
-            }/*
+            } /*
             customerioState.shouldSendContractRenewalQueuedEvent() -> {
                 val event = createContractRenewalQueuedEvent(customerioState. contracts)
             }*/
@@ -135,7 +134,6 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
                 .map { Contract.from(it) }
         )
    } */
-    
 
     private fun createStartDateUpdatedEvent(
         contracts: Collection<ContractInfo>
