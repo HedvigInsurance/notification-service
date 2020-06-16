@@ -57,4 +57,19 @@ class MultipleContractsWithJDBITest(@Autowired val jdbi: Jdbi) {
         assertThat(newState.contracts[0]).isEqualTo(state.contracts[0])
         assertThat(newState.contracts[1]).isEqualTo(state.contracts[1])
     }
+
+    @Test
+    fun `return contracts with findTriggersToUpdate`() {
+        val state = makeCustomerioState(
+            startDateUpdatedTriggerAt = Instant.now().minusSeconds(3)
+        )
+        state.createContract("FirstContract", Instant.now(), null)
+        state.createContract("SercondContract", Instant.now(), null)
+        repository.save(state)
+
+        val result = repository.shouldUpdate(Instant.now()).first()
+        assertThat(result.contracts).hasSize(2)
+        assertThat(result.contracts[0]).isEqualTo(state.contracts[0])
+        assertThat(result.contracts[1]).isEqualTo(state.contracts[1])
+    }
 }
