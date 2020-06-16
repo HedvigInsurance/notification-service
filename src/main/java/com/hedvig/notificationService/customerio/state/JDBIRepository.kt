@@ -8,13 +8,13 @@ import java.time.Instant
 
 @Repository
 class JDBIRepository(
-    private val jdbi: Jdbi
+  private val jdbi: Jdbi
 ) : CustomerIOStateRepository {
-    override fun save(customerioState: CustomerioState) {
+  override fun save(customerioState: CustomerioState) {
 
-        jdbi.withHandle<Int, RuntimeException> {
-            val stmt =
-                """
+    jdbi.withHandle<Int, RuntimeException> {
+      val stmt =
+        """
 INSERT INTO customerio_state (
     member_id, 
     sent_tmp_sign_event, 
@@ -38,34 +38,68 @@ ON CONFLICT (member_id) DO
         start_date_updated_trigger_at = :startDateUpdatedTriggerAt
 """.trimMargin()
 
-            val update = it.createUpdate(stmt)
-            update.bindBean(customerioState)
+      val update = it.createUpdate(stmt)
+      update.bindBean(customerioState)
 
-            update.execute()
-        }
+      update.execute()
     }
 
-    override fun findByMemberId(memberId: String): CustomerioState? {
-        return jdbi.withHandleUnchecked {
-            it.registerRowMapper(FieldMapper.factory(CustomerioState::class.java))
-            it.createQuery(
-                """
+    insertOrUpdateContractState(customerioState)
+
+  }
+
+  private fun insertOrUpdateContractState(customerioState: CustomerioState) {
+    customerioState.contracts.forEach { contract ->
+      jdbi.withHandle<Int, RuntimeException> {
+        val stmt =
+          """
+  INSERT INTO contract_state (
+      contract_id,
+      member_id,
+      renewal_date,
+      contract_renewal_queued_trigger_at
+  )
+  VALUES (:contractId,
+          :memberId,
+          :renewalDate,
+          :contractRenewalQueuedTriggerAt
+  )
+  ON CONFLICT (contract_id) DO
+          UPDATE
+          SET renewal_date = :renewalDate,
+          contract_renewal_queued_trigger_at = :contractRenewalQueuedTriggerAt
+  """.trimMargin()
+
+        val update = it.createUpdate(stmt)
+        update.bindBean(contract)
+        update.bind("memberId", customerioState.memberId)
+        update.execute()
+      }
+    }
+  }
+
+  override fun findByMemberId(memberId: String): CustomerioState? {
+    return jdbi.withHandleUnchecked {
+      it.registerRowMapper(FieldMapper.factory(CustomerioState::class.java))
+      it.createQuery(
+        """
                 SELECT * from customerio_state where member_id = :memberId
             """.trimIndent()
-            )
-                .bind("memberId", memberId)
-                .mapTo(CustomerioState::class.java)
-                .findFirst()
-        }.orElse(null)
-    }
+      )
+        .bind("memberId", memberId)
+        .mapTo(CustomerioState::class.java)
+        .findFirst()
+    }.orElse(null)
+  }
 
-    override fun shouldUpdate(byTime: Instant): Collection<CustomerioState> {
-        return jdbi.withHandleUnchecked {
-            it.registerRowMapper(FieldMapper.factory(CustomerioState::class.java))
-                .createQuery(
-                    """
+  override fun shouldUpdate(byTime: Instant): Collection<CustomerioState> {
+    return jdbi.withHandleUnchecked {
+      it.registerRowMapper(FieldMapper.factory(CustomerioState::class.java))
+        .createQuery(
+          """
                     SELECT * 
-                    FROM customerio_state 
+                    FROM customerio_state
+                    left join 
                     WHERE
                         (contract_created_trigger_at <= :byTime)
                     OR 
@@ -74,10 +108,11 @@ ON CONFLICT (member_id) DO
                         (start_date_updated_trigger_at <= :byTime)
                     OR
                         (activation_date_trigger_at <= :byTime)
+                    OR 
                 """.trimIndent()
-                )
-                .bind("byTime", byTime)
-                .mapTo(CustomerioState::class.java)
-        }.toList()
-    }
+        )
+        .bind("byTime", byTime)
+        .mapTo(CustomerioState::class.java)
+    }.toList()
+  }
 }

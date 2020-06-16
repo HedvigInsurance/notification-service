@@ -36,6 +36,7 @@ class ContractLoaderImpl(
 
     override fun getContractInfoForMember(memberId: String): List<ContractInfo> {
         val productPricingReponse = productPricingClient.getContractsForMember(memberId)
+        //TODO: MELETIS fetch renewal date
 
         return productPricingReponse.body.map {
             val underwriterResponse = underwriterClient.getQuoteFromContractId(it.id.toString()).body

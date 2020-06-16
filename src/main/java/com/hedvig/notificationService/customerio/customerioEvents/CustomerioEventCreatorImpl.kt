@@ -3,6 +3,7 @@ package com.hedvig.notificationService.customerio.customerioEvents
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.hedvig.notificationService.customerio.AgreementType
 import com.hedvig.notificationService.customerio.ContractInfo
+import com.hedvig.notificationService.customerio.dto.ContractRenewalQueuedEvent
 import com.hedvig.notificationService.customerio.state.CustomerioState
 
 class CustomerioEventCreatorImpl : CustomerioEventCreator {
@@ -92,7 +93,10 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
                     .sortedBy { it }
                     .firstOrNull { it?.isAfter(customerioState.activationDateTriggerAt) == true })
                 ExecutionResult(event)
-            }
+            }/*
+            customerioState.shouldSendContractRenewalQueuedEvent() -> {
+                val event = createContractRenewalQueuedEvent(customerioState. contracts)
+            }*/
             else
             -> throw RuntimeException("CustomerioState in weird state")
         }
@@ -114,6 +118,24 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
                 .map { Contract.from(it) }
         )
     }
+
+/*    private fun createContractRenewalQueuedEvent(
+        customerioState: CustomerioState,
+        contracts: List<ContractInfo>
+    ): ContractsRenewalQueuedTodayEvent {
+        val contractsWithRenewalQueuedToday =
+            contracts.filter { it.startDate == customerioState.activationDateTriggerAt }
+        if (contractsWithActivationDateToday.isEmpty()) {
+            throw RuntimeException("Cannot send crete event no contracts with activation date today")
+        }
+        return ContractsActivatedTodayEvent(
+            contractsWithActivationDateToday
+                .map { Contract.from(it) },
+            contracts.filter { it.startDate == null || it.startDate.isAfter(customerioState.activationDateTriggerAt) }
+                .map { Contract.from(it) }
+        )
+   } */
+    
 
     private fun createStartDateUpdatedEvent(
         contracts: Collection<ContractInfo>
