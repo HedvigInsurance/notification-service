@@ -54,5 +54,7 @@ class MultipleContractsWithJDBITest(@Autowired val jdbi: Jdbi) {
         val newState = repository.findByMemberId(state.memberId)
 
         assertThat(newState!!.contracts).hasSize(2)
+        assertThat(newState.contracts[0]).isEqualTo(state.contracts[0])
+        assertThat(newState.contracts[1]).isEqualTo(state.contracts[1])
     }
 }
