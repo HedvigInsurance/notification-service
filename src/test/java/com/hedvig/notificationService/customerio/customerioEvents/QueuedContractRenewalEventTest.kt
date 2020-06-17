@@ -4,6 +4,7 @@ import assertk.all
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
+import assertk.assertions.isNotNull
 import assertk.assertions.isNull
 import com.hedvig.notificationService.customerio.AgreementType
 import com.hedvig.notificationService.customerio.ContractInfo
@@ -21,13 +22,16 @@ class QueuedContractRenewalEventTest {
 
         val state = makeCustomerioState()
         val aInstant = Instant.now()
-        state.queueContractRenewal("theContractId", aInstant)
+
+        val contractId = UUID.randomUUID()
+        state.queueContractRenewal(contractId.toString(), aInstant)
 
         val result = eventCreatorImpl.execute(
             state, listOf(
                 ContractInfo(
                     type = AgreementType.NorwegianHomeContent,
-                    contractId = UUID.randomUUID()
+                    contractId = contractId,
+                    renewalDate = LocalDate.of(2020, 9, 24)
                 )
             )
         )
@@ -36,12 +40,37 @@ class QueuedContractRenewalEventTest {
     }
 
     @Test
+    internal fun `remove only triggered trigger after execution`() {
+        val eventCreatorImpl = CustomerioEventCreatorImpl()
+
+        val state = makeCustomerioState()
+        val aInstant = Instant.now()
+        val triggeredContractId = UUID.randomUUID()
+        state.queueContractRenewal(triggeredContractId.toString(), aInstant)
+        state.queueContractRenewal("theContractId2", aInstant)
+
+        val result = eventCreatorImpl.execute(
+            state, listOf(
+                ContractInfo(
+                    type = AgreementType.NorwegianHomeContent,
+                    contractId = triggeredContractId,
+                    renewalDate = LocalDate.of(2020, 6, 1)
+                )
+            )
+        )
+
+        assertThat(state.contracts[0].contractRenewalQueuedTriggerAt).isNull()
+        assertThat(state.contracts[1].contractRenewalQueuedTriggerAt).isNotNull()
+    }
+
+    @Test
     internal fun `create contractRenewalQueuedEvent after execution`() {
         val eventCreatorImpl = CustomerioEventCreatorImpl()
 
         val state = makeCustomerioState()
         val aInstant = Instant.now()
-        state.queueContractRenewal("theContractId", aInstant)
+        val contractId = UUID.randomUUID()
+        state.queueContractRenewal(contractId.toString(), aInstant)
 
         val renewalDate = LocalDate.of(2021, 7, 1)
         val result = eventCreatorImpl.execute(
@@ -49,7 +78,7 @@ class QueuedContractRenewalEventTest {
                 ContractInfo(
                     type = AgreementType.NorwegianHomeContent,
                     renewalDate = renewalDate,
-                    contractId = UUID.randomUUID()
+                    contractId = contractId
                 )
             )
         )
