@@ -98,4 +98,8 @@ class CustomerioState(
     fun sentContractRenewalQueuedTodayEvent() {
         contracts.forEach { it.contractRenewalQueuedTriggerAt = null }
     }
+
+    fun getContractRenewalQueuedContractId(): ContractState {
+        return contracts.first { it.contractRenewalQueuedTriggerAt != null }
+    }
 }

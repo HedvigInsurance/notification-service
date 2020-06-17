@@ -66,18 +66,19 @@ class QueuedContractRenewalEventTest {
 
         val state = makeCustomerioState()
         val aInstant = Instant.now()
-        state.queueContractRenewal("theContractId", aInstant)
+        val aContractId = UUID.randomUUID()
+        state.queueContractRenewal(aContractId.toString(), aInstant)
 
-        val renewalDate = LocalDate.of(2021, 7, 1)
+        val renewalDate = LocalDate.of(2021, 7, 11)
         val result = eventCreatorImpl.execute(
             state, listOf(
                 ContractInfo(
-                    type = AgreementType.NorwegianHomeContent,
+                    type = AgreementType.NorwegianTravel,
                     renewalDate = renewalDate,
-                    contractId = UUID.randomUUID()
+                    contractId = aContractId
                 ),
                 ContractInfo(
-                    type = AgreementType.NorwegianTravel,
+                    type = AgreementType.NorwegianHomeContent,
                     contractId = UUID.randomUUID()
                 )
             )
@@ -85,7 +86,7 @@ class QueuedContractRenewalEventTest {
 
         assertThat(result.event).isInstanceOf(ContractsRenewalQueuedTodayEvent::class.java).all {
             this.transform { it.renewalDate }.isEqualTo(renewalDate)
-            this.transform { it.type }.isEqualTo(AgreementType.NorwegianHomeContent.typeName)
+            this.transform { it.type }.isEqualTo(AgreementType.NorwegianTravel.typeName)
         }
     }
 }

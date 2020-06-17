@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.hedvig.notificationService.customerio.AgreementType
 import com.hedvig.notificationService.customerio.ContractInfo
 import com.hedvig.notificationService.customerio.state.CustomerioState
-import java.time.LocalDate
 
 class CustomerioEventCreatorImpl : CustomerioEventCreator {
     fun createTmpSignedInsuranceEvent(
@@ -125,7 +124,11 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
         customerioState: CustomerioState,
         contracts: List<ContractInfo>
     ): ContractsRenewalQueuedTodayEvent {
-        return ContractsRenewalQueuedTodayEvent(LocalDate.of(2021, 7, 1), AgreementType.NorwegianHomeContent.typeName)
+        val triggeredContract = customerioState.getContractRenewalQueuedContractId()
+
+        val contract = contracts.find { it.contractId.toString() == triggeredContract.contractId }!!
+
+        return ContractsRenewalQueuedTodayEvent(contract.renewalDate!!, contract.type.typeName)
     }
 
     private fun createStartDateUpdatedEvent(
