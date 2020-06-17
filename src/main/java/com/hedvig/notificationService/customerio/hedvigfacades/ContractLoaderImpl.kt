@@ -46,6 +46,7 @@ class ContractLoaderImpl(
                 startDate = it.masterInception,
                 signSource = it.signSource,
                 partnerCode = underwriterResponse.attributedTo,
+                renewalDate = it.renewal?.renewalDate,
                 contractId = it.id
             )
         }

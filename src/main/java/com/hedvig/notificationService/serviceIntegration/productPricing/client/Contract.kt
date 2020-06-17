@@ -19,6 +19,7 @@ data class Contract(
     val hasPendingAgreement: Boolean,
     val agreements: List<Agreement>,
     val hasQueuedRenewal: Boolean,
+    val renewal: Renewal?,
     val preferredCurrency: CurrencyUnit,
     val market: Market,
     val signSource: String?,

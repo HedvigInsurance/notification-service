@@ -9,6 +9,7 @@ import com.hedvig.notificationService.serviceIntegration.productPricing.client.C
 import com.hedvig.notificationService.serviceIntegration.productPricing.client.Market
 import com.hedvig.notificationService.serviceIntegration.productPricing.client.NorwegianHomeContentLineOfBusiness
 import com.hedvig.notificationService.serviceIntegration.productPricing.client.ProductPricingClient
+import com.hedvig.notificationService.serviceIntegration.productPricing.client.Renewal
 import com.hedvig.notificationService.serviceIntegration.productPricing.underwriter.makeQuoteDto
 import com.hedvig.notificationService.serviceIntegration.underwriter.UnderwriterClient
 import com.neovisionaries.i18n.CountryCode
@@ -103,6 +104,36 @@ class ContractLoaderGetContractsTest {
         assertThat(contractInfo.first().partnerCode).isEqualTo("A_PARTNER")
     }
 
+    @Test
+    fun `sets renewal date`() {
+        val contractId = UUID.fromString("b43a96b2-a70c-11ea-ac39-3af9d3902f96")
+        every { productPricingClient.getContractsForMember(any()) } returns ResponseEntity.ok(
+            listOf(
+                makeContract(
+                    makeNorwegianHomeContentAgreement(),
+                    contractId = contractId,
+                    renewal = Renewal(
+                        LocalDate.of(2020, 7, 1),
+                        "url",
+                        UUID.randomUUID()
+                    )
+                )
+            )
+        )
+
+        val quote = makeQuoteDto()
+        every { underwriterClient.getQuoteFromContractId(contractId.toString()) } returns ResponseEntity.ok(quote)
+
+        val sut =
+            ContractLoaderImpl(
+                productPricingClient,
+                underwriterClient
+            )
+
+        val contractInfo = sut.getContractInfoForMember("someId")
+        assertThat(contractInfo.first().renewalDate).isEqualTo(LocalDate.of(2020, 7, 1))
+    }
+
     private fun makeNorwegianHomeContentAgreement(): Agreement.NorwegianHomeContent {
         return Agreement.NorwegianHomeContent(
             UUID.randomUUID(),
@@ -119,7 +150,8 @@ class ContractLoaderGetContractsTest {
         vararg agreements: Agreement,
         switchedFrom: String? = null,
         signSource: String? = null,
-        contractId: UUID = UUID.randomUUID()
+        contractId: UUID = UUID.randomUUID(),
+        renewal: Renewal? = null
     ): Contract {
         return Contract(
             contractId,
@@ -135,6 +167,7 @@ class ContractLoaderGetContractsTest {
                 *agreements
             ),
             false,
+            renewal,
             Monetary.getCurrency("SEK"),
             Market.NORWAY,
             signSource,
