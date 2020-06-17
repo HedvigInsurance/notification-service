@@ -7,7 +7,8 @@ data class ContractInfo(
     val switcherCompany: String?,
     val startDate: LocalDate?,
     val signSource: String?,
-    val partnerCode: String?
+    val partnerCode: String?,
+    val renewalDate: LocalDate? = null
 //    ,
 //    val renewalScheduled: LocalDate?
 )

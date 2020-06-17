@@ -1,5 +1,7 @@
 package com.hedvig.notificationService.customerio.customerioEvents
 
+import java.time.LocalDate
+
 data class ContractsRenewalQueuedTodayEvent(
-    val test: String = ""
+    val renewalDate: LocalDate
 )
