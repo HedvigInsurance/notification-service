@@ -125,7 +125,7 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
         customerioState: CustomerioState,
         contracts: List<ContractInfo>
     ): ContractsRenewalQueuedTodayEvent {
-        return ContractsRenewalQueuedTodayEvent(LocalDate.of(2021, 7, 1))
+        return ContractsRenewalQueuedTodayEvent(LocalDate.of(2021, 7, 1), AgreementType.NorwegianHomeContent.typeName)
     }
 
     private fun createStartDateUpdatedEvent(
