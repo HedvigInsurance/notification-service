@@ -91,18 +91,10 @@ from customerio_state cs
 LEFT JOIN contract_state c ON c.member_id = cs.member_id
 where cs.member_id = :memberId
             """.trimIndent()
-            ).bind("memberId", memberId)
-                .reduceRows { map: MutableMap<String, CustomerioState>, rw: RowView ->
-                    val contact: CustomerioState = map.computeIfAbsent(
-                        rw.getColumn("cs_member_id", String::class.java)
-                    ) { rw.getRow(CustomerioState::class.java) }
-
-                    if (rw.getColumn("c_contract_id", String::class.java) != null) {
-                        val element = rw.getRow(ContractState::class.java)
-
-                        contact.contracts.add(element)
-                    }
-                }.findFirst()
+            )
+                .bind("memberId", memberId)
+                .reduceRows(this::contractStateReducer)
+                .findFirst()
         }.orElse(null)
     }
 
@@ -132,16 +124,22 @@ where cs.member_id = :memberId
                 """.trimIndent()
             )
                 .bind("byTime", byTime)
-                .reduceRows { map: MutableMap<String, CustomerioState>, rw: RowView ->
-                    val contact: CustomerioState = map.computeIfAbsent(
-                        rw.getColumn("cs_member_id", String::class.java)
-                    ) { rw.getRow(CustomerioState::class.java) }
+                .reduceRows(this::contractStateReducer)
+        }
+    }
 
-                    if (rw.getColumn("c_contract_id", String::class.java) != null) {
-                        val element = rw.getRow(ContractState::class.java)
-                        contact.contracts.add(element)
-                    }
-                }
+    private fun contractStateReducer(
+        map: MutableMap<String, CustomerioState>,
+        rw: RowView
+    ) {
+        val contact: CustomerioState = map.computeIfAbsent(
+            rw.getColumn("cs_member_id", String::class.java)
+        ) { rw.getRow(CustomerioState::class.java) }
+
+        if (rw.getColumn("c_contract_id", String::class.java) != null) {
+            val element = rw.getRow(ContractState::class.java)
+
+            contact.contracts.add(element)
         }
     }
 
