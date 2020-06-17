@@ -243,7 +243,7 @@ class JDBIRepositoryFindTriggersToUpdateTest(@Autowired val jdbi: Jdbi) {
                     state.queueContractRenewal("SomeId", timestamp)
                     Arguments.of(
                         state,
-                        timestamp.minusSeconds(60 * 60 * 24),
+                        timestamp.minusSeconds(1),
                         0
                     )
                 }
