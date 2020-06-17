@@ -2,6 +2,7 @@ package com.hedvig.notificationService.customerio.state
 
 import java.time.Instant
 import java.time.ZoneId
+import java.util.stream.Stream
 
 class InMemoryCustomerIOStateRepository(var data: Map<String, CustomerioState> = mapOf()) :
     CustomerIOStateRepository {
@@ -13,7 +14,7 @@ class InMemoryCustomerIOStateRepository(var data: Map<String, CustomerioState> =
         return data[memberId]
     }
 
-    override fun shouldUpdate(byTime: Instant): Collection<CustomerioState> {
+    override fun shouldUpdate(byTime: Instant): Stream<CustomerioState> {
         return data.values.filter {
             (it.underwriterFirstSignAttributesUpdate != null &&
                 it.underwriterFirstSignAttributesUpdate!! <= byTime &&
@@ -22,6 +23,6 @@ class InMemoryCustomerIOStateRepository(var data: Map<String, CustomerioState> =
                 (it.startDateUpdatedTriggerAt != null && it.startDateUpdatedTriggerAt!! <= byTime) ||
                 (it.activationDateTriggerAt != null && it.activationDateTriggerAt!! <=
                     byTime.atZone(ZoneId.of("Europe/Stockholm")).toLocalDate())
-        }
+        }.stream()
     }
 }

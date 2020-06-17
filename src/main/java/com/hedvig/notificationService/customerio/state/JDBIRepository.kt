@@ -7,6 +7,7 @@ import org.jdbi.v3.core.mapper.RowMapperFactory
 import org.jdbi.v3.core.result.RowView
 import org.springframework.stereotype.Repository
 import java.time.Instant
+import java.util.stream.Stream
 
 @Repository
 class JDBIRepository(
@@ -116,7 +117,7 @@ where cs.member_id = :memberId
         }.orElse(null)
     }
 
-    override fun shouldUpdate(byTime: Instant): Collection<CustomerioState> {
+    override fun shouldUpdate(byTime: Instant): Stream<CustomerioState> {
         return jdbi.withHandleUnchecked {
             it
                 .registerRowMapper(
@@ -147,8 +148,18 @@ where cs.member_id = :memberId
                 """.trimIndent()
                 )
                 .bind("byTime", byTime)
-                .mapTo(CustomerioState::class.java)
-        }.toList()
+                .reduceRows { map: MutableMap<String, CustomerioState>, rw: RowView ->
+                    val contact: CustomerioState = map.computeIfAbsent(
+                        rw.getColumn("cs_member_id", String::class.java)
+                    ) { rw.getRow(CustomerioState::class.java) }
+
+                    if (rw.getColumn("c_contract_id", String::class.java) != null) {
+                        val element = rw.getRow(ContractState::class.java)
+
+                        contact.contracts.add(element)
+                    }
+                }
+        }
     }
 }
 

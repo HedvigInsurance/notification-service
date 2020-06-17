@@ -15,6 +15,7 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.time.Instant
+import kotlin.streams.toList
 
 @ExtendWith(SpringExtension::class)
 @DataJdbcTest()
@@ -67,7 +68,7 @@ class MultipleContractsWithJDBITest(@Autowired val jdbi: Jdbi) {
         state.createContract("SercondContract", Instant.now(), null)
         repository.save(state)
 
-        val result = repository.shouldUpdate(Instant.now()).first()
+        val result = repository.shouldUpdate(Instant.now()).toList().first()
         assertThat(result.contracts).hasSize(2)
         assertThat(result.contracts[0]).isEqualTo(state.contracts[0])
         assertThat(result.contracts[1]).isEqualTo(state.contracts[1])
