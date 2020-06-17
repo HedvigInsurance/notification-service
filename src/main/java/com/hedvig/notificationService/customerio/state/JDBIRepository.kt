@@ -1,5 +1,6 @@
 package com.hedvig.notificationService.customerio.state
 
+import org.jdbi.v3.core.Handle
 import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.core.kotlin.KotlinMapper
 import org.jdbi.v3.core.kotlin.withHandleUnchecked
@@ -82,6 +83,7 @@ ON CONFLICT (member_id) DO
 
     override fun findByMemberId(memberId: String): CustomerioState? {
         return jdbi.withHandleUnchecked {
+            registerRowMappers(it)
             it.createQuery(
                 """
 $SELECT_STATE_AND_CONTRACTS     
@@ -89,20 +91,7 @@ from customerio_state cs
 LEFT JOIN contract_state c ON c.member_id = cs.member_id
 where cs.member_id = :memberId
             """.trimIndent()
-            )
-                .bind("memberId", memberId)
-                .registerRowMapper(
-                    RowMapperFactory.of(
-                        CustomerioState::class.java,
-                        KotlinMapper(CustomerioState::class.java, "cs")
-                    )
-                )
-                .registerRowMapper(
-                    RowMapperFactory.of(
-                        ContractState::class.java,
-                        KotlinMapper(ContractState::class.java, "c")
-                    )
-                )
+            ).bind("memberId", memberId)
                 .reduceRows { map: MutableMap<String, CustomerioState>, rw: RowView ->
                     val contact: CustomerioState = map.computeIfAbsent(
                         rw.getColumn("cs_member_id", String::class.java)
@@ -119,21 +108,9 @@ where cs.member_id = :memberId
 
     override fun shouldUpdate(byTime: Instant): Stream<CustomerioState> {
         return jdbi.withHandleUnchecked {
-            it
-                .registerRowMapper(
-                    RowMapperFactory.of(
-                        CustomerioState::class.java,
-                        KotlinMapper(CustomerioState::class.java, "cs")
-                    )
-                )
-                .registerRowMapper(
-                    RowMapperFactory.of(
-                        ContractState::class.java,
-                        KotlinMapper(ContractState::class.java, "c")
-                    )
-                )
-                .createQuery(
-                    """
+            registerRowMappers(it)
+            it.createQuery(
+                """
                     WITH contract_triggers AS (
                      SELECT member_id, true AS contract_renewal_queued_trigger_at  
                      FROM contract_state
@@ -153,7 +130,7 @@ where cs.member_id = :memberId
                         (cs.activation_date_trigger_at <= :byTime)
                     OR ct.contract_renewal_queued_trigger_at
                 """.trimIndent()
-                )
+            )
                 .bind("byTime", byTime)
                 .reduceRows { map: MutableMap<String, CustomerioState>, rw: RowView ->
                     val contact: CustomerioState = map.computeIfAbsent(
@@ -166,6 +143,21 @@ where cs.member_id = :memberId
                     }
                 }
         }
+    }
+
+    private fun registerRowMappers(handle: Handle) {
+        handle.registerRowMapper(
+            RowMapperFactory.of(
+                CustomerioState::class.java,
+                KotlinMapper(CustomerioState::class.java, "cs")
+            )
+        )
+        handle.registerRowMapper(
+            RowMapperFactory.of(
+                ContractState::class.java,
+                KotlinMapper(ContractState::class.java, "c")
+            )
+        )
     }
 }
 
