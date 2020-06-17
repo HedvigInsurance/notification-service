@@ -94,4 +94,8 @@ class CustomerioState(
             contract.contractRenewalQueuedTriggerAt = callTime
         }
     }
+
+    fun sentContractRenewalQueuedTodayEvent() {
+        contracts.forEach { it.contractRenewalQueuedTriggerAt = null }
+    }
 }
