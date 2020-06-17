@@ -11,8 +11,6 @@ data class ContractInfo(
     val partnerCode: String? = null,
     val renewalDate: LocalDate? = null,
     val contractId: UUID
-//    ,
-//    val renewalScheduled: LocalDate?
 )
 
 enum class AgreementType {
