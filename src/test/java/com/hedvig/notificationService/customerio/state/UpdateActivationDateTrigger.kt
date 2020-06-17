@@ -3,7 +3,7 @@ package com.hedvig.notificationService.customerio.state
 import assertk.assertThat
 import assertk.assertions.isNull
 import com.hedvig.notificationService.customerio.AgreementType
-import com.hedvig.notificationService.customerio.ContractInfo
+import com.hedvig.notificationService.customerio.hedvigfacades.makeContractInfo
 import org.junit.Test
 
 class UpdateActivationDateTrigger() {
@@ -13,12 +13,12 @@ class UpdateActivationDateTrigger() {
         val sut = CustomerioState("aMemberID")
 
         val contracts = listOf(
-            ContractInfo(
+            makeContractInfo(
                 AgreementType.NorwegianHomeContent,
-                null,
-                null,
-                "IOS",
-                "HEDVIG"
+                switcherCompany = null,
+                startDate = null,
+                signSource = "IOS",
+                partnerCode = "HEDVIG"
             )
         )
         sut.updateFirstUpcomingStartDate(contracts)

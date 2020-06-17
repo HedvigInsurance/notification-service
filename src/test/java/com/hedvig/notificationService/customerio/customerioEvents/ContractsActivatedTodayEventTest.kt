@@ -6,7 +6,7 @@ import assertk.assertions.containsAll
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNull
 import com.hedvig.notificationService.customerio.AgreementType
-import com.hedvig.notificationService.customerio.ContractInfo
+import com.hedvig.notificationService.customerio.hedvigfacades.makeContractInfo
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import org.junit.Rule
 import org.junit.Test
@@ -29,12 +29,9 @@ class ContractsActivatedTodayEventTest {
         eventCreatorImpl.execute(
             customerioState,
             listOf(
-                ContractInfo(
+                makeContractInfo(
                     AgreementType.NorwegianHomeContent,
-                    null,
-                    LocalDate.of(2020, 1, 2),
-                    "IOS",
-                    "HEDVIG"
+                    startDate = LocalDate.of(2020, 1, 2)
                 )
             )
         )
@@ -51,12 +48,9 @@ class ContractsActivatedTodayEventTest {
                 activationDateTriggerAt = LocalDate.of(2020, 1, 2)
             ),
             listOf(
-                ContractInfo(
+                makeContractInfo(
                     AgreementType.NorwegianTravel,
-                    null,
-                    LocalDate.of(2020, 1, 2),
-                    "IOS",
-                    "HEDVIG"
+                    startDate = LocalDate.of(2020, 1, 2)
                 )
             )
         )
@@ -73,19 +67,13 @@ class ContractsActivatedTodayEventTest {
                 activationDateTriggerAt = LocalDate.of(2020, 1, 2)
             ),
             listOf(
-                ContractInfo(
+                makeContractInfo(
                     AgreementType.NorwegianTravel,
-                    null,
-                    LocalDate.of(2020, 1, 2),
-                    "IOS",
-                    "HEDVIG"
+                    startDate = LocalDate.of(2020, 1, 2)
                 ),
-                ContractInfo(
+                makeContractInfo(
                     AgreementType.NorwegianHomeContent,
-                    null,
-                    LocalDate.of(2020, 1, 2),
-                    "IOS",
-                    "HEDVIG"
+                    startDate = LocalDate.of(2020, 1, 2)
                 )
             )
         )
@@ -109,19 +97,13 @@ class ContractsActivatedTodayEventTest {
         val result = eventCreatorImpl.execute(
             customerioState,
             listOf(
-                ContractInfo(
+                makeContractInfo(
                     AgreementType.NorwegianTravel,
-                    null,
-                    LocalDate.of(2020, 1, 2),
-                    "IOS",
-                    "HEDVIG"
+                    startDate = LocalDate.of(2020, 1, 2)
                 ),
-                ContractInfo(
+                makeContractInfo(
                     AgreementType.NorwegianHomeContent,
-                    null,
-                    LocalDate.of(2020, 1, 3),
-                    "IOS",
-                    "HEDVIG"
+                    startDate = LocalDate.of(2020, 1, 3)
                 )
             )
         )
@@ -143,26 +125,17 @@ class ContractsActivatedTodayEventTest {
         val result = eventCreatorImpl.execute(
             customerioState,
             listOf(
-                ContractInfo(
+                makeContractInfo(
                     AgreementType.NorwegianTravel,
-                    null,
-                    LocalDate.of(2020, 1, 2),
-                    "IOS",
-                    "HEDVIG"
+                    startDate = LocalDate.of(2020, 1, 2)
                 ),
-                ContractInfo(
+                makeContractInfo(
                     AgreementType.NorwegianHomeContent,
-                    null,
-                    LocalDate.of(2020, 1, 3),
-                    "IOS",
-                    "HEDVIG"
+                    startDate = LocalDate.of(2020, 1, 3)
                 ),
-                ContractInfo(
+                makeContractInfo(
                     AgreementType.NorwegianHomeContent,
-                    null,
-                    null,
-                    "IOS",
-                    "HEDVIG"
+                    startDate = null
                 )
             )
         )
@@ -185,19 +158,13 @@ class ContractsActivatedTodayEventTest {
         val result = eventCreatorImpl.execute(
             customerioState,
             listOf(
-                ContractInfo(
+                makeContractInfo(
                     AgreementType.NorwegianTravel,
-                    null,
-                    LocalDate.of(2020, 1, 2),
-                    "IOS",
-                    "HEDVIG"
+                    startDate = LocalDate.of(2020, 1, 2)
                 ),
-                ContractInfo(
+                makeContractInfo(
                     AgreementType.NorwegianHomeContent,
-                    null,
-                    null,
-                    "IOS",
-                    "HEDVIG"
+                    startDate = null
                 )
             )
         )
@@ -220,12 +187,9 @@ class ContractsActivatedTodayEventTest {
                 activationDateTriggerAt = LocalDate.of(2020, 1, 2)
             ),
             listOf(
-                ContractInfo(
+                makeContractInfo(
                     AgreementType.NorwegianTravel,
-                    null,
-                    LocalDate.of(2020, 1, 3),
-                    "IOS",
-                    "HEDVIG"
+                    startDate = LocalDate.of(2020, 1, 3)
                 )
             )
         )

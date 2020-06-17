@@ -5,7 +5,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
 import com.hedvig.notificationService.customerio.AgreementType
-import com.hedvig.notificationService.customerio.ContractInfo
+import com.hedvig.notificationService.customerio.hedvigfacades.makeContractInfo
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import org.junit.jupiter.api.Test
 import java.time.Instant
@@ -21,9 +21,9 @@ class IncludeSignSourceInNorwegianContractCreatedEventTest {
 
         val result = sut.execute(
             customerioState, listOf(
-                ContractInfo(
+                makeContractInfo(
                     AgreementType.NorwegianTravel,
-                    null,
+                    switcherCompany = null,
                     startDate = null,
                     signSource = "RAPIO",
                     partnerCode = "HEDIVG"

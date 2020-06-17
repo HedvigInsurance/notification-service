@@ -3,6 +3,7 @@ package com.hedvig.notificationService.customerio.hedvigfacades
 import com.hedvig.notificationService.customerio.AgreementType
 import com.hedvig.notificationService.customerio.ContractInfo
 import com.hedvig.notificationService.customerio.Workspace
+import java.util.UUID
 
 class FakeContractLoader :
     ContractLoader {
@@ -13,11 +14,12 @@ class FakeContractLoader :
     override fun getContractInfoForMember(memberId: String): List<ContractInfo> {
         return listOf(
             ContractInfo(
-                AgreementType.NorwegianHomeContent,
-                null,
-                null,
-                "IOS",
-                "HEDVIG"
+                type = AgreementType.NorwegianHomeContent,
+                switcherCompany = null,
+                startDate = null,
+                signSource = "IOS",
+                partnerCode = "HEDVIG",
+                contractId = UUID.randomUUID()
             )
         )
     }

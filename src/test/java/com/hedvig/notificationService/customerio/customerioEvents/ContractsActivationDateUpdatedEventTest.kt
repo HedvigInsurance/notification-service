@@ -6,8 +6,8 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
 import assertk.assertions.isNull
 import com.hedvig.notificationService.customerio.AgreementType
-import com.hedvig.notificationService.customerio.ContractInfo
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
+import com.hedvig.notificationService.customerio.hedvigfacades.makeContractInfo
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import io.mockk.impl.annotations.MockK
 import org.junit.Rule
@@ -30,12 +30,11 @@ class ContractsActivationDateUpdatedEventTest {
 
         val contracts =
             listOf(
-                ContractInfo(
+                makeContractInfo(
                     AgreementType.NorwegianHomeContent,
-                    "someCompany",
-                    LocalDate.parse("2020-03-04"),
-                    "IOS",
-                    "HEDVIG"
+                    switcherCompany = "someCompany",
+
+                    startDate = LocalDate.parse("2020-03-04")
                 )
             )
 
@@ -50,12 +49,10 @@ class ContractsActivationDateUpdatedEventTest {
     @Test
     fun `one contract with start date`() {
         val contracts = listOf(
-            ContractInfo(
+            makeContractInfo(
                 AgreementType.NorwegianHomeContent,
-                "companyName",
-                LocalDate.of(2020, 5, 1),
-                "IOS",
-                "HEDVIG"
+                switcherCompany = "companyName",
+                startDate = LocalDate.of(2020, 5, 1)
             )
         )
 
@@ -78,19 +75,16 @@ class ContractsActivationDateUpdatedEventTest {
     @Test
     fun `two contracts with start date`() {
         val contracts = listOf(
-            ContractInfo(
+            makeContractInfo(
                 AgreementType.NorwegianHomeContent,
-                "companyName",
-                LocalDate.of(2020, 5, 1),
-                "IOS",
-                "HEDVIG"
+                switcherCompany = "companyName",
+                startDate = LocalDate.of(2020, 5, 1)
             ),
-            ContractInfo(
+
+            makeContractInfo(
                 AgreementType.NorwegianTravel,
-                "anotherCompany",
-                LocalDate.of(2020, 5, 13),
-                "IOS",
-                "HEDVIG"
+                switcherCompany = "anotherCompany",
+                startDate = LocalDate.of(2020, 5, 13)
             )
         )
 
@@ -120,19 +114,15 @@ class ContractsActivationDateUpdatedEventTest {
     @Test
     fun `one contract with one without start date`() {
         val contracts = listOf(
-            ContractInfo(
-                AgreementType.NorwegianHomeContent,
-                "companyName",
-                LocalDate.of(2020, 5, 1),
-                "IOS",
-                "HEDVIG"
+            makeContractInfo(
+                agreementType = AgreementType.NorwegianHomeContent,
+                switcherCompany = "companyName",
+                startDate = LocalDate.of(2020, 5, 1)
             ),
-            ContractInfo(
+            makeContractInfo(
                 AgreementType.NorwegianTravel,
-                "anotherCompany",
-                null,
-                "IOS",
-                "HEDVIG"
+                switcherCompany = "anotherCompany",
+                startDate = null
             )
         )
 
@@ -156,12 +146,10 @@ class ContractsActivationDateUpdatedEventTest {
     @Test
     fun `no contract with one with start date`() {
         val contracts = listOf(
-            ContractInfo(
+            makeContractInfo(
                 AgreementType.NorwegianTravel,
-                "anotherCompany",
-                null,
-                "IOS",
-                "HEDVIG"
+                switcherCompany = "anotherCompany",
+                startDate = null
             )
         )
 

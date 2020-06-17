@@ -11,6 +11,7 @@ import com.hedvig.notificationService.customerio.state.makeCustomerioState
 import org.junit.jupiter.api.Test
 import java.time.Instant
 import java.time.LocalDate
+import java.util.UUID
 
 class QueuedContractRenewalEventTest {
 
@@ -25,7 +26,8 @@ class QueuedContractRenewalEventTest {
         val result = eventCreatorImpl.execute(
             state, listOf(
                 ContractInfo(
-                    AgreementType.NorwegianHomeContent, null, null, null, null
+                    type = AgreementType.NorwegianHomeContent,
+                    contractId = UUID.randomUUID()
                 )
             )
         )
@@ -45,12 +47,38 @@ class QueuedContractRenewalEventTest {
         val result = eventCreatorImpl.execute(
             state, listOf(
                 ContractInfo(
-                    AgreementType.NorwegianHomeContent,
-                    null,
-                    null,
-                    null,
-                    null,
-                    renewalDate
+                    type = AgreementType.NorwegianHomeContent,
+                    renewalDate = renewalDate,
+                    contractId = UUID.randomUUID()
+                )
+            )
+        )
+
+        assertThat(result.event).isInstanceOf(ContractsRenewalQueuedTodayEvent::class.java).all {
+            this.transform { it.renewalDate }.isEqualTo(renewalDate)
+            this.transform { it.type }.isEqualTo(AgreementType.NorwegianHomeContent.typeName)
+        }
+    }
+
+    @Test
+    internal fun `create contractRenewalQueuedEvent for multiple contracts after execution`() {
+        val eventCreatorImpl = CustomerioEventCreatorImpl()
+
+        val state = makeCustomerioState()
+        val aInstant = Instant.now()
+        state.queueContractRenewal("theContractId", aInstant)
+
+        val renewalDate = LocalDate.of(2021, 7, 1)
+        val result = eventCreatorImpl.execute(
+            state, listOf(
+                ContractInfo(
+                    type = AgreementType.NorwegianHomeContent,
+                    renewalDate = renewalDate,
+                    contractId = UUID.randomUUID()
+                ),
+                ContractInfo(
+                    type = AgreementType.NorwegianTravel,
+                    contractId = UUID.randomUUID()
                 )
             )
         )

@@ -5,6 +5,7 @@ import com.hedvig.notificationService.customerio.customerioEvents.CustomerioEven
 import com.hedvig.notificationService.customerio.customerioEvents.CustomerioEventCreatorImpl
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
+import com.hedvig.notificationService.customerio.hedvigfacades.makeContractInfo
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import io.mockk.MockKAnnotations
@@ -81,13 +82,7 @@ class NorwaySignHackUpdateCustomerIOTest {
         )
 
         every { contractLoader.getContractInfoForMember(any()) } returns listOf(
-            ContractInfo(
-                AgreementType.NorwegianHomeContent,
-                null,
-                null,
-                "IOS",
-                "HEDVIG"
-            )
+            makeContractInfo()
         )
 
         sut.sendUpdates(updateTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
@@ -114,13 +109,7 @@ class NorwaySignHackUpdateCustomerIOTest {
         )
 
         every { contractLoader.getContractInfoForMember(any()) } returns listOf(
-            ContractInfo(
-                AgreementType.NorwegianHomeContent,
-                null,
-                null,
-                "IOS",
-                "HEDVIG"
-            )
+            makeContractInfo()
         )
         sut.sendUpdates(updateTime.plus(1, ChronoUnit.SECONDS))
 
@@ -145,13 +134,7 @@ class NorwaySignHackUpdateCustomerIOTest {
         )
         every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
         every { contractLoader.getContractInfoForMember(any()) } returns listOf(
-            ContractInfo(
-                AgreementType.NorwegianHomeContent,
-                null,
-                null,
-                "IOS",
-                "HEDVIG"
-            )
+            makeContractInfo()
         )
         sut.sendUpdates(someTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
 
@@ -181,13 +164,7 @@ class NorwaySignHackUpdateCustomerIOTest {
         )
         every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
         every { contractLoader.getContractInfoForMember(any()) } returns listOf(
-            ContractInfo(
-                AgreementType.NorwegianHomeContent,
-                null,
-                null,
-                "IOS",
-                "HEDVIG"
-            )
+            makeContractInfo()
         )
         sut.sendUpdates(time.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
         sut.sendUpdates(time.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
@@ -208,13 +185,7 @@ class NorwaySignHackUpdateCustomerIOTest {
 
         every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
         every { contractLoader.getContractInfoForMember(any()) } returns listOf(
-            ContractInfo(
-                AgreementType.SwedishApartment,
-                null,
-                null,
-                "IOS",
-                "HEDVIG"
-            )
+            makeContractInfo(AgreementType.SwedishApartment)
         )
         sut.sendUpdates(time.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
 

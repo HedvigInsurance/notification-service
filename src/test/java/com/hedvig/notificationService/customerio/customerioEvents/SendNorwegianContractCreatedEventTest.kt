@@ -6,12 +6,12 @@ import assertk.assertions.containsAll
 import assertk.assertions.isEqualTo
 import com.hedvig.customerio.CustomerioClient
 import com.hedvig.notificationService.customerio.AgreementType
-import com.hedvig.notificationService.customerio.ContractInfo
 import com.hedvig.notificationService.customerio.CustomerioService
 import com.hedvig.notificationService.customerio.SIGN_EVENT_WINDOWS_SIZE_MINUTES
 import com.hedvig.notificationService.customerio.Workspace
 import com.hedvig.notificationService.customerio.WorkspaceSelector
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
+import com.hedvig.notificationService.customerio.hedvigfacades.makeContractInfo
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import com.hedvig.notificationService.serviceIntegration.productPricing.FeignExceptionForTest
@@ -67,12 +67,12 @@ class SendNorwegianContractCreatedEventTest {
         every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
         every { contractLoader.getContractInfoForMember(any()) } returns
             listOf(
-                ContractInfo(
+                makeContractInfo(
                     AgreementType.NorwegianHomeContent,
-                    null,
-                    null,
-                    "IOS",
-                    "HEDVIG"
+                    switcherCompany = null,
+                    startDate = null,
+                    signSource = "IOS",
+                    partnerCode = "HEDVIG"
                 )
             )
 
@@ -94,12 +94,12 @@ class SendNorwegianContractCreatedEventTest {
 
         every { contractLoader.getContractInfoForMember(any()) } returns
             listOf(
-                ContractInfo(
+                makeContractInfo(
                     AgreementType.NorwegianHomeContent,
-                    null,
-                    null,
-                    "IOS",
-                    "HEDVIG"
+                    switcherCompany = null,
+                    startDate = null,
+                    signSource = "IOS",
+                    partnerCode = "HEDVIG"
                 )
             )
 
@@ -116,12 +116,12 @@ class SendNorwegianContractCreatedEventTest {
         every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
         every { contractLoader.getContractInfoForMember(any()) } returns
             listOf(
-                ContractInfo(
+                makeContractInfo(
                     AgreementType.NorwegianHomeContent,
-                    null,
-                    null,
-                    "IOS",
-                    "HEDVIG"
+                    switcherCompany = null,
+                    startDate = null,
+                    signSource = "IOS",
+                    partnerCode = "HEDVIG"
                 )
             )
 
