@@ -60,7 +60,7 @@ class MultipleContractsWithJDBITest(@Autowired val jdbi: Jdbi) {
     }
 
     @Test
-    fun `return contracts with findTriggersToUpdate`() {
+    fun `return contracts with shouldUpdate`() {
         val state = makeCustomerioState(
             startDateUpdatedTriggerAt = Instant.now().minusSeconds(3)
         )
