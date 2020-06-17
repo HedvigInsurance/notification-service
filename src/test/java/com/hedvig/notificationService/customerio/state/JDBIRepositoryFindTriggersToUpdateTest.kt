@@ -4,7 +4,6 @@ import assertk.all
 import assertk.assertThat
 import assertk.assertions.hasSize
 import assertk.assertions.isEmpty
-import assertk.assertions.isEqualTo
 import com.hedvig.notificationService.configuration.JDBIConfiguration
 import org.jdbi.v3.core.Jdbi
 import org.junit.jupiter.api.Test
@@ -51,20 +50,6 @@ class JDBIRepositoryFindTriggersToUpdateTest(@Autowired val jdbi: Jdbi) {
 
         assertThat(result.toList()).all {
             hasSize(expectedResultSize)
-        }
-    }
-
-    @Test
-    fun `return contracts with queuedContractRenewal`() {
-        val state = makeCustomerioState()
-        val aInstant = Instant.now()
-        state.queueContractRenewal("FirstContract", aInstant)
-        repository.save(state)
-
-        val result = repository.shouldUpdate(aInstant).toList()
-        assertThat(result).hasSize(1)
-        assertThat(result.first()).all {
-            this.transform { it.contracts[0].contractId }.isEqualTo("FirstContract")
         }
     }
 
@@ -240,6 +225,26 @@ class JDBIRepositoryFindTriggersToUpdateTest(@Autowired val jdbi: Jdbi) {
                         ),
                         timestamp.plusDays(1).atStartOfDay(ZoneId.of("UTC")).toInstant(),
                         1
+                    )
+                },
+                run {
+                    val timestamp = Instant.parse("2020-06-01T13:41:39.739783Z")
+                    val state = makeCustomerioState()
+                    state.queueContractRenewal("SomeId", timestamp)
+                    Arguments.of(
+                        state,
+                        timestamp,
+                        1
+                    )
+                },
+                run {
+                    val timestamp = Instant.parse("2020-06-01T13:41:39.739783Z")
+                    val state = makeCustomerioState()
+                    state.queueContractRenewal("SomeId", timestamp)
+                    Arguments.of(
+                        state,
+                        timestamp.minusSeconds(60 * 60 * 24),
+                        0
                     )
                 }
             )

@@ -137,7 +137,7 @@ where cs.member_id = :memberId
                     WITH contract_triggers AS (
                      SELECT member_id, true AS contract_renewal_queued_trigger_at  
                      FROM contract_state
-                     WHERE contract_renewal_queued_trigger_at IS NOT NULL
+                     WHERE contract_renewal_queued_trigger_at <= :byTime
                      GROUP BY member_id)
                     $SELECT_STATE_AND_CONTRACTS 
                     FROM customerio_state cs
