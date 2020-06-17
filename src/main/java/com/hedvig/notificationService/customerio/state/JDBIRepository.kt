@@ -59,18 +59,15 @@ ON CONFLICT (member_id) DO
   INSERT INTO contract_state (
       contract_id,
       member_id,
-      renewal_date,
       contract_renewal_queued_trigger_at
   )
   VALUES (:contractId,
           :memberId,
-          :renewalDate,
           :contractRenewalQueuedTriggerAt
   )
   ON CONFLICT (contract_id) DO
-          UPDATE
-          SET renewal_date = :renewalDate,
-          contract_renewal_queued_trigger_at = :contractRenewalQueuedTriggerAt
+          UPDATE 
+          SET contract_renewal_queued_trigger_at = :contractRenewalQueuedTriggerAt
   """.trimMargin()
 
                 val update = it.createUpdate(stmt)
@@ -168,6 +165,5 @@ SELECT
     cs.contract_created_trigger_at as cs_contract_created_trigger_at,
     cs.start_date_updated_trigger_at as cs_start_date_updated_trigger_at,
     c.contract_id as c_contract_id,
-    c.renewal_date as c_renewal_date,
     c.contract_renewal_queued_trigger_at as c_contract_renewal_queued_trigger_at
 """
