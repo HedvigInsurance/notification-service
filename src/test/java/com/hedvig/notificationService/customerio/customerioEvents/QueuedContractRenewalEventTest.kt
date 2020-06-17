@@ -84,8 +84,8 @@ class QueuedContractRenewalEventTest {
         )
 
         assertThat(result.event).isInstanceOf(ContractsRenewalQueuedTodayEvent::class.java).all {
-            this.transform { it.renewalDate }.isEqualTo(renewalDate)
-            this.transform { it.type }.isEqualTo(AgreementType.NorwegianHomeContent.typeName)
+            this.transform { it.data.renewalDate }.isEqualTo(renewalDate)
+            this.transform { it.data.type }.isEqualTo(AgreementType.NorwegianHomeContent.typeName)
         }
     }
 
@@ -114,8 +114,8 @@ class QueuedContractRenewalEventTest {
         )
 
         assertThat(result.event).isInstanceOf(ContractsRenewalQueuedTodayEvent::class.java).all {
-            this.transform { it.renewalDate }.isEqualTo(renewalDate)
-            this.transform { it.type }.isEqualTo(AgreementType.NorwegianTravel.typeName)
+            this.transform { it.data.renewalDate }.isEqualTo(renewalDate)
+            this.transform { it.data.type }.isEqualTo(AgreementType.NorwegianTravel.typeName)
         }
     }
 }

@@ -94,7 +94,6 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
                 ExecutionResult(event)
             }
             customerioState.shouldSendContractRenewalQueuedEvent() -> {
-
                 val triggeredContract = customerioState.getContractRenewalQueuedContractId()
                 val event = createContractRenewalQueuedEvent(
                     contracts,
@@ -132,7 +131,9 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
 
         val contract = contracts.find { it.contractId.toString() == triggeredContractId }!!
 
-        return ContractsRenewalQueuedTodayEvent(contract.renewalDate!!, contract.type.typeName)
+        return ContractsRenewalQueuedTodayEvent(
+            ContractsRenewalQueuedTodayEvent.DataObject(contract.renewalDate!!, contract.type.typeName)
+        )
     }
 
     private fun createStartDateUpdatedEvent(
