@@ -1,6 +1,7 @@
 package com.hedvig.notificationService.customerio.web
 
 import com.hedvig.notificationService.customerio.EventHandler
+import com.hedvig.notificationService.customerio.dto.ChargeFailedEvent
 import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
 import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent
 import org.springframework.http.ResponseEntity
@@ -22,6 +23,11 @@ class EventController(val eventHandler: EventHandler) {
     @PostMapping("/startDateUpdated")
     fun startDateUpdated(@RequestBody event: StartDateUpdatedEvent): ResponseEntity<Any> {
         eventHandler.onStartDateUpdatedEvent(event)
+        return ResponseEntity.accepted().build()
+    }
+
+    @PostMapping("/chargeFailed")
+    fun chargeFailed(@RequestBody event: ChargeFailedEvent): ResponseEntity<Any> {
         return ResponseEntity.accepted().build()
     }
 }
