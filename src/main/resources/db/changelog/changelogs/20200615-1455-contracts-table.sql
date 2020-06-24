@@ -5,7 +5,7 @@
 
 CREATE TABLE IF NOT EXISTS contract_state
 (
-    contract_id                        text      not null
+    contract_id                        TEXT NOT NULL
         constraint contract_id_pkey primary key,
     member_id                          text      not null
         REFERENCES customerio_state (member_id),
