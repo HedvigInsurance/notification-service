@@ -1,5 +1,7 @@
 package com.hedvig.notificationService.customerio.web
 
+import assertk.assertThat
+import assertk.assertions.isEqualTo
 import com.hedvig.notificationService.customerio.EventHandler
 import com.hedvig.notificationService.customerio.dto.ChargeFailedEvent
 import com.ninjasquad.springmockk.MockkBean
@@ -57,5 +59,15 @@ class FailedChargesEventTest {
         val response = testRestTemplate.postForEntity(url, HttpEntity(body), String::class.java)
 
         verify { eventHandler.onFailedChargeEvent(ChargeFailedEvent(1, 2, null)) }
+    }
+
+    @Test
+    fun `return 400 if not all attribues of json are included`() {
+        val url = URI("http://localhost:$port/_/events/chargeFailed")
+        val jsonWithoutAttributes = mapOf<Any, Any>()
+
+        val response = testRestTemplate.postForEntity(url, HttpEntity(jsonWithoutAttributes), String::class.java)
+
+        assertThat(response.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
     }
 }
