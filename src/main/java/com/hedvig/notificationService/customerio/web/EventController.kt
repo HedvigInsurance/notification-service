@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import javax.validation.Valid
 
 @RestController
 @RequestMapping("/_/events")
@@ -27,7 +28,7 @@ class EventController(val eventHandler: EventHandler) {
     }
 
     @PostMapping("/chargeFailed")
-    fun chargeFailed(@RequestBody event: ChargeFailedEvent): ResponseEntity<Any> {
+    fun chargeFailed(@Valid @RequestBody event: ChargeFailedEvent): ResponseEntity<Any> {
         eventHandler.onFailedChargeEvent(event)
         return ResponseEntity.accepted().build()
     }
