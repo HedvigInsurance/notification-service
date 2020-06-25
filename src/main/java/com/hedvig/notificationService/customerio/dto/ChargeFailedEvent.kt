@@ -9,6 +9,7 @@ data class ChargeFailedEvent(
     @get:PositiveOrZero
     val numberOfFailedCharges: Int,
     @JsonProperty(required = true)
+    @get:PositiveOrZero
     val numberOfChargesLeft: Int,
     @JsonProperty(required = true)
     val terminationDate: LocalDate?,

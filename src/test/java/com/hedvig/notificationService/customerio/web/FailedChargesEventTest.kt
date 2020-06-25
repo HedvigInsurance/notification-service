@@ -87,4 +87,20 @@ class FailedChargesEventTest {
 
         assertThat(response.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
     }
+
+    @Test
+    fun `return 400 if numberOfChargesLeft is negative`() {
+        val url = URI("http://localhost:$port/_/events/chargeFailed")
+
+        val jsonWithoutAttributes = mapOf(
+            "memberId" to "1227",
+            "numberOfFailedCharges" to 0,
+            "numberOfChargesLeft" to -1,
+            "terminationDate" to null
+        )
+
+        val response = testRestTemplate.postForEntity(url, HttpEntity(jsonWithoutAttributes), String::class.java)
+
+        assertThat(response.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
+    }
 }
