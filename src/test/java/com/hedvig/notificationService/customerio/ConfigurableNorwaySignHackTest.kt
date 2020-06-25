@@ -59,7 +59,7 @@ class ConfigurableNorwaySignHackTest {
         val configuration = ConfigurationProperties()
         configuration.useNorwayHack = true
 
-        val sut = EventHandler(stateRepository, configuration, mapOf(),firebaseNotificationService)
+        val sut = EventHandler(stateRepository, configuration, mapOf(), firebaseNotificationService)
 
         sut.onStartDateUpdatedEvent(StartDateUpdatedEvent("contractID", "memberID", LocalDate.parse("2020-03-01")))
 
