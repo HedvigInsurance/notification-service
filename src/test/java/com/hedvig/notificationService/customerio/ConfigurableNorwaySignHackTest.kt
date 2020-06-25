@@ -8,6 +8,7 @@ import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
 import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
+import com.hedvig.notificationService.service.FirebaseNotificationService
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Test
@@ -40,10 +41,11 @@ class ConfigurableNorwaySignHackTest {
     @Test
     fun `do not update on contract created event`() {
         val stateRepository = InMemoryCustomerIOStateRepository()
+        val firebaseNotificationService = mockk<FirebaseNotificationService>()
         val configuration = ConfigurationProperties()
         configuration.useNorwayHack = true
 
-        val sut = EventHandler(stateRepository, configuration, mapOf())
+        val sut = EventHandler(stateRepository, configuration, mapOf(), firebaseNotificationService)
 
         sut.onContractCreatedEvent(ContractCreatedEvent("contractID", "memberID", null))
 
@@ -53,10 +55,11 @@ class ConfigurableNorwaySignHackTest {
     @Test
     fun `do not update on start date updated event`() {
         val stateRepository = InMemoryCustomerIOStateRepository()
+        val firebaseNotificationService = mockk<FirebaseNotificationService>()
         val configuration = ConfigurationProperties()
         configuration.useNorwayHack = true
 
-        val sut = EventHandler(stateRepository, configuration, mapOf())
+        val sut = EventHandler(stateRepository, configuration, mapOf(),firebaseNotificationService)
 
         sut.onStartDateUpdatedEvent(StartDateUpdatedEvent("contractID", "memberID", LocalDate.parse("2020-03-01")))
 

@@ -10,7 +10,9 @@ import com.hedvig.notificationService.customerio.EventHandler
 import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
+import com.hedvig.notificationService.service.FirebaseNotificationService
 import io.mockk.MockKAnnotations
+import io.mockk.mockk
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.Instant
@@ -19,7 +21,8 @@ class ContractCreatedEventCreatesContractTest {
 
     val configurationProperties = ConfigurationProperties()
     val repo = InMemoryCustomerIOStateRepository()
-    val sut = EventHandler(repo, configurationProperties, mapOf())
+    val firebaseNotificationService = mockk<FirebaseNotificationService>()
+    val sut = EventHandler(repo, configurationProperties, mapOf(), firebaseNotificationService)
 
     @BeforeEach
     fun setup() {
