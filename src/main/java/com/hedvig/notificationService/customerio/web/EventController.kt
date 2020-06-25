@@ -28,6 +28,7 @@ class EventController(val eventHandler: EventHandler) {
 
     @PostMapping("/chargeFailed")
     fun chargeFailed(@RequestBody event: ChargeFailedEvent): ResponseEntity<Any> {
+        eventHandler.onFailedChargeEvent(event)
         return ResponseEntity.accepted().build()
     }
 }

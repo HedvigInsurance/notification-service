@@ -1,5 +1,6 @@
 package com.hedvig.notificationService.customerio
 
+import com.hedvig.notificationService.customerio.dto.ChargeFailedEvent
 import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
 import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
@@ -37,5 +38,9 @@ class EventHandler(
             state.createContract(contractCreatedEvent.contractId, callTime, contractCreatedEvent.startDate)
             repo.save(state)
         }
+    }
+
+    fun onFailedChargeEvent(chargeFailedEvent: ChargeFailedEvent) {
+        TODO("Not yet implemented")
     }
 }

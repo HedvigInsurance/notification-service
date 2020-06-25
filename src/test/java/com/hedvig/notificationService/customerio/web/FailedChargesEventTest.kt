@@ -1,5 +1,9 @@
 package com.hedvig.notificationService.customerio.web
 
+import com.hedvig.notificationService.customerio.EventHandler
+import com.hedvig.notificationService.customerio.dto.ChargeFailedEvent
+import com.ninjasquad.springmockk.MockkBean
+import io.mockk.verify
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -24,17 +28,34 @@ class FailedChargesEventTest {
     @Autowired
     lateinit var testRestTemplate: TestRestTemplate
 
+    @MockkBean(relaxed = true)
+    private lateinit var eventHandler: EventHandler
+
     @Test
     fun failedChargesSent() {
         val url = URI("http://localhost:$port/_/events/chargeFailed")
         val body = mapOf(
-            "numberFailedCharges" to 1,
-            "failedChargesLeft" to 2,
+            "numberOfFailedCharges" to 1,
+            "numberOfChargesLeft" to 2,
             "terminationDate" to null
         )
 
         val response = testRestTemplate.postForEntity(url, HttpEntity(body), String::class.java)
 
         Assertions.assertThat(response.statusCode).isEqualTo(HttpStatus.ACCEPTED)
+    }
+
+    @Test
+    fun failedChargesSentCallesEventHandler() {
+        val url = URI("http://localhost:$port/_/events/chargeFailed")
+        val body = mapOf(
+            "numberOfFailedCharges" to 1,
+            "numberOfChargesLeft" to 2,
+            "terminationDate" to null
+        )
+
+        val response = testRestTemplate.postForEntity(url, HttpEntity(body), String::class.java)
+
+        verify { eventHandler.onFailedChargeEvent(ChargeFailedEvent(1, 2, null)) }
     }
 }
