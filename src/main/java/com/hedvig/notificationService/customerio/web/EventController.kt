@@ -5,6 +5,7 @@ import com.hedvig.notificationService.customerio.dto.ChargeFailedEvent
 import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
 import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -27,9 +28,9 @@ class EventController(val eventHandler: EventHandler) {
         return ResponseEntity.accepted().build()
     }
 
-    @PostMapping("/chargeFailed")
-    fun chargeFailed(@Valid @RequestBody event: ChargeFailedEvent): ResponseEntity<Any> {
-        eventHandler.onFailedChargeEvent(event)
+    @PostMapping("{memberId}/chargeFailed")
+    fun chargeFailed(@PathVariable memberId: String, @Valid @RequestBody event: ChargeFailedEvent): ResponseEntity<Any> {
+        eventHandler.onFailedChargeEvent(memberId, event)
         return ResponseEntity.accepted().build()
     }
 }

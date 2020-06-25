@@ -42,7 +42,7 @@ class EventHandler(
         }
     }
 
-    fun onFailedChargeEvent(chargeFailedEvent: ChargeFailedEvent) {
-        clients[Workspace.SWEDEN]?.sendEvent(chargeFailedEvent.memberId, mapOf("name" to "ChargeFailedEvent"))
+    fun onFailedChargeEvent(memberId: String, chargeFailedEvent: ChargeFailedEvent) {
+        clients[Workspace.SWEDEN]?.sendEvent(memberId, chargeFailedEvent.toMap(memberId))
     }
 }
