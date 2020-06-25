@@ -9,5 +9,7 @@ data class ChargeFailedEvent(
     @JsonProperty(required = true)
     val numberOfChargesLeft: Int,
     @JsonProperty(required = true)
-    val terminationDate: LocalDate?
+    val terminationDate: LocalDate?,
+    @JsonProperty(required = true)
+    val memberId: String
 )

@@ -37,6 +37,7 @@ class FailedChargesEventTest {
     fun failedChargesSent() {
         val url = URI("http://localhost:$port/_/events/chargeFailed")
         val body = mapOf(
+            "memberId" to "1227",
             "numberOfFailedCharges" to 1,
             "numberOfChargesLeft" to 2,
             "terminationDate" to null
@@ -51,6 +52,7 @@ class FailedChargesEventTest {
     fun failedChargesSentCallesEventHandler() {
         val url = URI("http://localhost:$port/_/events/chargeFailed")
         val body = mapOf(
+            "memberId" to "1227",
             "numberOfFailedCharges" to 1,
             "numberOfChargesLeft" to 2,
             "terminationDate" to null
@@ -58,7 +60,7 @@ class FailedChargesEventTest {
 
         val response = testRestTemplate.postForEntity(url, HttpEntity(body), String::class.java)
 
-        verify { eventHandler.onFailedChargeEvent(ChargeFailedEvent(1, 2, null)) }
+        verify { eventHandler.onFailedChargeEvent(ChargeFailedEvent(1, 2, null, memberId = "1227")) }
     }
 
     @Test
