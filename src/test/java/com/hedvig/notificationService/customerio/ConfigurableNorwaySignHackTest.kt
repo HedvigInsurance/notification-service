@@ -43,7 +43,7 @@ class ConfigurableNorwaySignHackTest {
         val configuration = ConfigurationProperties()
         configuration.useNorwayHack = true
 
-        val sut = EventHandler(stateRepository, configuration)
+        val sut = EventHandler(stateRepository, configuration, mapOf())
 
         sut.onContractCreatedEvent(ContractCreatedEvent("contractID", "memberID", null))
 
@@ -56,7 +56,7 @@ class ConfigurableNorwaySignHackTest {
         val configuration = ConfigurationProperties()
         configuration.useNorwayHack = true
 
-        val sut = EventHandler(stateRepository, configuration)
+        val sut = EventHandler(stateRepository, configuration, mapOf())
 
         sut.onStartDateUpdatedEvent(StartDateUpdatedEvent("contractID", "memberID", LocalDate.parse("2020-03-01")))
 

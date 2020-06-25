@@ -10,6 +10,7 @@ import com.hedvig.notificationService.customerio.EventHandler
 import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
+import io.mockk.MockKAnnotations
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.Instant
@@ -18,11 +19,12 @@ class ContractCreatedEventCreatesContractTest {
 
     val configurationProperties = ConfigurationProperties()
     val repo = InMemoryCustomerIOStateRepository()
-    val sut = EventHandler(repo, configurationProperties)
+    val sut = EventHandler(repo, configurationProperties, mapOf())
 
     @BeforeEach
     fun setup() {
         configurationProperties.useNorwayHack = false
+        MockKAnnotations.init(this)
     }
 
     @Test

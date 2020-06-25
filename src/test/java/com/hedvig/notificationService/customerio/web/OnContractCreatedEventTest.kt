@@ -29,7 +29,7 @@ class OnContractCreatedEventTest {
         MockKAnnotations.init(this)
         val configuration = ConfigurationProperties()
         configuration.useNorwayHack = false
-        sut = EventHandler(repository, configuration)
+        sut = EventHandler(repository, configuration, mapOf())
     }
 
     @Test

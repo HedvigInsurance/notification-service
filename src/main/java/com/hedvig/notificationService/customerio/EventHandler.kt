@@ -1,5 +1,6 @@
 package com.hedvig.notificationService.customerio
 
+import com.hedvig.customerio.CustomerioClient
 import com.hedvig.notificationService.customerio.dto.ChargeFailedEvent
 import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
 import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent
@@ -11,7 +12,8 @@ import java.time.Instant
 @Service
 class EventHandler(
     private val repo: CustomerIOStateRepository,
-    private val configuration: ConfigurationProperties
+    private val configuration: ConfigurationProperties,
+    private val clients: Map<Workspace, CustomerioClient>
 ) {
     fun onStartDateUpdatedEvent(
         event: StartDateUpdatedEvent,
@@ -41,6 +43,6 @@ class EventHandler(
     }
 
     fun onFailedChargeEvent(chargeFailedEvent: ChargeFailedEvent) {
-        TODO("Not yet implemented")
+        clients[Workspace.SWEDEN]?.sendEvent(chargeFailedEvent.memberId, mapOf("name" to "ChargeFailedEvent"))
     }
 }
