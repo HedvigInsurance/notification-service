@@ -4,9 +4,12 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import com.hedvig.notificationService.customerio.ConfigurationProperties
 import com.hedvig.notificationService.customerio.EventHandler
+import com.hedvig.notificationService.customerio.WorkspaceSelector
 import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
+import com.hedvig.notificationService.service.FirebaseNotificationService
+import io.mockk.mockk
 import org.junit.Before
 import org.junit.Test
 import java.time.Instant
@@ -15,6 +18,9 @@ import java.time.LocalDate
 class OnStartDateUpdatedEventTest {
 
     lateinit var repo: InMemoryCustomerIOStateRepository
+
+    val firebaseNotificationService = mockk<FirebaseNotificationService>(relaxed = true)
+    val workspaceSelector = mockk<WorkspaceSelector>(relaxed = true)
 
     @Before
     fun setup() {
@@ -25,7 +31,7 @@ class OnStartDateUpdatedEventTest {
     fun `on start date updated event`() {
         val configuration = ConfigurationProperties()
         configuration.useNorwayHack = false
-        val sut = EventHandler(repo, configuration)
+        val sut = EventHandler(repo, configuration, mapOf(), firebaseNotificationService, workspaceSelector)
         val time = Instant.parse("2020-04-27T14:03:23.337770Z")
         sut.onStartDateUpdatedEvent(StartDateUpdatedEvent("aContractId", "aMemberId", LocalDate.of(2020, 5, 3)), time)
 
@@ -37,7 +43,7 @@ class OnStartDateUpdatedEventTest {
     fun `on start date updated event when startDate extists`() {
         val configuration = ConfigurationProperties()
         configuration.useNorwayHack = false
-        val sut = EventHandler(repo, configuration)
+        val sut = EventHandler(repo, configuration, mapOf(), firebaseNotificationService, workspaceSelector)
 
         val timeOfFirstCall = Instant.parse("2020-04-27T14:03:23.337770Z")
 
@@ -55,7 +61,7 @@ class OnStartDateUpdatedEventTest {
     fun `with existing state set activation date trigger to startdate`() {
         val configuration = ConfigurationProperties()
         configuration.useNorwayHack = false
-        val sut = EventHandler(repo, configuration)
+        val sut = EventHandler(repo, configuration, mapOf(), firebaseNotificationService, workspaceSelector)
 
         repo.save(
             CustomerioState(
@@ -83,7 +89,7 @@ class OnStartDateUpdatedEventTest {
     fun `without existing state set activation date trigger to startdate`() {
         val configuration = ConfigurationProperties()
         configuration.useNorwayHack = false
-        val sut = EventHandler(repo, configuration)
+        val sut = EventHandler(repo, configuration, mapOf(), firebaseNotificationService, workspaceSelector)
 
         val timeOfFirstCall = Instant.parse("2020-04-27T14:03:23.337770Z")
 

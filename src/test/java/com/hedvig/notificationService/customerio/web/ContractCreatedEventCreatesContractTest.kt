@@ -7,9 +7,13 @@ import assertk.assertions.extracting
 import assertk.assertions.isNotNull
 import com.hedvig.notificationService.customerio.ConfigurationProperties
 import com.hedvig.notificationService.customerio.EventHandler
+import com.hedvig.notificationService.customerio.WorkspaceSelector
 import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
+import com.hedvig.notificationService.service.FirebaseNotificationService
+import io.mockk.MockKAnnotations
+import io.mockk.mockk
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.Instant
@@ -18,11 +22,14 @@ class ContractCreatedEventCreatesContractTest {
 
     val configurationProperties = ConfigurationProperties()
     val repo = InMemoryCustomerIOStateRepository()
-    val sut = EventHandler(repo, configurationProperties)
+    val firebaseNotificationService = mockk<FirebaseNotificationService>()
+    val workspaceSelector = mockk<WorkspaceSelector>()
+    val sut = EventHandler(repo, configurationProperties, mapOf(), firebaseNotificationService, workspaceSelector)
 
     @BeforeEach
     fun setup() {
         configurationProperties.useNorwayHack = false
+        MockKAnnotations.init(this)
     }
 
     @Test

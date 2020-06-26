@@ -5,12 +5,15 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.isNull
 import com.hedvig.notificationService.customerio.ConfigurationProperties
 import com.hedvig.notificationService.customerio.EventHandler
+import com.hedvig.notificationService.customerio.WorkspaceSelector
 import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
+import com.hedvig.notificationService.service.FirebaseNotificationService
 import io.mockk.MockKAnnotations
 import io.mockk.impl.annotations.MockK
+import io.mockk.mockk
 import org.junit.Before
 import org.junit.Test
 import java.time.Instant
@@ -28,8 +31,10 @@ class OnContractCreatedEventTest {
     fun setup() {
         MockKAnnotations.init(this)
         val configuration = ConfigurationProperties()
+        val firebaseNotificationService = mockk<FirebaseNotificationService>()
+        val workspaceSelector = mockk<WorkspaceSelector>()
         configuration.useNorwayHack = false
-        sut = EventHandler(repository, configuration)
+        sut = EventHandler(repository, configuration, mapOf(), firebaseNotificationService, workspaceSelector)
     }
 
     @Test
