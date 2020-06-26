@@ -9,6 +9,7 @@ import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.service.FirebaseNotificationService
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.Instant
 
@@ -51,16 +52,22 @@ class EventHandler(
         val marketForMember = workspaceSelector.getWorkspaceForMember(memberId)
         clients[marketForMember]?.sendEvent(memberId, chargeFailedEvent.toMap(memberId))
 
-        if (chargeFailedEvent.terminationDate != null) {
-            firebaseNotificationService.sendTerminatedFailedChargesNotification(memberId)
-            return
-        }
+        try {
+            if (chargeFailedEvent.terminationDate != null) {
+                firebaseNotificationService.sendTerminatedFailedChargesNotification(memberId)
+                return
+            }
 
-        when (chargeFailedEvent.chargeFailedReason) {
-            ChargeFailedReason.INSUFFICIENT_FUNDS -> firebaseNotificationService.sendPaymentFailedNotification(memberId)
-            ChargeFailedReason.NOT_CONNECTED_DIRECT_DEBIT -> firebaseNotificationService.sendConnectDirectDebitNotification(
-                memberId
-            )
+            when (chargeFailedEvent.chargeFailedReason) {
+                ChargeFailedReason.INSUFFICIENT_FUNDS -> firebaseNotificationService.sendPaymentFailedNotification(
+                    memberId
+                )
+                ChargeFailedReason.NOT_CONNECTED_DIRECT_DEBIT -> firebaseNotificationService.sendConnectDirectDebitNotification(
+                    memberId
+                )
+            }
+        } catch (e: Exception) {
+            logger.error("onFailedChargeEvent - Can not send notification for $memberId - Exception: ${e.message}")
         }
     }
 
@@ -70,5 +77,9 @@ class EventHandler(
 
         state.queueContractRenewal(event.contractId, callTime)
         repo.save(state)
+    }
+
+    companion object {
+        val logger = LoggerFactory.getLogger(this::class.java)!!
     }
 }
