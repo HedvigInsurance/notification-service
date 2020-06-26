@@ -22,7 +22,6 @@ class OnStartDateUpdatedEventTest {
     val firebaseNotificationService = mockk<FirebaseNotificationService>(relaxed = true)
     val workspaceSelector = mockk<WorkspaceSelector>(relaxed = true)
 
-
     @Before
     fun setup() {
         repo = InMemoryCustomerIOStateRepository()
