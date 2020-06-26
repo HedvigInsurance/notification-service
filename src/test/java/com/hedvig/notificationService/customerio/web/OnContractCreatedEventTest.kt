@@ -5,6 +5,7 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.isNull
 import com.hedvig.notificationService.customerio.ConfigurationProperties
 import com.hedvig.notificationService.customerio.EventHandler
+import com.hedvig.notificationService.customerio.WorkspaceSelector
 import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.state.CustomerioState
@@ -31,8 +32,9 @@ class OnContractCreatedEventTest {
         MockKAnnotations.init(this)
         val configuration = ConfigurationProperties()
         val firebaseNotificationService = mockk<FirebaseNotificationService>()
+        val workspaceSelector = mockk<WorkspaceSelector>()
         configuration.useNorwayHack = false
-        sut = EventHandler(repository, configuration, mapOf(), firebaseNotificationService)
+        sut = EventHandler(repository, configuration, mapOf(), firebaseNotificationService, workspaceSelector)
     }
 
     @Test

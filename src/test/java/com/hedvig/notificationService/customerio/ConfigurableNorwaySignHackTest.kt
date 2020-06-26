@@ -40,12 +40,13 @@ class ConfigurableNorwaySignHackTest {
 
     @Test
     fun `do not update on contract created event`() {
+        val workspaceSelector = mockk<WorkspaceSelector>()
         val stateRepository = InMemoryCustomerIOStateRepository()
         val firebaseNotificationService = mockk<FirebaseNotificationService>()
         val configuration = ConfigurationProperties()
         configuration.useNorwayHack = true
 
-        val sut = EventHandler(stateRepository, configuration, mapOf(), firebaseNotificationService)
+        val sut = EventHandler(stateRepository, configuration, mapOf(), firebaseNotificationService, workspaceSelector)
 
         sut.onContractCreatedEvent(ContractCreatedEvent("contractID", "memberID", null))
 
@@ -54,12 +55,13 @@ class ConfigurableNorwaySignHackTest {
 
     @Test
     fun `do not update on start date updated event`() {
+        val workspaceSelector = mockk<WorkspaceSelector>()
         val stateRepository = InMemoryCustomerIOStateRepository()
         val firebaseNotificationService = mockk<FirebaseNotificationService>()
         val configuration = ConfigurationProperties()
         configuration.useNorwayHack = true
 
-        val sut = EventHandler(stateRepository, configuration, mapOf(), firebaseNotificationService)
+        val sut = EventHandler(stateRepository, configuration, mapOf(), firebaseNotificationService, workspaceSelector)
 
         sut.onStartDateUpdatedEvent(StartDateUpdatedEvent("contractID", "memberID", LocalDate.parse("2020-03-01")))
 

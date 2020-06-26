@@ -6,6 +6,7 @@ import com.hedvig.customerio.CustomerioClient
 import com.hedvig.notificationService.customerio.ConfigurationProperties
 import com.hedvig.notificationService.customerio.EventHandler
 import com.hedvig.notificationService.customerio.Workspace
+import com.hedvig.notificationService.customerio.WorkspaceSelector
 import com.hedvig.notificationService.customerio.dto.ChargeFailedEvent
 import com.hedvig.notificationService.customerio.dto.ChargeFailedReason
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
@@ -22,6 +23,7 @@ class OnChargeFailedEventTriggerCustomerioEventTest {
         val configurationProperties = ConfigurationProperties()
         configurationProperties.useNorwayHack = false
         val firebaseNotificationService = mockk<FirebaseNotificationService>(relaxed = true)
+        val workspaceSelector = mockk<WorkspaceSelector>()
 
         val sweClient = mockk<CustomerioClient>(relaxed = true)
         val noClient = mockk<CustomerioClient>(relaxed = true)
@@ -34,7 +36,8 @@ class OnChargeFailedEventTriggerCustomerioEventTest {
                 Workspace.SWEDEN to sweClient,
                 Workspace.NORWAY to noClient
             ),
-            firebaseNotificationService
+            firebaseNotificationService,
+            workspaceSelector
         )
 
         sut.onFailedChargeEvent(
