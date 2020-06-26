@@ -8,8 +8,7 @@ cloud:
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/notification_service_test
-    username: postgress
-    password: docker
+    username: johan
 
 
 hedvig:
