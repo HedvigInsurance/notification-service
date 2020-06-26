@@ -1,13 +1,16 @@
 package com.hedvig.notificationService.customerio
 
 import java.time.LocalDate
+import java.util.UUID
 
 data class ContractInfo(
     val type: AgreementType,
-    val switcherCompany: String?,
-    val startDate: LocalDate?,
-    val signSource: String?,
-    val partnerCode: String?
+    val switcherCompany: String? = null,
+    val startDate: LocalDate? = null,
+    val signSource: String? = null,
+    val partnerCode: String? = null,
+    val renewalDate: LocalDate? = null,
+    val contractId: UUID
 )
 
 enum class AgreementType {

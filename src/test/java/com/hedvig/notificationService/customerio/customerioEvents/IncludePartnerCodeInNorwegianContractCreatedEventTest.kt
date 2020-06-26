@@ -3,7 +3,7 @@ package com.hedvig.notificationService.customerio.customerioEvents
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import com.hedvig.notificationService.customerio.AgreementType
-import com.hedvig.notificationService.customerio.ContractInfo
+import com.hedvig.notificationService.customerio.hedvigfacades.makeContractInfo
 import org.junit.jupiter.api.Test
 
 class IncludePartnerCodeInNorwegianContractCreatedEventTest {
@@ -13,12 +13,12 @@ class IncludePartnerCodeInNorwegianContractCreatedEventTest {
 
         val result = sut.createContractCreatedEvent(
             listOf(
-                ContractInfo(
+                makeContractInfo(
                     AgreementType.NorwegianHomeContent,
-                    null,
-                    null,
-                    "ANDROID",
-                    "A_PARTNER_CODE"
+                    switcherCompany = null,
+                    startDate = null,
+                    signSource = "ANDROID",
+                    partnerCode = "A_PARTNER_CODE"
                 )
             )
         )

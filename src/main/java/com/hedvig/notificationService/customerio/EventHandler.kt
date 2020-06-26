@@ -4,6 +4,7 @@ import com.hedvig.customerio.CustomerioClient
 import com.hedvig.notificationService.customerio.dto.ChargeFailedEvent
 import com.hedvig.notificationService.customerio.dto.ChargeFailedReason
 import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
+import com.hedvig.notificationService.customerio.dto.ContractRenewalQueuedEvent
 import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.customerio.state.CustomerioState
@@ -61,5 +62,13 @@ class EventHandler(
                 memberId
             )
         }
+    }
+
+    fun onContractRenewalQueued(event: ContractRenewalQueuedEvent, callTime: Instant = Instant.now()) {
+        val state = repo.findByMemberId(event.memberId)
+            ?: CustomerioState(event.memberId)
+
+        state.queueContractRenewal(event.contractId, callTime)
+        repo.save(state)
     }
 }

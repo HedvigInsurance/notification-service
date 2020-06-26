@@ -40,11 +40,13 @@ class ContractLoaderImpl(
         return productPricingReponse.body.map {
             val underwriterResponse = underwriterClient.getQuoteFromContractId(it.id.toString()).body
             ContractInfo(
-                AgreementType.valueOf(it.agreements.first()::class.java.simpleName),
-                it.switchedFrom,
-                it.masterInception,
-                it.signSource,
-                underwriterResponse.attributedTo
+                type = AgreementType.valueOf(it.agreements.first()::class.java.simpleName),
+                switcherCompany = it.switchedFrom,
+                startDate = it.masterInception,
+                signSource = it.signSource,
+                partnerCode = underwriterResponse.attributedTo,
+                renewalDate = it.renewal?.renewalDate,
+                contractId = it.id
             )
         }
     }

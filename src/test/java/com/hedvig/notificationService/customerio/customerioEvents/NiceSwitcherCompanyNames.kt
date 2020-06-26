@@ -4,7 +4,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
 import com.hedvig.notificationService.customerio.AgreementType
-import com.hedvig.notificationService.customerio.ContractInfo
+import com.hedvig.notificationService.customerio.hedvigfacades.makeContractInfo
 import org.junit.Test
 
 class NiceSwitcherCompanyNames {
@@ -12,12 +12,12 @@ class NiceSwitcherCompanyNames {
     @Test
     fun `remove NO from company name`() {
         val contract = Contract.from(
-            ContractInfo(
+            makeContractInfo(
                 AgreementType.NorwegianTravel,
-                "Gjensidige NO",
-                null,
-                "IOS",
-                "HEDVIG"
+                switcherCompany = "Gjensidige NO",
+                startDate = null,
+                signSource = "IOS",
+                partnerCode = "HEDVIG"
             )
         )
 
@@ -27,12 +27,12 @@ class NiceSwitcherCompanyNames {
     @Test
     fun `keep name as is`() {
         val contract = Contract.from(
-            ContractInfo(
+            makeContractInfo(
                 AgreementType.NorwegianTravel,
-                "Fremtind",
-                null,
-                "IOS",
-                "HEDVIG"
+                switcherCompany = "Fremtind",
+                startDate = null,
+                signSource = "IOS",
+                partnerCode = "HEDVIG"
             )
         )
 

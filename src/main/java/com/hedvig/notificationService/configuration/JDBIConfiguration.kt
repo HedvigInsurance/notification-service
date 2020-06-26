@@ -9,6 +9,8 @@ import javax.sql.DataSource
 class JDBIConfiguration {
     @Bean("jdbi")
     fun jdbiFactory(dataSource: DataSource): JdbiFactoryBean {
-        return JdbiFactoryBean(dataSource)
+        val jdbiFactoryBean = JdbiFactoryBean(dataSource)
+        jdbiFactoryBean.setAutoInstallPlugins(true)
+        return jdbiFactoryBean
     }
 }

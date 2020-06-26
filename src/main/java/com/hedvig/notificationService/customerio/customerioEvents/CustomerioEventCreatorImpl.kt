@@ -93,6 +93,15 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
                     .firstOrNull { it?.isAfter(customerioState.activationDateTriggerAt) == true })
                 ExecutionResult(event)
             }
+            customerioState.shouldSendContractRenewalQueuedEvent() -> {
+                val triggeredContract = customerioState.getContractRenewalQueuedContractId()
+                val event = createContractRenewalQueuedEvent(
+                    contracts,
+                    triggeredContract.contractId
+                )
+                customerioState.sentContractRenewalQueuedTodayEvent(triggeredContract.contractId)
+                ExecutionResult(event)
+            }
             else
             -> throw RuntimeException("CustomerioState in weird state")
         }
@@ -112,6 +121,18 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
                 .map { Contract.from(it) },
             contracts.filter { it.startDate == null || it.startDate.isAfter(customerioState.activationDateTriggerAt) }
                 .map { Contract.from(it) }
+        )
+    }
+
+    private fun createContractRenewalQueuedEvent(
+        contracts: List<ContractInfo>,
+        triggeredContractId: String
+    ): ContractsRenewalQueuedTodayEvent {
+
+        val contract = contracts.find { it.contractId.toString() == triggeredContractId }!!
+
+        return ContractsRenewalQueuedTodayEvent(
+            ContractsRenewalQueuedTodayEvent.DataObject(contract.renewalDate!!, contract.type.typeName)
         )
     }
 

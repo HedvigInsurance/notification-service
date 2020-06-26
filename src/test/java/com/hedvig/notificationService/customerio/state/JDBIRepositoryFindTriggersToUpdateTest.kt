@@ -21,6 +21,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
+import kotlin.streams.toList
 
 @ExtendWith(SpringExtension::class)
 @DataJdbcTest()
@@ -37,7 +38,7 @@ class JDBIRepositoryFindTriggersToUpdateTest(@Autowired val jdbi: Jdbi) {
     @Test
     internal fun `findStatesToUpdate with empty db`() {
         val result = repository.shouldUpdate(Instant.parse("2020-06-01T13:41:39.739783Z"))
-        assertThat(result).isEmpty()
+        assertThat(result.toList()).isEmpty()
     }
 
     @ParameterizedTest
@@ -47,7 +48,7 @@ class JDBIRepositoryFindTriggersToUpdateTest(@Autowired val jdbi: Jdbi) {
 
         val result = repository.shouldUpdate(timestamp)
 
-        assertThat(result).all {
+        assertThat(result.toList()).all {
             hasSize(expectedResultSize)
         }
     }
@@ -224,6 +225,26 @@ class JDBIRepositoryFindTriggersToUpdateTest(@Autowired val jdbi: Jdbi) {
                         ),
                         timestamp.plusDays(1).atStartOfDay(ZoneId.of("UTC")).toInstant(),
                         1
+                    )
+                },
+                run {
+                    val timestamp = Instant.parse("2020-06-01T13:41:39.739783Z")
+                    val state = makeCustomerioState()
+                    state.queueContractRenewal("SomeId", timestamp)
+                    Arguments.of(
+                        state,
+                        timestamp,
+                        1
+                    )
+                },
+                run {
+                    val timestamp = Instant.parse("2020-06-01T13:41:39.739783Z")
+                    val state = makeCustomerioState()
+                    state.queueContractRenewal("SomeId", timestamp)
+                    Arguments.of(
+                        state,
+                        timestamp.minusSeconds(1),
+                        0
                     )
                 }
             )

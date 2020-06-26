@@ -42,3 +42,4 @@ service-account.json
 
 # jenv
 .java-version
+/private/

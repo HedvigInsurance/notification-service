@@ -11,6 +11,7 @@ import com.hedvig.notificationService.customerio.WorkspaceSelector
 import com.hedvig.notificationService.customerio.customerioEvents.CustomerioEventCreatorImpl
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoaderImpl
+import com.hedvig.notificationService.customerio.hedvigfacades.FakeContractLoader
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.serviceIntegration.memberService.MemberServiceClient
@@ -37,10 +38,14 @@ class CustomerIOConfig() {
 
     @Bean()
     fun productPricingFacade(productPricingClient: ProductPricingClient, underwriterClient: UnderwriterClient) =
-        ContractLoaderImpl(
-            productPricingClient,
-            underwriterClient
-        )
+        if (useFakes) {
+            FakeContractLoader()
+        } else {
+            ContractLoaderImpl(
+                productPricingClient,
+                underwriterClient
+            )
+        }
 
     @Bean()
     fun memberServiceFacade(memberServiceClient: MemberServiceClient) =

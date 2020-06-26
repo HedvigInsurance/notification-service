@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.hedvig.notificationService.customerio.AgreementType
 import com.hedvig.notificationService.customerio.ContractInfo
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
+import com.hedvig.notificationService.customerio.hedvigfacades.makeContractInfo
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import io.mockk.MockKAnnotations
 import io.mockk.impl.annotations.MockK
@@ -42,24 +43,24 @@ class TmpSignAndContractCreatedEventTest(
         fun data() = listOf(
             arrayOf(
                 listOf(
-                    ContractInfo(
+                    makeContractInfo(
                         AgreementType.NorwegianHomeContent,
-                        null,
-                        null,
-                        "IOS",
-                        "HEDVIG"
+                        switcherCompany = null,
+                        startDate = null,
+                        signSource = "IOS",
+                        partnerCode = "HEDVIG"
                     )
                 ),
                 mapOf("is_signed_innbo" to true)
             ),
             arrayOf(
                 listOf(
-                    ContractInfo(
+                    makeContractInfo(
                         AgreementType.NorwegianHomeContent,
-                        "folksam",
-                        null,
-                        "IOS",
-                        "HEDVIG"
+                        switcherCompany = "folksam",
+                        startDate = null,
+                        signSource = "IOS",
+                        partnerCode = "HEDVIG"
                     )
                 ), mapOf(
                     "is_signed_innbo" to true,
@@ -69,12 +70,12 @@ class TmpSignAndContractCreatedEventTest(
             ),
             arrayOf(
                 listOf(
-                    ContractInfo(
+                    makeContractInfo(
                         AgreementType.NorwegianHomeContent,
-                        null,
-                        LocalDate.of(2020, 3, 13),
-                        "IOS",
-                        "HEDVIG"
+                        switcherCompany = null,
+                        startDate = LocalDate.of(2020, 3, 13),
+                        signSource = "IOS",
+                        partnerCode = "HEDVIG"
                     )
                 ),
                 mapOf(
@@ -84,12 +85,12 @@ class TmpSignAndContractCreatedEventTest(
             ),
             arrayOf(
                 listOf(
-                    ContractInfo(
+                    makeContractInfo(
                         AgreementType.NorwegianTravel,
-                        null,
-                        null,
-                        "IOS",
-                        "HEDVIG"
+                        switcherCompany = null,
+                        startDate = null,
+                        signSource = "IOS",
+                        partnerCode = "HEDVIG"
                     )
                 ), mapOf(
                     "is_signed_reise" to true
@@ -97,12 +98,12 @@ class TmpSignAndContractCreatedEventTest(
             ),
             arrayOf(
                 listOf(
-                    ContractInfo(
+                    makeContractInfo(
                         AgreementType.NorwegianTravel,
-                        "a new company",
-                        null,
-                        "IOS",
-                        "HEDVIG"
+                        switcherCompany = "a new company",
+                        startDate = null,
+                        signSource = "IOS",
+                        partnerCode = "HEDVIG"
                     )
                 ),
                 mapOf(
@@ -113,12 +114,12 @@ class TmpSignAndContractCreatedEventTest(
             ),
             arrayOf(
                 listOf(
-                    ContractInfo(
+                    makeContractInfo(
                         AgreementType.NorwegianTravel,
-                        "a new company",
-                        LocalDate.of(2020, 1, 1),
-                        "IOS",
-                        "HEDVIG"
+                        switcherCompany = "a new company",
+                        startDate = LocalDate.of(2020, 1, 1),
+                        signSource = "IOS",
+                        partnerCode = "HEDVIG"
                     )
                 ),
                 mapOf(
@@ -130,19 +131,19 @@ class TmpSignAndContractCreatedEventTest(
             ),
             arrayOf(
                 listOf(
-                    ContractInfo(
+                    makeContractInfo(
                         AgreementType.NorwegianTravel,
-                        null,
-                        null,
-                        "IOS",
-                        "HEDVIG"
+                        switcherCompany = null,
+                        startDate = null,
+                        signSource = "IOS",
+                        partnerCode = "HEDVIG"
                     ),
-                    ContractInfo(
+                    makeContractInfo(
                         AgreementType.NorwegianHomeContent,
-                        null,
-                        null,
-                        "IOS",
-                        "HEDVIG"
+                        switcherCompany = null,
+                        startDate = null,
+                        signSource = "IOS",
+                        partnerCode = "HEDVIG"
                     )
                 ),
                 mapOf(
@@ -221,12 +222,12 @@ class TmpSignAndContractCreatedEventTest(
             false
         )
         val contracts = listOf(
-            ContractInfo(
+            makeContractInfo(
                 AgreementType.SwedishHouse,
-                null,
-                null,
-                "IOS",
-                "HEDVIG"
+                switcherCompany = null,
+                startDate = null,
+                signSource = "IOS",
+                partnerCode = "HEDVIG"
             )
         )
 

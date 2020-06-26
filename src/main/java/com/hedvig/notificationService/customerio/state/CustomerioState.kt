@@ -3,18 +3,15 @@ package com.hedvig.notificationService.customerio.state
 import com.hedvig.notificationService.customerio.ContractInfo
 import java.time.Instant
 import java.time.LocalDate
-import javax.persistence.Entity
-import javax.persistence.Id
 
-@Entity
 class CustomerioState(
-    @field:Id
     val memberId: String,
     underwriterFirstSignAttributesUpdate: Instant? = null,
     sentTmpSignEvent: Boolean = false,
     contractCreatedTriggerAt: Instant? = null,
     startDateUpdatedTriggerAt: Instant? = null,
-    activationDateTriggerAt: LocalDate? = null
+    activationDateTriggerAt: LocalDate? = null,
+    var contracts: MutableList<ContractState> = mutableListOf()
 ) {
     var underwriterFirstSignAttributesUpdate: Instant? = underwriterFirstSignAttributesUpdate
         private set
@@ -25,10 +22,6 @@ class CustomerioState(
     var startDateUpdatedTriggerAt: Instant? = startDateUpdatedTriggerAt
         private set
     var activationDateTriggerAt: LocalDate? = activationDateTriggerAt
-        private set
-
-    @Transient // Lets fool hibernate until we can drop the @Entity attribute
-    var contracts: List<ContractState> = listOf()
         private set
 
     fun shouldSendTmpSignedEvent(): Boolean = underwriterFirstSignAttributesUpdate != null
@@ -49,6 +42,10 @@ class CustomerioState(
     fun shouldSendActivatesTodayEvent(): Boolean = activationDateTriggerAt != null
     fun sentActivatesTodayEvent(nextActivationDate: LocalDate?) {
         this.activationDateTriggerAt = nextActivationDate
+    }
+
+    fun shouldSendContractRenewalQueuedEvent(): Boolean {
+        return contracts.any { it.contractRenewalQueuedTriggerAt != null }
     }
 
     fun updateFirstUpcomingStartDate(newDate: LocalDate?) {
@@ -82,7 +79,27 @@ class CustomerioState(
         triggerContractCreated(calltime)
         updateFirstUpcomingStartDate(startDate)
         if (this.contracts.none { it.contractId == contractId }) {
-            this.contracts = contracts.plus(ContractState(contractId))
+            this.contracts.add(ContractState(contractId))
         }
+    }
+
+    fun queueContractRenewal(contractId: String, callTime: Instant) {
+        var contract = this.contracts.find { it.contractId == contractId }
+        if (contract == null) {
+            contract = ContractState(contractId)
+            contracts.add(contract)
+        }
+
+        if (contract.contractRenewalQueuedTriggerAt == null) {
+            contract.contractRenewalQueuedTriggerAt = callTime
+        }
+    }
+
+    fun sentContractRenewalQueuedTodayEvent(contractId: String) {
+        contracts.first { it.contractId == contractId }.contractRenewalQueuedTriggerAt = null
+    }
+
+    fun getContractRenewalQueuedContractId(): ContractState {
+        return contracts.first { it.contractRenewalQueuedTriggerAt != null }
     }
 }

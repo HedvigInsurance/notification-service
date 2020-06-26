@@ -1,10 +1,14 @@
 package com.hedvig.notificationService.customerio.state
 
+import org.jdbi.v3.core.Handle
 import org.jdbi.v3.core.Jdbi
+import org.jdbi.v3.core.kotlin.KotlinMapper
 import org.jdbi.v3.core.kotlin.withHandleUnchecked
-import org.jdbi.v3.core.mapper.reflect.FieldMapper
+import org.jdbi.v3.core.mapper.RowMapperFactory
+import org.jdbi.v3.core.result.RowView
 import org.springframework.stereotype.Repository
 import java.time.Instant
+import java.util.stream.Stream
 
 @Repository
 class JDBIRepository(
@@ -43,41 +47,123 @@ ON CONFLICT (member_id) DO
 
             update.execute()
         }
+
+        insertOrUpdateContractState(customerioState)
+    }
+
+    private fun insertOrUpdateContractState(customerioState: CustomerioState) {
+        customerioState.contracts.forEach { contract ->
+            jdbi.withHandle<Int, RuntimeException> {
+                val stmt =
+                    """
+  INSERT INTO contract_state (
+      contract_id,
+      member_id,
+      contract_renewal_queued_trigger_at
+  )
+  VALUES (:contractId,
+          :memberId,
+          :contractRenewalQueuedTriggerAt
+  )
+  ON CONFLICT (contract_id) DO
+          UPDATE 
+          SET contract_renewal_queued_trigger_at = :contractRenewalQueuedTriggerAt
+  """.trimMargin()
+
+                val update = it.createUpdate(stmt)
+                update.bindBean(contract)
+                update.bind("memberId", customerioState.memberId)
+                update.execute()
+            }
+        }
     }
 
     override fun findByMemberId(memberId: String): CustomerioState? {
         return jdbi.withHandleUnchecked {
-            it.registerRowMapper(FieldMapper.factory(CustomerioState::class.java))
+            registerRowMappers(it)
             it.createQuery(
                 """
-                SELECT * from customerio_state where member_id = :memberId
+$SELECT_STATE_AND_CONTRACTS     
+from customerio_state cs
+LEFT JOIN contract_state c ON c.member_id = cs.member_id
+where cs.member_id = :memberId
             """.trimIndent()
             )
                 .bind("memberId", memberId)
-                .mapTo(CustomerioState::class.java)
+                .reduceRows(this::contractStateReducer)
                 .findFirst()
         }.orElse(null)
     }
 
-    override fun shouldUpdate(byTime: Instant): Collection<CustomerioState> {
+    override fun shouldUpdate(byTime: Instant): Stream<CustomerioState> {
         return jdbi.withHandleUnchecked {
-            it.registerRowMapper(FieldMapper.factory(CustomerioState::class.java))
-                .createQuery(
-                    """
-                    SELECT * 
-                    FROM customerio_state 
+            registerRowMappers(it)
+            it.createQuery(
+                """
+                    WITH contract_triggers AS (
+                     SELECT member_id, true AS contract_renewal_queued_trigger_at  
+                     FROM contract_state
+                     WHERE contract_renewal_queued_trigger_at <= :byTime
+                     GROUP BY member_id)
+                    $SELECT_STATE_AND_CONTRACTS 
+                    FROM customerio_state cs
+                    LEFT JOIN contract_state c ON c.member_id = cs.member_id
+                    LEFT JOIN contract_triggers ct on ct.member_id = cs.member_id
                     WHERE
-                        (contract_created_trigger_at <= :byTime)
+                        (cs.contract_created_trigger_at <= :byTime)
                     OR 
-                        (underwriter_first_sign_attributes_update <= :byTime AND sent_tmp_sign_event = false)
+                        (cs.underwriter_first_sign_attributes_update <= :byTime AND cs.sent_tmp_sign_event = false)
                     OR 
-                        (start_date_updated_trigger_at <= :byTime)
+                        (cs.start_date_updated_trigger_at <= :byTime)
                     OR
-                        (activation_date_trigger_at <= :byTime)
+                        (cs.activation_date_trigger_at <= :byTime)
+                    OR ct.contract_renewal_queued_trigger_at
                 """.trimIndent()
-                )
+            )
                 .bind("byTime", byTime)
-                .mapTo(CustomerioState::class.java)
-        }.toList()
+                .reduceRows(this::contractStateReducer)
+        }
+    }
+
+    private fun contractStateReducer(
+        map: MutableMap<String, CustomerioState>,
+        rw: RowView
+    ) {
+        val contact: CustomerioState = map.computeIfAbsent(
+            rw.getColumn("cs_member_id", String::class.java)
+        ) { rw.getRow(CustomerioState::class.java) }
+
+        if (rw.getColumn("c_contract_id", String::class.java) != null) {
+            val element = rw.getRow(ContractState::class.java)
+
+            contact.contracts.add(element)
+        }
+    }
+
+    private fun registerRowMappers(handle: Handle) {
+        handle.registerRowMapper(
+            RowMapperFactory.of(
+                CustomerioState::class.java,
+                KotlinMapper(CustomerioState::class.java, "cs")
+            )
+        )
+        handle.registerRowMapper(
+            RowMapperFactory.of(
+                ContractState::class.java,
+                KotlinMapper(ContractState::class.java, "c")
+            )
+        )
     }
 }
+
+val SELECT_STATE_AND_CONTRACTS = """
+SELECT
+    cs.member_id as cs_member_id,
+    cs.sent_tmp_sign_event as cs_sent_tmp_sign_event,
+    cs.underwriter_first_sign_attributes_update as cs_underwriter_first_sign_attributes_update,
+    cs.activation_date_trigger_at as cs_activation_date_trigger_at,
+    cs.contract_created_trigger_at as cs_contract_created_trigger_at,
+    cs.start_date_updated_trigger_at as cs_start_date_updated_trigger_at,
+    c.contract_id as c_contract_id,
+    c.contract_renewal_queued_trigger_at as c_contract_renewal_queued_trigger_at
+"""
