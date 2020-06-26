@@ -16,7 +16,8 @@ class EventHandler(
     private val repo: CustomerIOStateRepository,
     private val configuration: ConfigurationProperties,
     private val clients: Map<Workspace, CustomerioClient>,
-    private val firebaseNotificationService: FirebaseNotificationService
+    private val firebaseNotificationService: FirebaseNotificationService,
+    private val workspaceSelector: WorkspaceSelector
 ) {
     fun onStartDateUpdatedEvent(
         event: StartDateUpdatedEvent,
@@ -46,7 +47,8 @@ class EventHandler(
     }
 
     fun onFailedChargeEvent(memberId: String, chargeFailedEvent: ChargeFailedEvent) {
-        clients[Workspace.SWEDEN]?.sendEvent(memberId, chargeFailedEvent.toMap(memberId))
+        val marketForMember = workspaceSelector.getWorkspaceForMember(memberId)
+        clients[marketForMember]?.sendEvent(memberId, chargeFailedEvent.toMap(memberId))
 
         if (chargeFailedEvent.terminationDate != null) {
             firebaseNotificationService.sendTerminatedFailedChargesNotification(memberId)

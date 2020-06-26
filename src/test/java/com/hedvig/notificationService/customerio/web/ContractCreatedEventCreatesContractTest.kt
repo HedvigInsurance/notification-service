@@ -7,6 +7,7 @@ import assertk.assertions.extracting
 import assertk.assertions.isNotNull
 import com.hedvig.notificationService.customerio.ConfigurationProperties
 import com.hedvig.notificationService.customerio.EventHandler
+import com.hedvig.notificationService.customerio.WorkspaceSelector
 import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
@@ -22,7 +23,8 @@ class ContractCreatedEventCreatesContractTest {
     val configurationProperties = ConfigurationProperties()
     val repo = InMemoryCustomerIOStateRepository()
     val firebaseNotificationService = mockk<FirebaseNotificationService>()
-    val sut = EventHandler(repo, configurationProperties, mapOf(), firebaseNotificationService)
+    val workspaceSelector = mockk<WorkspaceSelector>()
+    val sut = EventHandler(repo, configurationProperties, mapOf(), firebaseNotificationService, workspaceSelector)
 
     @BeforeEach
     fun setup() {

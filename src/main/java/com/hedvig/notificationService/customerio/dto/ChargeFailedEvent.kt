@@ -19,10 +19,12 @@ data class ChargeFailedEvent(
 
     fun toMap(memberId: String) = mapOf(
         "name" to "ChargeFailedEvent",
-        "member_id" to memberId,
-        "number_of_failed_charges" to numberOfFailedCharges,
-        "charges_left_before_termination" to chargesLeftBeforeTermination,
-        "termination_date" to terminationDate,
-        "charge_failed_reason" to chargeFailedReason
+        "data" to mapOf(
+            "member_id" to memberId,
+            "number_of_failed_charges" to numberOfFailedCharges,
+            "charges_left_before_termination" to chargesLeftBeforeTermination,
+            "termination_date" to terminationDate,
+            "charge_failed_reason" to chargeFailedReason
+        )
     )
 }
