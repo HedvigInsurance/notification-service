@@ -11,6 +11,7 @@ import com.hedvig.notificationService.customerio.dto.ChargeFailedEvent
 import com.hedvig.notificationService.customerio.dto.ChargeFailedReason
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import com.hedvig.notificationService.service.FirebaseNotificationService
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
@@ -27,6 +28,8 @@ class OnChargeFailedEventTriggerCustomerioEventTest {
 
         val sweClient = mockk<CustomerioClient>(relaxed = true)
         val noClient = mockk<CustomerioClient>(relaxed = true)
+
+        every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.SWEDEN
 
         val repo = InMemoryCustomerIOStateRepository()
         val sut = EventHandler(
