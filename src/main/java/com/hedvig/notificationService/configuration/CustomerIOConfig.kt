@@ -52,14 +52,12 @@ class CustomerIOConfig() {
         memberServiceImpl: MemberServiceImpl,
         objectMapper: ObjectMapper,
         repo: CustomerIOStateRepository,
-        clients: Map<Workspace, CustomerioClient>
+        clients: Map<Workspace, CustomerioClient>,
+        workspaceSelector: WorkspaceSelector
     ): CustomerioService {
 
         return CustomerioService(
-            WorkspaceSelector(
-                contractLoader,
-                memberServiceImpl
-            ),
+            workspaceSelector,
             repo,
             CustomerioEventCreatorImpl(),
             clients,

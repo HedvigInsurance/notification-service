@@ -2,7 +2,9 @@ package com.hedvig.notificationService.customerio
 
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
+import org.springframework.stereotype.Service
 
+@Service
 class WorkspaceSelector(
     private val contractLoader: ContractLoader,
     private val memberServiceImpl: MemberServiceImpl
