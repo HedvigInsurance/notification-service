@@ -28,6 +28,7 @@ class WebIntegrationTestConfig {
     }
 
     @Bean
+    @Primary
     fun contractLoaderTest(): ContractLoader =
         FakeContractLoader()
 
@@ -55,21 +56,10 @@ class WebIntegrationTestConfig {
     }
 
     @Bean
-    fun workspaceSelector(contractLoader: ContractLoader, memberServiceClient: MemberServiceClient): WorkspaceSelector {
+    fun workspaceSelector(productPricingFacade: ContractLoader, memberServiceClient: MemberServiceClient): WorkspaceSelector {
         return WorkspaceSelector(
-            contractLoader,
+            productPricingFacade,
             MemberServiceImpl(memberServiceClient)
-        )
-    }
-
-    @Bean
-    fun customerioController(
-        customerioCustomerioService: CustomerioService,
-        objectMapper: ObjectMapper
-    ): CustomerioController {
-        return CustomerioController(
-            customerioCustomerioService,
-            objectMapper
         )
     }
 }
