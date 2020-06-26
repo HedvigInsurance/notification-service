@@ -26,22 +26,22 @@ class WebIntegrationTestConfig {
         return CustomerioMock(objectMapper)
     }
 
-    fun productPricingClientTest(): ContractLoader =
+    @Bean
+    fun contractLoaderTest(): ContractLoader =
         FakeContractLoader()
 
-    fun memberServiceClientTest(): MemberServiceClient = FakeMemberServiceClient()
+    @Bean
+    fun memberServiceClient(): MemberServiceClient = FakeMemberServiceClient()
 
     @Bean
     @Primary
-    fun customerioServiceTest(customerioMock: CustomerioClient): CustomerioService {
-        val productPricingFacade = productPricingClientTest()
+    fun customerioServiceTest(
+        customerioMock: CustomerioClient,
+        productPricingFacade: ContractLoader,
+        workspaceSelector: WorkspaceSelector
+    ): CustomerioService {
         return CustomerioService(
-            WorkspaceSelector(
-                productPricingFacade,
-                MemberServiceImpl(
-                    memberServiceClientTest()
-                )
-            ),
+            workspaceSelector,
             InMemoryCustomerIOStateRepository(),
             CustomerioEventCreatorImpl(),
             mapOf(
@@ -50,6 +50,14 @@ class WebIntegrationTestConfig {
             ),
             productPricingFacade,
             true
+        )
+    }
+
+    @Bean
+    fun workspaceSelector(contractLoader: ContractLoader, memberServiceClient: MemberServiceClient): WorkspaceSelector {
+        return WorkspaceSelector(
+            contractLoader,
+            MemberServiceImpl(memberServiceClient)
         )
     }
 }

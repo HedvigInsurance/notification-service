@@ -24,9 +24,6 @@ class CustomerIOIntegrationTest {
     var port: Int = 0
 
     @Autowired
-    lateinit var workspaceSelector: WorkspaceSelector
-
-    @Autowired
     lateinit var testRestTemplate: TestRestTemplate
 
     @Autowired
