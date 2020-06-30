@@ -41,10 +41,17 @@ open class FirebaseNotificationServiceImpl(
     private val memberService: MemberServiceClient
 ) : FirebaseNotificationService {
 
-    override fun sendNewMessageNotification(memberId: String) {
+    override fun sendNewMessageNotification(memberId: String, messageText: String?) {
         val firebaseToken = firebaseRepository.findById(memberId)
 
-        val message = createMessage(memberId, firebaseToken, NEW_MESSAGE, DEFAULT_TITLE, NEW_MESSAGE_BODY)
+        val message = createMessage(
+                memberId,
+                firebaseToken,
+                NEW_MESSAGE,
+                DEFAULT_TITLE,
+                NEW_MESSAGE_BODY,
+                customData = messageText?.let { mapOf(DATA_NEW_MESSAGE_BODY to it) }
+        )
 
         sendNotification(NEW_MESSAGE, memberId, message)
     }
@@ -305,6 +312,8 @@ open class FirebaseNotificationServiceImpl(
         const val DATA_MESSAGE_REFERRED_SUCCESS_NAME = "DATA_MESSAGE_REFERRED_SUCCESS_NAME"
         const val DATA_MESSAGE_REFERRED_SUCCESS_INCENTIVE_AMOUNT = "DATA_MESSAGE_REFERRED_SUCCESS_INCENTIVE_AMOUNT"
         const val DATA_MESSAGE_REFERRED_SUCCESS_INCENTIVE_CURRENCY = "DATA_MESSAGE_REFERRED_SUCCESS_INCENTIVE_CURRENCY"
+
+        const val DATA_NEW_MESSAGE_BODY = "DATA_NEW_MESSAGE_BODY"
 
         private val logger = LoggerFactory.getLogger(FirebaseNotificationServiceImpl::class.java)
     }

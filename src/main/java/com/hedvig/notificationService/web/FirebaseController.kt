@@ -4,6 +4,7 @@ import com.hedvig.notificationService.dto.ReferralsSuccessSendNotificationReques
 import com.hedvig.notificationService.service.FirebaseNotificationService
 import com.hedvig.notificationService.web.dto.ClaimPaidNotificationRequest
 import com.hedvig.notificationService.web.dto.GenericCommunicationNotificationRequest
+import com.hedvig.notificationService.web.dto.SendPushNotificationRequest
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.util.*
 import javax.validation.Valid
 
 @RestController
@@ -58,8 +60,12 @@ class FirebaseController(private val firebaseNotificationService: FirebaseNotifi
     }
 
     @PostMapping("/{memberId}/push/send")
-    fun sendPushNotification(@PathVariable memberId: String): ResponseEntity<Void> {
-        firebaseNotificationService.sendNewMessageNotification(memberId)
+    fun sendPushNotification(
+            @PathVariable memberId: String,
+            @RequestBody request: Optional<SendPushNotificationRequest>
+    ): ResponseEntity<Void> {
+        val message = request.orElse(null)?.message
+        firebaseNotificationService.sendNewMessageNotification(memberId, message)
         return ResponseEntity.noContent().build()
     }
 

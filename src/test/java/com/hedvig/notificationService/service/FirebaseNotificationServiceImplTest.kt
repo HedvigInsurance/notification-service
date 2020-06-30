@@ -83,17 +83,39 @@ internal class FirebaseNotificationServiceImplTest {
     }
 
     @Test
-    fun sendNewMessageNotification() {
+    fun sendNewMessageNotificationWithoutMessage() {
         val title = "title"
         val body = "body"
         every { localizationService.getTranslation("DEFAULT_TITLE", any()) } returns title
         every { localizationService.getTranslation("NEW_MESSAGE_BODY", any()) } returns body
-        classUnderTest.sendNewMessageNotification(MEMBER_ID)
+        classUnderTest.sendNewMessageNotification(MEMBER_ID, null)
 
         deepMatchMessageCommonData(messages[0], mapOf("TYPE" to "NEW_MESSAGE"))
         deepMatchMessageAndroidData(
             messages[0],
             mapOf("TYPE" to "NEW_MESSAGE", "DATA_MESSAGE_TITLE" to title, "DATA_MESSAGE_BODY" to body)
+        )
+        deepMatchMessageIOSData(messages[0], title, body)
+    }
+
+    @Test
+    fun sendNewMessageNotificationWithMessage() {
+        val title = "title"
+        val body = "body"
+        val message = "example message"
+        every { localizationService.getTranslation("DEFAULT_TITLE", any()) } returns title
+        every { localizationService.getTranslation("NEW_MESSAGE_BODY", any()) } returns body
+        classUnderTest.sendNewMessageNotification(MEMBER_ID, message)
+
+        deepMatchMessageCommonData(messages[0], mapOf("TYPE" to "NEW_MESSAGE"))
+        deepMatchMessageAndroidData(
+                messages[0],
+                mapOf(
+                        "TYPE" to "NEW_MESSAGE",
+                        "DATA_MESSAGE_TITLE" to title,
+                        "DATA_MESSAGE_BODY" to body,
+                        FirebaseNotificationServiceImpl.DATA_NEW_MESSAGE_BODY to message
+                )
         )
         deepMatchMessageIOSData(messages[0], title, body)
     }
