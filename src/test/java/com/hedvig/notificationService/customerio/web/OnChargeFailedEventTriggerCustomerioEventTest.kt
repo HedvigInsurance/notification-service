@@ -4,11 +4,13 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import com.hedvig.customerio.CustomerioClient
 import com.hedvig.notificationService.customerio.ConfigurationProperties
+import com.hedvig.notificationService.customerio.CustomerioService
 import com.hedvig.notificationService.customerio.EventHandler
 import com.hedvig.notificationService.customerio.Workspace
 import com.hedvig.notificationService.customerio.WorkspaceSelector
 import com.hedvig.notificationService.customerio.dto.ChargeFailedEvent
-import com.hedvig.notificationService.customerio.dto.ChargeFailedReason
+import com.hedvig.notificationService.customerio.dto.objects.ChargeFailedReason
+import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import com.hedvig.notificationService.service.FirebaseNotificationService
 import io.mockk.every
@@ -23,6 +25,8 @@ class OnChargeFailedEventTriggerCustomerioEventTest {
     internal fun `first test`() {
         val configurationProperties = ConfigurationProperties()
         configurationProperties.useNorwayHack = false
+        val customerioService = mockk<CustomerioService>()
+        val memberService = mockk<MemberServiceImpl>()
         val firebaseNotificationService = mockk<FirebaseNotificationService>(relaxed = true)
         val workspaceSelector = mockk<WorkspaceSelector>()
 
@@ -40,7 +44,9 @@ class OnChargeFailedEventTriggerCustomerioEventTest {
                 Workspace.NORWAY to noClient
             ),
             firebaseNotificationService,
-            workspaceSelector
+            workspaceSelector,
+            memberService,
+            customerioService
         )
 
         sut.onFailedChargeEvent(

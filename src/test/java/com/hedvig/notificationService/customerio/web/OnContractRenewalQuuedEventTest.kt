@@ -19,7 +19,7 @@ class OnContractRenewalQuuedEventTest {
 
     @BeforeEach
     fun setup() {
-        sut = EventHandler(repo, ConfigurationProperties(), mapOf(), mockk(), mockk())
+        sut = EventHandler(repo, ConfigurationProperties(), mapOf(), mockk(), mockk(),  mockk(), mockk())
     }
 
     @Test

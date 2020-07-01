@@ -1,6 +1,7 @@
 package com.hedvig.notificationService.serviceIntegration.memberService
 
 import com.hedvig.notificationService.serviceIntegration.memberService.dto.Member
+import com.hedvig.notificationService.serviceIntegration.memberService.dto.MemberHasSignedBeforeRequest
 import org.springframework.http.ResponseEntity
 
 class FakeMemberServiceClient : MemberServiceClient {
@@ -35,4 +36,6 @@ class FakeMemberServiceClient : MemberServiceClient {
     override fun pickedLocale(memberId: String): ResponseEntity<PickedLocale> {
         return ResponseEntity.ok(PickedLocale("nb_NO"))
     }
+
+    override fun memberHasSignedBefore(request: MemberHasSignedBeforeRequest): Boolean = false
 }

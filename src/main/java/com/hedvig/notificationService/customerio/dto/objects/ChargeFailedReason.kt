@@ -1,4 +1,4 @@
-package com.hedvig.notificationService.customerio.dto
+package com.hedvig.notificationService.customerio.dto.objects
 
 enum class ChargeFailedReason {
     INSUFFICIENT_FUNDS,
