@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import java.util.*
 import javax.validation.Valid
 
 @RestController
@@ -61,8 +60,8 @@ class FirebaseController(private val firebaseNotificationService: FirebaseNotifi
 
     @PostMapping("/{memberId}/push/send")
     fun sendPushNotification(
-            @PathVariable memberId: String,
-            @RequestBody request: SendPushNotificationRequest?
+        @PathVariable memberId: String,
+        @RequestBody request: SendPushNotificationRequest?
     ): ResponseEntity<Void> {
         firebaseNotificationService.sendNewMessageNotification(memberId, request?.message)
         return ResponseEntity.noContent().build()
