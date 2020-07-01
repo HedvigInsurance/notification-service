@@ -5,7 +5,7 @@ import java.util.Optional
 
 interface FirebaseNotificationService {
 
-    fun sendNewMessageNotification(memberId: String)
+    fun sendNewMessageNotification(memberId: String, messageText: String?)
 
     fun sendReferredSuccessNotification(
         memberId: String,
