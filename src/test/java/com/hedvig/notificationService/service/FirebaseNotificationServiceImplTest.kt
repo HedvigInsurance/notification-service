@@ -114,7 +114,7 @@ internal class FirebaseNotificationServiceImplTest {
                         "TYPE" to "NEW_MESSAGE",
                         "DATA_MESSAGE_TITLE" to title,
                         "DATA_MESSAGE_BODY" to body,
-                        FirebaseNotificationServiceImpl.DATA_NEW_MESSAGE_BODY to message
+                        "DATA_NEW_MESSAGE_BODY" to message
                 )
         )
         deepMatchMessageIOSData(messages[0], title, body)
