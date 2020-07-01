@@ -62,10 +62,9 @@ class FirebaseController(private val firebaseNotificationService: FirebaseNotifi
     @PostMapping("/{memberId}/push/send")
     fun sendPushNotification(
             @PathVariable memberId: String,
-            @RequestBody request: Optional<SendPushNotificationRequest>
+            @RequestBody request: SendPushNotificationRequest?
     ): ResponseEntity<Void> {
-        val message = request.orElse(null)?.message
-        firebaseNotificationService.sendNewMessageNotification(memberId, message)
+        firebaseNotificationService.sendNewMessageNotification(memberId, request?.message)
         return ResponseEntity.noContent().build()
     }
 
