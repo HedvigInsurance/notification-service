@@ -15,7 +15,7 @@ data class QuoteCreatedEvent(
     val attributedTo: String,
     val productType: String,
     val currentInsurer: String?,
-    val price: BigDecimal,
+    val price: BigDecimal?,
     val currency: String,
     val originatingProductId: UUID?
 ) {
