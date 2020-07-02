@@ -6,6 +6,9 @@ import java.util.UUID
 data class QuoteCreatedEvent(
     val memberId: String,
     val quoteId: UUID,
+    val firstName: String,
+    val lastName: String,
+    val postalCode: String?,
     val email: String,
     val ssn: String?,
     val initiatedFrom: String,
@@ -14,8 +17,7 @@ data class QuoteCreatedEvent(
     val currentInsurer: String?,
     val price: BigDecimal,
     val currency: String,
-    val originatingProductId: UUID?,
-    val address: String?
+    val originatingProductId: UUID?
 ) {
     fun toMap(): Map<String, Any> = mapOf(
         "name" to "QuoteCreatedEvent",
@@ -27,7 +29,7 @@ data class QuoteCreatedEvent(
             "current_insurer" to currentInsurer,
             "price" to price,
             "currency" to currency,
-            "address" to address
+            "postal_code" to postalCode
         )
     )
 

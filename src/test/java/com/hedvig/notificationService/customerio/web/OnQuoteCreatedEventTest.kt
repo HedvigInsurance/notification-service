@@ -41,6 +41,16 @@ class OnQuoteCreatedEventTest {
         every { memberService.hasSignedBefore(PersonHasSignedBeforeRequest(SSN, EMAIL)) } returns false
         eventHandlerToTest.onQuoteCreated(quoteCreatedEvent, CALL_TIME)
         verify { customerioService.sendEvent(MEMBER_ID, quoteCreatedEvent.toMap()) }
+        verify {
+            customerioService.updateCustomerAttributes(
+                MEMBER_ID, mapOf(
+                    "email" to EMAIL,
+                    "first_name" to quoteCreatedEvent.firstName,
+                    "last_name" to quoteCreatedEvent.lastName
+                ),
+                CALL_TIME
+            )
+        }
     }
 
     @Test
@@ -51,7 +61,7 @@ class OnQuoteCreatedEventTest {
         verify(inverse = true) {
             customerioService.updateCustomerAttributes(
                 MEMBER_ID,
-                mapOf("email" to EMAIL),
+                any(),
                 CALL_TIME
             )
         }
@@ -70,7 +80,8 @@ class OnQuoteCreatedEventTest {
     @Test
     fun `does not send event when member has not signed and quote has originating productId`() {
         every { memberService.hasSignedBefore(PersonHasSignedBeforeRequest(SSN, EMAIL)) } returns false
-        val eventWithQuoteWithOriginatingProductId = a.quoteCreatedEvent.copy(originatingProductId = UUID.randomUUID()).build()
+        val eventWithQuoteWithOriginatingProductId =
+            a.quoteCreatedEvent.copy(originatingProductId = UUID.randomUUID()).build()
         eventHandlerToTest.onQuoteCreated(eventWithQuoteWithOriginatingProductId, CALL_TIME)
         verify(inverse = true) { customerioService.updateCustomerAttributes(MEMBER_ID, any(), CALL_TIME) }
         verify(inverse = true) { customerioService.sendEvent(MEMBER_ID, any()) }

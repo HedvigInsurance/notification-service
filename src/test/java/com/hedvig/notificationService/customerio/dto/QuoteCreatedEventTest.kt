@@ -13,5 +13,7 @@ internal class QuoteCreatedEventTest {
         val result = a.quoteCreatedEvent.build().toMap()
         assertThat(result.values).doesNotContain(SSN)
         assertThat(result.values).doesNotContain(EMAIL)
+        assertThat(result.values).doesNotContain(a.quoteCreatedEvent.firstName)
+        assertThat(result.values).doesNotContain(a.quoteCreatedEvent.lastName)
     }
 }

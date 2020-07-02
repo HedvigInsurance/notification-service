@@ -92,7 +92,11 @@ class EventHandler(
             )
         )
         if (hasSignedBefore) return
-        customerioService.updateCustomerAttributes(event.memberId, mapOf("email" to event.email), callTime)
+        customerioService.updateCustomerAttributes(event.memberId, mapOf(
+            "email" to event.email,
+            "first_name" to event.firstName,
+            "last_name" to event.lastName
+        ), callTime)
         customerioService.sendEvent(event.memberId, event.toMap())
     }
 

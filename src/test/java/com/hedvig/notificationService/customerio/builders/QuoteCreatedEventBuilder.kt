@@ -7,6 +7,8 @@ import java.util.UUID
 data class QuoteCreatedEventBuilder(
     val memberId: String = MEMBER_ID,
     val quoteId: UUID = UUID.randomUUID(),
+    val firstName: String = "Test",
+    val lastName: String = "Testsson",
     val email: String = EMAIL,
     val ssn: String? = SSN,
     val initiatedFrom: String = "WEBONBOARDING",
@@ -21,6 +23,8 @@ data class QuoteCreatedEventBuilder(
     fun build() = QuoteCreatedEvent(
         memberId = memberId,
         quoteId = quoteId,
+        firstName = firstName,
+        lastName = lastName,
         email = email,
         ssn = ssn,
         initiatedFrom = initiatedFrom,
@@ -30,6 +34,6 @@ data class QuoteCreatedEventBuilder(
         price = price,
         currency = currency,
         originatingProductId = originatingProductId,
-        address = address
+        postalCode = address
     )
 }
