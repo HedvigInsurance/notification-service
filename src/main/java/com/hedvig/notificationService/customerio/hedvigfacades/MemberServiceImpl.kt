@@ -1,7 +1,7 @@
 package com.hedvig.notificationService.customerio.hedvigfacades
 
 import com.hedvig.notificationService.serviceIntegration.memberService.MemberServiceClient
-import com.hedvig.notificationService.serviceIntegration.memberService.dto.MemberHasSignedBeforeRequest
+import com.hedvig.notificationService.serviceIntegration.memberService.dto.PersonHasSignedBeforeRequest
 import java.util.Locale
 
 class MemberServiceImpl(private val memberServiceClient: MemberServiceClient) {
@@ -9,7 +9,7 @@ class MemberServiceImpl(private val memberServiceClient: MemberServiceClient) {
         return Locale.forLanguageTag(memberServiceClient.pickedLocale(memberId).body.pickedLocale.replace('_', '-'))
     }
 
-    fun hasSignedBefore(request: MemberHasSignedBeforeRequest): Boolean {
-        return memberServiceClient.memberHasSignedBefore(request)
+    fun hasSignedBefore(request: PersonHasSignedBeforeRequest): Boolean {
+        return memberServiceClient.personHasSignedBefore(request)
     }
 }

@@ -16,8 +16,8 @@ data class ChargeFailedEvent(
     val chargesLeftBeforeTermination: Int?,
     @JsonProperty(required = true)
     val chargeFailedReason: ChargeFailedReason
-) : CustomerIOEvent {
-    override fun toMap(memberId: String) = mapOf(
+){
+    fun toMap(memberId: String) = mapOf(
         "name" to "ChargeFailedEvent",
         "data" to mapOf(
             "member_id" to memberId,

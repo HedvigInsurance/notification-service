@@ -25,28 +25,17 @@ class OnChargeFailedEventTriggerCustomerioEventTest {
     internal fun `first test`() {
         val configurationProperties = ConfigurationProperties()
         configurationProperties.useNorwayHack = false
-        val customerioService = mockk<CustomerioService>()
+        val customerioService = mockk<CustomerioService>(relaxed = true)
         val memberService = mockk<MemberServiceImpl>()
         val firebaseNotificationService = mockk<FirebaseNotificationService>(relaxed = true)
-        val workspaceSelector = mockk<WorkspaceSelector>()
-
-        val sweClient = mockk<CustomerioClient>(relaxed = true)
-        val noClient = mockk<CustomerioClient>(relaxed = true)
-
-        every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.SWEDEN
 
         val repo = InMemoryCustomerIOStateRepository()
         val sut = EventHandler(
-            repo,
-            configurationProperties,
-            mapOf(
-                Workspace.SWEDEN to sweClient,
-                Workspace.NORWAY to noClient
-            ),
-            firebaseNotificationService,
-            workspaceSelector,
-            memberService,
-            customerioService
+            repo = repo,
+            configuration = configurationProperties,
+            firebaseNotificationService = firebaseNotificationService,
+            customerioService = customerioService,
+            memberService = memberService
         )
 
         sut.onFailedChargeEvent(
@@ -60,7 +49,7 @@ class OnChargeFailedEventTriggerCustomerioEventTest {
         )
 
         val slot = slot<Map<String, Any>>()
-        verify { sweClient.sendEvent("1227", capture(slot)) }
+        verify { customerioService.sendEvent("1227", capture(slot)) }
         assertThat(slot.captured["name"]).isEqualTo("ChargeFailedEvent")
     }
 }

@@ -1,6 +1,5 @@
 package com.hedvig.notificationService.customerio
 
-import com.hedvig.customerio.CustomerioClient
 import com.hedvig.notificationService.customerio.dto.ChargeFailedEvent
 import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
 import com.hedvig.notificationService.customerio.dto.ContractRenewalQueuedEvent
@@ -11,7 +10,7 @@ import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.service.FirebaseNotificationService
-import com.hedvig.notificationService.serviceIntegration.memberService.dto.MemberHasSignedBeforeRequest
+import com.hedvig.notificationService.serviceIntegration.memberService.dto.PersonHasSignedBeforeRequest
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.Instant
@@ -20,11 +19,9 @@ import java.time.Instant
 class EventHandler(
     private val repo: CustomerIOStateRepository,
     private val configuration: ConfigurationProperties,
-    private val clients: Map<Workspace, CustomerioClient>,
     private val firebaseNotificationService: FirebaseNotificationService,
-    private val workspaceSelector: WorkspaceSelector,
-    private val memberService: MemberServiceImpl,
-    private val customerioService: CustomerioService
+    private val customerioService: CustomerioService,
+    private val memberService: MemberServiceImpl
 ) {
     fun onStartDateUpdatedEvent(
         event: StartDateUpdatedEvent,
@@ -54,8 +51,7 @@ class EventHandler(
     }
 
     fun onFailedChargeEvent(memberId: String, chargeFailedEvent: ChargeFailedEvent) {
-        val marketForMember = workspaceSelector.getWorkspaceForMember(memberId)
-        clients[marketForMember]?.sendEvent(memberId, chargeFailedEvent.toMap(memberId))
+        customerioService.sendEvent(memberId, chargeFailedEvent.toMap(memberId))
 
         try {
             if (chargeFailedEvent.terminationDate != null) {
@@ -84,18 +80,17 @@ class EventHandler(
         repo.save(state)
     }
 
-    fun onQuoteCreated(memberId: String, event: QuoteCreatedEvent, callTime: Instant = Instant.now()) {
+    fun onQuoteCreated(event: QuoteCreatedEvent, callTime: Instant = Instant.now()) {
         if (!event.shouldSend()) return
         val hasSignedBefore = memberService.hasSignedBefore(
-            MemberHasSignedBeforeRequest(
-                memberId = memberId,
+            PersonHasSignedBeforeRequest(
                 ssn = event.ssn,
                 email = event.email
             )
         )
         if (hasSignedBefore) return
-        customerioService.updateCustomerAttributes(memberId, mapOf("email" to event.email), callTime)
-        customerioService.sendEvent(memberId, event.toMap(memberId))
+        customerioService.updateCustomerAttributes(event.memberId, mapOf("email" to event.email), callTime)
+        customerioService.sendEvent(event.memberId, event.toMap())
     }
 
     companion object {

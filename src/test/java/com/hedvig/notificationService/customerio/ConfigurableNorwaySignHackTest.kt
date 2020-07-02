@@ -52,11 +52,9 @@ class ConfigurableNorwaySignHackTest {
         val sut = EventHandler(
             stateRepository,
             configuration,
-            mapOf(),
             firebaseNotificationService,
-            workspaceSelector,
-            memberService,
-            customerioService
+            customerioService,
+            memberService
         )
 
         sut.onContractCreatedEvent(ContractCreatedEvent("contractID", "memberID", null))
@@ -77,11 +75,9 @@ class ConfigurableNorwaySignHackTest {
         val sut = EventHandler(
             stateRepository,
             configuration,
-            mapOf(),
             firebaseNotificationService,
-            workspaceSelector,
-            memberService,
-            customerioService
+            customerioService,
+            memberService
         )
 
         sut.onStartDateUpdatedEvent(StartDateUpdatedEvent("contractID", "memberID", LocalDate.parse("2020-03-01")))
