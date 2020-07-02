@@ -81,7 +81,10 @@ class EventHandler(
     }
 
     fun onQuoteCreated(event: QuoteCreatedEvent, callTime: Instant = Instant.now()) {
-        if (!event.shouldSend()) return
+        val shouldNotSendEvent = event.initiatedFrom == "HOPE" ||
+            event.originatingProductId != null ||
+            event.productType == "UNKNOWN"
+        if (shouldNotSendEvent) return
         val hasSignedBefore = memberService.hasSignedBefore(
             PersonHasSignedBeforeRequest(
                 ssn = event.ssn,
