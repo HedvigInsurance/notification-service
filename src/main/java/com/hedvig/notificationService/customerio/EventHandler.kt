@@ -84,14 +84,20 @@ class EventHandler(
         val shouldNotSendEvent = event.initiatedFrom == "HOPE" ||
             event.originatingProductId != null ||
             event.productType == "UNKNOWN"
-        if (shouldNotSendEvent) return
+        if (shouldNotSendEvent) {
+            logger.info("Will not send QuoteCreatedEvent to customer.io for member=${event.memberId} (event=$event)")
+            return
+        }
         val hasSignedBefore = memberService.hasSignedBefore(
             PersonHasSignedBeforeRequest(
                 ssn = event.ssn,
                 email = event.email
             )
         )
-        if (hasSignedBefore) return
+        if (hasSignedBefore) {
+            logger.info("Will not send QuoteCreatedEvent to customer.io for member=${event.memberId} since the person signed before")
+            return
+        }
         customerioService.updateCustomerAttributes(event.memberId, mapOf(
             "email" to event.email,
             "first_name" to event.firstName,
