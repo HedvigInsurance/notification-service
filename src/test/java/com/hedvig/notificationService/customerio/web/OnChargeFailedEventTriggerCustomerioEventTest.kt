@@ -2,18 +2,14 @@ package com.hedvig.notificationService.customerio.web
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import com.hedvig.customerio.CustomerioClient
 import com.hedvig.notificationService.customerio.ConfigurationProperties
 import com.hedvig.notificationService.customerio.CustomerioService
 import com.hedvig.notificationService.customerio.EventHandler
-import com.hedvig.notificationService.customerio.Workspace
-import com.hedvig.notificationService.customerio.WorkspaceSelector
 import com.hedvig.notificationService.customerio.dto.ChargeFailedEvent
 import com.hedvig.notificationService.customerio.dto.objects.ChargeFailedReason
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import com.hedvig.notificationService.service.FirebaseNotificationService
-import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify

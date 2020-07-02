@@ -8,7 +8,6 @@ import assertk.assertions.isNotNull
 import com.hedvig.notificationService.customerio.ConfigurationProperties
 import com.hedvig.notificationService.customerio.CustomerioService
 import com.hedvig.notificationService.customerio.EventHandler
-import com.hedvig.notificationService.customerio.WorkspaceSelector
 import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
 import com.hedvig.notificationService.customerio.state.CustomerioState
