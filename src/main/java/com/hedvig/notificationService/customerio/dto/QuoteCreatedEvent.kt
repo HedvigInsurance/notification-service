@@ -32,10 +32,4 @@ data class QuoteCreatedEvent(
             "postal_code" to postalCode
         )
     )
-
-    fun shouldSend(): Boolean {
-        return initiatedFrom != "HOPE" &&
-            originatingProductId == null &&
-            productType != "UNKNOWN"
-    }
 }

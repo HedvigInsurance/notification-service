@@ -88,7 +88,7 @@ class EventHandler(
             logger.info("Will not send QuoteCreatedEvent to customer.io for member=${event.memberId} (event=$event)")
             return
         }
-        val hasSignedBefore = memberService.hasSignedBefore(
+        val hasSignedBefore = memberService.personHasSignedBefore(
             PersonHasSignedBeforeRequest(
                 ssn = event.ssn,
                 email = event.email

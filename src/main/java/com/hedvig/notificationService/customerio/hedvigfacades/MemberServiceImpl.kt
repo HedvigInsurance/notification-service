@@ -9,7 +9,7 @@ class MemberServiceImpl(private val memberServiceClient: MemberServiceClient) {
         return Locale.forLanguageTag(memberServiceClient.pickedLocale(memberId).body.pickedLocale.replace('_', '-'))
     }
 
-    fun hasSignedBefore(request: PersonHasSignedBeforeRequest): Boolean {
+    fun personHasSignedBefore(request: PersonHasSignedBeforeRequest): Boolean {
         return memberServiceClient.personHasSignedBefore(request)
     }
 }
