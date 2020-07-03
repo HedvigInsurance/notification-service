@@ -1,6 +1,7 @@
 package com.hedvig.notificationService.customerio.dto
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.hedvig.notificationService.customerio.dto.objects.ChargeFailedReason
 import java.time.LocalDate
 import javax.validation.constraints.PositiveOrZero
 
@@ -16,7 +17,6 @@ data class ChargeFailedEvent(
     @JsonProperty(required = true)
     val chargeFailedReason: ChargeFailedReason
 ) {
-
     fun toMap(memberId: String) = mapOf(
         "name" to "ChargeFailedEvent",
         "data" to mapOf(

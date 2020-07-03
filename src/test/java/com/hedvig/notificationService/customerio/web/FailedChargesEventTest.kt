@@ -4,7 +4,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import com.hedvig.notificationService.customerio.EventHandler
 import com.hedvig.notificationService.customerio.dto.ChargeFailedEvent
-import com.hedvig.notificationService.customerio.dto.ChargeFailedReason
+import com.hedvig.notificationService.customerio.dto.objects.ChargeFailedReason
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.verify
 import org.assertj.core.api.Assertions

@@ -6,9 +6,10 @@ import assertk.assertions.containsOnly
 import assertk.assertions.extracting
 import assertk.assertions.isNotNull
 import com.hedvig.notificationService.customerio.ConfigurationProperties
+import com.hedvig.notificationService.customerio.CustomerioService
 import com.hedvig.notificationService.customerio.EventHandler
-import com.hedvig.notificationService.customerio.WorkspaceSelector
 import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
+import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import com.hedvig.notificationService.service.FirebaseNotificationService
@@ -23,8 +24,15 @@ class ContractCreatedEventCreatesContractTest {
     val configurationProperties = ConfigurationProperties()
     val repo = InMemoryCustomerIOStateRepository()
     val firebaseNotificationService = mockk<FirebaseNotificationService>()
-    val workspaceSelector = mockk<WorkspaceSelector>()
-    val sut = EventHandler(repo, configurationProperties, mapOf(), firebaseNotificationService, workspaceSelector)
+    val customerioService = mockk<CustomerioService>()
+    val memberService = mockk<MemberServiceImpl>()
+    val sut = EventHandler(
+        repo = repo,
+        configuration = configurationProperties,
+        firebaseNotificationService = firebaseNotificationService,
+        customerioService = customerioService,
+        memberService = memberService
+    )
 
     @BeforeEach
     fun setup() {
