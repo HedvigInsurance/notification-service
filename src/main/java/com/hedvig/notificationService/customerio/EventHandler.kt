@@ -10,7 +10,7 @@ import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.service.FirebaseNotificationService
-import com.hedvig.notificationService.serviceIntegration.memberService.dto.PersonHasSignedBeforeRequest
+import com.hedvig.notificationService.serviceIntegration.memberService.dto.HasPersonSignedBeforeRequest
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.Instant
@@ -88,8 +88,8 @@ class EventHandler(
             logger.info("Will not send QuoteCreatedEvent to customer.io for member=${event.memberId} (event=$event)")
             return
         }
-        val hasSignedBefore = memberService.personHasSignedBefore(
-            PersonHasSignedBeforeRequest(
+        val hasSignedBefore = memberService.hasPersonSignedBefore(
+            HasPersonSignedBeforeRequest(
                 ssn = event.ssn,
                 email = event.email
             )
