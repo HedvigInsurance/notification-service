@@ -58,16 +58,11 @@ ON CONFLICT (member_id) DO
                     """
   INSERT INTO contract_state (
       contract_id,
-      member_id,
-      contract_renewal_queued_trigger_at
+      member_id
   )
   VALUES (:contractId,
-          :memberId,
-          :contractRenewalQueuedTriggerAt
+          :memberId
   )
-  ON CONFLICT (contract_id) DO
-          UPDATE 
-          SET contract_renewal_queued_trigger_at = :contractRenewalQueuedTriggerAt
   """.trimMargin()
 
                 val update = it.createUpdate(stmt)
@@ -101,9 +96,8 @@ where cs.member_id = :memberId
             it.createQuery(
                 """
                     WITH contract_triggers AS (
-                     SELECT member_id, true AS contract_renewal_queued_trigger_at  
+                     SELECT member_id
                      FROM contract_state
-                     WHERE contract_renewal_queued_trigger_at <= :byTime
                      GROUP BY member_id)
                     $SELECT_STATE_AND_CONTRACTS 
                     FROM customerio_state cs
@@ -117,7 +111,6 @@ where cs.member_id = :memberId
                         (cs.start_date_updated_trigger_at <= :byTime)
                     OR
                         (cs.activation_date_trigger_at <= :byTime)
-                    OR ct.contract_renewal_queued_trigger_at
                 """.trimIndent()
             )
                 .bind("byTime", byTime)
@@ -164,6 +157,5 @@ SELECT
     cs.activation_date_trigger_at as cs_activation_date_trigger_at,
     cs.contract_created_trigger_at as cs_contract_created_trigger_at,
     cs.start_date_updated_trigger_at as cs_start_date_updated_trigger_at,
-    c.contract_id as c_contract_id,
-    c.contract_renewal_queued_trigger_at as c_contract_renewal_queued_trigger_at
+    c.contract_id as c_contract_id
 """
