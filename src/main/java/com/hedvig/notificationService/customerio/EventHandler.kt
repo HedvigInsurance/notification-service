@@ -73,17 +73,13 @@ class EventHandler(
     }
 
     fun onContractRenewalQueued(event: ContractRenewalQueuedEvent, callTime: Instant = Instant.now()) {
-        val state = repo.findByMemberId(event.memberId)
-            ?: CustomerioState(event.memberId)
-
-        state.queueContractRenewal(event.contractId, callTime)
-        repo.save(state)
+        customerioService.sendEvent(event.memberId, event.toMap())
     }
 
     fun onQuoteCreated(event: QuoteCreatedEvent, callTime: Instant = Instant.now()) {
         val shouldNotSendEvent = event.initiatedFrom == "HOPE" ||
-            event.originatingProductId != null ||
-            event.productType == "UNKNOWN"
+                event.originatingProductId != null ||
+                event.productType == "UNKNOWN"
         if (shouldNotSendEvent) {
             logger.info("Will not send QuoteCreatedEvent to customer.io for member=${event.memberId} (event=$event)")
             return
@@ -98,11 +94,13 @@ class EventHandler(
             logger.info("Will not send QuoteCreatedEvent to customer.io for member=${event.memberId} since the person signed before")
             return
         }
-        customerioService.updateCustomerAttributes(event.memberId, mapOf(
-            "email" to event.email,
-            "first_name" to event.firstName,
-            "last_name" to event.lastName
-        ), callTime)
+        customerioService.updateCustomerAttributes(
+            event.memberId, mapOf(
+                "email" to event.email,
+                "first_name" to event.firstName,
+                "last_name" to event.lastName
+            ), callTime
+        )
         customerioService.sendEvent(event.memberId, event.toMap())
     }
 
