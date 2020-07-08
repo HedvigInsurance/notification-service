@@ -5,19 +5,14 @@ import assertk.assertions.isEqualTo
 import com.hedvig.notificationService.customerio.ConfigurationProperties
 import com.hedvig.notificationService.customerio.CustomerioService
 import com.hedvig.notificationService.customerio.EventHandler
-import com.hedvig.notificationService.customerio.dto.ChargeFailedEvent
 import com.hedvig.notificationService.customerio.dto.ContractRenewalQueuedEvent
-import com.hedvig.notificationService.customerio.dto.objects.ChargeFailedReason
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
-import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import com.hedvig.notificationService.service.FirebaseNotificationService
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.time.Instant
 import java.time.LocalDate
 
 class OnContractRenewalQuuedEventTest {
@@ -43,7 +38,7 @@ class OnContractRenewalQuuedEventTest {
             ContractRenewalQueuedEvent(
                 "contractOne",
                 "member",
-                LocalDate.of(1989,2,17)
+                LocalDate.of(1989, 2, 17)
             )
         )
 
