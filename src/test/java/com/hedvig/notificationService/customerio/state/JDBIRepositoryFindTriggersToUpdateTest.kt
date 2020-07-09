@@ -230,17 +230,6 @@ class JDBIRepositoryFindTriggersToUpdateTest(@Autowired val jdbi: Jdbi) {
                 run {
                     val timestamp = Instant.parse("2020-06-01T13:41:39.739783Z")
                     val state = makeCustomerioState()
-                    state.queueContractRenewal("SomeId", timestamp)
-                    Arguments.of(
-                        state,
-                        timestamp,
-                        1
-                    )
-                },
-                run {
-                    val timestamp = Instant.parse("2020-06-01T13:41:39.739783Z")
-                    val state = makeCustomerioState()
-                    state.queueContractRenewal("SomeId", timestamp)
                     Arguments.of(
                         state,
                         timestamp.minusSeconds(1),

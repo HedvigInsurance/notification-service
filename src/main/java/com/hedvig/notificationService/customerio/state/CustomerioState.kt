@@ -44,10 +44,6 @@ class CustomerioState(
         this.activationDateTriggerAt = nextActivationDate
     }
 
-    fun shouldSendContractRenewalQueuedEvent(): Boolean {
-        return contracts.any { it.contractRenewalQueuedTriggerAt != null }
-    }
-
     fun updateFirstUpcomingStartDate(newDate: LocalDate?) {
         val newFirstUpcomingStartDate =
             if (newDate == null || (activationDateTriggerAt != null && newDate.isAfter(activationDateTriggerAt))) {
@@ -81,25 +77,5 @@ class CustomerioState(
         if (this.contracts.none { it.contractId == contractId }) {
             this.contracts.add(ContractState(contractId))
         }
-    }
-
-    fun queueContractRenewal(contractId: String, callTime: Instant) {
-        var contract = this.contracts.find { it.contractId == contractId }
-        if (contract == null) {
-            contract = ContractState(contractId)
-            contracts.add(contract)
-        }
-
-        if (contract.contractRenewalQueuedTriggerAt == null) {
-            contract.contractRenewalQueuedTriggerAt = callTime
-        }
-    }
-
-    fun sentContractRenewalQueuedTodayEvent(contractId: String) {
-        contracts.first { it.contractId == contractId }.contractRenewalQueuedTriggerAt = null
-    }
-
-    fun getContractRenewalQueuedContractId(): ContractState {
-        return contracts.first { it.contractRenewalQueuedTriggerAt != null }
     }
 }
