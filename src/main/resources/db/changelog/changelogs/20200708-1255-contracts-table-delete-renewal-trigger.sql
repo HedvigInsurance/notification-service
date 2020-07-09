@@ -5,5 +5,3 @@
 
 ALTER TABLE contract_state
     DROP COLUMN contract_renewal_queued_trigger_at
-
---rollback DROP TABLE contract_state
