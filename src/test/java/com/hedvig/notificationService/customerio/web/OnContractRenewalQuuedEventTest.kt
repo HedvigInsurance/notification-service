@@ -37,6 +37,7 @@ class OnContractRenewalQuuedEventTest {
         sut.onContractRenewalQueued(
             ContractRenewalQueuedEvent(
                 "contractOne",
+                "contractType",
                 "member",
                 LocalDate.of(1989, 2, 17)
             )
