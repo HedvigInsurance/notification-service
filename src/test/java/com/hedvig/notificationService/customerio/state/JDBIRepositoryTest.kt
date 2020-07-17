@@ -102,6 +102,21 @@ class JDBIRepositoryTest(@Autowired val jdbi: Jdbi) {
         }
     }
 
+    @Test
+    fun `save and load with multiple contract states with multiple saves`() {
+        val state = makeCustomerioState()
+        state.contracts.add(ContractState("a"))
+        state.contracts.add(ContractState("b"))
+        repository.save(state)
+        repository.save(state)
+
+        val rows = jdbi.withHandle<Int, java.lang.RuntimeException> {
+            it.createQuery("select count(*) from customerio_state").mapTo(Int::class.java).first()
+        }
+
+        assertThat(rows).isEqualTo(1)
+    }
+
     companion object {
         @JvmStatic
         fun makeTestData(): Stream<Arguments> {
