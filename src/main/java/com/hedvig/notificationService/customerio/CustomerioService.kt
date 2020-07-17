@@ -111,12 +111,12 @@ open class CustomerioService(
     ) {
         try {
             logger.info("Sending event ${event["name"]} to member ${customerioState.memberId}")
+            this.stateRepository.save(customerioState)
             val workspace = workspaceSelector.getWorkspaceForMember(customerioState.memberId)
             clients[workspace]?.sendEvent(
                 customerioState.memberId,
                 event
             )
-            this.stateRepository.save(customerioState)
         } catch (ex: RuntimeException) {
             logger.error("Could not send event to customerio", ex)
         }

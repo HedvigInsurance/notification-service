@@ -54,6 +54,16 @@ ON CONFLICT (member_id) DO
     private fun insertOrUpdateContractState(customerioState: CustomerioState) {
         customerioState.contracts.forEach { contract ->
             jdbi.withHandle<Int, RuntimeException> {
+                val findStmt = "SELECT COUNT(*) count FROM contract_state WHERE contract_id = :contractId"
+                val result = it.createQuery(findStmt)
+                    .bind("contractId", contract.contractId)
+                    .map { row -> row.getColumn("count", java.lang.Integer::class.java) }
+                    .findFirst()
+
+                if (result.filter { count -> count >= 1 }.isPresent) {
+                    return@withHandle 0
+                }
+
                 val stmt =
                     """
   INSERT INTO contract_state (
