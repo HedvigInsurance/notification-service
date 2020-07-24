@@ -40,8 +40,9 @@ class NorwaySignHackUpdateCustomerIOTest {
     private val repository =
         InMemoryCustomerIOStateRepository()
 
-    @MockK
-    lateinit var sut: CustomerioService
+    lateinit var customerioService: CustomerioService
+
+    lateinit var scheduler: CustomerioUpdateScheduler
 
     @MockK
     lateinit var workspaceSelector: WorkspaceSelector
@@ -51,17 +52,20 @@ class NorwaySignHackUpdateCustomerIOTest {
         MockKAnnotations.init(this)
         eventCreator = CustomerioEventCreatorImpl()
 
-        sut = CustomerioService(
+        customerioService = CustomerioService(
             workspaceSelector,
             repository,
-            eventCreator,
             mapOf(
                 Workspace.SWEDEN to seCustomerioClient,
                 Workspace.NORWAY to noCustomerIoClient
             ),
-            contractLoader,
-            true
+            ConfigurationProperties()
         )
+
+        scheduler = CustomerioUpdateScheduler(
+            eventCreator, repository, contractLoader, customerioService
+        )
+
     }
 
     @Test
@@ -71,7 +75,7 @@ class NorwaySignHackUpdateCustomerIOTest {
 
         val updateTime = Instant.parse("2020-04-15T14:53:40.550493Z")
 
-        sut.updateCustomerAttributes(
+        customerioService.updateCustomerAttributes(
             "1337", mapOf(
                 "partner_code" to "campaigncode",
                 "sign_source" to "RAPIO",
@@ -85,7 +89,7 @@ class NorwaySignHackUpdateCustomerIOTest {
             makeContractInfo()
         )
 
-        sut.sendUpdates(updateTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
+        scheduler.sendUpdates(updateTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
 
         val eventDataSlot = slot<Map<String, Any>>()
         verify { noCustomerIoClient.sendEvent("1337", capture(eventDataSlot)) }
@@ -98,7 +102,7 @@ class NorwaySignHackUpdateCustomerIOTest {
         every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
 
         val updateTime = Instant.parse("2020-04-15T14:53:40.550493Z")
-        sut.updateCustomerAttributes(
+        customerioService.updateCustomerAttributes(
             "42", mapOf(
                 "partner_code" to "campaigncode",
                 "sign_source" to "RAPIO",
@@ -111,7 +115,7 @@ class NorwaySignHackUpdateCustomerIOTest {
         every { contractLoader.getContractInfoForMember(any()) } returns listOf(
             makeContractInfo()
         )
-        sut.sendUpdates(updateTime.plus(1, ChronoUnit.SECONDS))
+        scheduler.sendUpdates(updateTime.plus(1, ChronoUnit.SECONDS))
 
         verify(inverse = true) { noCustomerIoClient.sendEvent(any(), any()) }
     }
@@ -136,7 +140,7 @@ class NorwaySignHackUpdateCustomerIOTest {
         every { contractLoader.getContractInfoForMember(any()) } returns listOf(
             makeContractInfo()
         )
-        sut.sendUpdates(someTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
+        scheduler.sendUpdates(someTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
 
         verify { noCustomerIoClient.sendEvent("memberOne", any()) }
         verify { noCustomerIoClient.sendEvent("memberTwo", any()) }
@@ -147,7 +151,7 @@ class NorwaySignHackUpdateCustomerIOTest {
 
         val someTime = Instant.parse("2020-04-15T14:53:40.550493Z")
         every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
-        sut.sendUpdates(someTime)
+        scheduler.sendUpdates(someTime)
 
         verify(inverse = true) { noCustomerIoClient.sendEvent(any(), any()) }
     }
@@ -166,8 +170,8 @@ class NorwaySignHackUpdateCustomerIOTest {
         every { contractLoader.getContractInfoForMember(any()) } returns listOf(
             makeContractInfo()
         )
-        sut.sendUpdates(time.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
-        sut.sendUpdates(time.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
+        scheduler.sendUpdates(time.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
+        scheduler.sendUpdates(time.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
 
         verify(atMost = 1) { noCustomerIoClient.sendEvent("someMemberID", any()) }
     }
@@ -187,7 +191,7 @@ class NorwaySignHackUpdateCustomerIOTest {
         every { contractLoader.getContractInfoForMember(any()) } returns listOf(
             makeContractInfo(AgreementType.SwedishApartment)
         )
-        sut.sendUpdates(time.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
+        scheduler.sendUpdates(time.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
 
         verify(inverse = true) { noCustomerIoClient.sendEvent("someMemberID", any()) }
     }

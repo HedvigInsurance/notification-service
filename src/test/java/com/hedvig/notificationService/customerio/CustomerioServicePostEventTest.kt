@@ -22,13 +22,11 @@ class CustomerioServicePostEventTest {
         val sut = CustomerioService(
             workspaceSelector,
             InMemoryCustomerIOStateRepository(),
-            eventCreator,
             mapOf(
                 Workspace.SWEDEN to sweClient,
                 Workspace.NORWAY to noClient
             ),
-            productPricingFacade,
-            true
+            ConfigurationProperties().also { it.useNorwayHack = false }
         )
 
         every { workspaceSelector.getWorkspaceForMember("8080") } returns Workspace.SWEDEN
@@ -49,14 +47,11 @@ class CustomerioServicePostEventTest {
         val sut = CustomerioService(
             workspaceSelector,
             InMemoryCustomerIOStateRepository(),
-            eventCreator,
-
             mapOf(
                 Workspace.SWEDEN to sweClient,
                 Workspace.NORWAY to noClient
             ),
-            productPricingFacade,
-            true
+            ConfigurationProperties().also { it.useNorwayHack = false }
         )
 
         every { workspaceSelector.getWorkspaceForMember("8080") } returns Workspace.NORWAY

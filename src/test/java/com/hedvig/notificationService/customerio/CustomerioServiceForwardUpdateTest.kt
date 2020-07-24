@@ -48,13 +48,11 @@ class CustomerioServiceForwardUpdateTest {
                 memberServiceImpl
             ),
             repository,
-            CustomerioEventCreatorImpl(),
             mapOf(
                 Workspace.SWEDEN to customerIOMockSweden,
                 Workspace.NORWAY to customerIOMockNorway
             ),
-            contractLoader,
-            true
+            ConfigurationProperties().also { it.useNorwayHack = false }
         )
     }
 

@@ -27,13 +27,11 @@ class CustomerioServiceDeleteCustomerTest {
         val cut = CustomerioService(
             WorkspaceSelector(productPricingFacade, memberServiceImpl),
             repository,
-            CustomerioEventCreatorImpl(),
             mapOf(
                 Workspace.SWEDEN to sweClient,
                 Workspace.NORWAY to noClient
             ),
-            productPricingFacade,
-            true
+            ConfigurationProperties()
         )
         cut.deleteCustomer("asdad")
         verify { noClient.deleteCustomer(any()) }
@@ -49,13 +47,11 @@ class CustomerioServiceDeleteCustomerTest {
         val cut = CustomerioService(
             WorkspaceSelector(productPricingFacade, memberServiceImpl),
             repository,
-            CustomerioEventCreatorImpl(),
             mapOf(
                 Workspace.SWEDEN to sweClient,
                 Workspace.NORWAY to noClient
             ),
-            productPricingFacade,
-            true
+            ConfigurationProperties()
         )
         cut.deleteCustomer("asdad")
         verify { sweClient.deleteCustomer(any()) }

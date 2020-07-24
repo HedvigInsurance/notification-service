@@ -64,10 +64,8 @@ class CustomerIOConfig() {
         return CustomerioService(
             workspaceSelector,
             repo,
-            CustomerioEventCreatorImpl(),
             clients,
-            contractLoader,
-            configuration.useNorwayHack
+            configuration
         )
     }
 
