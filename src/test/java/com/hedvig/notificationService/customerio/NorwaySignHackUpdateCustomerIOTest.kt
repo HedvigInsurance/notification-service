@@ -65,7 +65,6 @@ class NorwaySignHackUpdateCustomerIOTest {
         scheduler = CustomerioUpdateScheduler(
             eventCreator, repository, contractLoader, customerioService
         )
-
     }
 
     @Test
