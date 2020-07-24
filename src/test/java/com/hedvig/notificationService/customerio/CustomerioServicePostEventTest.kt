@@ -51,7 +51,7 @@ class CustomerioServicePostEventTest {
                 Workspace.SWEDEN to sweClient,
                 Workspace.NORWAY to noClient
             ),
-            ConfigurationProperties().also { it.useNorwayHack = false }
+            ConfigurationProperties()
         )
 
         every { workspaceSelector.getWorkspaceForMember("8080") } returns Workspace.NORWAY
