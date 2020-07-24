@@ -53,7 +53,7 @@ class NorwaySignHackHandleUpdatesFromUnderwriterTest {
                 Workspace.SWEDEN to seCustomerioClient,
                 Workspace.NORWAY to noCustomerIoClient
             ),
-            ConfigurationProperties().also { it.useNorwayHack = false }
+            ConfigurationProperties()
         )
     }
 
