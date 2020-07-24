@@ -51,7 +51,7 @@ class CustomerioServiceForwardUpdateTest {
                 Workspace.SWEDEN to customerIOMockSweden,
                 Workspace.NORWAY to customerIOMockNorway
             ),
-            ConfigurationProperties().also { it.useNorwayHack = false }
+            ConfigurationProperties()
         )
     }
 
