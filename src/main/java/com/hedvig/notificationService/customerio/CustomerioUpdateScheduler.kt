@@ -16,7 +16,7 @@ open class CustomerioUpdateScheduler(
 ) {
 
     private val logger =
-        LoggerFactory.getLogger(CustomerioService::class.java)
+        LoggerFactory.getLogger(CustomerioUpdateScheduler::class.java)
 
     // @Scheduled functions cannot have any arguments
     // so this is a bit of a hack
