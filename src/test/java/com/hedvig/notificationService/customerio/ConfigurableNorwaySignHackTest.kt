@@ -32,7 +32,7 @@ class ConfigurableNorwaySignHackTest {
         every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
 
         val cut =
-            CustomerioService(workspaceSelector, stateRepository, eventCreator, clients, productPricingFacade, false)
+            CustomerioService(workspaceSelector, stateRepository, clients, ConfigurationProperties().also { it.useNorwayHack = false })
 
         cut.updateCustomerAttributes("someId", makeSignFromUnderwriterMap())
 

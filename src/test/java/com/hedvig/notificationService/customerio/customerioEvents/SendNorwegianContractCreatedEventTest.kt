@@ -6,6 +6,8 @@ import assertk.assertions.containsAll
 import assertk.assertions.isEqualTo
 import com.hedvig.customerio.CustomerioClient
 import com.hedvig.notificationService.customerio.AgreementType
+import com.hedvig.notificationService.customerio.ConfigurationProperties
+import com.hedvig.notificationService.customerio.CustomerioUpdateScheduler
 import com.hedvig.notificationService.customerio.CustomerioService
 import com.hedvig.notificationService.customerio.SIGN_EVENT_WINDOWS_SIZE_MINUTES
 import com.hedvig.notificationService.customerio.Workspace
@@ -41,21 +43,23 @@ class SendNorwegianContractCreatedEventTest {
     @MockK(relaxed = true)
     lateinit var seClient: CustomerioClient
 
-    lateinit var sut: CustomerioService
+    lateinit var customerioService: CustomerioService
+    lateinit var scheduler: CustomerioUpdateScheduler
 
     @Before
     fun setup() {
         MockKAnnotations.init(this)
-        sut = CustomerioService(
+        customerioService = CustomerioService(
             workspaceSelector,
             repo,
-            CustomerioEventCreatorImpl(),
             mapOf(
                 Workspace.NORWAY to noClient,
                 Workspace.SWEDEN to seClient
             ),
-            contractLoader,
-            true
+            ConfigurationProperties()
+        )
+        scheduler = CustomerioUpdateScheduler(
+            CustomerioEventCreatorImpl(), repo, contractLoader, customerioService
         )
     }
 
@@ -76,7 +80,7 @@ class SendNorwegianContractCreatedEventTest {
                 )
             )
 
-        sut.sendUpdates(startTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
+        scheduler.sendUpdates(startTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
 
         val slot = slot<Map<String, Any?>>()
         verify { noClient.sendEvent(any(), capture(slot)) }
@@ -103,7 +107,7 @@ class SendNorwegianContractCreatedEventTest {
                 )
             )
 
-        sut.sendUpdates(startTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
+        scheduler.sendUpdates(startTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
 
         val slot = slot<Map<String, Any?>>()
         verify { seClient.sendEvent(any(), any()) }
@@ -125,8 +129,8 @@ class SendNorwegianContractCreatedEventTest {
                 )
             )
 
-        sut.sendUpdates(startTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
-        sut.sendUpdates(startTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
+        scheduler.sendUpdates(startTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
+        scheduler.sendUpdates(startTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
 
         val slot = slot<Map<String, Any?>>()
         verify(atMost = 1) { noClient.sendEvent(any(), capture(slot)) }
@@ -144,7 +148,7 @@ class SendNorwegianContractCreatedEventTest {
         every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
         every { noClient.sendEvent(any(), any()) } throws FeignExceptionForTest(500)
 
-        sut.sendUpdates(startTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
+        scheduler.sendUpdates(startTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
 
         assertThat(repo.data["someMemberId"]?.contractCreatedTriggerAt).isEqualTo(startTime)
     }

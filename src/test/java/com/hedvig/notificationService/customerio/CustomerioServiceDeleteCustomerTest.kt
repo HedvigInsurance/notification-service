@@ -1,7 +1,6 @@
 package com.hedvig.notificationService.customerio
 
 import com.hedvig.customerio.CustomerioClient
-import com.hedvig.notificationService.customerio.customerioEvents.CustomerioEventCreatorImpl
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
@@ -27,13 +26,11 @@ class CustomerioServiceDeleteCustomerTest {
         val cut = CustomerioService(
             WorkspaceSelector(productPricingFacade, memberServiceImpl),
             repository,
-            CustomerioEventCreatorImpl(),
             mapOf(
                 Workspace.SWEDEN to sweClient,
                 Workspace.NORWAY to noClient
             ),
-            productPricingFacade,
-            true
+            ConfigurationProperties()
         )
         cut.deleteCustomer("asdad")
         verify { noClient.deleteCustomer(any()) }
@@ -49,13 +46,11 @@ class CustomerioServiceDeleteCustomerTest {
         val cut = CustomerioService(
             WorkspaceSelector(productPricingFacade, memberServiceImpl),
             repository,
-            CustomerioEventCreatorImpl(),
             mapOf(
                 Workspace.SWEDEN to sweClient,
                 Workspace.NORWAY to noClient
             ),
-            productPricingFacade,
-            true
+            ConfigurationProperties()
         )
         cut.deleteCustomer("asdad")
         verify { sweClient.deleteCustomer(any()) }

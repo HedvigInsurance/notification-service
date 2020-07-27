@@ -49,13 +49,11 @@ class NorwaySignHackHandleUpdatesFromUnderwriterTest {
         sut = CustomerioService(
             workspaceSelector,
             repository,
-            eventCreator,
             mapOf(
                 Workspace.SWEDEN to seCustomerioClient,
                 Workspace.NORWAY to noCustomerIoClient
             ),
-            contractLoader,
-            true
+            ConfigurationProperties()
         )
     }
 

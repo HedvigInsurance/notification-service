@@ -3,10 +3,10 @@ package com.hedvig.notificationService
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.hedvig.customerio.CustomerioClient
 import com.hedvig.customerio.CustomerioMock
+import com.hedvig.notificationService.customerio.ConfigurationProperties
 import com.hedvig.notificationService.customerio.CustomerioService
 import com.hedvig.notificationService.customerio.Workspace
 import com.hedvig.notificationService.customerio.WorkspaceSelector
-import com.hedvig.notificationService.customerio.customerioEvents.CustomerioEventCreatorImpl
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.hedvigfacades.FakeContractLoader
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
@@ -44,13 +44,11 @@ class WebIntegrationTestConfig {
         return CustomerioService(
             workspaceSelector,
             InMemoryCustomerIOStateRepository(),
-            CustomerioEventCreatorImpl(),
             mapOf(
                 Workspace.SWEDEN to customerioMock,
                 Workspace.NORWAY to customerioMock
             ),
-            productPricingFacade,
-            true
+            ConfigurationProperties()
         )
     }
 
