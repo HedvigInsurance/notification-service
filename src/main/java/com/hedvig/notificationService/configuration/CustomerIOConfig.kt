@@ -8,7 +8,6 @@ import com.hedvig.notificationService.customerio.ConfigurationProperties
 import com.hedvig.notificationService.customerio.CustomerioService
 import com.hedvig.notificationService.customerio.CustomerioUpdateScheduler
 import com.hedvig.notificationService.customerio.Workspace
-import com.hedvig.notificationService.customerio.WorkspaceSelector
 import com.hedvig.notificationService.customerio.customerioEvents.CustomerioEventCreatorImpl
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoaderImpl
