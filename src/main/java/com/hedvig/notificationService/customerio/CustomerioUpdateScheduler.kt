@@ -8,6 +8,8 @@ import org.springframework.scheduling.annotation.Scheduled
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
+const val SIGN_EVENT_WINDOWS_SIZE_MINUTES = 10L
+
 open class CustomerioUpdateScheduler(
     private val eventCreator: CustomerioEventCreator,
     private val stateRepository: CustomerIOStateRepository,
