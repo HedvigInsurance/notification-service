@@ -6,8 +6,10 @@ import com.hedvig.customerio.CustomerioClient
 import com.hedvig.customerio.CustomerioMock
 import com.hedvig.notificationService.customerio.ConfigurationProperties
 import com.hedvig.notificationService.customerio.CustomerioService
+import com.hedvig.notificationService.customerio.CustomerioUpdateScheduler
 import com.hedvig.notificationService.customerio.Workspace
 import com.hedvig.notificationService.customerio.WorkspaceSelector
+import com.hedvig.notificationService.customerio.customerioEvents.CustomerioEventCreatorImpl
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoaderImpl
 import com.hedvig.notificationService.customerio.hedvigfacades.FakeContractLoader
@@ -51,22 +53,17 @@ class CustomerIOConfig() {
         MemberServiceImpl(memberServiceClient)
 
     @Bean
-    fun customerioService(
+    fun customerioUpdateScheduler(
         contractLoader: ContractLoader,
-        memberServiceImpl: MemberServiceImpl,
-        objectMapper: ObjectMapper,
         repo: CustomerIOStateRepository,
         clients: Map<Workspace, CustomerioClient>,
-        workspaceSelector: WorkspaceSelector
-    ): CustomerioService {
-
-        return CustomerioService(
-            workspaceSelector,
-            repo,
-            clients,
-            configuration
-        )
-    }
+        customerioService: CustomerioService
+    ) = CustomerioUpdateScheduler(
+        eventCreator = CustomerioEventCreatorImpl(),
+        stateRepository = repo,
+        contractLoader = contractLoader,
+        customerioService = customerioService
+    )
 
     @Bean
     fun createClients(objectMapper: ObjectMapper): Map<Workspace, CustomerioClient> {

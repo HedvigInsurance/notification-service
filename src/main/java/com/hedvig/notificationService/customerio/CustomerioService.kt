@@ -8,8 +8,6 @@ import org.springframework.stereotype.Service
 import java.time.Instant
 import javax.transaction.Transactional
 
-const val SIGN_EVENT_WINDOWS_SIZE_MINUTES = 10L
-
 @Service
 class CustomerioService(
     private val workspaceSelector: WorkspaceSelector,
