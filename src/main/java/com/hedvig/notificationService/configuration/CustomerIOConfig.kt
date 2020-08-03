@@ -18,15 +18,23 @@ import com.hedvig.notificationService.serviceIntegration.memberService.MemberSer
 import com.hedvig.notificationService.serviceIntegration.productPricing.client.ProductPricingClient
 import com.hedvig.notificationService.serviceIntegration.underwriter.UnderwriterClient
 import okhttp3.OkHttpClient
+import org.quartz.JobBuilder
+import org.quartz.Scheduler
+import org.quartz.SimpleScheduleBuilder.simpleSchedule
+import org.quartz.TriggerBuilder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.scheduling.annotation.EnableScheduling
+import javax.annotation.PostConstruct
+
 
 @Configuration
 @EnableScheduling
-class CustomerIOConfig() {
+class CustomerIOConfig(
+    private val scheduler: Scheduler
+) {
 
     @Autowired
     lateinit var configuration: ConfigurationProperties
@@ -82,5 +90,27 @@ class CustomerIOConfig() {
                 )
             }.toMap()
         }
+    }
+
+    @PostConstruct
+    fun scheduleCustomerio() {
+        val job = JobBuilder
+            .newJob(CustomerioUpdateScheduler::class.java)
+            .withIdentity("Customerio_update_scheduler")
+            .withDescription("Customer.io update scheduler")
+            .build()
+
+        val trigger = TriggerBuilder
+            .newTrigger()
+            .forJob(job)
+            .withIdentity("Customerio_update_scheduler_trigger")
+            .withSchedule(simpleSchedule().repeatForever().withIntervalInSeconds(30))
+            .startNow()
+            .build()
+
+        if (!scheduler.checkExists(job.key) && !scheduler.checkExists(trigger.key)) {
+            scheduler.scheduleJob(job, trigger)
+        }
+        scheduler.start()
     }
 }

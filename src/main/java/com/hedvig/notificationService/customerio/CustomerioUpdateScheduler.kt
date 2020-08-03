@@ -3,31 +3,44 @@ package com.hedvig.notificationService.customerio
 import com.hedvig.notificationService.customerio.customerioEvents.CustomerioEventCreator
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
+import org.quartz.Job
+import org.quartz.JobExecutionContext
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Bean
 import org.springframework.scheduling.annotation.Scheduled
+import org.springframework.stereotype.Component
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
 const val SIGN_EVENT_WINDOWS_SIZE_MINUTES = 10L
 
-open class CustomerioUpdateScheduler(
-    private val eventCreator: CustomerioEventCreator,
-    private val stateRepository: CustomerIOStateRepository,
-    private val contractLoader: ContractLoader,
-    private val customerioService: CustomerioService
-) {
+open class CustomerioUpdateScheduler: Job {
+
+    //TODO: This are still null :(
+    lateinit var eventCreator: CustomerioEventCreator
+    lateinit var stateRepository: CustomerIOStateRepository
+    lateinit var contractLoader: ContractLoader
+    lateinit var customerioService: CustomerioService
 
     private val logger =
         LoggerFactory.getLogger(CustomerioUpdateScheduler::class.java)
 
-    // @Scheduled functions cannot have any arguments
-    // so this is a bit of a hack
-    @Scheduled(fixedDelay = 1000 * 30)
-    open fun scheduledUpdates() {
-        sendUpdates()
+    constructor()
+
+    constructor(
+        eventCreator: CustomerioEventCreator,
+        stateRepository: CustomerIOStateRepository,
+        contractLoader: ContractLoader,
+        customerioService: CustomerioService
+    ) {
+        this.eventCreator = eventCreator
+        this.stateRepository = stateRepository
+        this.contractLoader = contractLoader
+        this.customerioService = customerioService
     }
 
-    open fun sendUpdates(timeNow: Instant = Instant.now()) {
+    fun sendUpdates(timeNow: Instant = Instant.now()) {
         val windowEndTime = timeNow.minus(
             SIGN_EVENT_WINDOWS_SIZE_MINUTES,
             ChronoUnit.MINUTES
@@ -43,5 +56,9 @@ open class CustomerioUpdateScheduler(
                 logger.error("Could not create event from customerio state", ex)
             }
         }
+    }
+
+    override fun execute(context: JobExecutionContext) {
+        sendUpdates()
     }
 }
