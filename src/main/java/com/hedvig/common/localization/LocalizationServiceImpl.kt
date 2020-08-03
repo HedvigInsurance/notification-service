@@ -1,6 +1,6 @@
 package com.hedvig.common.localization
 
-import com.hedvig.lokalise.client.LokaliseClient
+import com.hedvig.lokalise.repository.LokaliseRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.util.Locale
@@ -9,11 +9,15 @@ import java.util.Locale
 class LocalizationServiceImpl(
     @Value("\${lokalise.useFakes}")
     private val useFakes: Boolean,
-    private val configuration: LokaliseConfigurationProperties
+    configuration: LokaliseConfigurationProperties
 ) : LocalizationService {
 
-    val client = if (!useFakes) LokaliseClient(configuration.projectId, configuration.apiToken) else null
+    val repository = if (!useFakes) LokaliseRepository(configuration.projectId, configuration.apiToken) else null
 
-    override fun getTranslation(key: String, locale: Locale) =
-        if (!useFakes) client!!.getTranslation(key, locale) else "lokalise configuration useFakes is set to true"
+    override fun getTranslation(key: String, locale: Locale, replacements: Map<String, String>) =
+        if (!useFakes) repository!!.getTranslation(
+            key,
+            locale,
+            replacements
+        ) else "lokalise configuration useFakes is set to true"
 }

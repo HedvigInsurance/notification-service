@@ -45,12 +45,12 @@ open class FirebaseNotificationServiceImpl(
         val firebaseToken = firebaseRepository.findById(memberId)
 
         val message = createMessage(
-                memberId,
-                firebaseToken,
-                NEW_MESSAGE,
-                DEFAULT_TITLE,
-                NEW_MESSAGE_BODY,
-                customData = messageText?.let { mapOf(DATA_NEW_MESSAGE_BODY to it) }
+            memberId,
+            firebaseToken,
+            NEW_MESSAGE,
+            DEFAULT_TITLE,
+            NEW_MESSAGE_BODY,
+            customData = messageText?.let { mapOf(DATA_NEW_MESSAGE_BODY to it) }
         )
 
         sendNotification(NEW_MESSAGE, memberId, message)
@@ -74,7 +74,8 @@ open class FirebaseNotificationServiceImpl(
                 DATA_MESSAGE_REFERRED_SUCCESS_NAME to referredName,
                 DATA_MESSAGE_REFERRED_SUCCESS_INCENTIVE_AMOUNT to incentiveAmount,
                 DATA_MESSAGE_REFERRED_SUCCESS_INCENTIVE_CURRENCY to incentiveCurrency
-            )
+            ),
+            bodyReplacements = mapOf("REFERRAL_VALUE" to incentiveAmount.toFloat().toInt().toString())
         )
 
         sendNotification(REFERRAL_SUCCESS, memberId, message)
@@ -172,12 +173,14 @@ open class FirebaseNotificationServiceImpl(
         dataType: String,
         titleTextKey: String,
         bodyTextKey: String,
-        customData: Map<String, String>? = null
+        customData: Map<String, String>? = null,
+        bodyReplacements: Map<String, String> = emptyMap()
     ): Message {
         val apsConfig = createApnsConfig(
             memberId = memberId,
             titleTextKey = titleTextKey,
-            bodyTextKey = bodyTextKey
+            bodyTextKey = bodyTextKey,
+            bodyReplacements = bodyReplacements
         )
 
         customData?.let {
@@ -243,9 +246,10 @@ open class FirebaseNotificationServiceImpl(
     private fun createApnsConfig(
         memberId: String,
         titleTextKey: String,
-        bodyTextKey: String
+        bodyTextKey: String,
+        bodyReplacements: Map<String, String>
     ): ApnsConfig.Builder {
-        val (title, body) = resolveTitleAndBody(memberId, titleTextKey, bodyTextKey)
+        val (title, body) = resolveTitleAndBody(memberId, titleTextKey, bodyTextKey, bodyReplacements)
 
         return ApnsConfig
             .builder()
@@ -277,7 +281,12 @@ open class FirebaseNotificationServiceImpl(
             .putData(TYPE, type)
     }
 
-    private fun resolveTitleAndBody(memberId: String, titleTextKey: String, bodyTextKey: String): Pair<String, String> {
+    private fun resolveTitleAndBody(
+        memberId: String,
+        titleTextKey: String,
+        bodyTextKey: String,
+        bodyReplacements: Map<String, String> = emptyMap()
+    ): Pair<String, String> {
         val acceptLanguage = memberService.profile(memberId).body?.acceptLanguage
         val locale = LocaleResolver.resolveLocale(acceptLanguage)
 
@@ -285,7 +294,7 @@ open class FirebaseNotificationServiceImpl(
             localizationService.getTranslation(titleTextKey, locale)
                 ?: throw Error("Could not find text key $titleTextKey")
         val body =
-            localizationService.getTranslation(bodyTextKey, locale)
+            localizationService.getTranslation(bodyTextKey, locale, bodyReplacements)
                 ?: throw Error("Could not find text key $bodyTextKey")
 
         return Pair(title, body)

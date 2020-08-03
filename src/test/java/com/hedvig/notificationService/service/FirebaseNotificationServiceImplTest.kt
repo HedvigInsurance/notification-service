@@ -15,6 +15,7 @@ import com.hedvig.notificationService.serviceIntegration.memberService.dto.Membe
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
+import io.mockk.verify
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -31,10 +32,13 @@ internal class FirebaseNotificationServiceImplTest {
 
     @MockK
     lateinit var firebaseRepository: FirebaseRepository
+
     @MockK
     lateinit var firebaseMessaging: RealFirebaseMessenger
+
     @MockK
     lateinit var localizationService: LocalizationService
+
     @MockK
     lateinit var memberService: MemberServiceClient
 
@@ -109,13 +113,13 @@ internal class FirebaseNotificationServiceImplTest {
 
         deepMatchMessageCommonData(messages[0], mapOf("TYPE" to "NEW_MESSAGE"))
         deepMatchMessageAndroidData(
-                messages[0],
-                mapOf(
-                        "TYPE" to "NEW_MESSAGE",
-                        "DATA_MESSAGE_TITLE" to title,
-                        "DATA_MESSAGE_BODY" to body,
-                        "DATA_NEW_MESSAGE_BODY" to message
-                )
+            messages[0],
+            mapOf(
+                "TYPE" to "NEW_MESSAGE",
+                "DATA_MESSAGE_TITLE" to title,
+                "DATA_MESSAGE_BODY" to body,
+                "DATA_NEW_MESSAGE_BODY" to message
+            )
         )
         deepMatchMessageIOSData(messages[0], title, body)
     }
@@ -125,7 +129,7 @@ internal class FirebaseNotificationServiceImplTest {
         val title = "title"
         val body = "body"
         every { localizationService.getTranslation("DEFAULT_TITLE", any()) } returns title
-        every { localizationService.getTranslation("REFERRAL_SUCCESS_BODY", any()) } returns body
+        every { localizationService.getTranslation("REFERRAL_SUCCESS_BODY", any(), any()) } returns body
         val referredName = "referredName"
         val incentiveAmount = "10.00"
         val incentiveCurrency = "SEK"
@@ -155,6 +159,8 @@ internal class FirebaseNotificationServiceImplTest {
                 "DATA_MESSAGE_REFERRED_SUCCESS_INCENTIVE_CURRENCY" to incentiveCurrency
             )
         )
+
+        verify { localizationService.getTranslation("REFERRAL_SUCCESS_BODY", any(), mapOf("REFERRAL_VALUE" to "10")) }
     }
 
     @Test
