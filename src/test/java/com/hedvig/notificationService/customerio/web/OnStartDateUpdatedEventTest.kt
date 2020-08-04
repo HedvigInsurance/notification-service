@@ -77,6 +77,8 @@ class OnStartDateUpdatedEventTest {
         assertThat(jobSlot.captured).all {
             transform { it.key.group }.isEqualTo("customerio.triggers")
             transform { it.requestsRecovery() }.isTrue()
+            transform { it.jobClass }.isEqualTo(UpdateStartDateJob::class.java)
+            transform { it.jobDataMap.get("memberId") }.isEqualTo("aMemberId")
         }
         assertThat(triggerSot.captured).all {
             transform { it.key.group }.isEqualTo("customerio.triggers")

@@ -9,16 +9,17 @@ import com.hedvig.notificationService.customerio.dto.objects.ChargeFailedReason
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.customerio.state.CustomerioState
+import com.hedvig.notificationService.customerio.web.UpdateStartDateJob
 import com.hedvig.notificationService.service.FirebaseNotificationService
 import com.hedvig.notificationService.serviceIntegration.memberService.dto.HasPersonSignedBeforeRequest
 import org.quartz.JobBuilder
+import org.quartz.JobDataMap
 import org.quartz.Scheduler
 import org.quartz.SchedulerException
 import org.quartz.SimpleScheduleBuilder
 import org.quartz.TriggerBuilder
 import org.quartz.TriggerKey
 import org.slf4j.LoggerFactory
-import org.springframework.scheduling.quartz.QuartzJobBean
 import org.springframework.stereotype.Service
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -51,11 +52,17 @@ class EventHandler(
         if (useQuartz) {
             try {
                 val jobName = "onStartDateUpdatedEvent+${event.hashCode()}"
+
+                val jobData = JobDataMap()
+                jobData["memberId"] = event.owningMemberId
+
                 val jobDetail = JobBuilder.newJob()
                     .withIdentity(jobName, jobGroup)
-                    .ofType(QuartzJobBean::class.java)
+                    .ofType(UpdateStartDateJob::class.java)
                     .requestRecovery()
+                    .setJobData(jobData)
                     .build()
+
                 val trigger = TriggerBuilder.newTrigger()
                     .withIdentity(TriggerKey.triggerKey(jobName, jobGroup))
                     .forJob(jobName, jobGroup)
