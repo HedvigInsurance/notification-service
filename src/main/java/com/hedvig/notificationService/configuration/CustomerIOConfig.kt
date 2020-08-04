@@ -59,19 +59,6 @@ class CustomerIOConfig(
     fun memberServiceFacade(memberServiceClient: MemberServiceClient) =
         MemberServiceImpl(memberServiceClient)
 
-//    @Bean
-//    fun customerioUpdateScheduler(
-//        contractLoader: ContractLoader,
-//        repo: CustomerIOStateRepository,
-//        clients: Map<Workspace, CustomerioClient>,
-//        customerioService: CustomerioService
-//    ) = CustomerioUpdateScheduler(
-//        eventCreator = CustomerioEventCreatorImpl(),
-//        stateRepository = repo,
-//        contractLoader = contractLoader,
-//        customerioService = customerioService
-//    )
-
     @Bean
     fun createClients(objectMapper: ObjectMapper): Map<Workspace, CustomerioClient> {
         return if (useFakes) {
