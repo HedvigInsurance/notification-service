@@ -24,7 +24,7 @@ class CustomerioState(
     var activationDateTriggerAt: LocalDate? = activationDateTriggerAt
         private set
 
-    fun shouldSendTmpSignedEvent(): Boolean = underwriterFirstSignAttributesUpdate != null
+    fun shouldSendTmpSignedEvent(): Boolean = underwriterFirstSignAttributesUpdate != null && !sentTmpSignEvent
     fun sentTmpSignedEvent() {
         this.sentTmpSignEvent = true
     }
