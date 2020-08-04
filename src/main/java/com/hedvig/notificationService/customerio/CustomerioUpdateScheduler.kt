@@ -3,8 +3,9 @@ package com.hedvig.notificationService.customerio
 import com.hedvig.notificationService.customerio.customerioEvents.CustomerioEventCreator
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
+import org.quartz.JobExecutionContext
 import org.slf4j.LoggerFactory
-import org.springframework.scheduling.annotation.Scheduled
+import org.springframework.scheduling.quartz.QuartzJobBean
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -15,19 +16,12 @@ open class CustomerioUpdateScheduler(
     private val stateRepository: CustomerIOStateRepository,
     private val contractLoader: ContractLoader,
     private val customerioService: CustomerioService
-) {
+) : QuartzJobBean() {
 
     private val logger =
         LoggerFactory.getLogger(CustomerioUpdateScheduler::class.java)
 
-    // @Scheduled functions cannot have any arguments
-    // so this is a bit of a hack
-    @Scheduled(fixedDelay = 1000 * 30)
-    open fun scheduledUpdates() {
-        sendUpdates()
-    }
-
-    open fun sendUpdates(timeNow: Instant = Instant.now()) {
+    fun sendUpdates(timeNow: Instant = Instant.now()) {
         val windowEndTime = timeNow.minus(
             SIGN_EVENT_WINDOWS_SIZE_MINUTES,
             ChronoUnit.MINUTES
@@ -43,5 +37,9 @@ open class CustomerioUpdateScheduler(
                 logger.error("Could not create event from customerio state", ex)
             }
         }
+    }
+
+    override fun executeInternal(context: JobExecutionContext) {
+        sendUpdates()
     }
 }

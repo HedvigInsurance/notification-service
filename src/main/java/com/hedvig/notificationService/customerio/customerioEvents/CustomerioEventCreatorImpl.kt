@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.hedvig.notificationService.customerio.AgreementType
 import com.hedvig.notificationService.customerio.ContractInfo
 import com.hedvig.notificationService.customerio.state.CustomerioState
+import org.springframework.stereotype.Component
 
+@Component
 class CustomerioEventCreatorImpl : CustomerioEventCreator {
     fun createTmpSignedInsuranceEvent(
         argContracts: Collection<ContractInfo>

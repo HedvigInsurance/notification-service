@@ -30,7 +30,8 @@ target/*
 .idea
 
 application.yaml
-application-*.yml
+application-development.yml
+application-test.yml
 service-account.json
 
 # vscode

@@ -1,0 +1,9 @@
+spring.quartz.job-store-type: jdbc
+spring.quartz.properties:
+  org.quartz.jobStore.clusterCheckinInterval: 5000
+  org.quartz.jobStore.driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
+  org.quartz.jobStore.isClustered: true
+  org.quartz.jobStore.useProperties: true
+  org.quartz.scheduler.instanceName: notification-service
+  org.quartz.scheduler.instanceId: AUTO
+  org.quartz.threadPool.threadCount: 3
