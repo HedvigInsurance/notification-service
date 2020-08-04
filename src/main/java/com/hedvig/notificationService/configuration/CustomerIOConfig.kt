@@ -59,18 +59,18 @@ class CustomerIOConfig(
     fun memberServiceFacade(memberServiceClient: MemberServiceClient) =
         MemberServiceImpl(memberServiceClient)
 
-    @Bean
-    fun customerioUpdateScheduler(
-        contractLoader: ContractLoader,
-        repo: CustomerIOStateRepository,
-        clients: Map<Workspace, CustomerioClient>,
-        customerioService: CustomerioService
-    ) = CustomerioUpdateScheduler(
-        eventCreator = CustomerioEventCreatorImpl(),
-        stateRepository = repo,
-        contractLoader = contractLoader,
-        customerioService = customerioService
-    )
+//    @Bean
+//    fun customerioUpdateScheduler(
+//        contractLoader: ContractLoader,
+//        repo: CustomerIOStateRepository,
+//        clients: Map<Workspace, CustomerioClient>,
+//        customerioService: CustomerioService
+//    ) = CustomerioUpdateScheduler(
+//        eventCreator = CustomerioEventCreatorImpl(),
+//        stateRepository = repo,
+//        contractLoader = contractLoader,
+//        customerioService = customerioService
+//    )
 
     @Bean
     fun createClients(objectMapper: ObjectMapper): Map<Workspace, CustomerioClient> {
@@ -94,10 +94,11 @@ class CustomerIOConfig(
 
     @PostConstruct
     fun scheduleCustomerio() {
-        val job = JobBuilder
-            .newJob(CustomerioUpdateScheduler::class.java)
+        val job = JobBuilder.newJob()
+            .ofType(CustomerioUpdateScheduler::class.java)
             .withIdentity("Customerio_update_scheduler")
             .withDescription("Customer.io update scheduler")
+            .requestRecovery(true)
             .build()
 
         val trigger = TriggerBuilder
