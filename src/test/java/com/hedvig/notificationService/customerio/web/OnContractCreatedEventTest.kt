@@ -37,10 +37,10 @@ class OnContractCreatedEventTest {
         val firebaseNotificationService = mockk<FirebaseNotificationService>()
         sut = EventHandler(
             repo = repository,
-            configuration = configuration,
             firebaseNotificationService = firebaseNotificationService,
             customerioService = customerioService,
-            memberService = memberService
+            memberService = memberService,
+            scheduler = mockk()
         )
     }
 

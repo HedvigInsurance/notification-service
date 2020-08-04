@@ -27,10 +27,10 @@ class OnChargeFailedEventTriggerCustomerioEventTest {
         val repo = InMemoryCustomerIOStateRepository()
         val sut = EventHandler(
             repo = repo,
-            configuration = configurationProperties,
             firebaseNotificationService = firebaseNotificationService,
             customerioService = customerioService,
-            memberService = memberService
+            memberService = memberService,
+            scheduler = mockk()
         )
 
         sut.onFailedChargeEvent(

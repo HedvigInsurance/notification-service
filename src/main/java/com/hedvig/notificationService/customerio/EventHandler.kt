@@ -11,28 +11,71 @@ import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.service.FirebaseNotificationService
 import com.hedvig.notificationService.serviceIntegration.memberService.dto.HasPersonSignedBeforeRequest
+import org.quartz.JobBuilder
+import org.quartz.Scheduler
+import org.quartz.SchedulerException
+import org.quartz.SimpleScheduleBuilder
+import org.quartz.TriggerBuilder
+import org.quartz.TriggerKey
 import org.slf4j.LoggerFactory
+import org.springframework.scheduling.quartz.QuartzJobBean
 import org.springframework.stereotype.Service
 import java.time.Instant
+import java.time.temporal.ChronoUnit
+import java.util.Date
 
 @Service
 class EventHandler(
     private val repo: CustomerIOStateRepository,
-    private val configuration: ConfigurationProperties,
     private val firebaseNotificationService: FirebaseNotificationService,
     private val customerioService: CustomerioService,
-    private val memberService: MemberServiceImpl
+    private val memberService: MemberServiceImpl,
+    private val scheduler: Scheduler
 ) {
+    val jobGroup = "customerio.triggers"
+
+    var useQuartz = false
+
     fun onStartDateUpdatedEvent(
         event: StartDateUpdatedEvent,
         callTime: Instant = Instant.now()
     ) {
+
         val state = repo.findByMemberId(event.owningMemberId)
             ?: CustomerioState(event.owningMemberId)
 
         state.triggerStartDateUpdated(callTime)
         state.updateFirstUpcomingStartDate(event.startDate)
         repo.save(state)
+
+        if (useQuartz) {
+            try {
+                val jobName = "onStartDateUpdatedEvent+${event.hashCode()}"
+                val jobDetail = JobBuilder.newJob()
+                    .withIdentity(jobName, jobGroup)
+                    .ofType(QuartzJobBean::class.java)
+                    .requestRecovery()
+                    .build()
+                val trigger = TriggerBuilder.newTrigger()
+                    .withIdentity(TriggerKey.triggerKey(jobName, jobGroup))
+                    .forJob(jobName, jobGroup)
+                    .startNow()
+                    .withSchedule(
+                        SimpleScheduleBuilder
+                            .simpleSchedule()
+                            .withMisfireHandlingInstructionFireNow()
+                    )
+                    .startAt(Date.from(callTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES)))
+                    .build()
+
+                scheduler.scheduleJob(
+                    jobDetail,
+                    trigger
+                )
+            } catch (e: SchedulerException) {
+                throw RuntimeException(e.message, e)
+            }
+        }
     }
 
     fun onContractCreatedEvent(contractCreatedEvent: ContractCreatedEvent, callTime: Instant = Instant.now()) {

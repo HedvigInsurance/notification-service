@@ -1,7 +1,9 @@
 package com.hedvig.notificationService.customerio.web
 
+import assertk.all
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import assertk.assertions.isTrue
 import com.hedvig.notificationService.customerio.ConfigurationProperties
 import com.hedvig.notificationService.customerio.CustomerioService
 import com.hedvig.notificationService.customerio.EventHandler
@@ -10,11 +12,19 @@ import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import com.hedvig.notificationService.service.FirebaseNotificationService
+import io.mockk.every
 import io.mockk.mockk
+import io.mockk.slot
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.quartz.JobDetail
+import org.quartz.Scheduler
+import org.quartz.SimpleTrigger
+import org.quartz.Trigger
 import java.time.Instant
 import java.time.LocalDate
+import java.time.temporal.ChronoUnit
+import java.util.Date
 
 class OnStartDateUpdatedEventTest {
 
@@ -23,6 +33,7 @@ class OnStartDateUpdatedEventTest {
     val firebaseNotificationService = mockk<FirebaseNotificationService>(relaxed = true)
     val customerioService = mockk<CustomerioService>()
     val memberService = mockk<MemberServiceImpl>()
+    val scheduler = mockk<Scheduler>()
     lateinit var configuration: ConfigurationProperties
     lateinit var sut: EventHandler
 
@@ -32,10 +43,10 @@ class OnStartDateUpdatedEventTest {
         configuration = ConfigurationProperties()
         sut = EventHandler(
             repo,
-            configuration,
             firebaseNotificationService,
             customerioService,
-            memberService
+            memberService,
+            scheduler
         )
     }
 
@@ -46,6 +57,32 @@ class OnStartDateUpdatedEventTest {
 
         assertThat(repo.data["aMemberId"]?.startDateUpdatedTriggerAt).isEqualTo(time)
         assertThat(repo.data["aMemberId"]?.activationDateTriggerAt).isEqualTo(LocalDate.of(2020, 5, 3))
+    }
+
+    @Test
+    fun `post job to quartz`() {
+        val callTime = Instant.parse("2020-04-27T14:03:23.337770Z")
+
+        val jobSlot = slot<JobDetail>()
+        val triggerSot = slot<Trigger>()
+
+        every { scheduler.scheduleJob(capture(jobSlot), capture(triggerSot)) } returns Date()
+
+        sut.useQuartz = true
+        sut.onStartDateUpdatedEvent(
+            StartDateUpdatedEvent("aContractId", "aMemberId", LocalDate.of(2020, 5, 3)),
+            callTime
+        )
+
+        assertThat(jobSlot.captured).all {
+            transform { it.key.group }.isEqualTo("customerio.triggers")
+            transform { it.requestsRecovery() }.isTrue()
+        }
+        assertThat(triggerSot.captured).all {
+            transform { it.key.group }.isEqualTo("customerio.triggers")
+            transform { it.misfireInstruction }.isEqualTo(SimpleTrigger.MISFIRE_INSTRUCTION_FIRE_NOW)
+            transform { it.startTime }.isEqualTo(Date.from(callTime.plus(10, ChronoUnit.MINUTES)))
+        }
     }
 
     @Test

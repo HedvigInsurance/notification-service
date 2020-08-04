@@ -28,10 +28,10 @@ class ContractCreatedEventCreatesContractTest {
     val memberService = mockk<MemberServiceImpl>()
     val sut = EventHandler(
         repo = repo,
-        configuration = configurationProperties,
         firebaseNotificationService = firebaseNotificationService,
         customerioService = customerioService,
-        memberService = memberService
+        memberService = memberService,
+        scheduler = mockk()
     )
 
     @BeforeEach
