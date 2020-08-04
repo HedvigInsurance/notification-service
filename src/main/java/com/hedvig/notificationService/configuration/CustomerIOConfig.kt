@@ -5,15 +5,11 @@ import com.hedvig.customerio.Customerio
 import com.hedvig.customerio.CustomerioClient
 import com.hedvig.customerio.CustomerioMock
 import com.hedvig.notificationService.customerio.ConfigurationProperties
-import com.hedvig.notificationService.customerio.CustomerioService
 import com.hedvig.notificationService.customerio.CustomerioUpdateScheduler
 import com.hedvig.notificationService.customerio.Workspace
-import com.hedvig.notificationService.customerio.customerioEvents.CustomerioEventCreatorImpl
-import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoaderImpl
 import com.hedvig.notificationService.customerio.hedvigfacades.FakeContractLoader
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
-import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.serviceIntegration.memberService.MemberServiceClient
 import com.hedvig.notificationService.serviceIntegration.productPricing.client.ProductPricingClient
 import com.hedvig.notificationService.serviceIntegration.underwriter.UnderwriterClient
@@ -28,7 +24,6 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.scheduling.annotation.EnableScheduling
 import javax.annotation.PostConstruct
-
 
 @Configuration
 @EnableScheduling

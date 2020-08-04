@@ -16,7 +16,7 @@ open class CustomerioUpdateScheduler(
     private val stateRepository: CustomerIOStateRepository,
     private val contractLoader: ContractLoader,
     private val customerioService: CustomerioService
-): QuartzJobBean() {
+) : QuartzJobBean() {
 
     private val logger =
         LoggerFactory.getLogger(CustomerioUpdateScheduler::class.java)
