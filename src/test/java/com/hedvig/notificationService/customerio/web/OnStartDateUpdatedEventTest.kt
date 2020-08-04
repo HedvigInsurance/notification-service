@@ -41,7 +41,6 @@ class OnStartDateUpdatedEventTest {
 
     @Test
     fun `on start date updated event`() {
-        configuration.useNorwayHack = false
         val time = Instant.parse("2020-04-27T14:03:23.337770Z")
         sut.onStartDateUpdatedEvent(StartDateUpdatedEvent("aContractId", "aMemberId", LocalDate.of(2020, 5, 3)), time)
 
@@ -51,7 +50,6 @@ class OnStartDateUpdatedEventTest {
 
     @Test
     fun `on start date updated event when startDate extists`() {
-        configuration.useNorwayHack = false
 
         val timeOfFirstCall = Instant.parse("2020-04-27T14:03:23.337770Z")
 
@@ -67,7 +65,6 @@ class OnStartDateUpdatedEventTest {
 
     @Test
     fun `with existing state set activation date trigger to startdate`() {
-        configuration.useNorwayHack = false
 
         repo.save(
             CustomerioState(
@@ -93,7 +90,6 @@ class OnStartDateUpdatedEventTest {
 
     @Test
     fun `without existing state set activation date trigger to startdate`() {
-        configuration.useNorwayHack = false
 
         val timeOfFirstCall = Instant.parse("2020-04-27T14:03:23.337770Z")
 

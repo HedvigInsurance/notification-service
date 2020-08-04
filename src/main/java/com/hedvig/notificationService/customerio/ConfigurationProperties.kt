@@ -7,8 +7,6 @@ import org.springframework.context.annotation.Configuration
 @ConfigurationProperties(prefix = "hedvig.customerio")
 class ConfigurationProperties {
 
-    var useNorwayHack: Boolean = true
-
     lateinit var workspaces: List<WorkspaceProperties>
 
     class WorkspaceProperties {

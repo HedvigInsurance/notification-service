@@ -38,17 +38,6 @@ class CustomerioService(
         val marketForMember = workspaceSelector.getWorkspaceForMember(memberId)
 
         if (marketForMember == Workspace.NORWAY && isSignUpdateFromUnderwriter(attributes)) {
-            if (configuration.useNorwayHack) {
-                val customerState = stateRepository.findByMemberId(memberId)
-                if (customerState == null) {
-                    stateRepository.save(
-                        CustomerioState(
-                            memberId,
-                            now
-                        )
-                    )
-                }
-            }
             return
         }
 

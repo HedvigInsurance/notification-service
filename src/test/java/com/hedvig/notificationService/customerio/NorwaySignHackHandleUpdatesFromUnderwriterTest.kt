@@ -94,7 +94,7 @@ class NorwaySignHackHandleUpdatesFromUnderwriterTest {
         val updateInstant = Instant.parse("2020-04-15T14:53:40.550493Z")
         sut.updateCustomerAttributes("randomId", makeSignFromUnderwriterMap(), updateInstant)
 
-        assertThat(repository.data["randomId"]?.underwriterFirstSignAttributesUpdate).isEqualTo(updateInstant)
+        assertThat(repository.data["randomId"]?.underwriterFirstSignAttributesUpdate).isNull()
     }
 
     @Test
@@ -105,7 +105,7 @@ class NorwaySignHackHandleUpdatesFromUnderwriterTest {
         sut.updateCustomerAttributes("randomId", makeSignFromUnderwriterMap(), updateInstant)
         sut.updateCustomerAttributes("randomId", makeSignFromUnderwriterMap(), updateInstant.plusMillis(1000))
 
-        assertThat(repository.data["randomId"]?.underwriterFirstSignAttributesUpdate).isEqualTo(updateInstant)
+        assertThat(repository.data["randomId"]?.underwriterFirstSignAttributesUpdate).isNull()
     }
 
     @Test
