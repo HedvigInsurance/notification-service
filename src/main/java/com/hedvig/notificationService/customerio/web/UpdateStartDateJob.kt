@@ -18,7 +18,8 @@ class UpdateStartDateJob(
     private val logger = LoggerFactory.getLogger(CustomerioUpdateScheduler::class.java)
 
     override fun executeInternal(jobContext: JobExecutionContext) {
-        val customerioState = customerIOStateRepository.findByMemberId("")!!
+        val memberId = jobContext.get("memberId") as String
+        val customerioState = customerIOStateRepository.findByMemberId(memberId)!!
         customerioService.doUpdate(customerioState, eventCreator, contractLoader)
     }
 }
