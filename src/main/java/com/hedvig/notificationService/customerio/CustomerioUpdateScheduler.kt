@@ -3,6 +3,7 @@ package com.hedvig.notificationService.customerio
 import com.hedvig.notificationService.customerio.customerioEvents.CustomerioEventCreator
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
+import org.quartz.DisallowConcurrentExecution
 import org.quartz.JobExecutionContext
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.quartz.QuartzJobBean
@@ -11,6 +12,7 @@ import java.time.temporal.ChronoUnit
 
 const val SIGN_EVENT_WINDOWS_SIZE_MINUTES = 10L
 
+@DisallowConcurrentExecution
 open class CustomerioUpdateScheduler(
     private val eventCreator: CustomerioEventCreator,
     private val stateRepository: CustomerIOStateRepository,
