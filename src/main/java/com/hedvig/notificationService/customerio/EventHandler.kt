@@ -51,7 +51,7 @@ class EventHandler(
 
         if (useQuartz) {
             try {
-                val jobName = "onStartDateUpdatedEvent+${event.hashCode()}"
+                val jobName = "onStartDateUpdatedEvent+${event.contractId}"
 
                 val jobData = JobDataMap()
                 jobData["memberId"] = event.owningMemberId
@@ -72,7 +72,7 @@ class EventHandler(
                             .simpleSchedule()
                             .withMisfireHandlingInstructionFireNow()
                     )
-                    .startAt(Date.from(callTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES)))
+                    .startAt(Date.from(callTime.plus(1, ChronoUnit.MINUTES)))
                     .build()
 
                 scheduler.scheduleJob(
