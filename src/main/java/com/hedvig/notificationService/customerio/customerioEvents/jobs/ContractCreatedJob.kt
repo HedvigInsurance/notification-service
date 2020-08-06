@@ -1,4 +1,4 @@
-package com.hedvig.notificationService.customerio.web
+package com.hedvig.notificationService.customerio.customerioEvents.jobs
 
 import org.quartz.JobExecutionContext
 import org.springframework.scheduling.quartz.QuartzJobBean

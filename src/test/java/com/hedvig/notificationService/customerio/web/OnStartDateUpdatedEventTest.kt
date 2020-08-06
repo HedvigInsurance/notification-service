@@ -7,7 +7,7 @@ import assertk.assertions.isTrue
 import com.hedvig.notificationService.customerio.ConfigurationProperties
 import com.hedvig.notificationService.customerio.CustomerioService
 import com.hedvig.notificationService.customerio.EventHandler
-import com.hedvig.notificationService.customerio.customerioEvents.UpdateStartDateJob
+import com.hedvig.notificationService.customerio.customerioEvents.jobs.UpdateStartDateJob
 import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
 import com.hedvig.notificationService.customerio.state.CustomerioState

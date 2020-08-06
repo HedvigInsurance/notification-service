@@ -1,5 +1,6 @@
 package com.hedvig.notificationService.customerio
 
+import com.hedvig.notificationService.customerio.customerioEvents.jobs.ContractCreatedJob
 import com.hedvig.notificationService.customerio.customerioEvents.jobs.UpdateStartDateJob
 import com.hedvig.notificationService.customerio.dto.ChargeFailedEvent
 import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
@@ -10,9 +11,9 @@ import com.hedvig.notificationService.customerio.dto.objects.ChargeFailedReason
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.customerio.state.CustomerioState
-import com.hedvig.notificationService.customerio.web.ContractCreatedJob
 import com.hedvig.notificationService.service.FirebaseNotificationService
 import com.hedvig.notificationService.serviceIntegration.memberService.dto.HasPersonSignedBeforeRequest
+import org.quartz.Job
 import org.quartz.JobBuilder
 import org.quartz.JobDataMap
 import org.quartz.JobDetail
@@ -138,10 +139,10 @@ class EventHandler(
         }
     }
 
-    private fun createJob(
+    private fun <T : Job> createJob(
         jobName: String,
         jobData: JobDataMap,
-        jobClass: Class<ContractCreatedJob>
+        jobClass: Class<T>
     ): JobDetail? {
         return JobBuilder.newJob()
             .withIdentity(jobName, jobGroup)

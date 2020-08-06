@@ -2,7 +2,7 @@ package com.hedvig.notificationService.customerio
 
 import assertk.assertThat
 import assertk.assertions.isNotNull
-import com.hedvig.notificationService.customerio.customerioEvents.UpdateStartDateJob
+import com.hedvig.notificationService.customerio.customerioEvents.jobs.UpdateStartDateJob
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
