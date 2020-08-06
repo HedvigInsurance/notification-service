@@ -117,8 +117,6 @@ where cs.member_id = :memberId
                         (cs.contract_created_trigger_at <= :byTime)
                     OR 
                         (cs.underwriter_first_sign_attributes_update <= :byTime AND cs.sent_tmp_sign_event = false)
-                    OR 
-                        (cs.start_date_updated_trigger_at <= :byTime)
                     OR
                         (cs.activation_date_trigger_at <= :byTime)
                 """.trimIndent()

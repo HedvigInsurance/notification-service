@@ -179,7 +179,7 @@ class JDBIRepositoryFindTriggersToUpdateTest(@Autowired val jdbi: Jdbi) {
                             startDateUpdatedTriggerAt = timestamp
                         ),
                         timestamp,
-                        1
+                        0
                     )
                 },
                 run {
@@ -190,7 +190,7 @@ class JDBIRepositoryFindTriggersToUpdateTest(@Autowired val jdbi: Jdbi) {
                             startDateUpdatedTriggerAt = timestamp
                         ),
                         timestamp.plusMillis(1),
-                        1
+                        0
                     )
                 },
                 // activationDateTriggerAt

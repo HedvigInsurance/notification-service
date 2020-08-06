@@ -7,6 +7,7 @@ import assertk.assertions.isTrue
 import com.hedvig.notificationService.customerio.ConfigurationProperties
 import com.hedvig.notificationService.customerio.CustomerioService
 import com.hedvig.notificationService.customerio.EventHandler
+import com.hedvig.notificationService.customerio.customerioEvents.UpdateStartDateJob
 import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
 import com.hedvig.notificationService.customerio.state.CustomerioState
@@ -52,6 +53,8 @@ class OnStartDateUpdatedEventTest {
 
     @Test
     fun `on start date updated event`() {
+        every { scheduler.scheduleJob(any(), any()) } returns Date()
+
         val time = Instant.parse("2020-04-27T14:03:23.337770Z")
         sut.onStartDateUpdatedEvent(StartDateUpdatedEvent("aContractId", "aMemberId", LocalDate.of(2020, 5, 3)), time)
 
@@ -68,7 +71,6 @@ class OnStartDateUpdatedEventTest {
 
         every { scheduler.scheduleJob(capture(jobSlot), capture(triggerSot)) } returns Date()
 
-        sut.useQuartz = true
         sut.onStartDateUpdatedEvent(
             StartDateUpdatedEvent("aContractId", "aMemberId", LocalDate.of(2020, 5, 3)),
             callTime
@@ -94,6 +96,8 @@ class OnStartDateUpdatedEventTest {
 
         repo.save(CustomerioState("aMemberId", null, startDateUpdatedTriggerAt = timeOfFirstCall))
 
+        every { scheduler.scheduleJob(any(), any()) } returns Date()
+
         sut.onStartDateUpdatedEvent(
             StartDateUpdatedEvent("aContractId", "aMemberId", LocalDate.of(2020, 5, 3)),
             timeOfFirstCall.plusMillis(3000)
@@ -113,6 +117,7 @@ class OnStartDateUpdatedEventTest {
                 activationDateTriggerAt = LocalDate.of(2020, 4, 1)
             )
         )
+        every { scheduler.scheduleJob(any(), any()) } returns Date()
 
         val timeOfCall = Instant.parse("2020-04-27T14:03:23.337770Z")
         sut.onStartDateUpdatedEvent(
@@ -129,6 +134,8 @@ class OnStartDateUpdatedEventTest {
 
     @Test
     fun `without existing state set activation date trigger to startdate`() {
+
+        every { scheduler.scheduleJob(any(), any()) } returns Date()
 
         val timeOfFirstCall = Instant.parse("2020-04-27T14:03:23.337770Z")
 

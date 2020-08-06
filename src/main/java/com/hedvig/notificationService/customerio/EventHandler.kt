@@ -35,8 +35,6 @@ class EventHandler(
 ) {
     val jobGroup = "customerio.triggers"
 
-    var useQuartz = false
-
     fun onStartDateUpdatedEvent(
         event: StartDateUpdatedEvent,
         callTime: Instant = Instant.now()
@@ -49,39 +47,37 @@ class EventHandler(
         state.updateFirstUpcomingStartDate(event.startDate)
         repo.save(state)
 
-        if (useQuartz) {
-            try {
-                val jobName = "onStartDateUpdatedEvent+${event.contractId}"
+        try {
+            val jobName = "onStartDateUpdatedEvent+${event.contractId}"
 
-                val jobData = JobDataMap()
-                jobData["memberId"] = event.owningMemberId
+            val jobData = JobDataMap()
+            jobData["memberId"] = event.owningMemberId
 
-                val jobDetail = JobBuilder.newJob()
-                    .withIdentity(jobName, jobGroup)
-                    .ofType(UpdateStartDateJob::class.java)
-                    .requestRecovery()
-                    .setJobData(jobData)
-                    .build()
+            val jobDetail = JobBuilder.newJob()
+                .withIdentity(jobName, jobGroup)
+                .ofType(UpdateStartDateJob::class.java)
+                .requestRecovery()
+                .setJobData(jobData)
+                .build()
 
-                val trigger = TriggerBuilder.newTrigger()
-                    .withIdentity(TriggerKey.triggerKey(jobName, jobGroup))
-                    .forJob(jobName, jobGroup)
-                    .startNow()
-                    .withSchedule(
-                        SimpleScheduleBuilder
-                            .simpleSchedule()
-                            .withMisfireHandlingInstructionFireNow()
-                    )
-                    .startAt(Date.from(callTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES)))
-                    .build()
-
-                scheduler.scheduleJob(
-                    jobDetail,
-                    trigger
+            val trigger = TriggerBuilder.newTrigger()
+                .withIdentity(TriggerKey.triggerKey(jobName, jobGroup))
+                .forJob(jobName, jobGroup)
+                .startNow()
+                .withSchedule(
+                    SimpleScheduleBuilder
+                        .simpleSchedule()
+                        .withMisfireHandlingInstructionFireNow()
                 )
-            } catch (e: SchedulerException) {
-                throw RuntimeException(e.message, e)
-            }
+                .startAt(Date.from(callTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES)))
+                .build()
+
+            scheduler.scheduleJob(
+                jobDetail,
+                trigger
+            )
+        } catch (e: SchedulerException) {
+            throw RuntimeException(e.message, e)
         }
     }
 
