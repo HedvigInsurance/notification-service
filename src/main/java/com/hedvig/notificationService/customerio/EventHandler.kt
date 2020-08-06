@@ -1,5 +1,6 @@
 package com.hedvig.notificationService.customerio
 
+import com.hedvig.notificationService.customerio.customerioEvents.UpdateStartDateJob
 import com.hedvig.notificationService.customerio.dto.ChargeFailedEvent
 import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
 import com.hedvig.notificationService.customerio.dto.ContractRenewalQueuedEvent
@@ -9,7 +10,6 @@ import com.hedvig.notificationService.customerio.dto.objects.ChargeFailedReason
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.customerio.state.CustomerioState
-import com.hedvig.notificationService.customerio.web.UpdateStartDateJob
 import com.hedvig.notificationService.service.FirebaseNotificationService
 import com.hedvig.notificationService.serviceIntegration.memberService.dto.HasPersonSignedBeforeRequest
 import org.quartz.JobBuilder
@@ -72,7 +72,7 @@ class EventHandler(
                             .simpleSchedule()
                             .withMisfireHandlingInstructionFireNow()
                     )
-                    .startAt(Date.from(callTime.plus(10, ChronoUnit.MINUTES)))
+                    .startAt(Date.from(callTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES)))
                     .build()
 
                 scheduler.scheduleJob(

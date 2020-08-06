@@ -1,9 +1,8 @@
-package com.hedvig.notificationService.customerio.web
+package com.hedvig.notificationService.customerio.customerioEvents
 
 import com.hedvig.notificationService.common.quartz.executeWithRetry
 import com.hedvig.notificationService.customerio.CustomerioService
 import com.hedvig.notificationService.customerio.CustomerioUpdateScheduler
-import com.hedvig.notificationService.customerio.customerioEvents.CustomerioEventCreator
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import org.quartz.JobExecutionContext
