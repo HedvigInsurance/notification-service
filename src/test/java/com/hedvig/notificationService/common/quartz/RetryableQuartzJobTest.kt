@@ -70,7 +70,25 @@ class RetryableQuartzJobTest {
             throw RuntimeException()
         }
 
-        assertThat(jobContext.jobDetail.jobDataMap).contains("RETRY_COUNT", 1)
+        assertThat(jobContext.jobDetail.jobDataMap).contains("RETRY_COUNT", "1")
+    }
+
+    @Test
+    fun `second exception durin execution causes job retries to be incremented`() {
+        val scheduler = mockk<Scheduler>()
+        val job = TestableJob()
+        val jobData = JobDataMap()
+        jobData.putAsString("RETRY_COUNT", 2)
+        val jobContext = makeJobExecutionContext(scheduler, job, jobData)
+
+        val jobSlot = slot<JobDetail>()
+        val triggerSlot = slot<Trigger>()
+        every { scheduler.scheduleJob(capture(jobSlot), capture(triggerSlot)) } returns Date()
+        executeWithRetry(jobContext) {
+            throw RuntimeException()
+        }
+
+        assertThat(jobContext.jobDetail.jobDataMap).contains("RETRY_COUNT", "3")
     }
 
     private fun executeWithRetry(context: JobExecutionContextImpl, function: () -> Unit) {
@@ -80,7 +98,10 @@ class RetryableQuartzJobTest {
 
             val originalStartTime = context.trigger.startTime.toInstant()
             val newStartTime = Date.from(originalStartTime.plus(1, ChronoUnit.MINUTES))
-            context.jobDetail.jobDataMap["RETRY_COUNT"] = 1
+
+            val retryCount = context.jobDetail.jobDataMap.getIntOrNull("RETRY_COUNT") ?: 0
+            context.jobDetail.jobDataMap.putAsString("RETRY_COUNT", retryCount + 1)
+
             context.scheduler.scheduleJob(
                 context.jobDetail,
                 TriggerBuilder.newTrigger().startAt(newStartTime).build()
@@ -88,3 +109,6 @@ class RetryableQuartzJobTest {
         }
     }
 }
+
+fun JobDataMap.getIntOrNull(key: String): Int? =
+    this.getString(key)?.toIntOrNull()
