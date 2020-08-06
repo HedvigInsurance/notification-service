@@ -11,7 +11,7 @@ import org.quartz.JobExecutionContext
 import org.quartz.Scheduler
 import org.quartz.impl.JobExecutionContextImpl
 
-class RetryableQuartzJob {
+class RetryableQuartzJobTest {
 
     class TestableJob() : Job {
         override fun execute(p0: JobExecutionContext?) {
