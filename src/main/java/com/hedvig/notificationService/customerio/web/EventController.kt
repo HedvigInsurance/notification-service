@@ -21,13 +21,22 @@ class EventController(
     private val eventHandler: EventHandler
 ) {
     @PostMapping("/contractCreated")
-    fun contractCreated(@RequestBody event: ContractCreatedEvent): ResponseEntity<Any> {
-        eventHandler.onContractCreatedEvent(event)
+    fun contractCreated(
+        @RequestHeader(value = "Request-Id", required = false) requestId: String?,
+        @RequestBody event: ContractCreatedEvent
+    ): ResponseEntity<Any> {
+        eventHandler.onContractCreatedEvent(
+            contractCreatedEvent = event,
+            requestId = requestId
+        )
         return ResponseEntity.accepted().build()
     }
 
     @PostMapping("/startDateUpdated")
-    fun startDateUpdated(@RequestHeader(value = "Request-Id", required = false) requestId: String?, @RequestBody event: StartDateUpdatedEvent): ResponseEntity<Any> {
+    fun startDateUpdated(
+        @RequestHeader(value = "Request-Id", required = false) requestId: String?,
+        @RequestBody event: StartDateUpdatedEvent
+    ): ResponseEntity<Any> {
         eventHandler.onStartDateUpdatedEvent(
             event = event,
             requestId = requestId
@@ -36,20 +45,36 @@ class EventController(
     }
 
     @PostMapping("/contractRenewalQueued")
-    fun contractRenewalQueued(@RequestBody event: ContractRenewalQueuedEvent): ResponseEntity<Any> {
-        eventHandler.onContractRenewalQueued(event)
+    fun contractRenewalQueued(
+        @RequestHeader(value = "Request-Id", required = false) requestId: String?,
+        @RequestBody event: ContractRenewalQueuedEvent
+    ): ResponseEntity<Any> {
+        eventHandler.onContractRenewalQueued(
+            event = event,
+            requestId = requestId
+        )
         return ResponseEntity.accepted().build()
     }
 
     @PostMapping("/{memberId}/chargeFailed")
-    fun chargeFailed(@RequestHeader(value = "Request-Id", required = false) requestId: String?, @PathVariable memberId: String, @Valid @RequestBody event: ChargeFailedEvent): ResponseEntity<Any> {
-        eventHandler.onFailedChargeEvent(requestId, memberId, event)
+    fun chargeFailed(
+        @RequestHeader(value = "Request-Id", required = false) requestId: String?,
+        @PathVariable memberId: String,
+        @Valid @RequestBody event: ChargeFailedEvent
+    ): ResponseEntity<Any> {
+        eventHandler.onFailedChargeEvent(memberId, event, requestId)
         return ResponseEntity.accepted().build()
     }
 
     @PostMapping("/quoteCreated")
-    fun quoteCreated(@RequestBody event: QuoteCreatedEvent): ResponseEntity<Any> {
-        eventHandler.onQuoteCreated(event)
+    fun quoteCreated(
+        @RequestHeader(value = "Request-Id", required = false) requestId: String?,
+        @RequestBody event: QuoteCreatedEvent
+    ): ResponseEntity<Any> {
+        eventHandler.onQuoteCreated(
+            event = event,
+            requestId = requestId
+        )
         return ResponseEntity.accepted().build()
     }
 }

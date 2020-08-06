@@ -52,17 +52,16 @@ class FailedChargesEventTest {
 
         testRestTemplate.postForEntity(url, HttpEntity(body), String::class.java)
 
-        verify {      }
         verify {
             eventHandler.onFailedChargeEvent(
-                any(),
                 "1227",
                 ChargeFailedEvent(
                     terminationDate = null,
                     numberOfFailedCharges = 1,
                     chargesLeftBeforeTermination = 2,
                     chargeFailedReason = ChargeFailedReason.INSUFFICIENT_FUNDS
-                )
+                ),
+                any()
             )
         }
     }

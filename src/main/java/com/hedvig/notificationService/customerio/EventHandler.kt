@@ -49,7 +49,16 @@ class EventHandler(
         }
     }
 
-    fun onContractCreatedEvent(contractCreatedEvent: ContractCreatedEvent, callTime: Instant = Instant.now()) {
+    fun onContractCreatedEvent(
+        contractCreatedEvent: ContractCreatedEvent,
+        callTime: Instant = Instant.now(),
+        requestId: String? = null
+    ) {
+        requestId?.let {
+            if (handledRequestRepository.isRequestHandled(it)) {
+                return
+            }
+        }
         val state = repo.findByMemberId(contractCreatedEvent.owningMemberId)
             ?: CustomerioState(contractCreatedEvent.owningMemberId)
 
@@ -58,9 +67,16 @@ class EventHandler(
 
         state.createContract(contractCreatedEvent.contractId, callTime, contractCreatedEvent.startDate)
         repo.save(state)
+        requestId?.let {
+            handledRequestRepository.storeHandledRequest(it)
+        }
     }
 
-    fun onFailedChargeEvent(requestId: String?, memberId: String, chargeFailedEvent: ChargeFailedEvent) {
+    fun onFailedChargeEvent(
+        memberId: String,
+        chargeFailedEvent: ChargeFailedEvent,
+        requestId: String?
+    ) {
         requestId?.let {
             if (handledRequestRepository.isRequestHandled(it)) {
                 return
@@ -91,11 +107,32 @@ class EventHandler(
         }
     }
 
-    fun onContractRenewalQueued(event: ContractRenewalQueuedEvent, callTime: Instant = Instant.now()) {
+    fun onContractRenewalQueued(
+        event: ContractRenewalQueuedEvent,
+        callTime: Instant = Instant.now(),
+        requestId: String? = null
+    ) {
+        requestId?.let {
+            if (handledRequestRepository.isRequestHandled(it)) {
+                return
+            }
+        }
         customerioService.sendEvent(event.memberId, event.toMap())
+        requestId?.let {
+            handledRequestRepository.storeHandledRequest(it)
+        }
     }
 
-    fun onQuoteCreated(event: QuoteCreatedEvent, callTime: Instant = Instant.now()) {
+    fun onQuoteCreated(
+        event: QuoteCreatedEvent,
+        callTime: Instant = Instant.now(),
+        requestId: String? = null
+    ) {
+        requestId?.let {
+            if (handledRequestRepository.isRequestHandled(it)) {
+                return
+            }
+        }
         val shouldNotSendEvent = event.initiatedFrom == "HOPE" ||
                 event.originatingProductId != null ||
                 event.productType == "UNKNOWN"
@@ -121,6 +158,9 @@ class EventHandler(
             ), callTime
         )
         customerioService.sendEvent(event.memberId, event.toMap())
+        requestId?.let {
+            handledRequestRepository.storeHandledRequest(it)
+        }
     }
 
     companion object {

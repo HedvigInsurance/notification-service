@@ -14,8 +14,10 @@ import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRe
 import com.hedvig.notificationService.service.firebase.FirebaseNotificationService
 import com.hedvig.notificationService.service.request.HandledRequestRepository
 import io.mockk.MockKAnnotations
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
+import io.mockk.verify
 import org.junit.Before
 import org.junit.Test
 import java.time.Instant
@@ -25,6 +27,8 @@ class OnContractCreatedEventTest {
 
     @MockK
     lateinit var contractLoader: ContractLoader
+
+    val handledRequestRepository = mockk<HandledRequestRepository>(relaxed = true)
 
     private val repository = InMemoryCustomerIOStateRepository()
     lateinit var sut: EventHandler
@@ -36,7 +40,6 @@ class OnContractCreatedEventTest {
         val customerioService = mockk<CustomerioService>()
         val memberService = mockk<MemberServiceImpl>()
         val firebaseNotificationService = mockk<FirebaseNotificationService>()
-        val handledRequestRepository = mockk<HandledRequestRepository>(relaxed = true)
 
         sut = EventHandler(
             repo = repository,
@@ -50,7 +53,7 @@ class OnContractCreatedEventTest {
 
     @Test
     fun onContractCreatedEvent() {
-
+        val requestId = "un handled request id"
         val time = Instant.parse("2020-04-27T09:20:42.815351Z")
 
         sut.onContractCreatedEvent(
@@ -58,10 +61,13 @@ class OnContractCreatedEventTest {
                 "someEventId",
                 "1337",
                 null
-            ), time
+            ),
+            time,
+            requestId
         )
 
         assertThat(repository.data["1337"]?.contractCreatedTriggerAt).isEqualTo(time)
+        verify { handledRequestRepository.storeHandledRequest(requestId) }
     }
 
     @Test
@@ -200,5 +206,22 @@ class OnContractCreatedEventTest {
         )
 
         assertThat(repository.data["1337"]?.activationDateTriggerAt).isNull()
+    }
+
+    @Test
+    fun `handled request dose nothing`() {
+        val requestId = "handled request id"
+        every { handledRequestRepository.isRequestHandled(requestId) } returns true
+
+        sut.onContractCreatedEvent(
+            ContractCreatedEvent(
+                "someEventId",
+                "1337",
+                null
+            ),
+            requestId = requestId
+        )
+
+        assertThat(repository.data["1337"]).isNull()
     }
 }
