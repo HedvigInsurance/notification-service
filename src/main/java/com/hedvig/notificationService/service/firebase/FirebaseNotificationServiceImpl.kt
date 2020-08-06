@@ -1,4 +1,4 @@
-package com.hedvig.notificationService.service
+package com.hedvig.notificationService.service.firebase
 
 import com.google.firebase.cloud.FirestoreClient
 import com.google.firebase.messaging.AndroidConfig
@@ -10,22 +10,21 @@ import com.google.firebase.messaging.Message
 import com.hedvig.common.localization.LocalizationService
 import com.hedvig.notificationService.entities.FirebaseRepository
 import com.hedvig.notificationService.entities.FirebaseToken
-import com.hedvig.notificationService.service.TextKeys.CLAIM_PAID_BODY
-import com.hedvig.notificationService.service.TextKeys.CLAIM_PAID_TITLE
-import com.hedvig.notificationService.service.TextKeys.CONNECT_DD_BODY
-import com.hedvig.notificationService.service.TextKeys.CONNECT_DD_TITLE
-import com.hedvig.notificationService.service.TextKeys.DEFAULT_TITLE
-import com.hedvig.notificationService.service.TextKeys.INSURANCE_POLICY_UPDATED_BODY
-import com.hedvig.notificationService.service.TextKeys.INSURANCE_POLICY_UPDATED_TITLE
-import com.hedvig.notificationService.service.TextKeys.INSURANCE_RENEWED_BODY
-import com.hedvig.notificationService.service.TextKeys.INSURANCE_RENEWED_TITLE
-import com.hedvig.notificationService.service.TextKeys.NEW_MESSAGE_BODY
-import com.hedvig.notificationService.service.TextKeys.PAYMENT_FAILED_BODY
-import com.hedvig.notificationService.service.TextKeys.PAYMENT_FAILED_TITLE
-import com.hedvig.notificationService.service.TextKeys.REFERRALS_ENABLED_BODY
-import com.hedvig.notificationService.service.TextKeys.REFERRALS_ENABLED_TITLE
-import com.hedvig.notificationService.service.TextKeys.REFERRAL_SUCCESS_BODY
-import com.hedvig.notificationService.service.firebase.FirebaseMessager
+import com.hedvig.notificationService.service.firebase.TextKeys.CLAIM_PAID_BODY
+import com.hedvig.notificationService.service.firebase.TextKeys.CLAIM_PAID_TITLE
+import com.hedvig.notificationService.service.firebase.TextKeys.CONNECT_DD_BODY
+import com.hedvig.notificationService.service.firebase.TextKeys.CONNECT_DD_TITLE
+import com.hedvig.notificationService.service.firebase.TextKeys.DEFAULT_TITLE
+import com.hedvig.notificationService.service.firebase.TextKeys.INSURANCE_POLICY_UPDATED_BODY
+import com.hedvig.notificationService.service.firebase.TextKeys.INSURANCE_POLICY_UPDATED_TITLE
+import com.hedvig.notificationService.service.firebase.TextKeys.INSURANCE_RENEWED_BODY
+import com.hedvig.notificationService.service.firebase.TextKeys.INSURANCE_RENEWED_TITLE
+import com.hedvig.notificationService.service.firebase.TextKeys.NEW_MESSAGE_BODY
+import com.hedvig.notificationService.service.firebase.TextKeys.PAYMENT_FAILED_BODY
+import com.hedvig.notificationService.service.firebase.TextKeys.PAYMENT_FAILED_TITLE
+import com.hedvig.notificationService.service.firebase.TextKeys.REFERRALS_ENABLED_BODY
+import com.hedvig.notificationService.service.firebase.TextKeys.REFERRALS_ENABLED_TITLE
+import com.hedvig.notificationService.service.firebase.TextKeys.REFERRAL_SUCCESS_BODY
 import com.hedvig.notificationService.serviceIntegration.memberService.MemberServiceClient
 import com.hedvig.resolver.LocaleResolver
 import org.slf4j.LoggerFactory
@@ -84,7 +83,8 @@ open class FirebaseNotificationServiceImpl(
     override fun sendConnectDirectDebitNotification(memberId: String) {
         val firebaseToken = firebaseRepository.findById(memberId)
 
-        val message = createMessage(memberId, firebaseToken, CONNECT_DIRECT_DEBIT, CONNECT_DD_TITLE, CONNECT_DD_BODY)
+        val message = createMessage(memberId, firebaseToken,
+            CONNECT_DIRECT_DEBIT, CONNECT_DD_TITLE, CONNECT_DD_BODY)
 
         sendNotification(CONNECT_DIRECT_DEBIT, memberId, message)
     }
@@ -92,7 +92,8 @@ open class FirebaseNotificationServiceImpl(
     override fun sendPaymentFailedNotification(memberId: String) {
         val firebaseToken = firebaseRepository.findById(memberId)
 
-        val message = createMessage(memberId, firebaseToken, PAYMENT_FAILED, PAYMENT_FAILED_TITLE, PAYMENT_FAILED_BODY)
+        val message = createMessage(memberId, firebaseToken,
+            PAYMENT_FAILED, PAYMENT_FAILED_TITLE, PAYMENT_FAILED_BODY)
 
         sendNotification(PAYMENT_FAILED, memberId, message)
     }
@@ -108,7 +109,8 @@ open class FirebaseNotificationServiceImpl(
     override fun sendClaimPaidNotification(memberId: String) {
         val firebaseToken = firebaseRepository.findById(memberId)
 
-        val message = createMessage(memberId, firebaseToken, CLAIM_PAID, CLAIM_PAID_TITLE, CLAIM_PAID_BODY)
+        val message = createMessage(memberId, firebaseToken,
+            CLAIM_PAID, CLAIM_PAID_TITLE, CLAIM_PAID_BODY)
 
         sendNotification(CLAIM_PAID, memberId, message)
     }
@@ -131,7 +133,8 @@ open class FirebaseNotificationServiceImpl(
         val firebaseToken = firebaseRepository.findById(memberId)
 
         val message =
-            createMessage(memberId, firebaseToken, INSURANCE_RENEWED, INSURANCE_RENEWED_TITLE, INSURANCE_RENEWED_BODY)
+            createMessage(memberId, firebaseToken,
+                INSURANCE_RENEWED, INSURANCE_RENEWED_TITLE, INSURANCE_RENEWED_BODY)
 
         sendNotification(INSURANCE_RENEWED, memberId, message)
     }
@@ -140,7 +143,8 @@ open class FirebaseNotificationServiceImpl(
         val firebaseToken = firebaseRepository.findById(memberId)
 
         val message =
-            createMessage(memberId, firebaseToken, REFERRALS_ENABLED, REFERRALS_ENABLED_TITLE, REFERRALS_ENABLED_BODY)
+            createMessage(memberId, firebaseToken,
+                REFERRALS_ENABLED, REFERRALS_ENABLED_TITLE, REFERRALS_ENABLED_BODY)
 
         sendNotification(REFERRALS_ENABLED, memberId, message)
     }
@@ -148,7 +152,8 @@ open class FirebaseNotificationServiceImpl(
     override fun sendGenericCommunicationNotification(memberId: String, titleTextKey: String, bodyTextKey: String) {
         val firebaseToken = firebaseRepository.findById(memberId)
 
-        val message = createMessage(memberId, firebaseToken, GENERIC_COMMUNICATION, titleTextKey, bodyTextKey)
+        val message = createMessage(memberId, firebaseToken,
+            GENERIC_COMMUNICATION, titleTextKey, bodyTextKey)
 
         sendNotification(GENERIC_COMMUNICATION, memberId, message)
     }
