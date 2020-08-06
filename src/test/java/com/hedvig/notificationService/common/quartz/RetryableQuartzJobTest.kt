@@ -1,6 +1,7 @@
 package com.hedvig.notificationService.common.quartz
 
 import assertk.assertThat
+import assertk.assertions.contains
 import assertk.assertions.isGreaterThan
 import assertk.assertions.isTrue
 import com.hedvig.notificationService.customerio.makeJobExecutionContext
@@ -56,6 +57,22 @@ class RetryableQuartzJobTest {
         assertThat(triggerSlot.captured.startTime).isGreaterThan(jobContext.trigger.startTime)
     }
 
+    @Test
+    fun `first exception during execution causes job retries to be  set to one`() {
+        val scheduler = mockk<Scheduler>()
+        val job = TestableJob()
+        val jobContext = makeJobExecutionContext(scheduler, job, JobDataMap())
+
+        val jobSlot = slot<JobDetail>()
+        val triggerSlot = slot<Trigger>()
+        every { scheduler.scheduleJob(capture(jobSlot), capture(triggerSlot)) } returns Date()
+        executeWithRetry(jobContext) {
+            throw RuntimeException()
+        }
+
+        assertThat(jobContext.jobDetail.jobDataMap).contains("RETRY_COUNT", 1)
+    }
+
     private fun executeWithRetry(context: JobExecutionContextImpl, function: () -> Unit) {
         try {
             function()
@@ -63,6 +80,7 @@ class RetryableQuartzJobTest {
 
             val originalStartTime = context.trigger.startTime.toInstant()
             val newStartTime = Date.from(originalStartTime.plus(1, ChronoUnit.MINUTES))
+            context.jobDetail.jobDataMap["RETRY_COUNT"] = 1
             context.scheduler.scheduleJob(
                 context.jobDetail,
                 TriggerBuilder.newTrigger().startAt(newStartTime).build()
