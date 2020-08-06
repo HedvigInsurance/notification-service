@@ -14,10 +14,13 @@ import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import com.hedvig.notificationService.service.FirebaseNotificationService
 import io.mockk.MockKAnnotations
+import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.quartz.Scheduler
 import java.time.Instant
+import java.util.Date
 
 class ContractCreatedEventCreatesContractTest {
 
@@ -26,17 +29,19 @@ class ContractCreatedEventCreatesContractTest {
     val firebaseNotificationService = mockk<FirebaseNotificationService>()
     val customerioService = mockk<CustomerioService>()
     val memberService = mockk<MemberServiceImpl>()
+    val scheduler: Scheduler = mockk()
     val sut = EventHandler(
         repo = repo,
         firebaseNotificationService = firebaseNotificationService,
         customerioService = customerioService,
         memberService = memberService,
-        scheduler = mockk()
+        scheduler = scheduler
     )
 
     @BeforeEach
     fun setup() {
         MockKAnnotations.init(this)
+        every { scheduler.scheduleJob(any(), any()) } returns Date()
     }
 
     @Test

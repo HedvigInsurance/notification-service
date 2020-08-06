@@ -8,6 +8,7 @@ import java.time.temporal.ChronoUnit
 import java.util.Date
 
 val MAX_RETRIES = 5
+
 fun executeWithRetry(
     context: JobExecutionContext,
     errorFunction: (Exception) -> Unit = {},

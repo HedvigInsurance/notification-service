@@ -10,10 +10,12 @@ import com.hedvig.notificationService.customerio.dto.objects.ChargeFailedReason
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.customerio.state.CustomerioState
+import com.hedvig.notificationService.customerio.web.ContractCreatedJob
 import com.hedvig.notificationService.service.FirebaseNotificationService
 import com.hedvig.notificationService.serviceIntegration.memberService.dto.HasPersonSignedBeforeRequest
 import org.quartz.JobBuilder
 import org.quartz.JobDataMap
+import org.quartz.JobDetail
 import org.quartz.Scheduler
 import org.quartz.SchedulerException
 import org.quartz.SimpleScheduleBuilder
@@ -90,6 +92,47 @@ class EventHandler(
 
         state.createContract(contractCreatedEvent.contractId, callTime, contractCreatedEvent.startDate)
         repo.save(state)
+
+        try {
+            val jobName = "onContractCreatedEvent+${contractCreatedEvent.owningMemberId}"
+
+            val jobData = JobDataMap()
+            jobData["memberId"] = contractCreatedEvent.owningMemberId
+
+            val jobDetail = createJob(jobName, jobData, ContractCreatedJob::class.java)
+
+            val trigger = TriggerBuilder.newTrigger()
+                .withIdentity(TriggerKey.triggerKey(jobName, jobGroup))
+                .forJob(jobName, jobGroup)
+                .startNow()
+                .withSchedule(
+                    SimpleScheduleBuilder
+                        .simpleSchedule()
+                        .withMisfireHandlingInstructionFireNow()
+                )
+                .startAt(Date.from(callTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES)))
+                .build()
+
+            scheduler.scheduleJob(
+                jobDetail,
+                trigger
+            )
+        } catch (e: SchedulerException) {
+            throw RuntimeException(e.message, e)
+        }
+    }
+
+    private fun createJob(
+        jobName: String,
+        jobData: JobDataMap,
+        jobClass: Class<ContractCreatedJob>
+    ): JobDetail? {
+        return JobBuilder.newJob()
+            .withIdentity(jobName, jobGroup)
+            .ofType(jobClass)
+            .requestRecovery()
+            .setJobData(jobData)
+            .build()
     }
 
     fun onFailedChargeEvent(memberId: String, chargeFailedEvent: ChargeFailedEvent) {
