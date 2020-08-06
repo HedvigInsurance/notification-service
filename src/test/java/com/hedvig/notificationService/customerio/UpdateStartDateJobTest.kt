@@ -24,7 +24,7 @@ import org.quartz.spi.OperableTrigger
 import org.quartz.spi.TriggerFiredBundle
 import java.util.Date
 
-class RetryableJobTest {
+class UpdateStartDateJobTest {
 
     var job: Job
     private val customerioService: CustomerioService = mockk()
