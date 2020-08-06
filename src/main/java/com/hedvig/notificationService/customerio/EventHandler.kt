@@ -95,8 +95,7 @@ class EventHandler(
         repo.save(state)
 
         try {
-            val jobName = "onContractCreatedEvent-" +
-                "${contractCreatedEvent.owningMemberId}"
+            val jobName = "onContractCreatedEvent-${contractCreatedEvent.owningMemberId}"
             val triggerKey = TriggerKey.triggerKey(jobName, jobGroup)
 
             val existingTrigger = scheduler.getTrigger(triggerKey)

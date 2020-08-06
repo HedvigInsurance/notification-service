@@ -69,7 +69,7 @@ class JDBIRepositoryFindTriggersToUpdateTest(@Autowired val jdbi: Jdbi) {
                     Arguments.of(
                         CustomerioState("1337", contractCreatedTriggerAt = contractCreatedTriggerAt),
                         contractCreatedTriggerAt,
-                        1
+                        0
                     )
                 },
                 run {
@@ -77,7 +77,7 @@ class JDBIRepositoryFindTriggersToUpdateTest(@Autowired val jdbi: Jdbi) {
                     Arguments.of(
                         CustomerioState("1337", contractCreatedTriggerAt = contractCreatedTriggerAt),
                         contractCreatedTriggerAt.plusMillis(1),
-                        1
+                        0
                     )
                 },
                 run {

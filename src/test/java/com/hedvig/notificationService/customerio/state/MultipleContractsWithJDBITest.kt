@@ -15,6 +15,7 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.time.Instant
+import java.time.LocalDate
 import kotlin.streams.toList
 
 @ExtendWith(SpringExtension::class)
@@ -62,7 +63,7 @@ class MultipleContractsWithJDBITest(@Autowired val jdbi: Jdbi) {
     @Test
     fun `return contracts with shouldUpdate`() {
         val state = makeCustomerioState(
-            startDateUpdatedTriggerAt = Instant.now().minusSeconds(3)
+            activationDateTriggerAt = LocalDate.now().minusDays(1)
         )
         state.createContract("FirstContract", Instant.now(), null)
         state.createContract("SercondContract", Instant.now(), null)
