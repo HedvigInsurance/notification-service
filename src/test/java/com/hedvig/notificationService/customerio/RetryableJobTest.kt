@@ -68,30 +68,30 @@ class RetryableJobTest {
         job.execute(makeJobExecutionContext(scheduler, job, jobData))
         assertThat(slot1.captured).isNotNull()
     }
+}
 
-    private fun makeJobExecutionContext(
-        scheduler: Scheduler,
-        job: Job,
-        jobData: JobDataMap
-    ): JobExecutionContextImpl {
-        val jobDetail = JobBuilder
-            .newJob(job::class.java)
-            .setJobData(jobData)
-            .build()
+fun makeJobExecutionContext(
+    scheduler: Scheduler,
+    job: Job,
+    jobData: JobDataMap
+): JobExecutionContextImpl {
+    val jobDetail = JobBuilder
+        .newJob(job::class.java)
+        .setJobData(jobData)
+        .build()
 
-        return JobExecutionContextImpl(
-            scheduler,
-            TriggerFiredBundle(
-                jobDetail,
-                TriggerBuilder.newTrigger().build() as OperableTrigger,
-                null,
-                false,
-                Date(),
-                Date(),
-                null,
-                null
-            ),
-            job
-        )
-    }
+    return JobExecutionContextImpl(
+        scheduler,
+        TriggerFiredBundle(
+            jobDetail,
+            TriggerBuilder.newTrigger().build() as OperableTrigger,
+            null,
+            false,
+            Date(),
+            Date(),
+            null,
+            null
+        ),
+        job
+    )
 }
