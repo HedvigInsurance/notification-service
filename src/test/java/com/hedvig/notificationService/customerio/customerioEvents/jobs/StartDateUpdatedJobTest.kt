@@ -30,7 +30,7 @@ import java.time.LocalDate
 import java.util.Date
 import java.util.UUID
 
-class UpdateStartDateJobTest {
+class StartDateUpdatedJobTest {
 
     var job: Job
     private val customerioService: CustomerioService = mockk()
@@ -40,7 +40,7 @@ class UpdateStartDateJobTest {
 
     init {
 
-        job = UpdateStartDateJob(
+        job = StartDateUpdatedJob(
             contractLoader,
             CustomerioEventCreatorImpl(),
             customerioService,

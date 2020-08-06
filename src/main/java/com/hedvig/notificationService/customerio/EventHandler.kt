@@ -1,7 +1,7 @@
 package com.hedvig.notificationService.customerio
 
 import com.hedvig.notificationService.customerio.customerioEvents.jobs.ContractCreatedJob
-import com.hedvig.notificationService.customerio.customerioEvents.jobs.UpdateStartDateJob
+import com.hedvig.notificationService.customerio.customerioEvents.jobs.StartDateUpdatedJob
 import com.hedvig.notificationService.customerio.dto.ChargeFailedEvent
 import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
 import com.hedvig.notificationService.customerio.dto.ContractRenewalQueuedEvent
@@ -58,7 +58,7 @@ class EventHandler(
 
             val jobDetail = JobBuilder.newJob()
                 .withIdentity(jobName, jobGroup)
-                .ofType(UpdateStartDateJob::class.java)
+                .ofType(StartDateUpdatedJob::class.java)
                 .requestRecovery()
                 .setJobData(jobData)
                 .build()

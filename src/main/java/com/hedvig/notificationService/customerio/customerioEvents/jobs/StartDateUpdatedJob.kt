@@ -14,7 +14,7 @@ import org.springframework.scheduling.quartz.QuartzJobBean
 
 @DisallowConcurrentExecution
 @PersistJobDataAfterExecution
-class UpdateStartDateJob(
+class StartDateUpdatedJob(
     private val contractLoader: ContractLoader,
     private val eventCreator: CustomerioEventCreator,
     private val customerioService: CustomerioService,
