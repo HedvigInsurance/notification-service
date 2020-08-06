@@ -2,7 +2,11 @@ package com.hedvig.notificationService.customerio.customerioEvents.jobs
 
 import assertk.assertThat
 import assertk.assertions.isNotNull
+import com.hedvig.notificationService.customerio.AgreementType
+import com.hedvig.notificationService.customerio.ContractInfo
 import com.hedvig.notificationService.customerio.CustomerioService
+import com.hedvig.notificationService.customerio.customerioEvents.CustomerioEventCreatorImpl
+import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
@@ -22,7 +26,9 @@ import org.quartz.TriggerBuilder
 import org.quartz.impl.JobExecutionContextImpl
 import org.quartz.spi.OperableTrigger
 import org.quartz.spi.TriggerFiredBundle
+import java.time.LocalDate
 import java.util.Date
+import java.util.UUID
 
 class UpdateStartDateJobTest {
 
@@ -30,12 +36,13 @@ class UpdateStartDateJobTest {
     private val customerioService: CustomerioService = mockk()
     private val scheduler: Scheduler = mockk()
     private val customerIOStateRepository: CustomerIOStateRepository = InMemoryCustomerIOStateRepository()
+    private val contractLoader: ContractLoader = mockk()
 
     init {
 
         job = UpdateStartDateJob(
-            mockk(),
-            mockk(),
+            contractLoader,
+            CustomerioEventCreatorImpl(),
             customerioService,
             customerIOStateRepository
         )
@@ -46,7 +53,15 @@ class UpdateStartDateJobTest {
     @Test
     fun successfulRunDoesNothing() {
 
-        every { customerioService.doUpdate(any(), any(), any()) } returns Unit
+        every { customerioService.sendEventAndUpdateState(any(), any()) } returns Unit
+        every { contractLoader.getContractInfoForMember(any()) } returns listOf(
+            ContractInfo(
+                AgreementType.NorwegianHomeContent,
+                null,
+                LocalDate.of(2020, 8, 13),
+                contractId = UUID.fromString("4c1b5d7c-d822-11ea-aab8-735d900f8217")
+            )
+        )
 
         val jobData = JobDataMap()
         jobData["memberId"] = "1234"
@@ -62,7 +77,7 @@ class UpdateStartDateJobTest {
     }
 
     @Test
-    fun exceptionReschdulesJob() {
+    fun exceptionReschedulesJob() {
 
         val slot1 = slot<JobDetail>()
         val slot2 = slot<Trigger>()
@@ -70,6 +85,8 @@ class UpdateStartDateJobTest {
 
         val jobData = JobDataMap()
         jobData["memberId"] = "1234"
+
+        every { customerioService.doUpdate(any(), any(), any()) } throws RuntimeException()
         job.execute(
             makeJobExecutionContext(
                 scheduler,

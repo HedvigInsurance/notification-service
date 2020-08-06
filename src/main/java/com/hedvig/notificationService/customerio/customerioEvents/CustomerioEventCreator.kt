@@ -14,4 +14,9 @@ CustomerioEventCreator {
         customerioState: CustomerioState,
         contracts: List<ContractInfo>
     ): ExecutionResult
+
+    fun startDateUpdatedEvent(
+        customerioState: CustomerioState,
+        contracts: List<ContractInfo>
+    ): ExecutionResult
 }

@@ -5,10 +5,14 @@ import org.quartz.JobDataMap
 import org.quartz.JobExecutionContext
 import org.quartz.SchedulerException
 import org.quartz.TriggerBuilder
+import org.slf4j.LoggerFactory
+import java.lang.invoke.MethodHandles
 import java.time.temporal.ChronoUnit
 import java.util.Date
 
 val MAX_RETRIES = 5
+
+private val logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().`package`.name)
 
 fun executeWithRetry(
     context: JobExecutionContext,
@@ -18,6 +22,8 @@ fun executeWithRetry(
     try {
         function()
     } catch (e: RuntimeException) {
+        logger.warn("Caught exception in job will retry", e)
+
         val retryCount = context.jobDetail.jobDataMap.getIntOrNull("RETRY_COUNT") ?: 0
         context.jobDetail.jobDataMap.putAsString("RETRY_COUNT", retryCount + 1)
 
