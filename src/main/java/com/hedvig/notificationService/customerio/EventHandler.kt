@@ -12,6 +12,7 @@ import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.service.firebase.FirebaseNotificationService
+import com.hedvig.notificationService.service.request.HandledRequestRepository
 import com.hedvig.notificationService.serviceIntegration.memberService.dto.HasPersonSignedBeforeRequest
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -23,7 +24,8 @@ class EventHandler(
     private val configuration: ConfigurationProperties,
     private val firebaseNotificationService: FirebaseNotificationService,
     private val customerioService: CustomerioService,
-    private val memberService: MemberServiceImpl
+    private val memberService: MemberServiceImpl,
+    private val handledRequestRepository: HandledRequestRepository
 ) {
     fun onStartDateUpdatedEvent(
         event: StartDateUpdatedEvent,
@@ -48,7 +50,13 @@ class EventHandler(
         repo.save(state)
     }
 
-    fun onFailedChargeEvent(memberId: String, chargeFailedEvent: ChargeFailedEvent) {
+    fun onFailedChargeEvent(requestId: String?, memberId: String, chargeFailedEvent: ChargeFailedEvent) {
+        requestId?.let {
+            if (handledRequestRepository.isRequestHandled(it)) {
+                return
+            }
+        }
+
         customerioService.sendEvent(memberId, chargeFailedEvent.toMap(memberId))
 
         try {
@@ -67,6 +75,9 @@ class EventHandler(
             }
         } catch (e: Exception) {
             logger.error("onFailedChargeEvent - Can not send notification for $memberId - Exception: ${e.message}")
+        }
+        requestId?.let {
+            handledRequestRepository.storeHandledRequest(it)
         }
     }
 

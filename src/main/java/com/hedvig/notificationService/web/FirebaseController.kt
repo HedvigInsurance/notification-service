@@ -1,7 +1,7 @@
 package com.hedvig.notificationService.web
 
 import com.hedvig.notificationService.dto.ReferralsSuccessSendNotificationRequest
-import com.hedvig.notificationService.service.FirebaseNotificationService
+import com.hedvig.notificationService.service.firebase.FirebaseNotificationService
 import com.hedvig.notificationService.web.dto.ClaimPaidNotificationRequest
 import com.hedvig.notificationService.web.dto.GenericCommunicationNotificationRequest
 import com.hedvig.notificationService.web.dto.SendPushNotificationRequest
