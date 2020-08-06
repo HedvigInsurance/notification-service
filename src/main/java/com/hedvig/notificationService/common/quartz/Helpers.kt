@@ -10,7 +10,7 @@ import java.util.Date
 val MAX_RETRIES = 5
 fun executeWithRetry(
     context: JobExecutionContext,
-    errorFunction: () -> Unit = {},
+    errorFunction: (Exception) -> Unit = {},
     function: () -> Unit
 ) {
     try {
@@ -22,12 +22,12 @@ fun executeWithRetry(
         if (retryCount < MAX_RETRIES) {
             rescheduleJob(context, errorFunction)
         } else {
-            errorFunction()
+            errorFunction(e)
         }
     }
 }
 
-fun rescheduleJob(context: JobExecutionContext, errorFunction: () -> Unit) {
+fun rescheduleJob(context: JobExecutionContext, errorFunction: (ex: Exception) -> Unit) {
     try {
         val originalStartTime = context.trigger.startTime.toInstant()
         val newStartTime = Date.from(
@@ -42,7 +42,7 @@ fun rescheduleJob(context: JobExecutionContext, errorFunction: () -> Unit) {
             TriggerBuilder.newTrigger().startAt(newStartTime).build()
         )
     } catch (ex: SchedulerException) {
-        errorFunction()
+        errorFunction(ex)
     }
 }
 

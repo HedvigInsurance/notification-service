@@ -20,7 +20,11 @@ class UpdateStartDateJob(
 
     override fun executeInternal(jobContext: JobExecutionContext) {
 
-        executeWithRetry(jobContext) {
+        executeWithRetry(jobContext,
+            {
+                logger.error("Job ${this::class.simpleName} could not be completed", it)
+            }
+        ) {
             val memberId = jobContext.mergedJobDataMap.get("memberId") as String
             val customerioState = customerIOStateRepository.findByMemberId(memberId)!!
             customerioService.doUpdate(customerioState, eventCreator, contractLoader)
