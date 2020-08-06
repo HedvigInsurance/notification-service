@@ -46,14 +46,16 @@ class FailedChargesEventTest {
     }
 
     @Test
-    fun failedChargesSentCallesEventHandler() {
+    fun failedChargesSentCallsEventHandler() {
         val url = URI("http://localhost:$port/_/events/1227/chargeFailed")
         val body = makeJsonWithAttributes()
 
         testRestTemplate.postForEntity(url, HttpEntity(body), String::class.java)
 
+        verify {      }
         verify {
             eventHandler.onFailedChargeEvent(
+                any(),
                 "1227",
                 ChargeFailedEvent(
                     terminationDate = null,

@@ -8,7 +8,8 @@ import com.hedvig.notificationService.customerio.EventHandler
 import com.hedvig.notificationService.customerio.dto.ContractRenewalQueuedEvent
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
-import com.hedvig.notificationService.service.FirebaseNotificationService
+import com.hedvig.notificationService.service.firebase.FirebaseNotificationService
+import com.hedvig.notificationService.service.request.HandledRequestRepository
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
@@ -23,6 +24,7 @@ class OnContractRenewalQuuedEventTest {
         val customerioService = mockk<CustomerioService>(relaxed = true)
         val memberService = mockk<MemberServiceImpl>()
         val firebaseNotificationService = mockk<FirebaseNotificationService>(relaxed = true)
+        val handledRequestRepository = mockk<HandledRequestRepository>(relaxed = true)
 
         val repo = InMemoryCustomerIOStateRepository()
         val sut = EventHandler(
@@ -30,7 +32,8 @@ class OnContractRenewalQuuedEventTest {
             configuration = configurationProperties,
             firebaseNotificationService = firebaseNotificationService,
             customerioService = customerioService,
-            memberService = memberService
+            memberService = memberService,
+            handledRequestRepository = handledRequestRepository
         )
 
         sut.onContractRenewalQueued(

@@ -9,7 +9,8 @@ import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
-import com.hedvig.notificationService.service.FirebaseNotificationService
+import com.hedvig.notificationService.service.firebase.FirebaseNotificationService
+import com.hedvig.notificationService.service.request.HandledRequestRepository
 import io.mockk.mockk
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -23,6 +24,7 @@ class OnStartDateUpdatedEventTest {
     val firebaseNotificationService = mockk<FirebaseNotificationService>(relaxed = true)
     val customerioService = mockk<CustomerioService>()
     val memberService = mockk<MemberServiceImpl>()
+    val requestHandlerService = mockk<HandledRequestRepository>(relaxed = true)
     lateinit var configuration: ConfigurationProperties
     lateinit var sut: EventHandler
 
@@ -35,7 +37,8 @@ class OnStartDateUpdatedEventTest {
             configuration,
             firebaseNotificationService,
             customerioService,
-            memberService
+            memberService,
+            requestHandlerService
         )
     }
 

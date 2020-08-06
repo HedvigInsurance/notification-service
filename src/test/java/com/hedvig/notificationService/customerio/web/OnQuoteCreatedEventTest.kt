@@ -7,6 +7,7 @@ import com.hedvig.notificationService.customerio.builders.MEMBER_ID
 import com.hedvig.notificationService.customerio.builders.SSN
 import com.hedvig.notificationService.customerio.builders.a
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
+import com.hedvig.notificationService.service.request.HandledRequestRepository
 import com.hedvig.notificationService.serviceIntegration.memberService.dto.HasPersonSignedBeforeRequest
 import io.mockk.every
 import io.mockk.mockk
@@ -21,6 +22,7 @@ class OnQuoteCreatedEventTest {
 
     private val customerioService = mockk<CustomerioService>(relaxed = true)
     private val memberService = mockk<MemberServiceImpl>()
+    private val handledRequestRepository = mockk<HandledRequestRepository>(relaxed = true)
 
     lateinit var eventHandlerToTest: EventHandler
 
@@ -31,7 +33,8 @@ class OnQuoteCreatedEventTest {
             configuration = mockk(),
             firebaseNotificationService = mockk(),
             customerioService = customerioService,
-            memberService = memberService
+            memberService = memberService,
+            handledRequestRepository = handledRequestRepository
         )
     }
 

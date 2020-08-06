@@ -11,7 +11,8 @@ import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
-import com.hedvig.notificationService.service.FirebaseNotificationService
+import com.hedvig.notificationService.service.firebase.FirebaseNotificationService
+import com.hedvig.notificationService.service.request.HandledRequestRepository
 import io.mockk.MockKAnnotations
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
@@ -35,12 +36,15 @@ class OnContractCreatedEventTest {
         val customerioService = mockk<CustomerioService>()
         val memberService = mockk<MemberServiceImpl>()
         val firebaseNotificationService = mockk<FirebaseNotificationService>()
+        val handledRequestRepository = mockk<HandledRequestRepository>(relaxed = true)
+
         sut = EventHandler(
             repo = repository,
             configuration = configuration,
             firebaseNotificationService = firebaseNotificationService,
             customerioService = customerioService,
-            memberService = memberService
+            memberService = memberService,
+            handledRequestRepository = handledRequestRepository
         )
     }
 

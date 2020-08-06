@@ -9,6 +9,7 @@ import com.google.firebase.messaging.Message
 import com.hedvig.common.localization.LocalizationService
 import com.hedvig.notificationService.entities.FirebaseRepository
 import com.hedvig.notificationService.entities.FirebaseToken
+import com.hedvig.notificationService.service.firebase.FirebaseNotificationServiceImpl
 import com.hedvig.notificationService.service.firebase.RealFirebaseMessenger
 import com.hedvig.notificationService.serviceIntegration.memberService.MemberServiceClient
 import com.hedvig.notificationService.serviceIntegration.memberService.dto.Member
@@ -47,7 +48,12 @@ internal class FirebaseNotificationServiceImplTest {
     @BeforeEach
     fun setup() {
         classUnderTest =
-            FirebaseNotificationServiceImpl(firebaseRepository, firebaseMessaging, localizationService, memberService)
+            FirebaseNotificationServiceImpl(
+                firebaseRepository,
+                firebaseMessaging,
+                localizationService,
+                memberService
+            )
 
         val token = FirebaseToken().apply {
             memberId = MEMBER_ID
