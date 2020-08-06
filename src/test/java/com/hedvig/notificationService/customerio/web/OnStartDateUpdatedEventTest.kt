@@ -2,6 +2,7 @@ package com.hedvig.notificationService.customerio.web
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import assertk.assertions.isNull
 import com.hedvig.notificationService.customerio.ConfigurationProperties
 import com.hedvig.notificationService.customerio.CustomerioService
 import com.hedvig.notificationService.customerio.EventHandler
@@ -11,7 +12,9 @@ import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import com.hedvig.notificationService.service.firebase.FirebaseNotificationService
 import com.hedvig.notificationService.service.request.HandledRequestRepository
+import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.Instant
@@ -24,7 +27,7 @@ class OnStartDateUpdatedEventTest {
     val firebaseNotificationService = mockk<FirebaseNotificationService>(relaxed = true)
     val customerioService = mockk<CustomerioService>()
     val memberService = mockk<MemberServiceImpl>()
-    val requestHandlerService = mockk<HandledRequestRepository>(relaxed = true)
+    val handledRequestRepository = mockk<HandledRequestRepository>(relaxed = true)
     lateinit var configuration: ConfigurationProperties
     lateinit var sut: EventHandler
 
@@ -38,17 +41,19 @@ class OnStartDateUpdatedEventTest {
             firebaseNotificationService,
             customerioService,
             memberService,
-            requestHandlerService
+            handledRequestRepository
         )
     }
 
     @Test
-    fun `on start date updated event`() {
+    fun `on start date with requst id updated event and store handled request`() {
+        val requestId = "a unhandled request"
         val time = Instant.parse("2020-04-27T14:03:23.337770Z")
-        sut.onStartDateUpdatedEvent(StartDateUpdatedEvent("aContractId", "aMemberId", LocalDate.of(2020, 5, 3)), time)
+        sut.onStartDateUpdatedEvent(StartDateUpdatedEvent("aContractId", "aMemberId", LocalDate.of(2020, 5, 3)), time, requestId)
 
         assertThat(repo.data["aMemberId"]?.startDateUpdatedTriggerAt).isEqualTo(time)
         assertThat(repo.data["aMemberId"]?.activationDateTriggerAt).isEqualTo(LocalDate.of(2020, 5, 3))
+        verify { handledRequestRepository.storeHandledRequest(requestId) }
     }
 
     @Test
@@ -105,5 +110,24 @@ class OnStartDateUpdatedEventTest {
         )
 
         assertThat(repo.data["aMemberId"]?.activationDateTriggerAt).isEqualTo(LocalDate.of(2020, 4, 3))
+    }
+
+    @Test
+    fun `on handled request nothing is stored`() {
+        val requestId = "a handled request"
+        every { handledRequestRepository.isRequestHandled(requestId) } returns true
+
+        val memberId = "handledMemberId"
+        sut.onStartDateUpdatedEvent(
+            StartDateUpdatedEvent(
+                "aContractId",
+                memberId,
+                LocalDate.of(2020, 4, 3)
+            ),
+            Instant.now(),
+            requestId
+        )
+
+        assertThat(repo.data[memberId]).isNull()
     }
 }

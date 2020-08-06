@@ -27,8 +27,11 @@ class EventController(
     }
 
     @PostMapping("/startDateUpdated")
-    fun startDateUpdated(@RequestBody event: StartDateUpdatedEvent): ResponseEntity<Any> {
-        eventHandler.onStartDateUpdatedEvent(event)
+    fun startDateUpdated(@RequestHeader(value = "Request-Id", required = false) requestId: String?, @RequestBody event: StartDateUpdatedEvent): ResponseEntity<Any> {
+        eventHandler.onStartDateUpdatedEvent(
+            event = event,
+            requestId = requestId
+        )
         return ResponseEntity.accepted().build()
     }
 

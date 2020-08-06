@@ -29,14 +29,24 @@ class EventHandler(
 ) {
     fun onStartDateUpdatedEvent(
         event: StartDateUpdatedEvent,
-        callTime: Instant = Instant.now()
+        callTime: Instant = Instant.now(),
+        requestId: String? = null
     ) {
+        requestId?.let {
+            if (handledRequestRepository.isRequestHandled(it)) {
+                return
+            }
+        }
+
         val state = repo.findByMemberId(event.owningMemberId)
             ?: CustomerioState(event.owningMemberId)
 
         state.triggerStartDateUpdated(callTime)
         state.updateFirstUpcomingStartDate(event.startDate)
         repo.save(state)
+        requestId?.let {
+            handledRequestRepository.storeHandledRequest(it)
+        }
     }
 
     fun onContractCreatedEvent(contractCreatedEvent: ContractCreatedEvent, callTime: Instant = Instant.now()) {
@@ -87,8 +97,8 @@ class EventHandler(
 
     fun onQuoteCreated(event: QuoteCreatedEvent, callTime: Instant = Instant.now()) {
         val shouldNotSendEvent = event.initiatedFrom == "HOPE" ||
-            event.originatingProductId != null ||
-            event.productType == "UNKNOWN"
+                event.originatingProductId != null ||
+                event.productType == "UNKNOWN"
         if (shouldNotSendEvent) {
             logger.info("Will not send QuoteCreatedEvent to customer.io for member=${event.memberId} (event=$event)")
             return
