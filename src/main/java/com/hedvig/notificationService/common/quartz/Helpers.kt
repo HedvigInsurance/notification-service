@@ -1,15 +1,15 @@
 package com.hedvig.notificationService.common.quartz
 
 import org.quartz.JobDataMap
+import org.quartz.JobExecutionContext
 import org.quartz.SchedulerException
 import org.quartz.TriggerBuilder
-import org.quartz.impl.JobExecutionContextImpl
 import java.time.temporal.ChronoUnit
 import java.util.Date
 
 val MAX_RETRIES = 5
 fun executeWithRetry(
-    context: JobExecutionContextImpl,
+    context: JobExecutionContext,
     errorFunction: () -> Unit = {},
     function: () -> Unit
 ) {
@@ -27,7 +27,7 @@ fun executeWithRetry(
     }
 }
 
-fun rescheduleJob(context: JobExecutionContextImpl, errorFunction: () -> Unit) {
+fun rescheduleJob(context: JobExecutionContext, errorFunction: () -> Unit) {
     try {
         val originalStartTime = context.trigger.startTime.toInstant()
         val newStartTime = Date.from(

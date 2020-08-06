@@ -37,8 +37,7 @@ class RetryableJobTest {
             mockk(),
             mockk(),
             customerioService,
-            customerIOStateRepository,
-            scheduler
+            customerIOStateRepository
         )
         every { scheduler.context } returns SchedulerContext()
         customerIOStateRepository.save(CustomerioState("1234"))
