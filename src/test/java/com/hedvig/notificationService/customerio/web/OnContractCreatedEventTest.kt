@@ -21,6 +21,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.slot
+import io.mockk.verify
 import org.junit.Before
 import org.junit.Test
 import org.quartz.JobDetail
@@ -41,7 +42,7 @@ class OnContractCreatedEventTest {
 
     private val repository = InMemoryCustomerIOStateRepository()
     lateinit var sut: EventHandler
-    val scheduler: Scheduler = mockk()
+    val scheduler: Scheduler = mockk(relaxed = true)
 
     @Before
     fun setup() {
@@ -143,29 +144,30 @@ class OnContractCreatedEventTest {
         assertThat(newTriggerSlot.captured.startTime).isGreaterThan(oldTrigger.startTime)
     }
 
-    //
-    // @Test
-    // fun `state already exists`() {
-    //
-    //     repository.save(
-    //         CustomerioState(
-    //             memberId = "1337",
-    //             contractCreatedTriggerAt = null
-    //         )
-    //     )
-    //
-    //     val callTime = Instant.parse("2020-04-27T09:20:42.815351Z")
-    //
-    //     sut.onContractCreatedEvent(
-    //         ContractCreatedEvent(
-    //             "someEventId",
-    //             "1337",
-    //             null
-    //         ), callTime
-    //     )
-    //
-    //     assertThat(repository.data["1337"]?.contractCreatedTriggerAt).isEqualTo(callTime)
-    // }
+    @Test
+    fun `state already exists`() {
+
+        repository.save(
+            CustomerioState(
+                memberId = "1337",
+                contractCreatedTriggerAt = null
+            )
+        )
+        every { scheduler.getTrigger(any()) } returns null
+
+        val callTime = Instant.parse("2020-04-27T09:20:42.815351Z")
+
+        sut.onContractCreatedEvent(
+            ContractCreatedEvent(
+                "someEventId",
+                "1337",
+                null
+            ), callTime
+        )
+
+        assertThat(repository.data["1337"]?.contractCreatedTriggerAt).isEqualTo(callTime)
+        verify { scheduler.scheduleJob(any(), any()) }
+    }
 
     // @Test
     // @Disabled("sada")
