@@ -23,7 +23,6 @@ import io.mockk.mockk
 import io.mockk.slot
 import org.junit.Before
 import org.junit.Test
-import org.junit.jupiter.api.Disabled
 import org.quartz.JobDetail
 import org.quartz.Scheduler
 import org.quartz.SimpleTrigger
@@ -66,6 +65,7 @@ class OnContractCreatedEventTest {
         val jobSlot = slot<JobDetail>()
         val triggerSot = slot<Trigger>()
 
+        every { scheduler.getTrigger(any()) } returns null
         every { scheduler.scheduleJob(capture(jobSlot), capture(triggerSot)) } returns Date()
 
         val callTime = Instant.parse("2020-04-27T09:20:42.815351Z")
@@ -143,99 +143,99 @@ class OnContractCreatedEventTest {
         assertThat(newTriggerSlot.captured.startTime).isGreaterThan(oldTrigger.startTime)
     }
 
-    @Test
-    @Disabled
-    fun `state already exists`() {
+    //
+    // @Test
+    // fun `state already exists`() {
+    //
+    //     repository.save(
+    //         CustomerioState(
+    //             memberId = "1337",
+    //             contractCreatedTriggerAt = null
+    //         )
+    //     )
+    //
+    //     val callTime = Instant.parse("2020-04-27T09:20:42.815351Z")
+    //
+    //     sut.onContractCreatedEvent(
+    //         ContractCreatedEvent(
+    //             "someEventId",
+    //             "1337",
+    //             null
+    //         ), callTime
+    //     )
+    //
+    //     assertThat(repository.data["1337"]?.contractCreatedTriggerAt).isEqualTo(callTime)
+    // }
 
-        repository.save(
-            CustomerioState(
-                memberId = "1337",
-                contractCreatedTriggerAt = null
-            )
-        )
+    // @Test
+    // @Disabled("sada")
+    // fun `contract with activation date`() {
+    //
+    //     val stateCreatedAt = Instant.parse("2020-04-27T09:20:42.815351Z").minusMillis(3000)
+    //     val time = Instant.parse("2020-04-27T09:20:42.815351Z")
+    //
+    //     sut.onContractCreatedEvent(
+    //         ContractCreatedEvent(
+    //             "someEventId",
+    //             "1337",
+    //             LocalDate.of(2020, 5, 4)
+    //         ), time
+    //     )
+    //
+    //     assertThat(repository.data["1337"]?.activationDateTriggerAt).isEqualTo(LocalDate.of(2020, 5, 4))
+    // }
 
-        val callTime = Instant.parse("2020-04-27T09:20:42.815351Z")
+    // @Test
+    // @Disabled("")
+    // fun `contract with activation date later than existing activation date`() {
+    //
+    //     val stateCreatedAt = Instant.parse("2020-04-27T09:20:42.815351Z").minusMillis(3000)
+    //     repository.save(
+    //         CustomerioState(
+    //             "1337",
+    //             contractCreatedTriggerAt = stateCreatedAt,
+    //             activationDateTriggerAt =
+    //             LocalDate.of(2020, 1, 1)
+    //         )
+    //     )
+    //     val time = Instant.parse("2020-04-27T09:20:42.815351Z")
+    //
+    //     sut.onContractCreatedEvent(
+    //         ContractCreatedEvent(
+    //             "someEventId",
+    //             "1337",
+    //             LocalDate.of(2020, 5, 4)
+    //         ), time
+    //     )
+    //
+    //     assertThat(repository.data["1337"]?.activationDateTriggerAt).isEqualTo(LocalDate.of(2020, 1, 1))
+    // }
 
-        sut.onContractCreatedEvent(
-            ContractCreatedEvent(
-                "someEventId",
-                "1337",
-                null
-            ), callTime
-        )
-
-        assertThat(repository.data["1337"]?.contractCreatedTriggerAt).isEqualTo(callTime)
-    }
-
-    @Test
-    @Disabled
-    fun `contract with activation date`() {
-
-        val stateCreatedAt = Instant.parse("2020-04-27T09:20:42.815351Z").minusMillis(3000)
-        val time = Instant.parse("2020-04-27T09:20:42.815351Z")
-
-        sut.onContractCreatedEvent(
-            ContractCreatedEvent(
-                "someEventId",
-                "1337",
-                LocalDate.of(2020, 5, 4)
-            ), time
-        )
-
-        assertThat(repository.data["1337"]?.activationDateTriggerAt).isEqualTo(LocalDate.of(2020, 5, 4))
-    }
-
-    @Test
-    @Disabled
-    fun `contract with activation date later than existing activation date`() {
-
-        val stateCreatedAt = Instant.parse("2020-04-27T09:20:42.815351Z").minusMillis(3000)
-        repository.save(
-            CustomerioState(
-                "1337",
-                contractCreatedTriggerAt = stateCreatedAt,
-                activationDateTriggerAt =
-                LocalDate.of(2020, 1, 1)
-            )
-        )
-        val time = Instant.parse("2020-04-27T09:20:42.815351Z")
-
-        sut.onContractCreatedEvent(
-            ContractCreatedEvent(
-                "someEventId",
-                "1337",
-                LocalDate.of(2020, 5, 4)
-            ), time
-        )
-
-        assertThat(repository.data["1337"]?.activationDateTriggerAt).isEqualTo(LocalDate.of(2020, 1, 1))
-    }
-
-    @Test
-    @Disabled
-    fun `contract with activation date yearlier than existing activation date`() {
-
-        val stateCreatedAt = Instant.parse("2020-04-27T09:20:42.815351Z").minusMillis(3000)
-        repository.save(
-            CustomerioState(
-                "1337",
-                contractCreatedTriggerAt = stateCreatedAt,
-                activationDateTriggerAt =
-                LocalDate.of(2020, 5, 2)
-            )
-        )
-        val time = Instant.parse("2020-04-27T09:20:42.815351Z")
-
-        sut.onContractCreatedEvent(
-            ContractCreatedEvent(
-                "someEventId",
-                "1337",
-                LocalDate.of(2020, 5, 1)
-            ), time
-        )
-
-        assertThat(repository.data["1337"]?.activationDateTriggerAt).isEqualTo(LocalDate.of(2020, 5, 1))
-    }
+    // @Test
+    // @Disabled("")
+    // fun `contract with activation date yearlier than existing activation date`() {
+    //
+    //     val stateCreatedAt = Instant.parse("2020-04-27T09:20:42.815351Z").minusMillis(3000)
+    //     repository.save(
+    //         CustomerioState(
+    //             "1337",
+    //             contractCreatedTriggerAt = stateCreatedAt,
+    //             activationDateTriggerAt =
+    //             LocalDate.of(2020, 5, 2)
+    //         )
+    //     )
+    //     val time = Instant.parse("2020-04-27T09:20:42.815351Z")
+    //
+    //     sut.onContractCreatedEvent(
+    //         ContractCreatedEvent(
+    //             "someEventId",
+    //             "1337",
+    //             LocalDate.of(2020, 5, 1)
+    //         ), time
+    //     )
+    //
+    //     assertThat(repository.data["1337"]?.activationDateTriggerAt).isEqualTo(LocalDate.of(2020, 5, 1))
+    // }
 
     @Test
     fun `do not send duplicates emails if norwegian sign hack is triggered`() {
