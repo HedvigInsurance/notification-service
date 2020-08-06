@@ -72,7 +72,7 @@ class EventHandler(
                             .simpleSchedule()
                             .withMisfireHandlingInstructionFireNow()
                     )
-                    .startAt(Date.from(callTime.plus(1, ChronoUnit.MINUTES)))
+                    .startAt(Date.from(callTime.plus(10, ChronoUnit.MINUTES)))
                     .build()
 
                 scheduler.scheduleJob(

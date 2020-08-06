@@ -8,6 +8,7 @@ import com.hedvig.notificationService.customerio.makeJobExecutionContext
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
+import io.mockk.verify
 import org.junit.Test
 import org.quartz.Job
 import org.quartz.JobDataMap
@@ -28,7 +29,7 @@ class RetryableQuartzJobTest {
     }
 
     @Test
-    fun `executionWithoutExecutesPassedLambda`() {
+    fun `executionWithoutExceptionRunsLambda`() {
 
         val scheduler = mockk<Scheduler>()
         val job = TestableJob()
@@ -91,6 +92,27 @@ class RetryableQuartzJobTest {
         assertThat(jobContext.jobDetail.jobDataMap).contains("RETRY_COUNT", "3")
     }
 
+    @Test
+    fun `do not reschedule when retrycount greater than max_retries`() {
+        val scheduler = mockk<Scheduler>()
+        val job = TestableJob()
+
+        val jobData = JobDataMap()
+        jobData.putAsString("RETRY_COUNT", 5)
+
+        val jobContext = makeJobExecutionContext(scheduler, job, jobData)
+
+        val jobSlot = slot<JobDetail>()
+        val triggerSlot = slot<Trigger>()
+        every { scheduler.scheduleJob(capture(jobSlot), capture(triggerSlot)) } returns Date()
+        executeWithRetry(jobContext) {
+            throw RuntimeException()
+        }
+
+        verify(inverse = true) { scheduler.scheduleJob(any(), any()) }
+    }
+
+    val MAX_RETRIES = 5
     private fun executeWithRetry(context: JobExecutionContextImpl, function: () -> Unit) {
         try {
             function()
@@ -102,10 +124,12 @@ class RetryableQuartzJobTest {
             val retryCount = context.jobDetail.jobDataMap.getIntOrNull("RETRY_COUNT") ?: 0
             context.jobDetail.jobDataMap.putAsString("RETRY_COUNT", retryCount + 1)
 
-            context.scheduler.scheduleJob(
-                context.jobDetail,
-                TriggerBuilder.newTrigger().startAt(newStartTime).build()
-            )
+            if (retryCount < MAX_RETRIES) {
+                context.scheduler.scheduleJob(
+                    context.jobDetail,
+                    TriggerBuilder.newTrigger().startAt(newStartTime).build()
+                )
+            }
         }
     }
 }
