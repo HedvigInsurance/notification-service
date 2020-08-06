@@ -3,6 +3,7 @@ package com.hedvig.notificationService.customerio.web
 import assertk.all
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import assertk.assertions.isGreaterThan
 import assertk.assertions.isNull
 import assertk.assertions.isTrue
 import com.hedvig.notificationService.customerio.ConfigurationProperties
@@ -27,6 +28,8 @@ import org.quartz.JobDetail
 import org.quartz.Scheduler
 import org.quartz.SimpleTrigger
 import org.quartz.Trigger
+import org.quartz.TriggerBuilder
+import org.quartz.TriggerKey
 import java.time.Instant
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
@@ -99,7 +102,6 @@ class OnContractCreatedEventTest {
     }
 
     @Test
-    @Disabled
     fun `contract already created`() {
 
         val stateCreatedAt = Instant.parse("2020-04-27T09:20:42.815351Z").minusMillis(3000)
@@ -112,8 +114,17 @@ class OnContractCreatedEventTest {
             )
         )
 
-        val time = Instant.parse("2020-04-27T09:20:42.815351Z")
+        val oldTrigger = TriggerBuilder
+            .newTrigger()
+            .startNow()
+            .build()
+        every { scheduler.getTrigger(any()) } returns oldTrigger
 
+        val oldTriggerKeySlot = slot<TriggerKey>()
+        val newTriggerSlot = slot<Trigger>()
+        every { scheduler.rescheduleJob(capture(oldTriggerKeySlot), capture(newTriggerSlot)) } returns Date()
+
+        val time = Instant.parse("2020-04-27T09:20:42.815351Z")
         sut.onContractCreatedEvent(
             ContractCreatedEvent(
                 "someEventId",
@@ -123,6 +134,13 @@ class OnContractCreatedEventTest {
         )
 
         assertThat(repository.data["1337"]?.contractCreatedTriggerAt).isEqualTo(stateCreatedAt)
+        assertThat(oldTriggerKeySlot.captured).isEqualTo(
+            TriggerKey(
+                "onContractCreatedEvent-1337",
+                "customerio.triggers"
+            )
+        )
+        assertThat(newTriggerSlot.captured.startTime).isGreaterThan(oldTrigger.startTime)
     }
 
     @Test
