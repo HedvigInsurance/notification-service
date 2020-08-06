@@ -1,6 +1,6 @@
 package com.hedvig.notificationService.customerio
 
-import com.hedvig.notificationService.customerio.customerioEvents.UpdateStartDateJob
+import com.hedvig.notificationService.customerio.customerioEvents.jobs.UpdateStartDateJob
 import com.hedvig.notificationService.customerio.dto.ChargeFailedEvent
 import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
 import com.hedvig.notificationService.customerio.dto.ContractRenewalQueuedEvent
