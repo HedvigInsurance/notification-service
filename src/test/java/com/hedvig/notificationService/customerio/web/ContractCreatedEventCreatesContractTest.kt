@@ -29,7 +29,7 @@ class ContractCreatedEventCreatesContractTest {
     val firebaseNotificationService = mockk<FirebaseNotificationService>()
     val customerioService = mockk<CustomerioService>()
     val memberService = mockk<MemberServiceImpl>()
-    val scheduler: Scheduler = mockk()
+    val scheduler: Scheduler = mockk(relaxed = true)
     val sut = EventHandler(
         repo = repo,
         firebaseNotificationService = firebaseNotificationService,
