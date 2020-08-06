@@ -35,7 +35,6 @@ class OnContractCreatedEventTest {
         val customerioService = mockk<CustomerioService>()
         val memberService = mockk<MemberServiceImpl>()
         val firebaseNotificationService = mockk<FirebaseNotificationService>()
-        configuration.useNorwayHack = false
         sut = EventHandler(
             repo = repository,
             configuration = configuration,

@@ -20,7 +20,6 @@ class OnContractRenewalQuuedEventTest {
     @Test
     internal fun `renewal queued test`() {
         val configurationProperties = ConfigurationProperties()
-        configurationProperties.useNorwayHack = false
         val customerioService = mockk<CustomerioService>(relaxed = true)
         val memberService = mockk<MemberServiceImpl>()
         val firebaseNotificationService = mockk<FirebaseNotificationService>(relaxed = true)

@@ -8,7 +8,6 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.verify
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
 import java.time.Instant
@@ -85,27 +84,6 @@ class NorwaySignHackHandleUpdatesFromUnderwriterTest {
         )
 
         verify { seCustomerioClient.updateCustomer("1337", any()) }
-    }
-
-    @Test
-    fun norwegianSignAttributesUpdatesRepositoryWithTime() {
-        every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
-
-        val updateInstant = Instant.parse("2020-04-15T14:53:40.550493Z")
-        sut.updateCustomerAttributes("randomId", makeSignFromUnderwriterMap(), updateInstant)
-
-        assertThat(repository.data["randomId"]?.underwriterFirstSignAttributesUpdate).isEqualTo(updateInstant)
-    }
-
-    @Test
-    fun norwegianSecondSignAttributesDoesNotUpdateRepositoryWithTime() {
-        every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
-
-        val updateInstant = Instant.parse("2020-04-15T14:53:40.550493Z")
-        sut.updateCustomerAttributes("randomId", makeSignFromUnderwriterMap(), updateInstant)
-        sut.updateCustomerAttributes("randomId", makeSignFromUnderwriterMap(), updateInstant.plusMillis(1000))
-
-        assertThat(repository.data["randomId"]?.underwriterFirstSignAttributesUpdate).isEqualTo(updateInstant)
     }
 
     @Test

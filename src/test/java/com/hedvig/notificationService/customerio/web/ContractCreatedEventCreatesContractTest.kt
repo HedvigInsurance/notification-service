@@ -36,7 +36,6 @@ class ContractCreatedEventCreatesContractTest {
 
     @BeforeEach
     fun setup() {
-        configurationProperties.useNorwayHack = false
         MockKAnnotations.init(this)
     }
 

@@ -30,11 +30,9 @@ class EventHandler(
         val state = repo.findByMemberId(event.owningMemberId)
             ?: CustomerioState(event.owningMemberId)
 
-        if (!configuration.useNorwayHack) {
-            state.triggerStartDateUpdated(callTime)
-            state.updateFirstUpcomingStartDate(event.startDate)
-            repo.save(state)
-        }
+        state.triggerStartDateUpdated(callTime)
+        state.updateFirstUpcomingStartDate(event.startDate)
+        repo.save(state)
     }
 
     fun onContractCreatedEvent(contractCreatedEvent: ContractCreatedEvent, callTime: Instant = Instant.now()) {
@@ -44,10 +42,8 @@ class EventHandler(
         if (state.underwriterFirstSignAttributesUpdate != null)
             return // This should only happen when we go live or if we rollback to earlier versions
 
-        if (!configuration.useNorwayHack) {
-            state.createContract(contractCreatedEvent.contractId, callTime, contractCreatedEvent.startDate)
-            repo.save(state)
-        }
+        state.createContract(contractCreatedEvent.contractId, callTime, contractCreatedEvent.startDate)
+        repo.save(state)
     }
 
     fun onFailedChargeEvent(memberId: String, chargeFailedEvent: ChargeFailedEvent) {
@@ -78,8 +74,8 @@ class EventHandler(
 
     fun onQuoteCreated(event: QuoteCreatedEvent, callTime: Instant = Instant.now()) {
         val shouldNotSendEvent = event.initiatedFrom == "HOPE" ||
-                event.originatingProductId != null ||
-                event.productType == "UNKNOWN"
+            event.originatingProductId != null ||
+            event.productType == "UNKNOWN"
         if (shouldNotSendEvent) {
             logger.info("Will not send QuoteCreatedEvent to customer.io for member=${event.memberId} (event=$event)")
             return
