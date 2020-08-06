@@ -4,7 +4,7 @@ import assertk.assertThat
 import assertk.assertions.contains
 import assertk.assertions.isGreaterThan
 import assertk.assertions.isTrue
-import com.hedvig.notificationService.customerio.makeJobExecutionContext
+import com.hedvig.notificationService.customerio.customerioEvents.jobs.makeJobExecutionContext
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
@@ -31,7 +31,12 @@ class RetryableQuartzJobTest {
 
         val scheduler = mockk<Scheduler>()
         val job = TestableJob()
-        val jobContext = makeJobExecutionContext(scheduler, job, JobDataMap())
+        val jobContext =
+            makeJobExecutionContext(
+                scheduler,
+                job,
+                JobDataMap()
+            )
         var changeMe = false
         executeWithRetry(jobContext) {
             changeMe = true
@@ -44,7 +49,12 @@ class RetryableQuartzJobTest {
     fun `exception during execution causes job to be resceduled`() {
         val scheduler = mockk<Scheduler>()
         val job = TestableJob()
-        val jobContext = makeJobExecutionContext(scheduler, job, JobDataMap())
+        val jobContext =
+            makeJobExecutionContext(
+                scheduler,
+                job,
+                JobDataMap()
+            )
 
         val jobSlot = slot<JobDetail>()
         val triggerSlot = slot<Trigger>()
@@ -60,7 +70,12 @@ class RetryableQuartzJobTest {
     fun `first exception during execution causes job retries to be  set to one`() {
         val scheduler = mockk<Scheduler>()
         val job = TestableJob()
-        val jobContext = makeJobExecutionContext(scheduler, job, JobDataMap())
+        val jobContext =
+            makeJobExecutionContext(
+                scheduler,
+                job,
+                JobDataMap()
+            )
 
         val jobSlot = slot<JobDetail>()
         val triggerSlot = slot<Trigger>()
@@ -78,7 +93,12 @@ class RetryableQuartzJobTest {
         val job = TestableJob()
         val jobData = JobDataMap()
         jobData.putAsString("RETRY_COUNT", 2)
-        val jobContext = makeJobExecutionContext(scheduler, job, jobData)
+        val jobContext =
+            makeJobExecutionContext(
+                scheduler,
+                job,
+                jobData
+            )
 
         val jobSlot = slot<JobDetail>()
         val triggerSlot = slot<Trigger>()
@@ -98,7 +118,12 @@ class RetryableQuartzJobTest {
         val jobData = JobDataMap()
         jobData.putAsString("RETRY_COUNT", 5)
 
-        val jobContext = makeJobExecutionContext(scheduler, job, jobData)
+        val jobContext =
+            makeJobExecutionContext(
+                scheduler,
+                job,
+                jobData
+            )
 
         val jobSlot = slot<JobDetail>()
         val triggerSlot = slot<Trigger>()
@@ -118,7 +143,12 @@ class RetryableQuartzJobTest {
         val jobData = JobDataMap()
         jobData.putAsString("RETRY_COUNT", MAX_RETRIES)
 
-        val jobContext = makeJobExecutionContext(scheduler, job, jobData)
+        val jobContext =
+            makeJobExecutionContext(
+                scheduler,
+                job,
+                jobData
+            )
 
         every { scheduler.scheduleJob(any(), any()) } returns Date()
 
@@ -140,7 +170,12 @@ class RetryableQuartzJobTest {
         val jobData = JobDataMap()
         jobData.putAsString("RETRY_COUNT", 1)
 
-        val jobContext = makeJobExecutionContext(scheduler, job, jobData)
+        val jobContext =
+            makeJobExecutionContext(
+                scheduler,
+                job,
+                jobData
+            )
 
         every { scheduler.scheduleJob(any(), any()) } throws SchedulerException()
 

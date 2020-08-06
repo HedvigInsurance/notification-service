@@ -1,5 +1,6 @@
 package com.hedvig.notificationService.common.quartz
 
+import com.hedvig.notificationService.customerio.SIGN_EVENT_WINDOWS_SIZE_MINUTES
 import org.quartz.JobDataMap
 import org.quartz.JobExecutionContext
 import org.quartz.SchedulerException
@@ -33,7 +34,7 @@ fun rescheduleJob(context: JobExecutionContext, errorFunction: (ex: Exception) -
         val originalStartTime = context.trigger.startTime.toInstant()
         val newStartTime = Date.from(
             originalStartTime.plus(
-                1,
+                SIGN_EVENT_WINDOWS_SIZE_MINUTES,
                 ChronoUnit.MINUTES
             )
         )

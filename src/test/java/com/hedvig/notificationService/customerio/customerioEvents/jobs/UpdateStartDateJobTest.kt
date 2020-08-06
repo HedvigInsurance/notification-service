@@ -1,8 +1,8 @@
-package com.hedvig.notificationService.customerio
+package com.hedvig.notificationService.customerio.customerioEvents.jobs
 
 import assertk.assertThat
 import assertk.assertions.isNotNull
-import com.hedvig.notificationService.customerio.customerioEvents.jobs.UpdateStartDateJob
+import com.hedvig.notificationService.customerio.CustomerioService
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
@@ -50,7 +50,13 @@ class UpdateStartDateJobTest {
 
         val jobData = JobDataMap()
         jobData["memberId"] = "1234"
-        job.execute(makeJobExecutionContext(scheduler, job, jobData))
+        job.execute(
+            makeJobExecutionContext(
+                scheduler,
+                job,
+                jobData
+            )
+        )
 
         verify(inverse = true) { scheduler.scheduleJob(any(), any()) }
     }
@@ -64,7 +70,13 @@ class UpdateStartDateJobTest {
 
         val jobData = JobDataMap()
         jobData["memberId"] = "1234"
-        job.execute(makeJobExecutionContext(scheduler, job, jobData))
+        job.execute(
+            makeJobExecutionContext(
+                scheduler,
+                job,
+                jobData
+            )
+        )
         assertThat(slot1.captured).isNotNull()
     }
 }
