@@ -29,7 +29,7 @@ class RetryableQuartzJobTest {
     }
 
     @Test
-    fun `executionWithoutExceptionRunsLambda`() {
+    fun executionWithoutExceptionRunsLambda() {
 
         val scheduler = mockk<Scheduler>()
         val job = TestableJob()
@@ -112,8 +112,34 @@ class RetryableQuartzJobTest {
         verify(inverse = true) { scheduler.scheduleJob(any(), any()) }
     }
 
+    @Test
+    fun `call error lambda after max retries`() {
+        val scheduler = mockk<Scheduler>()
+        val job = TestableJob()
+
+        val jobData = JobDataMap()
+        jobData.putAsString("RETRY_COUNT", MAX_RETRIES)
+
+        val jobContext = makeJobExecutionContext(scheduler, job, jobData)
+
+        every { scheduler.scheduleJob(any(), any()) } returns Date()
+
+        var errorLambdaCalled = false
+        executeWithRetry(jobContext, {
+            errorLambdaCalled = true
+        }) {
+            throw RuntimeException()
+        }
+
+        assertThat(errorLambdaCalled).isTrue()
+    }
+
     val MAX_RETRIES = 5
-    private fun executeWithRetry(context: JobExecutionContextImpl, function: () -> Unit) {
+    private fun executeWithRetry(
+        context: JobExecutionContextImpl,
+        errorFunction: () -> Unit = {},
+        function: () -> Unit
+    ) {
         try {
             function()
         } catch (e: RuntimeException) {
@@ -129,6 +155,8 @@ class RetryableQuartzJobTest {
                     context.jobDetail,
                     TriggerBuilder.newTrigger().startAt(newStartTime).build()
                 )
+            } else {
+                errorFunction()
             }
         }
     }
