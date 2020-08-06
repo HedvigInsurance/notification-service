@@ -79,9 +79,7 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
             }
             customerioState.shouldSendContractCreatedEvent()
             -> {
-                val event = createContractCreatedEvent(contracts)
-                customerioState.sentContractCreatedEvent()
-                ExecutionResult(event)
+                contractCreatedEvent(customerioState, contracts)
             }
             customerioState.shouldSendStartDateUpdatedEvent() -> {
                 val event = createStartDateUpdatedEvent(contracts)
@@ -98,6 +96,15 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
             else
             -> throw RuntimeException("CustomerioState in weird state")
         }
+    }
+
+    override fun contractCreatedEvent(
+        customerioState: CustomerioState,
+        contracts: List<ContractInfo>
+    ): ExecutionResult {
+        val event = createContractCreatedEvent(contracts)
+        customerioState.sentContractCreatedEvent()
+        return ExecutionResult(event)
     }
 
     private fun createActivationDateTodayEvent(

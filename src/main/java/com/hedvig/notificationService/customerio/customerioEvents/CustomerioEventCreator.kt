@@ -9,4 +9,9 @@ CustomerioEventCreator {
         customerioState: CustomerioState,
         contracts: List<ContractInfo>
     ): ExecutionResult
+
+    fun contractCreatedEvent(
+        customerioState: CustomerioState,
+        contracts: List<ContractInfo>
+    ): ExecutionResult
 }

@@ -27,7 +27,9 @@ class ContractCreatedJob(
         ) {
             val memberId = jobContext.mergedJobDataMap.get("memberId") as String
             val customerioState = customerIOStateRepository.findByMemberId(memberId)!!
-            customerioService.doUpdate(customerioState, eventCreator, contractLoader)
+            val contracts = contractLoader.getContractInfoForMember(customerioState.memberId)
+            val eventAndState = eventCreator.contractCreatedEvent(customerioState, contracts)
+            customerioService.sendEventAndUpdateState(customerioState, eventAndState.asMap)
         }
     }
 }
