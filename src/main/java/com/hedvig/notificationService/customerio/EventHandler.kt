@@ -1,3 +1,5 @@
+//TODO: I think we should move this one to package com.hedvig.notificationService.service hence its not really just customer io
+// but I'm thinking of the merge conflict, will move it before opening the pr
 package com.hedvig.notificationService.customerio
 
 import com.hedvig.notificationService.customerio.dto.ChargeFailedEvent
@@ -9,7 +11,7 @@ import com.hedvig.notificationService.customerio.dto.objects.ChargeFailedReason
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.customerio.state.CustomerioState
-import com.hedvig.notificationService.service.FirebaseNotificationService
+import com.hedvig.notificationService.service.firebase.FirebaseNotificationService
 import com.hedvig.notificationService.serviceIntegration.memberService.dto.HasPersonSignedBeforeRequest
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
