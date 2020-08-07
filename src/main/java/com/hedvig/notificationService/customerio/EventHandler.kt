@@ -28,14 +28,7 @@ class EventHandler(
     private val handledRequestRepository: HandledRequestRepository
 ) {
 
-    fun onEventRequest(
-        requestId: String,
-        event: Map<String, Any>
-    ) {
-        //TODO
-    }
-
-    fun onStartDateUpdatedEvent(
+    fun onStartDateUpdatedEventHandleRequest(
         event: StartDateUpdatedEvent,
         callTime: Instant = Instant.now(),
         requestId: String? = null
@@ -45,16 +38,22 @@ class EventHandler(
                 return
             }
         }
+        onStartDateUpdatedEvent(event, callTime)
+        requestId?.let {
+            handledRequestRepository.storeHandledRequest(it)
+        }
+    }
 
+    fun onStartDateUpdatedEvent(
+        event: StartDateUpdatedEvent,
+        callTime: Instant = Instant.now()
+    ) {
         val state = repo.findByMemberId(event.owningMemberId)
             ?: CustomerioState(event.owningMemberId)
 
         state.triggerStartDateUpdated(callTime)
         state.updateFirstUpcomingStartDate(event.startDate)
         repo.save(state)
-        requestId?.let {
-            handledRequestRepository.storeHandledRequest(it)
-        }
     }
 
     fun onContractCreatedEvent(

@@ -1,6 +1,7 @@
 package com.hedvig.notificationService.service.event
 
 import com.hedvig.notificationService.customerio.EventHandler
+import com.hedvig.notificationService.service.request.EventRequestHandler
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.verify
 import org.assertj.core.api.Assertions
@@ -29,7 +30,7 @@ class WebEventRequestTest {
     lateinit var testRestTemplate: TestRestTemplate
 
     @MockkBean(relaxed = true)
-    private lateinit var eventHandler: EventHandler
+    private lateinit var eventRequestHandler: EventRequestHandler
 
     val testEvent: Map<String, Any> = mapOf(
         "name" to "TestEvent",
@@ -48,7 +49,7 @@ class WebEventRequestTest {
         val response = testRestTemplate.postForEntity(url, HttpEntity(body, headers), String::class.java)
 
         verify {
-            eventHandler.onEventRequest(requestId, testEvent)
+            eventRequestHandler.onEventRequest(requestId, testEvent)
         }
 
         Assertions.assertThat(response.statusCode).isEqualTo(HttpStatus.ACCEPTED)

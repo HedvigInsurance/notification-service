@@ -6,6 +6,7 @@ import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
 import com.hedvig.notificationService.customerio.dto.ContractRenewalQueuedEvent
 import com.hedvig.notificationService.customerio.dto.QuoteCreatedEvent
 import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent
+import com.hedvig.notificationService.service.request.EventRequestHandler
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -18,7 +19,8 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/_/events")
 class EventController(
-    private val eventHandler: EventHandler
+    private val eventHandler: EventHandler,
+    private val eventRequestHandler: EventRequestHandler
 ) {
 
     //TODO maybe better endpoint
@@ -27,7 +29,7 @@ class EventController(
         @RequestHeader(value = "Request-Id") requestId: String,
         @RequestBody event: Map<String, Any>
     ): ResponseEntity<Any> {
-        eventHandler.onEventRequest(requestId, event)
+        eventRequestHandler.onEventRequest(requestId, event)
         return ResponseEntity.accepted().build()
     }
 
@@ -48,7 +50,7 @@ class EventController(
         @RequestHeader(value = "Request-Id", required = false) requestId: String?,
         @RequestBody event: StartDateUpdatedEvent
     ): ResponseEntity<Any> {
-        eventHandler.onStartDateUpdatedEvent(
+        eventHandler.onStartDateUpdatedEventHandleRequest(
             event = event,
             requestId = requestId
         )
