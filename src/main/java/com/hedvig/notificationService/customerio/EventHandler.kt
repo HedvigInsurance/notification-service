@@ -27,6 +27,14 @@ class EventHandler(
     private val memberService: MemberServiceImpl,
     private val handledRequestRepository: HandledRequestRepository
 ) {
+
+    fun onEventRequest(
+        requestId: String,
+        event: Map<String, Any>
+    ) {
+        //TODO
+    }
+
     fun onStartDateUpdatedEvent(
         event: StartDateUpdatedEvent,
         callTime: Instant = Instant.now(),

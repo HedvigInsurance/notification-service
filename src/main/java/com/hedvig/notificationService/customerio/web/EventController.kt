@@ -20,6 +20,17 @@ import javax.validation.Valid
 class EventController(
     private val eventHandler: EventHandler
 ) {
+
+    //TODO maybe better endpoint
+    @PostMapping("/request")
+    fun event(
+        @RequestHeader(value = "Request-Id") requestId: String,
+        @RequestBody event: Map<String, Any>
+    ): ResponseEntity<Any> {
+        eventHandler.onEventRequest(requestId, event)
+        return ResponseEntity.accepted().build()
+    }
+
     @PostMapping("/contractCreated")
     fun contractCreated(
         @RequestHeader(value = "Request-Id", required = false) requestId: String?,
