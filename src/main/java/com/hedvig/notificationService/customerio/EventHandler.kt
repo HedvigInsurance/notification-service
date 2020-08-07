@@ -22,6 +22,7 @@ import org.quartz.Scheduler
 import org.quartz.SchedulerException
 import org.quartz.SimpleScheduleBuilder
 import org.quartz.SimpleTrigger
+import org.quartz.Trigger
 import org.quartz.TriggerBuilder
 import org.quartz.TriggerKey
 import org.slf4j.LoggerFactory
@@ -123,16 +124,7 @@ class EventHandler(
 
             val existingTrigger = scheduler.getTrigger(triggerKey)
             if (existingTrigger != null) {
-                val newStartTime = Date.from(
-                    callTime.plus(
-                        SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES
-                    )
-                )
-                scheduler.rescheduleJob(
-                    triggerKey, existingTrigger.triggerBuilder.startAt(
-                        newStartTime
-                    ).build()
-                )
+                rescheduleJob(callTime, triggerKey, existingTrigger)
             } else {
                 val jobData = JobDataMap()
                 jobData["memberId"] = contractCreatedEvent.owningMemberId
@@ -147,6 +139,23 @@ class EventHandler(
         } catch (e: SchedulerException) {
             throw RuntimeException(e.message, e)
         }
+    }
+
+    private fun rescheduleJob(
+        callTime: Instant,
+        triggerKey: TriggerKey?,
+        existingTrigger: Trigger
+    ) {
+        val newStartTime = Date.from(
+            callTime.plus(
+                SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES
+            )
+        )
+        scheduler.rescheduleJob(
+            triggerKey, existingTrigger.triggerBuilder.startAt(
+                newStartTime
+            ).build()
+        )
     }
 
     private fun <T : Job> createJob(
