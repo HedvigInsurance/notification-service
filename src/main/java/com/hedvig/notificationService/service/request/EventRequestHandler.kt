@@ -14,13 +14,17 @@ import org.springframework.stereotype.Service
 @Service
 class EventRequestHandler(
     private val eventHandler: EventHandler,
-    private val objectMapper: ObjectMapper
+    private val objectMapper: ObjectMapper,
+    private val handledRequestRepository: HandledRequestRepository
 ) {
 
     fun onEventRequest(
         requestId: String,
         eventJson: JsonNode
     ) {
+        if (handledRequestRepository.isRequestHandled(requestId)) {
+            return
+        }
         when (val event = getRequestEvent(eventJson)) {
             is ChargeFailedEvent -> eventHandler.onFailedChargeEvent(event)
             is ContractCreatedEvent -> eventHandler.onContractCreatedEvent(event)
@@ -28,6 +32,7 @@ class EventRequestHandler(
             is QuoteCreatedEvent -> eventHandler.onQuoteCreated(event)
             is StartDateUpdatedEvent -> eventHandler.onStartDateUpdatedEvent(event)
         }
+        handledRequestRepository.storeHandledRequest(requestId)
     }
 
     private fun getRequestEvent(eventJson: JsonNode): RequestEvent {

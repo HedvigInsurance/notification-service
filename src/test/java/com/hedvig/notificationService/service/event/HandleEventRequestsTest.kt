@@ -11,8 +11,10 @@ import com.hedvig.notificationService.customerio.dto.QuoteCreatedEvent
 import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent
 import com.hedvig.notificationService.customerio.dto.objects.ChargeFailedReason
 import com.hedvig.notificationService.service.request.EventRequestHandler
+import com.hedvig.notificationService.service.request.HandledRequestRepository
 import com.hedvig.notificationService.service.request.NoDataOnEventException
 import com.hedvig.notificationService.service.request.NoNameOnEventException
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Test
@@ -24,12 +26,39 @@ import java.util.UUID
 class HandleEventRequestsTest {
 
     val eventHandler = mockk<EventHandler>(relaxed = true)
+    val handledRequestRepository = mockk<HandledRequestRepository>(relaxed = true)
 
     val mapper = ObjectMapper()
         .registerModule(JavaTimeModule())
         .registerModule(KotlinModule())
 
-    val serviceToTest = EventRequestHandler(eventHandler, mapper)
+    val serviceToTest = EventRequestHandler(eventHandler, mapper, handledRequestRepository)
+
+
+    @Test
+    fun `do nothing on handled request`() {
+        val contractId = "contractId"
+        val memberId = "memberId"
+        val startDate = "2020-11-02"
+        val map = mapOf(
+            "name" to "StartDateUpdatedEvent",
+            "data" to mapOf(
+                "contractId" to contractId,
+                "owningMemberId" to memberId,
+                "startDate" to startDate
+            )
+        )
+
+
+        val requestId = "handled request"
+        every { handledRequestRepository.isRequestHandled(requestId) } returns true
+        serviceToTest.onEventRequest(
+            requestId, mapper.valueToTree(map)
+        )
+
+        verify(exactly = 0) { eventHandler.onStartDateUpdatedEvent(any(), any()) }
+        verify(exactly = 0) { handledRequestRepository.storeHandledRequest(requestId) }
+    }
 
     @Test
     fun `start date update event`() {
@@ -45,8 +74,9 @@ class HandleEventRequestsTest {
             )
         )
 
+        val requestId = "unhandled request"
         serviceToTest.onEventRequest(
-            "unhandled request", mapper.valueToTree(map)
+            requestId, mapper.valueToTree(map)
         )
 
         verify {
@@ -58,6 +88,7 @@ class HandleEventRequestsTest {
                 ), any()
             )
         }
+        verify { handledRequestRepository.storeHandledRequest(requestId) }
     }
 
     @Test
@@ -77,8 +108,9 @@ class HandleEventRequestsTest {
             )
         )
 
+        val requestId = "unhandled request"
         serviceToTest.onEventRequest(
-            "unhandled request", mapper.valueToTree(map)
+            requestId, mapper.valueToTree(map)
         )
 
         verify {
@@ -92,6 +124,7 @@ class HandleEventRequestsTest {
                 )
             )
         }
+        verify { handledRequestRepository.storeHandledRequest(requestId) }
     }
 
     @Test
@@ -110,8 +143,9 @@ class HandleEventRequestsTest {
             )
         )
 
+        val requestId = "unhandled request"
         serviceToTest.onEventRequest(
-            "unhandled request", mapper.valueToTree(map)
+            requestId, mapper.valueToTree(map)
         )
 
         verify {
@@ -125,6 +159,7 @@ class HandleEventRequestsTest {
                 any()
             )
         }
+        verify { handledRequestRepository.storeHandledRequest(requestId) }
     }
 
     @Test
@@ -144,8 +179,9 @@ class HandleEventRequestsTest {
             )
         )
 
+        val requestId = "unhandled request"
         serviceToTest.onEventRequest(
-            "unhandled request", mapper.valueToTree(map)
+            requestId, mapper.valueToTree(map)
         )
 
         verify {
@@ -159,6 +195,7 @@ class HandleEventRequestsTest {
                 any()
             )
         }
+        verify { handledRequestRepository.storeHandledRequest(requestId) }
     }
 
     @Test
@@ -197,8 +234,9 @@ class HandleEventRequestsTest {
             )
         )
 
+        val requestId = "unhandled request"
         serviceToTest.onEventRequest(
-            "unhandled request", mapper.valueToTree(map)
+            requestId, mapper.valueToTree(map)
         )
 
         verify {
@@ -222,6 +260,7 @@ class HandleEventRequestsTest {
                 any()
             )
         }
+        verify { handledRequestRepository.storeHandledRequest(requestId) }
     }
 
     @Test
