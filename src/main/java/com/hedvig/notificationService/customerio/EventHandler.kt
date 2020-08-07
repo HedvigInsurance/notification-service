@@ -98,10 +98,11 @@ class EventHandler(
             if (existingTrigger != null) {
                 rescheduleJob(callTime, triggerKey, existingTrigger)
             } else {
-                val jobData = JobDataMap()
-                jobData["memberId"] = contractCreatedEvent.owningMemberId
+                val jobData = mapOf(
+                    "memberId" to contractCreatedEvent.owningMemberId
+                )
 
-                scheduleJob(
+                jobScheduler.scheduleJob(
                     jobName,
                     jobData,
                     ContractCreatedJob::class,
@@ -110,9 +111,11 @@ class EventHandler(
             }
 
             if (contractCreatedEvent.startDate != null) {
-                val jobData = JobDataMap()
-                jobData["memberId"] = contractCreatedEvent.owningMemberId
-                scheduleJob(
+                val jobData = mapOf(
+                    "memberId" to contractCreatedEvent.owningMemberId
+                )
+
+                jobScheduler.scheduleJob(
                     "contractActivatedTodayJob-aContractId",
                     jobData,
                     ContractActivatedTodayJob::class,
