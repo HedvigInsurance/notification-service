@@ -27,6 +27,7 @@ import org.quartz.TriggerKey
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.Instant
+import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 import java.util.Date
 import kotlin.reflect.KClass
@@ -69,7 +70,7 @@ class EventHandler(
                 "contractActivatedTodayJob-aContractId",
                 jobData,
                 ContractActivatedTodayJob::class,
-                callTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES)
+                event.startDate.atStartOfDay(ZoneId.of("Europe/Stockholm")).toInstant()
             )
         } catch (e: SchedulerException) {
             throw RuntimeException(e.message, e)

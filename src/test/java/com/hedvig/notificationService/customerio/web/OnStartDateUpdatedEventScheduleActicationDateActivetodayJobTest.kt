@@ -19,6 +19,7 @@ import org.quartz.JobDetail
 import org.quartz.Scheduler
 import org.quartz.Trigger
 import java.time.LocalDate
+import java.time.ZoneId
 import java.util.Date
 
 class OnStartDateUpdatedEventScheduleActivationDateActiveTodayJobTest {
@@ -59,7 +60,27 @@ class OnStartDateUpdatedEventScheduleActivationDateActiveTodayJobTest {
                 mapOf("memberId" to "aMemberId")
             )
         }
+
+        assertThat(triggerSlot).any {
+            it.matches(
+                "contractActivatedTodayJob-aContractId",
+                Date.from(LocalDate.of(2020, 9, 1).atStartOfDay(ZoneId.of("Europe/Stockholm")).toInstant())
+            )
+        }
     }
+}
+
+fun Assert<Trigger>.matches(
+    name: String,
+    startDate: Date
+) = given { actual ->
+
+    if (
+        name == actual.key.name &&
+        startDate == actual.startTime
+    ) return@given
+
+    expected("${show(actual)} did not match expected")
 }
 
 fun Assert<JobDetail>.matches(
