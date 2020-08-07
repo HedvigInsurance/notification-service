@@ -94,10 +94,9 @@ class EventHandler(
             val jobName = "onContractCreatedEvent-${contractCreatedEvent.owningMemberId}"
             val triggerKey = TriggerKey.triggerKey(jobName, jobGroup)
 
-            val existingTrigger = scheduler.getTrigger(triggerKey)
-            if (existingTrigger != null) {
-                rescheduleJob(callTime, triggerKey, existingTrigger)
-            } else {
+            val jobRescheduled = jobScheduler.rescheduleJob(callTime, triggerKey)
+
+            if (!jobRescheduled) {
                 val jobData = mapOf(
                     "memberId" to contractCreatedEvent.owningMemberId
                 )

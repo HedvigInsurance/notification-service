@@ -1,5 +1,6 @@
 package com.hedvig.notificationService.customerio.customerioEvents.jobs
 
+import com.hedvig.notificationService.customerio.SIGN_EVENT_WINDOWS_SIZE_MINUTES
 import org.quartz.Job
 import org.quartz.JobBuilder
 import org.quartz.JobDataMap
@@ -10,6 +11,7 @@ import org.quartz.SimpleTrigger
 import org.quartz.TriggerBuilder
 import org.quartz.TriggerKey
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 import java.util.Date
 import kotlin.reflect.KClass
 
@@ -32,6 +34,26 @@ class JobScheduler(private val scheduler: Scheduler) {
             jobDetail,
             trigger
         )
+    }
+
+    fun rescheduleJob(
+        callTime: Instant,
+        triggerKey: TriggerKey
+    ): Boolean {
+        val existingTrigger = scheduler.getTrigger(triggerKey) ?: return false
+
+        val newStartTime = Date.from(
+            callTime.plus(
+                SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES
+            )
+        )
+        scheduler.rescheduleJob(
+            triggerKey, existingTrigger.triggerBuilder.startAt(
+                newStartTime
+            ).build()
+        )
+
+        return true
     }
 
     fun <T : Job> createJob(
