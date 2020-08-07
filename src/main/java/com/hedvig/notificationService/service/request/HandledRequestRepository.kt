@@ -4,4 +4,3 @@ interface HandledRequestRepository {
     fun isRequestHandled(requestId: String): Boolean
     fun storeHandledRequest(requestId: String)
 }
-

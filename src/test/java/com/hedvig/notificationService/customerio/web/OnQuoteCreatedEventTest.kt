@@ -6,7 +6,6 @@ import com.hedvig.notificationService.customerio.builders.EMAIL
 import com.hedvig.notificationService.customerio.builders.MEMBER_ID
 import com.hedvig.notificationService.customerio.builders.SSN
 import com.hedvig.notificationService.customerio.builders.a
-import com.hedvig.notificationService.customerio.dto.ContractRenewalQueuedEvent
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
 import com.hedvig.notificationService.service.request.HandledRequestRepository
 import com.hedvig.notificationService.serviceIntegration.memberService.dto.HasPersonSignedBeforeRequest
@@ -16,7 +15,6 @@ import io.mockk.verify
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.Instant
-import java.time.LocalDate
 import java.util.UUID
 
 class OnQuoteCreatedEventTest {
@@ -104,7 +102,6 @@ class OnQuoteCreatedEventTest {
         verify(inverse = true) { customerioService.sendEvent(MEMBER_ID, any()) }
     }
 
-
     @Test
     fun `handled request dose nothing`() {
         val requestId = "handled request id"
@@ -114,6 +111,6 @@ class OnQuoteCreatedEventTest {
 
         verify(exactly = 0) { customerioService.sendEvent(any(), any()) }
         verify(exactly = 0) { customerioService.updateCustomerAttributes(any(), any(), any()) }
-        verify(exactly = 0)  { handledRequestRepository.storeHandledRequest(any()) }
+        verify(exactly = 0) { handledRequestRepository.storeHandledRequest(any()) }
     }
 }
