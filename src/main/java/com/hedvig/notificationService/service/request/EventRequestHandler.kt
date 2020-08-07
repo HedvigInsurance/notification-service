@@ -22,10 +22,10 @@ class EventRequestHandler(
         eventJson: JsonNode
     ) {
         when (val event = getRequestEvent(eventJson)) {
-            is ChargeFailedEvent -> TODO()
-            is ContractCreatedEvent -> TODO()
-            is ContractRenewalQueuedEvent -> TODO()
-            is QuoteCreatedEvent -> TODO()
+            is ChargeFailedEvent -> eventHandler.onFailedChargeEvent(event)
+            is ContractCreatedEvent -> eventHandler.onContractCreatedEvent(event)
+            is ContractRenewalQueuedEvent -> eventHandler.onContractRenewalQueued(event)
+            is QuoteCreatedEvent -> eventHandler.onQuoteCreated(event)
             is StartDateUpdatedEvent -> eventHandler.onStartDateUpdatedEvent(event)
         }
     }

@@ -71,6 +71,7 @@ class HandleEventRequestsTest {
             "name" to "ChargeFailedEvent",
             "data" to mapOf(
                 "terminationDate" to terminationDate,
+                "numberOfFailedCharges" to numberOfFailedCharges,
                 "chargeFailedReason" to chargeFailedReason,
                 "memberId" to memberId
             )
@@ -129,10 +130,9 @@ class HandleEventRequestsTest {
     @Test
     fun `contract renewal queued event`() {
         val contractId = "contractId"
-        val contractType = "type of contract"
+        val contractType = "contractType"
         val memberId = "memberId"
         val renewalQueuedAt = "2020-01-01"
-
 
         val map = mapOf(
             "name" to "ContractRenewalQueuedEvent",
@@ -174,7 +174,7 @@ class HandleEventRequestsTest {
         val attributedTo = "hedvig"
         val productType = "type of product"
         val currentInsurer = "123"
-        val price = BigDecimal.TEN
+        val price = "10.00"
         val currency = "SEK"
         val originatingProductId = null
 
@@ -215,7 +215,7 @@ class HandleEventRequestsTest {
                     attributedTo,
                     productType,
                     currentInsurer,
-                    price,
+                    BigDecimal(price),
                     currency,
                     originatingProductId
                 ),
