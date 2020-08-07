@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.Date
+import kotlin.reflect.KClass
 
 @Service
 class EventHandler(
@@ -51,26 +52,40 @@ class EventHandler(
         state.updateFirstUpcomingStartDate(event.startDate)
         repo.save(state)
 
+        val jobName = "onStartDateUpdatedEvent+${event.contractId}"
+
+        val jobData = JobDataMap()
+        jobData["memberId"] = event.owningMemberId
+
         try {
-            val jobName = "onStartDateUpdatedEvent+${event.contractId}"
-
-            val jobData = JobDataMap()
-            jobData["memberId"] = event.owningMemberId
-
-            val jobDetail = createJob(jobName, jobData, StartDateUpdatedJob::class.java)
-
-            val trigger = createTrigger(jobName, callTime)
-
-            scheduler.scheduleJob(
-                jobDetail,
-                trigger
+            scheduleJob(
+                jobName,
+                jobData,
+                StartDateUpdatedJob::class,
+                callTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES)
             )
         } catch (e: SchedulerException) {
             throw RuntimeException(e.message, e)
         }
     }
 
-    private fun createTrigger(jobName: String, callTime: Instant): SimpleTrigger? {
+    private fun <T : Job> scheduleJob(
+        jobName: String,
+        jobData: JobDataMap,
+        jobClass: KClass<T>,
+        startTime: Instant
+    ) {
+        val jobDetail = createJob(jobName, jobData, jobClass.java)
+
+        val trigger = createTrigger(jobName, startTime)
+
+        scheduler.scheduleJob(
+            jobDetail,
+            trigger
+        )
+    }
+
+    private fun createTrigger(jobName: String, triggerAt: Instant?): SimpleTrigger? {
         return TriggerBuilder.newTrigger()
             .withIdentity(TriggerKey.triggerKey(jobName, jobGroup))
             .forJob(jobName, jobGroup)
@@ -80,7 +95,7 @@ class EventHandler(
                     .simpleSchedule()
                     .withMisfireHandlingInstructionFireNow()
             )
-            .startAt(Date.from(callTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES)))
+            .startAt(Date.from(triggerAt))
             .build()
     }
 
@@ -114,13 +129,11 @@ class EventHandler(
                 val jobData = JobDataMap()
                 jobData["memberId"] = contractCreatedEvent.owningMemberId
 
-                val jobDetail = createJob(jobName, jobData, ContractCreatedJob::class.java)
-
-                val trigger = createTrigger(jobName, callTime)
-
-                scheduler.scheduleJob(
-                    jobDetail,
-                    trigger
+                scheduleJob(
+                    jobName,
+                    jobData,
+                    ContractCreatedJob::class,
+                    callTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES)
                 )
             }
         } catch (e: SchedulerException) {
