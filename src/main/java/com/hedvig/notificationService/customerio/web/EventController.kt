@@ -1,5 +1,6 @@
 package com.hedvig.notificationService.customerio.web
 
+import com.fasterxml.jackson.databind.JsonNode
 import com.hedvig.notificationService.customerio.EventHandler
 import com.hedvig.notificationService.customerio.dto.ChargeFailedEvent
 import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
@@ -27,9 +28,9 @@ class EventController(
     @PostMapping("/request")
     fun event(
         @RequestHeader(value = "Request-Id") requestId: String,
-        @RequestBody event: Map<String, Any>
+        @RequestBody eventJson: JsonNode
     ): ResponseEntity<Any> {
-        eventRequestHandler.onEventRequest(requestId, event)
+        eventRequestHandler.onEventRequest(requestId, eventJson)
         return ResponseEntity.accepted().build()
     }
 

@@ -1,6 +1,6 @@
 package com.hedvig.notificationService.service.event
 
-import com.hedvig.notificationService.customerio.EventHandler
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.hedvig.notificationService.service.request.EventRequestHandler
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.verify
@@ -18,6 +18,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.util.CollectionUtils
 import java.net.URI
 
+
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -28,6 +29,8 @@ class WebEventRequestTest {
 
     @Autowired
     lateinit var testRestTemplate: TestRestTemplate
+    @Autowired
+    lateinit var mapper: ObjectMapper
 
     @MockkBean(relaxed = true)
     private lateinit var eventRequestHandler: EventRequestHandler
@@ -49,7 +52,7 @@ class WebEventRequestTest {
         val response = testRestTemplate.postForEntity(url, HttpEntity(body, headers), String::class.java)
 
         verify {
-            eventRequestHandler.onEventRequest(requestId, testEvent)
+            eventRequestHandler.onEventRequest(requestId, mapper.valueToTree(body))
         }
 
         Assertions.assertThat(response.statusCode).isEqualTo(HttpStatus.ACCEPTED)
