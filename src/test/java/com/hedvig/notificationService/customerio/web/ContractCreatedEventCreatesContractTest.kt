@@ -45,7 +45,7 @@ class ContractCreatedEventCreatesContractTest {
     @Test
     internal fun `after contract created with no existing contracts a contract exists`() {
 
-        sut.onContractCreatedEvent(
+        sut.onContractCreatedEventHandleRequest(
             ContractCreatedEvent("theContractId", "aMemberId", null),
             Instant.parse("2020-06-03T08:02:39.403803Z")
         )
@@ -68,7 +68,7 @@ class ContractCreatedEventCreatesContractTest {
         )
         repo.save(customerioState)
 
-        sut.onContractCreatedEvent(
+        sut.onContractCreatedEventHandleRequest(
             ContractCreatedEvent("theNewContractId", "aMemberId", null),
             Instant.parse("2020-06-03T08:02:39.403803Z")
         )
@@ -91,7 +91,7 @@ class ContractCreatedEventCreatesContractTest {
         )
         repo.save(customerioState)
 
-        sut.onContractCreatedEvent(
+        sut.onContractCreatedEventHandleRequest(
             ContractCreatedEvent("theFirstContractId", "aMemberId", null),
             Instant.parse("2020-06-03T08:02:39.403803Z")
         )

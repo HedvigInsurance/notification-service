@@ -14,9 +14,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import java.time.LocalDate
 
 class OnContractRenewalQuuedEventTest {
@@ -44,7 +42,7 @@ class OnContractRenewalQuuedEventTest {
     fun `renewal queued test`() {
 
         val requestId = "unhandled request"
-        sut.onContractRenewalQueued(
+        sut.onContractRenewalQueuedHandleRequest(
             ContractRenewalQueuedEvent(
                 "contractOne",
                 "contractType",
@@ -65,7 +63,7 @@ class OnContractRenewalQuuedEventTest {
         val requestId = "handled request id"
         every { handledRequestRepository.isRequestHandled(requestId) } returns true
 
-        sut.onContractRenewalQueued(
+        sut.onContractRenewalQueuedHandleRequest(
             ContractRenewalQueuedEvent(
                 "contractOne",
                 "contractType",

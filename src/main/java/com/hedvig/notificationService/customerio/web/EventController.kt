@@ -39,7 +39,7 @@ class EventController(
         @RequestHeader(value = "Request-Id", required = false) requestId: String?,
         @RequestBody event: ContractCreatedEvent
     ): ResponseEntity<Any> {
-        eventHandler.onContractCreatedEvent(
+        eventHandler.onContractCreatedEventHandleRequest(
             contractCreatedEvent = event,
             requestId = requestId
         )
@@ -63,7 +63,7 @@ class EventController(
         @RequestHeader(value = "Request-Id", required = false) requestId: String?,
         @RequestBody event: ContractRenewalQueuedEvent
     ): ResponseEntity<Any> {
-        eventHandler.onContractRenewalQueued(
+        eventHandler.onContractRenewalQueuedHandleRequest(
             event = event,
             requestId = requestId
         )
@@ -76,7 +76,7 @@ class EventController(
         @PathVariable memberId: String,
         @Valid @RequestBody event: ChargeFailedEvent
     ): ResponseEntity<Any> {
-        eventHandler.onFailedChargeEvent(memberId, event, requestId)
+        eventHandler.onFailedChargeEventHandleRequest(memberId, event, requestId)
         return ResponseEntity.accepted().build()
     }
 
@@ -85,7 +85,7 @@ class EventController(
         @RequestHeader(value = "Request-Id", required = false) requestId: String?,
         @RequestBody event: QuoteCreatedEvent
     ): ResponseEntity<Any> {
-        eventHandler.onQuoteCreated(
+        eventHandler.onQuoteCreatedHandleRequest(
             event = event,
             requestId = requestId
         )

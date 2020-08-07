@@ -53,7 +53,7 @@ class FailedChargesEventTest {
         testRestTemplate.postForEntity(url, HttpEntity(body), String::class.java)
 
         verify {
-            eventHandler.onFailedChargeEvent(
+            eventHandler.onFailedChargeEventHandleRequest(
                 "1227",
                 ChargeFailedEvent(
                     terminationDate = null,

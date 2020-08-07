@@ -38,7 +38,7 @@ class OnChargeFailedEventTriggerCustomerioEventTest {
         )
         val requestId = "unhandled request id"
 
-        sut.onFailedChargeEvent(
+        sut.onFailedChargeEventHandleRequest(
             "1227",
             ChargeFailedEvent(
                 null,
@@ -75,7 +75,7 @@ class OnChargeFailedEventTriggerCustomerioEventTest {
         val requestId = "handled request id"
         every { handledRequestRepository.isRequestHandled(requestId) } returns true
 
-        sut.onFailedChargeEvent(
+        sut.onFailedChargeEventHandleRequest(
             "1227",
             ChargeFailedEvent(
                 null,
