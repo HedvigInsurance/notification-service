@@ -3,13 +3,12 @@ package com.hedvig.notificationService.service.event
 import com.hedvig.notificationService.customerio.EventHandler
 import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent
 import com.hedvig.notificationService.service.request.EventRequestHandler
-import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
-class EventRequestReflectionTest {
+class HandleEventRequestsTest {
 
     val eventHandler = mockk<EventHandler>(relaxed = true)
 
