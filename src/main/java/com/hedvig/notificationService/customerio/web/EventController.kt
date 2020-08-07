@@ -74,9 +74,16 @@ class EventController(
     fun chargeFailed(
         @RequestHeader(value = "Request-Id", required = false) requestId: String?,
         @PathVariable memberId: String,
-        @Valid @RequestBody event: ChargeFailedEvent
+        @Valid @RequestBody eventDto: ChargeFailedEventDto
     ): ResponseEntity<Any> {
-        eventHandler.onFailedChargeEventHandleRequest(memberId, event, requestId)
+        val event = ChargeFailedEvent(
+            terminationDate = eventDto.terminationDate,
+            numberOfFailedCharges = eventDto.numberOfFailedCharges,
+            chargesLeftBeforeTermination = eventDto.chargesLeftBeforeTermination,
+            chargeFailedReason = eventDto.chargeFailedReason,
+            memberId = memberId
+        )
+        eventHandler.onFailedChargeEventHandleRequest(event, requestId)
         return ResponseEntity.accepted().build()
     }
 

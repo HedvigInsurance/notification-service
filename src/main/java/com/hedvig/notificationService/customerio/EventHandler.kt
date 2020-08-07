@@ -54,27 +54,26 @@ class EventHandler(
         repo.save(state)
     }
     fun onFailedChargeEvent(
-        memberId: String,
         chargeFailedEvent: ChargeFailedEvent
     ) {
-        customerioService.sendEvent(memberId, chargeFailedEvent.toMap(memberId))
+        customerioService.sendEvent(chargeFailedEvent.memberId, chargeFailedEvent.toMap())
 
         try {
             if (chargeFailedEvent.terminationDate != null) {
-                firebaseNotificationService.sendTerminatedFailedChargesNotification(memberId)
+                firebaseNotificationService.sendTerminatedFailedChargesNotification(chargeFailedEvent.memberId)
                 return
             }
 
             when (chargeFailedEvent.chargeFailedReason) {
                 ChargeFailedReason.INSUFFICIENT_FUNDS -> firebaseNotificationService.sendPaymentFailedNotification(
-                    memberId
+                    chargeFailedEvent.memberId
                 )
                 ChargeFailedReason.NOT_CONNECTED_DIRECT_DEBIT -> firebaseNotificationService.sendConnectDirectDebitNotification(
-                    memberId
+                    chargeFailedEvent.memberId
                 )
             }
         } catch (e: Exception) {
-            logger.error("onFailedChargeEvent - Can not send notification for $memberId - Exception: ${e.message}")
+            logger.error("onFailedChargeEvent - Can not send notification for ${chargeFailedEvent.memberId} - Exception: ${e.message}")
         }
     }
 
@@ -152,7 +151,6 @@ class EventHandler(
     }
 
     fun onFailedChargeEventHandleRequest(
-        memberId: String,
         chargeFailedEvent: ChargeFailedEvent,
         requestId: String?
     ) {
@@ -161,7 +159,7 @@ class EventHandler(
                 return
             }
         }
-        onFailedChargeEvent(memberId, chargeFailedEvent)
+        onFailedChargeEvent(chargeFailedEvent)
         requestId?.let {
             handledRequestRepository.storeHandledRequest(it)
         }

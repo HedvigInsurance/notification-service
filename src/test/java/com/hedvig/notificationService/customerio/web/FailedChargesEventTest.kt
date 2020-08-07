@@ -54,12 +54,12 @@ class FailedChargesEventTest {
 
         verify {
             eventHandler.onFailedChargeEventHandleRequest(
-                "1227",
                 ChargeFailedEvent(
                     terminationDate = null,
                     numberOfFailedCharges = 1,
                     chargesLeftBeforeTermination = 2,
-                    chargeFailedReason = ChargeFailedReason.INSUFFICIENT_FUNDS
+                    chargeFailedReason = ChargeFailedReason.INSUFFICIENT_FUNDS,
+                    memberId = "1227"
                 ),
                 any()
             )

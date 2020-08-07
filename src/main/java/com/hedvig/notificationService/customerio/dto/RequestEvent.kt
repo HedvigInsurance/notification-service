@@ -1,29 +1,21 @@
 //TODO move this package with the event handler
 package com.hedvig.notificationService.customerio.dto
 
-import com.fasterxml.jackson.annotation.JsonFormat
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.hedvig.notificationService.customerio.dto.objects.ChargeFailedReason
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.util.UUID
-import javax.validation.constraints.PositiveOrZero
 
 sealed class RequestEvent
 
 data class ChargeFailedEvent(
-    @JsonProperty(required = true)
     val terminationDate: LocalDate?,
-    @JsonProperty(required = true)
-    @get:PositiveOrZero
     val numberOfFailedCharges: Int?,
-    @JsonProperty(required = true)
-    @get:PositiveOrZero
     val chargesLeftBeforeTermination: Int?,
-    @JsonProperty(required = true)
-    val chargeFailedReason: ChargeFailedReason
+    val chargeFailedReason: ChargeFailedReason,
+    val memberId: String
 ) : RequestEvent() {
-    fun toMap(memberId: String) = mapOf(
+    fun toMap() = mapOf(
         "name" to "ChargeFailedEvent",
         "data" to mapOf(
             "member_id" to memberId,
@@ -34,7 +26,6 @@ data class ChargeFailedEvent(
         )
     )
 }
-
 
 data class ContractCreatedEvent(
     val contractId: String,
@@ -59,7 +50,6 @@ class ContractRenewalQueuedEvent(
         )
     )
 }
-
 
 data class QuoteCreatedEvent(
     val memberId: String,
