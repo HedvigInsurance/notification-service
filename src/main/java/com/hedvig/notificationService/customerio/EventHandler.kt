@@ -15,19 +15,14 @@ import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.service.FirebaseNotificationService
 import com.hedvig.notificationService.serviceIntegration.memberService.dto.HasPersonSignedBeforeRequest
-import org.quartz.Job
-import org.quartz.JobDataMap
 import org.quartz.Scheduler
 import org.quartz.SchedulerException
-import org.quartz.Trigger
 import org.quartz.TriggerKey
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.Instant
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
-import java.util.Date
-import kotlin.reflect.KClass
 
 @Service
 class EventHandler(
@@ -61,22 +56,6 @@ class EventHandler(
             jobData,
             StartDateUpdatedJob::class,
             callTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES)
-        )
-    }
-
-    private fun <T : Job> scheduleJob(
-        jobName: String,
-        jobData: JobDataMap,
-        jobClass: KClass<T>,
-        startTime: Instant
-    ) {
-        val jobDetail = jobScheduler.createJob(jobName, jobData, jobClass.java)
-
-        val trigger = jobScheduler.createTrigger(jobName, startTime)
-
-        scheduler.scheduleJob(
-            jobDetail,
-            trigger
         )
     }
 
@@ -124,23 +103,6 @@ class EventHandler(
         } catch (e: SchedulerException) {
             throw RuntimeException(e.message, e)
         }
-    }
-
-    private fun rescheduleJob(
-        callTime: Instant,
-        triggerKey: TriggerKey?,
-        existingTrigger: Trigger
-    ) {
-        val newStartTime = Date.from(
-            callTime.plus(
-                SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES
-            )
-        )
-        scheduler.rescheduleJob(
-            triggerKey, existingTrigger.triggerBuilder.startAt(
-                newStartTime
-            ).build()
-        )
     }
 
     fun onFailedChargeEvent(memberId: String, chargeFailedEvent: ChargeFailedEvent) {
