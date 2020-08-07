@@ -116,9 +116,10 @@ class OnContractCreatedEventTest {
             )
         )
 
+        val callTime = Instant.parse("2020-04-27T09:20:42.815351Z")
         val oldTrigger = TriggerBuilder
             .newTrigger()
-            .startNow()
+            .startAt(Date.from(callTime))
             .build()
         every { scheduler.getTrigger(any()) } returns oldTrigger
 
@@ -126,13 +127,12 @@ class OnContractCreatedEventTest {
         val newTriggerSlot = slot<Trigger>()
         every { scheduler.rescheduleJob(capture(oldTriggerKeySlot), capture(newTriggerSlot)) } returns Date()
 
-        val time = Instant.parse("2020-04-27T09:20:42.815351Z")
         sut.onContractCreatedEvent(
             ContractCreatedEvent(
                 "someEventId",
                 "1337",
                 null
-            ), time
+            ), callTime
         )
 
         assertThat(repository.data["1337"]?.contractCreatedTriggerAt).isEqualTo(stateCreatedAt)

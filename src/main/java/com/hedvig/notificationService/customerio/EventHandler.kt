@@ -20,6 +20,7 @@ import org.quartz.JobDetail
 import org.quartz.Scheduler
 import org.quartz.SchedulerException
 import org.quartz.SimpleScheduleBuilder
+import org.quartz.SimpleTrigger
 import org.quartz.TriggerBuilder
 import org.quartz.TriggerKey
 import org.slf4j.LoggerFactory
@@ -56,24 +57,9 @@ class EventHandler(
             val jobData = JobDataMap()
             jobData["memberId"] = event.owningMemberId
 
-            val jobDetail = JobBuilder.newJob()
-                .withIdentity(jobName, jobGroup)
-                .ofType(StartDateUpdatedJob::class.java)
-                .requestRecovery()
-                .setJobData(jobData)
-                .build()
+            val jobDetail = createJob(jobName, jobData, StartDateUpdatedJob::class.java)
 
-            val trigger = TriggerBuilder.newTrigger()
-                .withIdentity(TriggerKey.triggerKey(jobName, jobGroup))
-                .forJob(jobName, jobGroup)
-                .startNow()
-                .withSchedule(
-                    SimpleScheduleBuilder
-                        .simpleSchedule()
-                        .withMisfireHandlingInstructionFireNow()
-                )
-                .startAt(Date.from(callTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES)))
-                .build()
+            val trigger = createTrigger(jobName, callTime)
 
             scheduler.scheduleJob(
                 jobDetail,
@@ -82,6 +68,20 @@ class EventHandler(
         } catch (e: SchedulerException) {
             throw RuntimeException(e.message, e)
         }
+    }
+
+    private fun createTrigger(jobName: String, callTime: Instant): SimpleTrigger? {
+        return TriggerBuilder.newTrigger()
+            .withIdentity(TriggerKey.triggerKey(jobName, jobGroup))
+            .forJob(jobName, jobGroup)
+            .startNow()
+            .withSchedule(
+                SimpleScheduleBuilder
+                    .simpleSchedule()
+                    .withMisfireHandlingInstructionFireNow()
+            )
+            .startAt(Date.from(callTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES)))
+            .build()
     }
 
     fun onContractCreatedEvent(contractCreatedEvent: ContractCreatedEvent, callTime: Instant = Instant.now()) {
@@ -101,7 +101,7 @@ class EventHandler(
             val existingTrigger = scheduler.getTrigger(triggerKey)
             if (existingTrigger != null) {
                 val newStartTime = Date.from(
-                    Instant.now().plus(
+                    callTime.plus(
                         SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES
                     )
                 )
@@ -116,17 +116,7 @@ class EventHandler(
 
                 val jobDetail = createJob(jobName, jobData, ContractCreatedJob::class.java)
 
-                val trigger = TriggerBuilder.newTrigger()
-                    .withIdentity(triggerKey)
-                    .forJob(jobName, jobGroup)
-                    .startNow()
-                    .withSchedule(
-                        SimpleScheduleBuilder
-                            .simpleSchedule()
-                            .withMisfireHandlingInstructionFireNow()
-                    )
-                    .startAt(Date.from(callTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES)))
-                    .build()
+                val trigger = createTrigger(jobName, callTime)
 
                 scheduler.scheduleJob(
                     jobDetail,
