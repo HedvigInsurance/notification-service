@@ -22,7 +22,7 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.util.Date
 
-class OnStartDateUpdatedEventScheduleActivationDateActiveTodayJobTest {
+class SchedulingOfActivationDateActiveTodayJobTest {
 
     val repo: InMemoryCustomerIOStateRepository = InMemoryCustomerIOStateRepository(mapOf())
     val firebaseNotificationService = mockk<FirebaseNotificationService>(relaxed = true)
