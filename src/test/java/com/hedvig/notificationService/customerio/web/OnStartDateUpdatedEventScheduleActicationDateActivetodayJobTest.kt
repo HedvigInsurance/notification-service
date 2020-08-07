@@ -3,12 +3,14 @@ package com.hedvig.notificationService.customerio.web
 import assertk.Assert
 import assertk.assertThat
 import assertk.assertions.any
+import assertk.assertions.isEqualTo
+import assertk.assertions.none
 import assertk.assertions.support.expected
 import assertk.assertions.support.show
 import com.hedvig.notificationService.customerio.CustomerioService
 import com.hedvig.notificationService.customerio.EventHandler
 import com.hedvig.notificationService.customerio.customerioEvents.jobs.ContractActivatedTodayJob
-import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent
+import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import com.hedvig.notificationService.service.FirebaseNotificationService
@@ -28,7 +30,7 @@ class SchedulingOfActivationDateActiveTodayJobTest {
     val firebaseNotificationService = mockk<FirebaseNotificationService>(relaxed = true)
     val customerioService = mockk<CustomerioService>()
     val memberService = mockk<MemberServiceImpl>()
-    val scheduler = mockk<Scheduler>()
+    val scheduler = mockk<Scheduler>(relaxed = true)
     val sut: EventHandler =
         EventHandler(
             repo,
@@ -39,14 +41,33 @@ class SchedulingOfActivationDateActiveTodayJobTest {
         )
 
     @Test
-    fun `startDate updated event schedules job`() {
+    fun `contract created without start date do not schedule job`() {
+        val capturedJobDetails = mutableListOf<JobDetail>()
+        val triggerSlot = mutableListOf<Trigger>()
+        every { scheduler.scheduleJob(capture(capturedJobDetails), capture(triggerSlot)) } returns Date()
+
+        sut.onContractCreatedEvent(
+            ContractCreatedEvent(
+                "aContractId",
+                "aMemberId",
+                null
+            )
+        )
+
+        assertThat(capturedJobDetails).none {
+            it.transform { jobDetail -> jobDetail.key.name }.isEqualTo("contractActivatedTodayJob-aContractId")
+        }
+    }
+
+    @Test
+    fun `contract created event schedules job`() {
 
         val capturedJobDetails = mutableListOf<JobDetail>()
         val triggerSlot = mutableListOf<Trigger>()
         every { scheduler.scheduleJob(capture(capturedJobDetails), capture(triggerSlot)) } returns Date()
 
-        sut.onStartDateUpdatedEvent(
-            StartDateUpdatedEvent(
+        sut.onContractCreatedEvent(
+            ContractCreatedEvent(
                 "aContractId",
                 "aMemberId",
                 LocalDate.of(2020, 9, 1)

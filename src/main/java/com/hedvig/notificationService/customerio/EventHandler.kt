@@ -67,12 +67,6 @@ class EventHandler(
                 StartDateUpdatedJob::class,
                 callTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES)
             )
-            scheduleJob(
-                "contractActivatedTodayJob-aContractId",
-                jobData,
-                ContractActivatedTodayJob::class,
-                event.startDate.atStartOfDay(ZoneId.of("Europe/Stockholm")).toInstant()
-            )
         } catch (e: SchedulerException) {
             throw RuntimeException(e.message, e)
         }
@@ -134,6 +128,17 @@ class EventHandler(
                     jobData,
                     ContractCreatedJob::class,
                     callTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES)
+                )
+            }
+
+            if (contractCreatedEvent.startDate != null) {
+                val jobData = JobDataMap()
+                jobData["memberId"] = contractCreatedEvent.owningMemberId
+                scheduleJob(
+                    "contractActivatedTodayJob-aContractId",
+                    jobData,
+                    ContractActivatedTodayJob::class,
+                    contractCreatedEvent.startDate.atStartOfDay(ZoneId.of("Europe/Stockholm")).toInstant()
                 )
             }
         } catch (e: SchedulerException) {
