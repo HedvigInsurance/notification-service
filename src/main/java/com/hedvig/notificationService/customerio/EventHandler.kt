@@ -1,5 +1,6 @@
 package com.hedvig.notificationService.customerio
 
+import com.hedvig.notificationService.customerio.customerioEvents.jobs.ContractActivatedTodayJob
 import com.hedvig.notificationService.customerio.customerioEvents.jobs.ContractCreatedJob
 import com.hedvig.notificationService.customerio.customerioEvents.jobs.StartDateUpdatedJob
 import com.hedvig.notificationService.customerio.dto.ChargeFailedEvent
@@ -49,7 +50,7 @@ class EventHandler(
             ?: CustomerioState(event.owningMemberId)
 
         state.triggerStartDateUpdated(callTime)
-        state.updateFirstUpcomingStartDate(event.startDate)
+        // state.updateFirstUpcomingStartDate(event.startDate)
         repo.save(state)
 
         val jobName = "onStartDateUpdatedEvent+${event.contractId}"
@@ -62,6 +63,12 @@ class EventHandler(
                 jobName,
                 jobData,
                 StartDateUpdatedJob::class,
+                callTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES)
+            )
+            scheduleJob(
+                "contractActivatedTodayJob-aContractId",
+                jobData,
+                ContractActivatedTodayJob::class,
                 callTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES)
             )
         } catch (e: SchedulerException) {
