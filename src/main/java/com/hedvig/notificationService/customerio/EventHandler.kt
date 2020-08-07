@@ -2,6 +2,7 @@ package com.hedvig.notificationService.customerio
 
 import com.hedvig.notificationService.customerio.customerioEvents.jobs.ContractActivatedTodayJob
 import com.hedvig.notificationService.customerio.customerioEvents.jobs.ContractCreatedJob
+import com.hedvig.notificationService.customerio.customerioEvents.jobs.JobScheduler
 import com.hedvig.notificationService.customerio.customerioEvents.jobs.StartDateUpdatedJob
 import com.hedvig.notificationService.customerio.dto.ChargeFailedEvent
 import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
@@ -15,15 +16,10 @@ import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.service.FirebaseNotificationService
 import com.hedvig.notificationService.serviceIntegration.memberService.dto.HasPersonSignedBeforeRequest
 import org.quartz.Job
-import org.quartz.JobBuilder
 import org.quartz.JobDataMap
-import org.quartz.JobDetail
 import org.quartz.Scheduler
 import org.quartz.SchedulerException
-import org.quartz.SimpleScheduleBuilder
-import org.quartz.SimpleTrigger
 import org.quartz.Trigger
-import org.quartz.TriggerBuilder
 import org.quartz.TriggerKey
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -42,6 +38,7 @@ class EventHandler(
     private val scheduler: Scheduler
 ) {
     val jobGroup = "customerio.triggers"
+    val jobScheduler = JobScheduler(scheduler)
 
     fun onStartDateUpdatedEvent(
         event: StartDateUpdatedEvent,
@@ -52,24 +49,19 @@ class EventHandler(
             ?: CustomerioState(event.owningMemberId)
 
         state.triggerStartDateUpdated(callTime)
-        // state.updateFirstUpcomingStartDate(event.startDate)
+        state.updateFirstUpcomingStartDate(event.startDate)
         repo.save(state)
 
-        val jobName = "onStartDateUpdatedEvent+${event.contractId}"
+        val jobData = mapOf(
+            "memberId" to event.owningMemberId
+        )
 
-        val jobData = JobDataMap()
-        jobData["memberId"] = event.owningMemberId
-
-        try {
-            scheduleJob(
-                jobName,
-                jobData,
-                StartDateUpdatedJob::class,
-                callTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES)
-            )
-        } catch (e: SchedulerException) {
-            throw RuntimeException(e.message, e)
-        }
+        jobScheduler.scheduleJob(
+            "onStartDateUpdatedEvent+${event.contractId}",
+            jobData,
+            StartDateUpdatedJob::class,
+            callTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES)
+        )
     }
 
     private fun <T : Job> scheduleJob(
@@ -78,28 +70,14 @@ class EventHandler(
         jobClass: KClass<T>,
         startTime: Instant
     ) {
-        val jobDetail = createJob(jobName, jobData, jobClass.java)
+        val jobDetail = jobScheduler.createJob(jobName, jobData, jobClass.java)
 
-        val trigger = createTrigger(jobName, startTime)
+        val trigger = jobScheduler.createTrigger(jobName, startTime)
 
         scheduler.scheduleJob(
             jobDetail,
             trigger
         )
-    }
-
-    private fun createTrigger(jobName: String, triggerAt: Instant?): SimpleTrigger? {
-        return TriggerBuilder.newTrigger()
-            .withIdentity(TriggerKey.triggerKey(jobName, jobGroup))
-            .forJob(jobName, jobGroup)
-            .startNow()
-            .withSchedule(
-                SimpleScheduleBuilder
-                    .simpleSchedule()
-                    .withMisfireHandlingInstructionFireNow()
-            )
-            .startAt(Date.from(triggerAt))
-            .build()
     }
 
     fun onContractCreatedEvent(contractCreatedEvent: ContractCreatedEvent, callTime: Instant = Instant.now()) {
@@ -161,19 +139,6 @@ class EventHandler(
                 newStartTime
             ).build()
         )
-    }
-
-    private fun <T : Job> createJob(
-        jobName: String,
-        jobData: JobDataMap,
-        jobClass: Class<T>
-    ): JobDetail? {
-        return JobBuilder.newJob()
-            .withIdentity(jobName, jobGroup)
-            .ofType(jobClass)
-            .requestRecovery()
-            .setJobData(jobData)
-            .build()
     }
 
     fun onFailedChargeEvent(memberId: String, chargeFailedEvent: ChargeFailedEvent) {
