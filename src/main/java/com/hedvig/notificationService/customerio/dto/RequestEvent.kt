@@ -34,7 +34,7 @@ data class ContractCreatedEvent(
     val signSource: String? = null
 ) : RequestEvent()
 
-class ContractRenewalQueuedEvent(
+data class ContractRenewalQueuedEvent(
     val contractId: String,
     val contractType: String,
     val memberId: String,
