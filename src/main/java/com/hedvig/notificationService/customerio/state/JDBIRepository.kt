@@ -145,6 +145,8 @@ where cs.member_id = :memberId
                         (cs.activation_date_trigger_at IS NOT NULL)
                     OR
                         (cs.contract_created_trigger_at IS NOT NULL)
+                    OR 
+                        (cs.start_date_updated_trigger_at IS NOT NULL)
                 """.trimIndent()
             )
                 .reduceRows(this::contractStateReducer)

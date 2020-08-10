@@ -55,4 +55,15 @@ class JDBIStateToMergeTest(@Autowired val jdbi: Jdbi) {
 
         assertThat(rows.count()).isEqualTo(1)
     }
+
+    @Test
+    fun `return row where start date updated trigger is set`() {
+
+        val state = makeCustomerioState(startDateUpdatedTriggerAt = Instant.now())
+        repository.save(state)
+
+        val rows = repository.statesWithTriggers()
+
+        assertThat(rows.count()).isEqualTo(1)
+    }
 }
