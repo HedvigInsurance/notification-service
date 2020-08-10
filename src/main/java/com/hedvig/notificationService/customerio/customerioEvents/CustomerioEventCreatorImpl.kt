@@ -85,15 +85,22 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
                 startDateUpdatedEvent(customerioState, contracts)
             }
             customerioState.shouldSendActivatesTodayEvent() -> {
-                val event = createActivationDateTodayEvent(customerioState, contracts)
-                customerioState.sentActivatesTodayEvent(nextActivationDate = contracts.map { it.startDate }
-                    .sortedBy { it }
-                    .firstOrNull { it?.isAfter(customerioState.activationDateTriggerAt) == true })
-                ExecutionResult(event)
+                sendActivatesToday(customerioState, contracts)
             }
             else
             -> throw RuntimeException("CustomerioState in weird state")
         }
+    }
+
+    override fun sendActivatesToday(
+        customerioState: CustomerioState,
+        contracts: List<ContractInfo>
+    ): ExecutionResult {
+        val event = createActivationDateTodayEvent(customerioState, contracts)
+        customerioState.sentActivatesTodayEvent(nextActivationDate = contracts.map { it.startDate }
+            .sortedBy { it }
+            .firstOrNull { it?.isAfter(customerioState.activationDateTriggerAt) == true })
+        return ExecutionResult(event)
     }
 
     override fun startDateUpdatedEvent(
