@@ -6,10 +6,14 @@ import com.hedvig.notificationService.customerio.CustomerioUpdateScheduler
 import com.hedvig.notificationService.customerio.customerioEvents.CustomerioEventCreator
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
+import org.quartz.DisallowConcurrentExecution
 import org.quartz.JobExecutionContext
+import org.quartz.PersistJobDataAfterExecution
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.quartz.QuartzJobBean
 
+@DisallowConcurrentExecution
+@PersistJobDataAfterExecution
 class ContractCreatedJob(
     private val contractLoader: ContractLoader,
     private val eventCreator: CustomerioEventCreator,
