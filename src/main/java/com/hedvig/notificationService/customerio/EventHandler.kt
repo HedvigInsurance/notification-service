@@ -41,6 +41,15 @@ class EventHandler(
         repo.save(state)
 
         jobScheduler.rescheduleOrTriggerStartDateUpdated(event, callTime)
+        jobScheduler.rescheduleOrTriggerContractActivatedToday(
+            ContractCreatedEvent(
+                event.contractId,
+                event.owningMemberId,
+                event.startDate,
+                null
+            ),
+            callTime
+        )
     }
 
     fun onContractCreatedEvent(contractCreatedEvent: ContractCreatedEvent, callTime: Instant = Instant.now()) {
