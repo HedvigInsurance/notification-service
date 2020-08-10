@@ -2,6 +2,7 @@ package com.hedvig.notificationService.service.request
 
 import org.jdbi.v3.core.Jdbi
 import org.springframework.stereotype.Repository
+import java.time.Instant
 
 @Repository
 class HandledRequestRepositoryImpl(
@@ -25,13 +26,16 @@ class HandledRequestRepositoryImpl(
         jdbi.withHandle<Int, RuntimeException> {
             val statment = """
                 INSERT INTO handled_request (
-                    request_id
+                    request_id,
+                    created_at
                 ) VALUES (
-                    :requestId
+                    :requestId,
+                    :createdAt
                 )
             """.trimIndent()
             it.createUpdate(statment)
                 .bind("requestId", requestId)
+                .bind("createdAt", Instant.now())
                 .execute()
         }
     }
