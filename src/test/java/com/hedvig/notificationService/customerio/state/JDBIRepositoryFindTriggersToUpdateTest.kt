@@ -69,7 +69,7 @@ class JDBIRepositoryFindTriggersToUpdateTest(@Autowired val jdbi: Jdbi) {
                     Arguments.of(
                         CustomerioState("1337", contractCreatedTriggerAt = contractCreatedTriggerAt),
                         contractCreatedTriggerAt,
-                        0
+                        1
                     )
                 },
                 run {
@@ -77,7 +77,7 @@ class JDBIRepositoryFindTriggersToUpdateTest(@Autowired val jdbi: Jdbi) {
                     Arguments.of(
                         CustomerioState("1337", contractCreatedTriggerAt = contractCreatedTriggerAt),
                         contractCreatedTriggerAt.plusMillis(1),
-                        0
+                        1
                     )
                 },
                 run {
@@ -179,7 +179,7 @@ class JDBIRepositoryFindTriggersToUpdateTest(@Autowired val jdbi: Jdbi) {
                             startDateUpdatedTriggerAt = timestamp
                         ),
                         timestamp,
-                        0
+                        1
                     )
                 },
                 run {
@@ -190,7 +190,7 @@ class JDBIRepositoryFindTriggersToUpdateTest(@Autowired val jdbi: Jdbi) {
                             startDateUpdatedTriggerAt = timestamp
                         ),
                         timestamp.plusMillis(1),
-                        0
+                        1
                     )
                 },
                 // activationDateTriggerAt
@@ -213,7 +213,7 @@ class JDBIRepositoryFindTriggersToUpdateTest(@Autowired val jdbi: Jdbi) {
                             activationDateTriggerAt = timestamp
                         ),
                         timestamp.atStartOfDay(ZoneId.of("UTC")).toInstant(),
-                        0
+                        1
                     )
                 },
                 run {
@@ -224,7 +224,7 @@ class JDBIRepositoryFindTriggersToUpdateTest(@Autowired val jdbi: Jdbi) {
                             activationDateTriggerAt = timestamp
                         ),
                         timestamp.plusDays(1).atStartOfDay(ZoneId.of("UTC")).toInstant(),
-                        0
+                        1
                     )
                 },
                 run {
