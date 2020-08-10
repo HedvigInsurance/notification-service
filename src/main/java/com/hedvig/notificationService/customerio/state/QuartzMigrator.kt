@@ -23,7 +23,11 @@ class QuartzMigrator(
                         now.truncatedTo(ChronoUnit.DAYS).atZone(ZoneId.of("Europe/Stockholm")).toLocalDate()
                     )
                 ) {
-                    jobScheduler.rescheduleOrTriggerContractActivatedToday(contract.startDate, state.memberId)
+                    jobScheduler.rescheduleOrTriggerContractActivatedToday(
+                        activationDate = contract.startDate,
+                        memberId = state.memberId,
+                        contractId = contract.contractId.toString()
+                    )
                 }
             }
         }

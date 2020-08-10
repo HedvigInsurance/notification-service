@@ -110,9 +110,10 @@ class JobScheduler(private val scheduler: Scheduler) {
 
     fun rescheduleOrTriggerContractActivatedToday(
         activationDate: LocalDate,
-        memberId: String
+        memberId: String,
+        contractId: String
     ) {
-        val jobName = "contractActivatedTodayJob-aContractId"
+        val jobName = "contractActivatedTodayJob-$contractId"
         val triggerKey = TriggerKey(jobName, jobGroup)
 
         val triggerTime = activationDate.atStartOfDay(ZoneId.of("Europe/Stockholm")).toInstant()

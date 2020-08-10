@@ -44,7 +44,8 @@ class EventHandler(
         jobScheduler.rescheduleOrTriggerStartDateUpdated(event, callTime)
         jobScheduler.rescheduleOrTriggerContractActivatedToday(
             event.startDate,
-            event.owningMemberId
+            event.owningMemberId,
+            contractId = event.contractId
         )
     }
 
@@ -64,7 +65,8 @@ class EventHandler(
             contractCreatedEvent.startDate?.let {
                 jobScheduler.rescheduleOrTriggerContractActivatedToday(
                     it,
-                    contractCreatedEvent.owningMemberId
+                    contractCreatedEvent.owningMemberId,
+                    contractCreatedEvent.contractId
                 )
             }
         } catch (e: SchedulerException) {
