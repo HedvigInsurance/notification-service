@@ -36,14 +36,16 @@ class EventHandler(
         val state = repo.findByMemberId(event.owningMemberId)
             ?: CustomerioState(event.owningMemberId)
 
-        state.triggerStartDateUpdated(callTime)
-        state.updateFirstUpcomingStartDate(event.startDate)
+        state.sentStartDateUpdatedEvent()
+        state.sentActivatesTodayEvent(null)
+
         repo.save(state)
 
-        jobScheduler.rescheduleOrTriggerStartDateUpdated(event, callTime)
+        jobScheduler.rescheduleOrTriggerStartDateUpdated(callTime, event.owningMemberId)
         jobScheduler.rescheduleOrTriggerContractActivatedToday(
             event.startDate,
-            event.owningMemberId
+            event.owningMemberId,
+            contractId = event.contractId
         )
     }
 
@@ -58,12 +60,13 @@ class EventHandler(
         repo.save(state)
 
         try {
-            jobScheduler.rescheduleOrTriggerContractCreated(contractCreatedEvent, callTime)
+            jobScheduler.rescheduleOrTriggerContractCreated(callTime, contractCreatedEvent.owningMemberId)
 
             contractCreatedEvent.startDate?.let {
                 jobScheduler.rescheduleOrTriggerContractActivatedToday(
                     it,
-                    contractCreatedEvent.owningMemberId
+                    contractCreatedEvent.owningMemberId,
+                    contractCreatedEvent.contractId
                 )
             }
         } catch (e: SchedulerException) {

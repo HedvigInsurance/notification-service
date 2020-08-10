@@ -1,8 +1,6 @@
 package com.hedvig.notificationService.customerio.customerioEvents.jobs
 
 import com.hedvig.notificationService.customerio.SIGN_EVENT_WINDOWS_SIZE_MINUTES
-import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
-import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent
 import org.quartz.Job
 import org.quartz.JobBuilder
 import org.quartz.JobDataMap
@@ -12,6 +10,7 @@ import org.quartz.SimpleScheduleBuilder
 import org.quartz.SimpleTrigger
 import org.quartz.TriggerBuilder
 import org.quartz.TriggerKey
+import org.springframework.stereotype.Service
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -19,6 +18,7 @@ import java.time.temporal.ChronoUnit
 import java.util.Date
 import kotlin.reflect.KClass
 
+@Service
 class JobScheduler(private val scheduler: Scheduler) {
 
     val jobGroup = "customerio.triggers"
@@ -82,8 +82,8 @@ class JobScheduler(private val scheduler: Scheduler) {
             .build()
     }
 
-    fun rescheduleOrTriggerContractCreated(contractCreatedEvent: ContractCreatedEvent, callTime: Instant) {
-        val jobName = "onContractCreatedEvent-${contractCreatedEvent.owningMemberId}"
+    fun rescheduleOrTriggerContractCreated(callTime: Instant, memberId: String) {
+        val jobName = "onContractCreatedEvent-$memberId"
         val triggerKey = TriggerKey.triggerKey(jobName, jobGroup)
 
         val jobRescheduled = this.rescheduleJob(
@@ -96,7 +96,7 @@ class JobScheduler(private val scheduler: Scheduler) {
 
         if (!jobRescheduled) {
             val jobData = mapOf(
-                "memberId" to contractCreatedEvent.owningMemberId
+                "memberId" to memberId
             )
 
             this.scheduleJob(
@@ -110,9 +110,10 @@ class JobScheduler(private val scheduler: Scheduler) {
 
     fun rescheduleOrTriggerContractActivatedToday(
         activationDate: LocalDate,
-        memberId: String
+        memberId: String,
+        contractId: String
     ) {
-        val jobName = "contractActivatedTodayJob-aContractId"
+        val jobName = "contractActivatedTodayJob-$contractId"
         val triggerKey = TriggerKey(jobName, jobGroup)
 
         val triggerTime = activationDate.atStartOfDay(ZoneId.of("Europe/Stockholm")).toInstant()
@@ -132,11 +133,14 @@ class JobScheduler(private val scheduler: Scheduler) {
         }
     }
 
-    fun rescheduleOrTriggerStartDateUpdated(event: StartDateUpdatedEvent, callTime: Instant) {
+    fun rescheduleOrTriggerStartDateUpdated(
+        callTime: Instant,
+        memberId: String
+    ) {
         val jobData = mapOf(
-            "memberId" to event.owningMemberId
+            "memberId" to memberId
         )
-        val jobName = "onStartDateUpdatedEvent+${event.contractId}"
+        val jobName = "onStartDateUpdatedEvent+$memberId"
 
         val successfullRescheduling = rescheduleJob(
             TriggerKey.triggerKey(jobName, jobGroup),

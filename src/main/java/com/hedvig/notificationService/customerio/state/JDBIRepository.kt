@@ -113,11 +113,42 @@ where cs.member_id = :memberId
                     FROM customerio_state cs
                     LEFT JOIN contract_state c ON c.member_id = cs.member_id
                     LEFT JOIN contract_triggers ct on ct.member_id = cs.member_id
-                    WHERE 
+                    WHERE
+                        (cs.contract_created_trigger_at <= :byTime)
+                    OR 
                         (cs.underwriter_first_sign_attributes_update <= :byTime AND cs.sent_tmp_sign_event = false)
+                    OR 
+                        (cs.start_date_updated_trigger_at <= :byTime)
+                    OR
+                        (cs.activation_date_trigger_at <= :byTime)
                 """.trimIndent()
             )
                 .bind("byTime", byTime)
+                .reduceRows(this::contractStateReducer)
+        }
+    }
+
+    override fun statesWithTriggers(): Stream<CustomerioState> {
+        return jdbi.withHandleUnchecked {
+            registerRowMappers(it)
+            it.createQuery(
+                """
+                    WITH contract_triggers AS (
+                     SELECT member_id
+                     FROM contract_state
+                     GROUP BY member_id)
+                    $SELECT_STATE_AND_CONTRACTS 
+                    FROM customerio_state cs
+                    LEFT JOIN contract_state c ON c.member_id = cs.member_id
+                    LEFT JOIN contract_triggers ct on ct.member_id = cs.member_id
+                    WHERE
+                        (cs.activation_date_trigger_at IS NOT NULL)
+                    OR
+                        (cs.contract_created_trigger_at IS NOT NULL)
+                    OR 
+                        (cs.start_date_updated_trigger_at IS NOT NULL)
+                """.trimIndent()
+            )
                 .reduceRows(this::contractStateReducer)
         }
     }

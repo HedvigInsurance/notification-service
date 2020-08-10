@@ -7,4 +7,5 @@ interface CustomerIOStateRepository {
     fun save(customerioState: CustomerioState)
     fun findByMemberId(memberId: String): CustomerioState?
     fun shouldUpdate(byTime: Instant): Stream<CustomerioState>
+    fun statesWithTriggers(): Stream<CustomerioState>
 }
