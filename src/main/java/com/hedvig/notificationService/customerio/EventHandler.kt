@@ -42,13 +42,8 @@ class EventHandler(
 
         jobScheduler.rescheduleOrTriggerStartDateUpdated(event, callTime)
         jobScheduler.rescheduleOrTriggerContractActivatedToday(
-            ContractCreatedEvent(
-                event.contractId,
-                event.owningMemberId,
-                event.startDate,
-                null
-            ),
-            callTime
+            event.startDate,
+            event.owningMemberId
         )
     }
 
@@ -65,7 +60,12 @@ class EventHandler(
         try {
             jobScheduler.rescheduleOrTriggerContractCreated(contractCreatedEvent, callTime)
 
-            jobScheduler.rescheduleOrTriggerContractActivatedToday(contractCreatedEvent, callTime)
+            contractCreatedEvent.startDate?.let {
+                jobScheduler.rescheduleOrTriggerContractActivatedToday(
+                    it,
+                    contractCreatedEvent.owningMemberId
+                )
+            }
         } catch (e: SchedulerException) {
             throw RuntimeException(e.message, e)
         }

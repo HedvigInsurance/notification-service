@@ -13,6 +13,7 @@ import org.quartz.SimpleTrigger
 import org.quartz.TriggerBuilder
 import org.quartz.TriggerKey
 import java.time.Instant
+import java.time.LocalDate
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 import java.util.Date
@@ -107,26 +108,27 @@ class JobScheduler(private val scheduler: Scheduler) {
         }
     }
 
-    fun rescheduleOrTriggerContractActivatedToday(contractCreatedEvent: ContractCreatedEvent, callTime: Instant) {
-        if (contractCreatedEvent.startDate != null) {
-            val jobName = "contractActivatedTodayJob-aContractId"
-            val triggerKey = TriggerKey(jobName, jobGroup)
+    fun rescheduleOrTriggerContractActivatedToday(
+        activationDate: LocalDate,
+        memberId: String
+    ) {
+        val jobName = "contractActivatedTodayJob-aContractId"
+        val triggerKey = TriggerKey(jobName, jobGroup)
 
-            val triggerTime = contractCreatedEvent.startDate.atStartOfDay(ZoneId.of("Europe/Stockholm")).toInstant()
-            val jobExisted = rescheduleJob(triggerKey, Date.from(triggerTime))
+        val triggerTime = activationDate.atStartOfDay(ZoneId.of("Europe/Stockholm")).toInstant()
+        val jobExisted = rescheduleJob(triggerKey, Date.from(triggerTime))
 
-            if (!jobExisted) {
-                val jobData = mapOf(
-                    "memberId" to contractCreatedEvent.owningMemberId
-                )
+        if (!jobExisted) {
+            val jobData = mapOf(
+                "memberId" to memberId
+            )
 
-                this.scheduleJob(
-                    jobName,
-                    jobData,
-                    ContractActivatedTodayJob::class,
-                    triggerTime
-                )
-            }
+            this.scheduleJob(
+                jobName,
+                jobData,
+                ContractActivatedTodayJob::class,
+                triggerTime
+            )
         }
     }
 
