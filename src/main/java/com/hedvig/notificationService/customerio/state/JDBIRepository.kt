@@ -128,6 +128,10 @@ where cs.member_id = :memberId
         }
     }
 
+    override fun statesWithTriggers(): Stream<CustomerioState> {
+        TODO("Not yet implemented")
+    }
+
     private fun contractStateReducer(
         map: MutableMap<String, CustomerioState>,
         rw: RowView

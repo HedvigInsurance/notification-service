@@ -23,4 +23,10 @@ class InMemoryCustomerIOStateRepository(var data: Map<String, CustomerioState> =
                     byTime.atZone(ZoneId.of("Europe/Stockholm")).toLocalDate())
         }.stream()
     }
+
+    override fun statesWithTriggers(): Stream<CustomerioState> {
+        return data.values.filter {
+            it.activationDateTriggerAt != null
+        }.stream()
+    }
 }
