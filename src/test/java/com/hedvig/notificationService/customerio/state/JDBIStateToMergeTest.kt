@@ -66,4 +66,15 @@ class JDBIStateToMergeTest(@Autowired val jdbi: Jdbi) {
 
         assertThat(rows.count()).isEqualTo(1)
     }
+
+    @Test
+    fun `return no rows when no triggers are set`() {
+
+        val state = makeCustomerioState()
+        repository.save(state)
+
+        val rows = repository.statesWithTriggers()
+
+        assertThat(rows.count()).isEqualTo(0)
+    }
 }
