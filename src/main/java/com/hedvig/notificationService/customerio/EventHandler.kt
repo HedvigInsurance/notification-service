@@ -36,8 +36,9 @@ class EventHandler(
         val state = repo.findByMemberId(event.owningMemberId)
             ?: CustomerioState(event.owningMemberId)
 
-        state.triggerStartDateUpdated(callTime)
-        state.updateFirstUpcomingStartDate(event.startDate)
+        state.sentStartDateUpdatedEvent()
+        state.sentActivatesTodayEvent(null)
+
         repo.save(state)
 
         jobScheduler.rescheduleOrTriggerStartDateUpdated(event, callTime)

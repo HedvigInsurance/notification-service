@@ -16,7 +16,7 @@ class IncludeSignSourceInNorwegianContractCreatedEventTest {
 
         val sut = CustomerioEventCreatorImpl()
 
-        val customerioState = CustomerioState("aMemberId")
+        val customerioState = CustomerioState("aMemberId", contractCreatedTriggerAt = Instant.now())
         customerioState.createContract("aContractId", Instant.now(), null)
 
         val result = sut.execute(
