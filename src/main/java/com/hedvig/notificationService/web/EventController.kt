@@ -34,6 +34,7 @@ class EventController(
         return ResponseEntity.accepted().build()
     }
 
+    @Deprecated(message = "use /event")
     @PostMapping("/events/contractCreated")
     fun contractCreated(
         @RequestHeader(value = "Request-Id", required = false) requestId: String?,
@@ -46,6 +47,7 @@ class EventController(
         return ResponseEntity.accepted().build()
     }
 
+    @Deprecated(message = "use /event")
     @PostMapping("/events/startDateUpdated")
     fun startDateUpdated(
         @RequestHeader(value = "Request-Id", required = false) requestId: String?,
@@ -58,6 +60,7 @@ class EventController(
         return ResponseEntity.accepted().build()
     }
 
+    @Deprecated(message = "use /event")
     @PostMapping("/events/contractRenewalQueued")
     fun contractRenewalQueued(
         @RequestHeader(value = "Request-Id", required = false) requestId: String?,
@@ -70,6 +73,7 @@ class EventController(
         return ResponseEntity.accepted().build()
     }
 
+    @Deprecated(message = "use /event")
     @PostMapping("/events/{memberId}/chargeFailed")
     fun chargeFailed(
         @RequestHeader(value = "Request-Id", required = false) requestId: String?,
@@ -87,6 +91,7 @@ class EventController(
         return ResponseEntity.accepted().build()
     }
 
+    @Deprecated(message = "use /event")
     @PostMapping("/events/quoteCreated")
     fun quoteCreated(
         @RequestHeader(value = "Request-Id", required = false) requestId: String?,
