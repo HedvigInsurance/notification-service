@@ -116,4 +116,30 @@ class QuartzMigratorTest {
             )
         }
     }
+
+    @Test
+    fun `do not migrate states activation date is null`() {
+
+        val aRandomStartDate = LocalDate.of(2020, 8, 9)
+        val contractId = UUID.fromString("258c203c-dafd-11ea-b8d7-a72cade86094")
+
+        repo.save(CustomerioState("someMemberId", activationDateTriggerAt = aRandomStartDate))
+
+        every { contractLoader.getContractInfoForMember(any()) } returns listOf(
+            ContractInfo(
+                AgreementType.SwedishApartment,
+                "",
+                startDate = null,
+                contractId = contractId
+            )
+        )
+
+        val migrator = QuartzMigrator(repo, jobScheduler, contractLoader)
+        migrator.migrate(Instant.parse("2020-08-10T11:41:38.479483Z"))
+
+        assertThat(repo.data["someMemberId"]!!.activationDateTriggerAt).isNull()
+        verify(inverse = true) {
+            jobScheduler.rescheduleOrTriggerContractActivatedToday(any(), any(), any())
+        }
+    }
 }
