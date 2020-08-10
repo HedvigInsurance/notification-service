@@ -18,7 +18,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.util.CollectionUtils
 import java.net.URI
 
-
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")

@@ -24,7 +24,7 @@ class EventController(
     private val eventRequestHandler: EventRequestHandler
 ) {
 
-    //TODO maybe better endpoint
+    // TODO maybe better endpoint
     @PostMapping("/request")
     fun event(
         @RequestHeader(value = "Request-Id") requestId: String,

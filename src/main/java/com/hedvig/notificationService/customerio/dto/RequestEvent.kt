@@ -1,4 +1,4 @@
-//TODO move this package with the event handler
+// TODO move this package with the event handler
 package com.hedvig.notificationService.customerio.dto
 
 import com.hedvig.notificationService.customerio.dto.objects.ChargeFailedReason
@@ -39,7 +39,7 @@ class ContractRenewalQueuedEvent(
     val contractType: String,
     val memberId: String,
     val renewalQueuedAt: LocalDate
-): RequestEvent() {
+) : RequestEvent() {
     fun toMap() = mapOf(
         "name" to "ContractRenewalQueuedEvent",
         "data" to mapOf(
@@ -66,7 +66,7 @@ data class QuoteCreatedEvent(
     val price: BigDecimal?,
     val currency: String,
     val originatingProductId: UUID?
-): RequestEvent() {
+) : RequestEvent() {
     fun toMap(): Map<String, Any> = mapOf(
         "name" to "QuoteCreatedEvent",
         "data" to mapOf(
@@ -86,7 +86,4 @@ data class StartDateUpdatedEvent(
     val contractId: String,
     val owningMemberId: String,
     val startDate: LocalDate
-): RequestEvent()
-
-
-
+) : RequestEvent()

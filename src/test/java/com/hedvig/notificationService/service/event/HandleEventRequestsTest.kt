@@ -34,7 +34,6 @@ class HandleEventRequestsTest {
 
     val serviceToTest = EventRequestHandler(eventHandler, mapper, handledRequestRepository)
 
-
     @Test
     fun `do nothing on handled request`() {
         val contractId = "contractId"
@@ -48,7 +47,6 @@ class HandleEventRequestsTest {
                 "startDate" to startDate
             )
         )
-
 
         val requestId = "handled request"
         every { handledRequestRepository.isRequestHandled(requestId) } returns true
