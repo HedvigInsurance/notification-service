@@ -7,12 +7,7 @@ import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.service.firebase.FirebaseNotificationService
-import com.hedvig.notificationService.service.event.ChargeFailedEvent
-import com.hedvig.notificationService.service.event.ContractCreatedEvent
-import com.hedvig.notificationService.service.event.ContractRenewalQueuedEvent
 import com.hedvig.notificationService.service.request.HandledRequestRepository
-import com.hedvig.notificationService.service.event.QuoteCreatedEvent
-import com.hedvig.notificationService.service.event.StartDateUpdatedEvent
 import com.hedvig.notificationService.serviceIntegration.memberService.dto.HasPersonSignedBeforeRequest
 import org.quartz.Scheduler
 import org.quartz.SchedulerException

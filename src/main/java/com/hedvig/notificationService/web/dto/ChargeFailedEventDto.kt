@@ -1,4 +1,4 @@
-package com.hedvig.notificationService.customerio.web
+package com.hedvig.notificationService.web.dto
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.hedvig.notificationService.customerio.dto.objects.ChargeFailedReason
