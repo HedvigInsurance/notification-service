@@ -1,7 +1,5 @@
 package com.hedvig.notificationService.customerio
 
-import com.hedvig.notificationService.customerio.customerioEvents.jobs.ContractActivatedTodayJob
-import com.hedvig.notificationService.customerio.customerioEvents.jobs.ContractCreatedJob
 import com.hedvig.notificationService.customerio.customerioEvents.jobs.JobScheduler
 import com.hedvig.notificationService.customerio.customerioEvents.jobs.StartDateUpdatedJob
 import com.hedvig.notificationService.customerio.dto.ChargeFailedEvent
@@ -17,11 +15,9 @@ import com.hedvig.notificationService.service.FirebaseNotificationService
 import com.hedvig.notificationService.serviceIntegration.memberService.dto.HasPersonSignedBeforeRequest
 import org.quartz.Scheduler
 import org.quartz.SchedulerException
-import org.quartz.TriggerKey
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.Instant
-import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 
 @Service
@@ -70,36 +66,9 @@ class EventHandler(
         repo.save(state)
 
         try {
-            val jobName = "onContractCreatedEvent-${contractCreatedEvent.owningMemberId}"
-            val triggerKey = TriggerKey.triggerKey(jobName, jobGroup)
+            jobScheduler.rescheduleOrTriggerContractCreated(contractCreatedEvent, callTime)
 
-            val jobRescheduled = jobScheduler.rescheduleJob(callTime, triggerKey)
-
-            if (!jobRescheduled) {
-                val jobData = mapOf(
-                    "memberId" to contractCreatedEvent.owningMemberId
-                )
-
-                jobScheduler.scheduleJob(
-                    jobName,
-                    jobData,
-                    ContractCreatedJob::class,
-                    callTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES)
-                )
-            }
-
-            if (contractCreatedEvent.startDate != null) {
-                val jobData = mapOf(
-                    "memberId" to contractCreatedEvent.owningMemberId
-                )
-
-                jobScheduler.scheduleJob(
-                    "contractActivatedTodayJob-aContractId",
-                    jobData,
-                    ContractActivatedTodayJob::class,
-                    contractCreatedEvent.startDate.atStartOfDay(ZoneId.of("Europe/Stockholm")).toInstant()
-                )
-            }
+            jobScheduler.rescheduleOrTriggerContractActivatedToday(contractCreatedEvent, callTime)
         } catch (e: SchedulerException) {
             throw RuntimeException(e.message, e)
         }
