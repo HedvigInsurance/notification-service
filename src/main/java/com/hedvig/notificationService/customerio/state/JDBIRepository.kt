@@ -129,7 +129,24 @@ where cs.member_id = :memberId
     }
 
     override fun statesWithTriggers(): Stream<CustomerioState> {
-        TODO("Not yet implemented")
+        return jdbi.withHandleUnchecked {
+            registerRowMappers(it)
+            it.createQuery(
+                """
+                    WITH contract_triggers AS (
+                     SELECT member_id
+                     FROM contract_state
+                     GROUP BY member_id)
+                    $SELECT_STATE_AND_CONTRACTS 
+                    FROM customerio_state cs
+                    LEFT JOIN contract_state c ON c.member_id = cs.member_id
+                    LEFT JOIN contract_triggers ct on ct.member_id = cs.member_id
+                    WHERE
+                        (cs.activation_date_trigger_at IS NOT NULL)
+                """.trimIndent()
+            )
+                .reduceRows(this::contractStateReducer)
+        }
     }
 
     private fun contractStateReducer(
