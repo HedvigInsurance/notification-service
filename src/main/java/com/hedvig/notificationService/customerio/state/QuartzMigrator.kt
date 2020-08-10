@@ -1,6 +1,7 @@
 package com.hedvig.notificationService.customerio.state
 
 import com.hedvig.notificationService.customerio.customerioEvents.jobs.JobScheduler
+import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import java.time.Instant
 import java.time.ZoneId
@@ -23,6 +24,17 @@ class QuartzMigrator(
                     now, state.memberId
                 )
                 state.sentStartDateUpdatedEvent()
+            }
+
+            if (state.contractCreatedTriggerAt != null) {
+                jobScheduler.rescheduleOrTriggerContractCreated(
+                    ContractCreatedEvent(
+                        contracts[0].contractId.toString(),
+                        state.memberId,
+                        null
+                    ), now
+                )
+                state.sentContractCreatedEvent()
             }
 
             if (state.activationDateTriggerAt != null) {

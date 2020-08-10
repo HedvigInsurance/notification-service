@@ -3,6 +3,7 @@ package com.hedvig.notificationService.customerio
 import assertk.assertThat
 import assertk.assertions.isNull
 import com.hedvig.notificationService.customerio.customerioEvents.jobs.JobScheduler
+import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
@@ -138,6 +139,50 @@ class QuartzMigratorTest {
         assertThat(repo.data["someMemberId"]!!.activationDateTriggerAt).isNull()
         verify(inverse = true) {
             jobScheduler.rescheduleOrTriggerContractActivatedToday(any(), any(), any())
+        }
+    }
+
+    @Test
+    fun `migrate contract created at`() {
+        val aRandomStartDate = LocalDate.of(2020, 8, 9)
+        val contractId = UUID.fromString("258c203c-dafd-11ea-b8d7-a72cade86094")
+        val contractId2 = UUID.fromString("258c203c-dafd-11ea-b8d7-a72cade86095")
+
+        repo.save(
+            CustomerioState(
+                "someMemberId",
+                contractCreatedTriggerAt = Instant.parse("2020-08-10T11:41:38.479483Z")
+            )
+        )
+
+        every { contractLoader.getContractInfoForMember(any()) } returns listOf(
+            ContractInfo(
+                AgreementType.NorwegianTravel,
+                "",
+                startDate = aRandomStartDate,
+                contractId = contractId
+            ),
+            ContractInfo(
+                AgreementType.NorwegianHomeContent,
+                "",
+                startDate = aRandomStartDate,
+                contractId = contractId2
+            )
+        )
+
+        val migrator = QuartzMigrator(repo, jobScheduler, contractLoader)
+        migrator.migrate(Instant.parse("2020-08-10T11:41:38.479483Z"))
+
+        assertThat(repo.data["someMemberId"]!!.contractCreatedTriggerAt).isNull()
+        verify {
+
+            jobScheduler.rescheduleOrTriggerContractCreated(
+                ContractCreatedEvent(
+                    contractId = contractId.toString(),
+                    owningMemberId = "someMemberId",
+                    startDate = null
+                ), any()
+            )
         }
     }
 }
