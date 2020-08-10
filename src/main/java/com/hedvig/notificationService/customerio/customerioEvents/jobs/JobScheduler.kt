@@ -10,6 +10,7 @@ import org.quartz.SimpleScheduleBuilder
 import org.quartz.SimpleTrigger
 import org.quartz.TriggerBuilder
 import org.quartz.TriggerKey
+import org.springframework.stereotype.Service
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -17,6 +18,7 @@ import java.time.temporal.ChronoUnit
 import java.util.Date
 import kotlin.reflect.KClass
 
+@Service
 class JobScheduler(private val scheduler: Scheduler) {
 
     val jobGroup = "customerio.triggers"

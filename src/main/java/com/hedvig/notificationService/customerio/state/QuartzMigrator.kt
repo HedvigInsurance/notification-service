@@ -2,15 +2,19 @@ package com.hedvig.notificationService.customerio.state
 
 import com.hedvig.notificationService.customerio.customerioEvents.jobs.JobScheduler
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
+import org.springframework.stereotype.Service
 import java.time.Instant
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
+import javax.transaction.Transactional
 
+@Service
 class QuartzMigrator(
     private val repo: CustomerIOStateRepository,
     private val jobScheduler: JobScheduler,
     private val contractLoader: ContractLoader
 ) {
+    @Transactional
     fun migrate(now: Instant) {
         val statesToMigrate = repo.statesWithTriggers()
 

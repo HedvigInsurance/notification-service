@@ -10,6 +10,7 @@ import com.hedvig.notificationService.customerio.Workspace
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoaderImpl
 import com.hedvig.notificationService.customerio.hedvigfacades.FakeContractLoader
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
+import com.hedvig.notificationService.customerio.state.QuartzMigrator
 import com.hedvig.notificationService.serviceIntegration.memberService.MemberServiceClient
 import com.hedvig.notificationService.serviceIntegration.productPricing.client.ProductPricingClient
 import com.hedvig.notificationService.serviceIntegration.underwriter.UnderwriterClient
@@ -22,7 +23,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.event.ContextRefreshedEvent
+import org.springframework.context.event.EventListener
 import org.springframework.scheduling.annotation.EnableScheduling
+import java.time.Instant
 import javax.annotation.PostConstruct
 
 @Configuration
@@ -34,10 +38,18 @@ class CustomerIOConfig(
     @Autowired
     lateinit var configuration: ConfigurationProperties
 
+    @Autowired
+    lateinit var quartzMigrator: QuartzMigrator
+
     @Value("\${hedvig.usefakes:false}")
     var useFakes: Boolean = false
 
     private val okHttp: OkHttpClient = OkHttpClient()
+
+    @EventListener
+    fun onContextRefereshedEvent(event: ContextRefreshedEvent) {
+        quartzMigrator.migrate(Instant.now())
+    }
 
     @Bean()
     fun productPricingFacade(productPricingClient: ProductPricingClient, underwriterClient: UnderwriterClient) =
