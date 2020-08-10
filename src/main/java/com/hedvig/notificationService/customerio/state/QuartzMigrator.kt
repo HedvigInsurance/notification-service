@@ -1,6 +1,7 @@
 package com.hedvig.notificationService.customerio.state
 
 import com.hedvig.notificationService.customerio.customerioEvents.jobs.JobScheduler
+import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import java.time.Instant
 import java.time.ZoneId
@@ -15,21 +16,35 @@ class QuartzMigrator(
         val statesToMigrate = repo.statesWithTriggers()
 
         for (state in statesToMigrate) {
-            state.sentActivatesTodayEvent(null)
-            repo.save(state)
+            val contracts = contractLoader.getContractInfoForMember(state.memberId)
 
-            for (contract in contractLoader.getContractInfoForMember(state.memberId)) {
-                if (contract.startDate != null && contract.startDate.isAfter(
-                        now.truncatedTo(ChronoUnit.DAYS).atZone(ZoneId.of("Europe/Stockholm")).toLocalDate()
-                    )
-                ) {
-                    jobScheduler.rescheduleOrTriggerContractActivatedToday(
-                        activationDate = contract.startDate,
-                        memberId = state.memberId,
-                        contractId = contract.contractId.toString()
-                    )
-                }
+            if (state.startDateUpdatedTriggerAt != null) {
+                jobScheduler.rescheduleOrTriggerStartDateUpdated(
+                    StartDateUpdatedEvent(
+                        contracts[0]!!.contractId.toString(),
+                        state.memberId, contracts[0].startDate!!
+                    ), now
+                )
+                state.sentStartDateUpdatedEvent()
             }
+
+            if (state.activationDateTriggerAt != null) {
+                for (contract in contracts) {
+                    if (contract.startDate != null && contract.startDate.isAfter(
+                            now.truncatedTo(ChronoUnit.DAYS).atZone(ZoneId.of("Europe/Stockholm")).toLocalDate()
+                        )
+                    ) {
+                        jobScheduler.rescheduleOrTriggerContractActivatedToday(
+                            activationDate = contract.startDate,
+                            memberId = state.memberId,
+                            contractId = contract.contractId.toString()
+                        )
+                    }
+                }
+                state.sentActivatesTodayEvent(null)
+            }
+
+            repo.save(state)
         }
     }
 }
