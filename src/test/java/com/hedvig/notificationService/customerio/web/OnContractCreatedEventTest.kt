@@ -87,7 +87,7 @@ class OnContractCreatedEventTest {
             requestId
         )
 
-        assertThat(repository.data["1337"]?.contractCreatedTriggerAt).isEqualTo(callTime)
+        assertThat(repository.data["1337"]?.contractCreatedTriggerAt).isNull()
 
         assertThat(jobSlot.captured).all {
             transform { it.key.group }.isEqualTo("customerio.triggers")
@@ -174,7 +174,7 @@ class OnContractCreatedEventTest {
             ), callTime
         )
 
-        assertThat(repository.data["1337"]?.contractCreatedTriggerAt).isEqualTo(callTime)
+        assertThat(repository.data["1337"]?.contractCreatedTriggerAt).isNull()
         verify { scheduler.scheduleJob(any(), any()) }
     }
 
@@ -192,7 +192,7 @@ class OnContractCreatedEventTest {
             ), time
         )
 
-        assertThat(repository.data["1337"]?.activationDateTriggerAt).isEqualTo(LocalDate.of(2020, 5, 4))
+        assertThat(repository.data["1337"]?.activationDateTriggerAt).isNull()
     }
 
     @Test
@@ -242,7 +242,7 @@ class OnContractCreatedEventTest {
             ), time
         )
 
-        assertThat(repository.data["1337"]?.activationDateTriggerAt).isEqualTo(LocalDate.of(2020, 5, 1))
+        assertThat(repository.data["1337"]?.activationDateTriggerAt).isEqualTo(LocalDate.of(2020, 5, 2))
     }
 
     @Test

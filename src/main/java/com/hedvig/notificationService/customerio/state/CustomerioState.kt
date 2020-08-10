@@ -60,20 +60,7 @@ class CustomerioState(
         }
     }
 
-    fun triggerStartDateUpdated(callTime: Instant) {
-        if (this.startDateUpdatedTriggerAt == null) {
-            this.startDateUpdatedTriggerAt = callTime
-        }
-    }
-
-    private fun triggerContractCreated(callTime: Instant) {
-        if (this.contractCreatedTriggerAt == null)
-            this.contractCreatedTriggerAt = callTime
-    }
-
     fun createContract(contractId: String, calltime: Instant, startDate: LocalDate?) {
-        triggerContractCreated(calltime)
-        updateFirstUpcomingStartDate(startDate)
         if (this.contracts.none { it.contractId == contractId }) {
             this.contracts.add(ContractState(contractId))
         }

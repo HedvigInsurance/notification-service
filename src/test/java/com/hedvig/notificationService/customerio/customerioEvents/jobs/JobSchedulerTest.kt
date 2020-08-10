@@ -36,20 +36,17 @@ class JobSchedulerTest {
                 .build()
         every { scheduler.rescheduleJob(any(), any()) } returns Date()
 
+        val event = StartDateUpdatedEvent("contractId", "someMemberId", LocalDate.of(2020, 10, 1))
         jobScheduler.rescheduleOrTriggerStartDateUpdated(
-            StartDateUpdatedEvent(
-                "contractId",
-                "someMemberId",
-                LocalDate.of(2020, 10, 1)
-            ),
-            callTime
+            callTime,
+            event.owningMemberId
         )
 
         val triggerKeySlot = slot<TriggerKey>()
         val triggerSlot = slot<Trigger>()
         verify { scheduler.rescheduleJob(capture(triggerKeySlot), capture(triggerSlot)) }
 
-        assertThat(triggerKeySlot.captured.name).isEqualTo("onStartDateUpdatedEvent+contractId")
+        assertThat(triggerKeySlot.captured.name).isEqualTo("onStartDateUpdatedEvent+someMemberId")
         assertThat(triggerSlot.captured.startTime).isEqualTo(
             Date.from(
                 callTime.plus(

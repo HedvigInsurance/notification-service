@@ -10,7 +10,6 @@ spring:
     url: jdbc:postgresql://localhost:5432/notification_service_test
     username: postgres
 
-
 hedvig:
   usefakes: true
   firebase:

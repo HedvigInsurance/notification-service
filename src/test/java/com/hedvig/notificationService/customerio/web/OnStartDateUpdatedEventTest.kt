@@ -2,7 +2,6 @@ package com.hedvig.notificationService.customerio.web
 
 import assertk.assertThat
 import assertk.assertions.any
-import assertk.assertions.isEqualTo
 import assertk.assertions.isNull
 import com.hedvig.notificationService.customerio.ConfigurationProperties
 import com.hedvig.notificationService.customerio.CustomerioService
@@ -67,8 +66,8 @@ class OnStartDateUpdatedEventTest {
                 LocalDate.of(2020, 5, 3)
             ), time, requestId)
 
-        assertThat(repo.data["aMemberId"]?.startDateUpdatedTriggerAt).isEqualTo(time)
-        assertThat(repo.data["aMemberId"]?.activationDateTriggerAt).isEqualTo(LocalDate.of(2020, 5, 3))
+        assertThat(repo.data["aMemberId"]?.startDateUpdatedTriggerAt).isNull()
+        assertThat(repo.data["aMemberId"]?.activationDateTriggerAt).isNull()
         verify { handledRequestRepository.storeHandledRequest(requestId) }
     }
 
@@ -93,13 +92,13 @@ class OnStartDateUpdatedEventTest {
 
         assertThat(jobSlot).any {
             it.matches(
-                "onStartDateUpdatedEvent+aContractId",
+                "onStartDateUpdatedEvent+aMemberId",
                 StartDateUpdatedJob::class.java,
                 mapOf("memberId" to "aMemberId")
             )
         }
         assertThat(triggerSot).any {
-            it.matches("onStartDateUpdatedEvent+aContractId", Date.from(callTime.plus(10, ChronoUnit.MINUTES)))
+            it.matches("onStartDateUpdatedEvent+aMemberId", Date.from(callTime.plus(10, ChronoUnit.MINUTES)))
         }
     }
 
@@ -122,7 +121,7 @@ class OnStartDateUpdatedEventTest {
             timeOfFirstCall.plusMillis(3000)
         )
 
-        assertThat(repo.data["aMemberId"]?.startDateUpdatedTriggerAt).isEqualTo(timeOfFirstCall)
+        assertThat(repo.data["aMemberId"]?.startDateUpdatedTriggerAt).isNull()
     }
 
     @Test
@@ -148,8 +147,8 @@ class OnStartDateUpdatedEventTest {
             ), timeOfCall
         )
 
-        assertThat(repo.data["aMemberId"]?.startDateUpdatedTriggerAt).isEqualTo(timeOfCall)
-        assertThat(repo.data["aMemberId"]?.activationDateTriggerAt).isEqualTo(LocalDate.of(2020, 4, 1))
+        assertThat(repo.data["aMemberId"]?.startDateUpdatedTriggerAt).isNull()
+        assertThat(repo.data["aMemberId"]?.activationDateTriggerAt).isNull()
     }
 
     @Test
@@ -168,7 +167,7 @@ class OnStartDateUpdatedEventTest {
             ), timeOfFirstCall.plusMillis(3000)
         )
 
-        assertThat(repo.data["aMemberId"]?.activationDateTriggerAt).isEqualTo(LocalDate.of(2020, 4, 3))
+        assertThat(repo.data["aMemberId"]?.activationDateTriggerAt).isNull()
     }
 
     @Test
