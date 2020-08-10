@@ -49,7 +49,7 @@ class HandleEventRequestsTest {
                 StartDateUpdatedEvent(
                     contractId,
                     memberId,
-                    LocalDate.parse(startDate)
+                    startDate
                 ), any()
             )
         }

@@ -35,7 +35,7 @@ class WebEventRequestTest {
     private lateinit var eventRequestHandler: EventRequestHandler
 
     val testEvent = mapOf(
-        "simpleClassName" to "StartDateUpdatedEvent",
+        "eventName" to "StartDateUpdatedEvent",
         "contractId" to UUID.randomUUID(),
         "owningMemberId" to "12345",
         "startDate" to LocalDate.now()

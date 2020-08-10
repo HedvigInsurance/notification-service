@@ -8,7 +8,7 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import java.util.UUID
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "simpleClassName")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "eventName")
 @JsonSubTypes(
     JsonSubTypes.Type(value = ChargeFailedEvent::class, name = "ChargeFailedEvent"),
     JsonSubTypes.Type(value = ContractCreatedEvent::class, name = "ContractCreatedEvent"),
