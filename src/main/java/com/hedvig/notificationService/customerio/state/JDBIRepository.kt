@@ -143,6 +143,8 @@ where cs.member_id = :memberId
                     LEFT JOIN contract_triggers ct on ct.member_id = cs.member_id
                     WHERE
                         (cs.activation_date_trigger_at IS NOT NULL)
+                    OR
+                        (cs.contract_created_trigger_at IS NOT NULL)
                 """.trimIndent()
             )
                 .reduceRows(this::contractStateReducer)

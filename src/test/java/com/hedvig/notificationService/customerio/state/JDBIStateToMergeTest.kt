@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.ConfigFileApplicationContextInitial
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import java.time.Instant
 import java.time.LocalDate
 
 @ExtendWith(SpringExtension::class)
@@ -37,6 +38,17 @@ class JDBIStateToMergeTest(@Autowired val jdbi: Jdbi) {
     fun `return row with activation date trigger is set`() {
 
         val state = makeCustomerioState(activationDateTriggerAt = LocalDate.now())
+        repository.save(state)
+
+        val rows = repository.statesWithTriggers()
+
+        assertThat(rows.count()).isEqualTo(1)
+    }
+
+    @Test
+    fun `return row where contract created trigger is set`() {
+
+        val state = makeCustomerioState(contractCreatedTriggerAt = Instant.now())
         repository.save(state)
 
         val rows = repository.statesWithTriggers()
