@@ -1,11 +1,13 @@
 package com.hedvig.notificationService.customerio.web
 
+import com.fasterxml.jackson.databind.JsonNode
 import com.hedvig.notificationService.customerio.EventHandler
 import com.hedvig.notificationService.customerio.dto.ChargeFailedEvent
 import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
 import com.hedvig.notificationService.customerio.dto.ContractRenewalQueuedEvent
 import com.hedvig.notificationService.customerio.dto.QuoteCreatedEvent
 import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent
+import com.hedvig.notificationService.service.request.EventRequestHandler
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -18,14 +20,26 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/_/events")
 class EventController(
-    private val eventHandler: EventHandler
+    private val eventHandler: EventHandler,
+    private val eventRequestHandler: EventRequestHandler
 ) {
+
+    //TODO maybe better endpoint
+    @PostMapping("/request")
+    fun event(
+        @RequestHeader(value = "Request-Id") requestId: String,
+        @RequestBody eventJson: JsonNode
+    ): ResponseEntity<Any> {
+        eventRequestHandler.onEventRequest(requestId, eventJson)
+        return ResponseEntity.accepted().build()
+    }
+
     @PostMapping("/contractCreated")
     fun contractCreated(
         @RequestHeader(value = "Request-Id", required = false) requestId: String?,
         @RequestBody event: ContractCreatedEvent
     ): ResponseEntity<Any> {
-        eventHandler.onContractCreatedEvent(
+        eventHandler.onContractCreatedEventHandleRequest(
             contractCreatedEvent = event,
             requestId = requestId
         )
@@ -37,7 +51,7 @@ class EventController(
         @RequestHeader(value = "Request-Id", required = false) requestId: String?,
         @RequestBody event: StartDateUpdatedEvent
     ): ResponseEntity<Any> {
-        eventHandler.onStartDateUpdatedEvent(
+        eventHandler.onStartDateUpdatedEventHandleRequest(
             event = event,
             requestId = requestId
         )
@@ -49,7 +63,7 @@ class EventController(
         @RequestHeader(value = "Request-Id", required = false) requestId: String?,
         @RequestBody event: ContractRenewalQueuedEvent
     ): ResponseEntity<Any> {
-        eventHandler.onContractRenewalQueued(
+        eventHandler.onContractRenewalQueuedHandleRequest(
             event = event,
             requestId = requestId
         )
@@ -60,9 +74,16 @@ class EventController(
     fun chargeFailed(
         @RequestHeader(value = "Request-Id", required = false) requestId: String?,
         @PathVariable memberId: String,
-        @Valid @RequestBody event: ChargeFailedEvent
+        @Valid @RequestBody eventDto: ChargeFailedEventDto
     ): ResponseEntity<Any> {
-        eventHandler.onFailedChargeEvent(memberId, event, requestId)
+        val event = ChargeFailedEvent(
+            terminationDate = eventDto.terminationDate,
+            numberOfFailedCharges = eventDto.numberOfFailedCharges,
+            chargesLeftBeforeTermination = eventDto.chargesLeftBeforeTermination,
+            chargeFailedReason = eventDto.chargeFailedReason,
+            memberId = memberId
+        )
+        eventHandler.onFailedChargeEventHandleRequest(event, requestId)
         return ResponseEntity.accepted().build()
     }
 
@@ -71,7 +92,7 @@ class EventController(
         @RequestHeader(value = "Request-Id", required = false) requestId: String?,
         @RequestBody event: QuoteCreatedEvent
     ): ResponseEntity<Any> {
-        eventHandler.onQuoteCreated(
+        eventHandler.onQuoteCreatedHandleRequest(
             event = event,
             requestId = requestId
         )

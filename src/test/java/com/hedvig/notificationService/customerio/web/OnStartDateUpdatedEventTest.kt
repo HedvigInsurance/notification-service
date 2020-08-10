@@ -49,7 +49,7 @@ class OnStartDateUpdatedEventTest {
     fun `on start date with requst id updated event and store handled request`() {
         val requestId = "a unhandled request"
         val time = Instant.parse("2020-04-27T14:03:23.337770Z")
-        sut.onStartDateUpdatedEvent(StartDateUpdatedEvent("aContractId", "aMemberId", LocalDate.of(2020, 5, 3)), time, requestId)
+        sut.onStartDateUpdatedEventHandleRequest(StartDateUpdatedEvent("aContractId", "aMemberId", LocalDate.of(2020, 5, 3)), time, requestId)
 
         assertThat(repo.data["aMemberId"]?.startDateUpdatedTriggerAt).isEqualTo(time)
         assertThat(repo.data["aMemberId"]?.activationDateTriggerAt).isEqualTo(LocalDate.of(2020, 5, 3))
@@ -63,7 +63,7 @@ class OnStartDateUpdatedEventTest {
 
         repo.save(CustomerioState("aMemberId", null, startDateUpdatedTriggerAt = timeOfFirstCall))
 
-        sut.onStartDateUpdatedEvent(
+        sut.onStartDateUpdatedEventHandleRequest(
             StartDateUpdatedEvent("aContractId", "aMemberId", LocalDate.of(2020, 5, 3)),
             timeOfFirstCall.plusMillis(3000)
         )
@@ -84,7 +84,7 @@ class OnStartDateUpdatedEventTest {
         )
 
         val timeOfCall = Instant.parse("2020-04-27T14:03:23.337770Z")
-        sut.onStartDateUpdatedEvent(
+        sut.onStartDateUpdatedEventHandleRequest(
             StartDateUpdatedEvent(
                 "aContractId",
                 "aMemberId",
@@ -101,7 +101,7 @@ class OnStartDateUpdatedEventTest {
 
         val timeOfFirstCall = Instant.parse("2020-04-27T14:03:23.337770Z")
 
-        sut.onStartDateUpdatedEvent(
+        sut.onStartDateUpdatedEventHandleRequest(
             StartDateUpdatedEvent(
                 "aContractId",
                 "aMemberId",
@@ -118,7 +118,7 @@ class OnStartDateUpdatedEventTest {
         every { handledRequestRepository.isRequestHandled(requestId) } returns true
 
         val memberId = "handledMemberId"
-        sut.onStartDateUpdatedEvent(
+        sut.onStartDateUpdatedEventHandleRequest(
             StartDateUpdatedEvent(
                 "aContractId",
                 memberId,

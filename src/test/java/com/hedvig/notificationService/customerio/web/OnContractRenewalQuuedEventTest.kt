@@ -42,7 +42,7 @@ class OnContractRenewalQuuedEventTest {
     fun `renewal queued test`() {
 
         val requestId = "unhandled request"
-        sut.onContractRenewalQueued(
+        sut.onContractRenewalQueuedHandleRequest(
             ContractRenewalQueuedEvent(
                 "contractOne",
                 "contractType",
@@ -63,7 +63,7 @@ class OnContractRenewalQuuedEventTest {
         val requestId = "handled request id"
         every { handledRequestRepository.isRequestHandled(requestId) } returns true
 
-        sut.onContractRenewalQueued(
+        sut.onContractRenewalQueuedHandleRequest(
             ContractRenewalQueuedEvent(
                 "contractOne",
                 "contractType",

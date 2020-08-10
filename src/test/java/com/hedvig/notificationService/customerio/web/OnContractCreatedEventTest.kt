@@ -56,7 +56,7 @@ class OnContractCreatedEventTest {
         val requestId = "un handled request id"
         val time = Instant.parse("2020-04-27T09:20:42.815351Z")
 
-        sut.onContractCreatedEvent(
+        sut.onContractCreatedEventHandleRequest(
             ContractCreatedEvent(
                 "someEventId",
                 "1337",
@@ -85,7 +85,7 @@ class OnContractCreatedEventTest {
 
         val time = Instant.parse("2020-04-27T09:20:42.815351Z")
 
-        sut.onContractCreatedEvent(
+        sut.onContractCreatedEventHandleRequest(
             ContractCreatedEvent(
                 "someEventId",
                 "1337",
@@ -108,7 +108,7 @@ class OnContractCreatedEventTest {
 
         val callTime = Instant.parse("2020-04-27T09:20:42.815351Z")
 
-        sut.onContractCreatedEvent(
+        sut.onContractCreatedEventHandleRequest(
             ContractCreatedEvent(
                 "someEventId",
                 "1337",
@@ -125,7 +125,7 @@ class OnContractCreatedEventTest {
         val stateCreatedAt = Instant.parse("2020-04-27T09:20:42.815351Z").minusMillis(3000)
         val time = Instant.parse("2020-04-27T09:20:42.815351Z")
 
-        sut.onContractCreatedEvent(
+        sut.onContractCreatedEventHandleRequest(
             ContractCreatedEvent(
                 "someEventId",
                 "1337",
@@ -150,7 +150,7 @@ class OnContractCreatedEventTest {
         )
         val time = Instant.parse("2020-04-27T09:20:42.815351Z")
 
-        sut.onContractCreatedEvent(
+        sut.onContractCreatedEventHandleRequest(
             ContractCreatedEvent(
                 "someEventId",
                 "1337",
@@ -175,7 +175,7 @@ class OnContractCreatedEventTest {
         )
         val time = Instant.parse("2020-04-27T09:20:42.815351Z")
 
-        sut.onContractCreatedEvent(
+        sut.onContractCreatedEventHandleRequest(
             ContractCreatedEvent(
                 "someEventId",
                 "1337",
@@ -197,7 +197,7 @@ class OnContractCreatedEventTest {
         )
 
         val time = Instant.parse("2020-04-27T09:20:42.815351Z")
-        sut.onContractCreatedEvent(
+        sut.onContractCreatedEventHandleRequest(
             ContractCreatedEvent(
                 "someEventId",
                 "1337",
@@ -213,7 +213,7 @@ class OnContractCreatedEventTest {
         val requestId = "handled request id"
         every { handledRequestRepository.isRequestHandled(requestId) } returns true
 
-        sut.onContractCreatedEvent(
+        sut.onContractCreatedEventHandleRequest(
             ContractCreatedEvent(
                 "someEventId",
                 "1337",
