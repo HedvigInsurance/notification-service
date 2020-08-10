@@ -1,7 +1,7 @@
 package com.hedvig.notificationService.service.event
 
-import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent
 import com.hedvig.notificationService.service.request.EventRequestHandler
+import com.hedvig.notificationService.service.event.StartDateUpdatedEvent
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.verify
 import org.assertj.core.api.Assertions

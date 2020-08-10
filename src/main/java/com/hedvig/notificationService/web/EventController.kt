@@ -1,12 +1,13 @@
-package com.hedvig.notificationService.customerio.web
+package com.hedvig.notificationService.web
 
 import com.hedvig.notificationService.service.event.EventHandler
-import com.hedvig.notificationService.customerio.dto.ChargeFailedEvent
-import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
-import com.hedvig.notificationService.customerio.dto.ContractRenewalQueuedEvent
-import com.hedvig.notificationService.customerio.dto.QuoteCreatedEvent
-import com.hedvig.notificationService.customerio.dto.EventRequest
-import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent
+import com.hedvig.notificationService.service.event.ChargeFailedEvent
+import com.hedvig.notificationService.service.event.ContractCreatedEvent
+import com.hedvig.notificationService.service.event.ContractRenewalQueuedEvent
+import com.hedvig.notificationService.service.event.QuoteCreatedEvent
+import com.hedvig.notificationService.service.event.EventRequest
+import com.hedvig.notificationService.service.event.StartDateUpdatedEvent
+import com.hedvig.notificationService.customerio.web.ChargeFailedEventDto
 import com.hedvig.notificationService.service.request.EventRequestHandler
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable

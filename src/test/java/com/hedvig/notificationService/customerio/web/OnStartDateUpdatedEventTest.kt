@@ -8,7 +8,7 @@ import com.hedvig.notificationService.customerio.ConfigurationProperties
 import com.hedvig.notificationService.customerio.CustomerioService
 import com.hedvig.notificationService.service.event.EventHandler
 import com.hedvig.notificationService.customerio.customerioEvents.jobs.StartDateUpdatedJob
-import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent
+import com.hedvig.notificationService.service.event.StartDateUpdatedEvent
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
@@ -60,7 +60,12 @@ class OnStartDateUpdatedEventTest {
         every { scheduler.scheduleJob(any(), any()) } returns Date()
 
         val time = Instant.parse("2020-04-27T14:03:23.337770Z")
-        sut.onStartDateUpdatedEventHandleRequest(StartDateUpdatedEvent("aContractId", "aMemberId", LocalDate.of(2020, 5, 3)), time, requestId)
+        sut.onStartDateUpdatedEventHandleRequest(
+            StartDateUpdatedEvent(
+                "aContractId",
+                "aMemberId",
+                LocalDate.of(2020, 5, 3)
+            ), time, requestId)
 
         assertThat(repo.data["aMemberId"]?.startDateUpdatedTriggerAt).isEqualTo(time)
         assertThat(repo.data["aMemberId"]?.activationDateTriggerAt).isEqualTo(LocalDate.of(2020, 5, 3))
@@ -78,7 +83,11 @@ class OnStartDateUpdatedEventTest {
         every { scheduler.scheduleJob(capture(jobSlot), capture(triggerSot)) } returns Date()
 
         sut.onStartDateUpdatedEvent(
-            StartDateUpdatedEvent("aContractId", "aMemberId", LocalDate.of(2020, 5, 3)),
+            StartDateUpdatedEvent(
+                "aContractId",
+                "aMemberId",
+                LocalDate.of(2020, 5, 3)
+            ),
             callTime
         )
 
@@ -105,7 +114,11 @@ class OnStartDateUpdatedEventTest {
         every { scheduler.scheduleJob(any(), any()) } returns Date()
 
         sut.onStartDateUpdatedEventHandleRequest(
-            StartDateUpdatedEvent("aContractId", "aMemberId", LocalDate.of(2020, 5, 3)),
+            StartDateUpdatedEvent(
+                "aContractId",
+                "aMemberId",
+                LocalDate.of(2020, 5, 3)
+            ),
             timeOfFirstCall.plusMillis(3000)
         )
 

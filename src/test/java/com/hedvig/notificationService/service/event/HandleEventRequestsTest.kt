@@ -1,8 +1,8 @@
 package com.hedvig.notificationService.service.event
 
-import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent
 import com.hedvig.notificationService.service.request.EventRequestHandler
 import com.hedvig.notificationService.service.request.HandledRequestRepository
+import com.hedvig.notificationService.service.event.StartDateUpdatedEvent
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -25,7 +25,12 @@ class HandleEventRequestsTest {
         val requestId = "handled request"
         every { handledRequestRepository.isRequestHandled(requestId) } returns true
         serviceToTest.onEventRequest(
-            requestId, StartDateUpdatedEvent(contractId, memberId, startDate)
+            requestId,
+            StartDateUpdatedEvent(
+                contractId,
+                memberId,
+                startDate
+            )
         )
 
         verify(exactly = 0) { eventHandler.onStartDateUpdatedEvent(any(), any()) }
@@ -40,7 +45,12 @@ class HandleEventRequestsTest {
 
         val requestId = "unhandled request"
         serviceToTest.onEventRequest(
-            requestId, StartDateUpdatedEvent(contractId, memberId, startDate)
+            requestId,
+            StartDateUpdatedEvent(
+                contractId,
+                memberId,
+                startDate
+            )
         )
 
         verify {

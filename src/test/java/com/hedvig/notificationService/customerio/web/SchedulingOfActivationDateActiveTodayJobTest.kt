@@ -10,8 +10,8 @@ import assertk.assertions.support.show
 import com.hedvig.notificationService.customerio.CustomerioService
 import com.hedvig.notificationService.service.event.EventHandler
 import com.hedvig.notificationService.customerio.customerioEvents.jobs.ContractActivatedTodayJob
-import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
-import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent
+import com.hedvig.notificationService.service.event.ContractCreatedEvent
+import com.hedvig.notificationService.service.event.StartDateUpdatedEvent
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import com.hedvig.notificationService.service.firebase.FirebaseNotificationService

@@ -4,7 +4,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import com.hedvig.notificationService.customerio.CustomerioService
 import com.hedvig.notificationService.service.event.EventHandler
-import com.hedvig.notificationService.customerio.dto.ChargeFailedEvent
+import com.hedvig.notificationService.service.event.ChargeFailedEvent
 import com.hedvig.notificationService.customerio.dto.objects.ChargeFailedReason
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
@@ -79,7 +79,7 @@ class OnChargeFailedEventTriggerCustomerioEventTest {
                 2,
                 ChargeFailedReason.INSUFFICIENT_FUNDS,
                 "1227"
-                ),
+            ),
             requestId
         )
 

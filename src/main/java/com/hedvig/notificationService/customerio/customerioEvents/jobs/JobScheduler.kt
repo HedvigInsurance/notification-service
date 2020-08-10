@@ -1,8 +1,8 @@
 package com.hedvig.notificationService.customerio.customerioEvents.jobs
 
 import com.hedvig.notificationService.customerio.SIGN_EVENT_WINDOWS_SIZE_MINUTES
-import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
-import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent
+import com.hedvig.notificationService.service.event.ContractCreatedEvent
+import com.hedvig.notificationService.service.event.StartDateUpdatedEvent
 import org.quartz.Job
 import org.quartz.JobBuilder
 import org.quartz.JobDataMap
