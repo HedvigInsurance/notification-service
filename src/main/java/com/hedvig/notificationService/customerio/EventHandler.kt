@@ -60,7 +60,7 @@ class EventHandler(
         repo.save(state)
 
         try {
-            jobScheduler.rescheduleOrTriggerContractCreated(contractCreatedEvent, callTime)
+            jobScheduler.rescheduleOrTriggerContractCreated(callTime, contractCreatedEvent.owningMemberId)
 
             contractCreatedEvent.startDate?.let {
                 jobScheduler.rescheduleOrTriggerContractActivatedToday(

@@ -1,7 +1,6 @@
 package com.hedvig.notificationService.customerio.customerioEvents.jobs
 
 import com.hedvig.notificationService.customerio.SIGN_EVENT_WINDOWS_SIZE_MINUTES
-import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
 import org.quartz.Job
 import org.quartz.JobBuilder
 import org.quartz.JobDataMap
@@ -81,8 +80,8 @@ class JobScheduler(private val scheduler: Scheduler) {
             .build()
     }
 
-    fun rescheduleOrTriggerContractCreated(contractCreatedEvent: ContractCreatedEvent, callTime: Instant) {
-        val jobName = "onContractCreatedEvent-${contractCreatedEvent.owningMemberId}"
+    fun rescheduleOrTriggerContractCreated(callTime: Instant, memberId: String) {
+        val jobName = "onContractCreatedEvent-$memberId"
         val triggerKey = TriggerKey.triggerKey(jobName, jobGroup)
 
         val jobRescheduled = this.rescheduleJob(
@@ -95,7 +94,7 @@ class JobScheduler(private val scheduler: Scheduler) {
 
         if (!jobRescheduled) {
             val jobData = mapOf(
-                "memberId" to contractCreatedEvent.owningMemberId
+                "memberId" to memberId
             )
 
             this.scheduleJob(

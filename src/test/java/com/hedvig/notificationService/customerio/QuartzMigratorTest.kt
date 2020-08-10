@@ -3,7 +3,6 @@ package com.hedvig.notificationService.customerio
 import assertk.assertThat
 import assertk.assertions.isNull
 import com.hedvig.notificationService.customerio.customerioEvents.jobs.JobScheduler
-import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
@@ -177,11 +176,7 @@ class QuartzMigratorTest {
         verify {
 
             jobScheduler.rescheduleOrTriggerContractCreated(
-                ContractCreatedEvent(
-                    contractId = contractId.toString(),
-                    owningMemberId = "someMemberId",
-                    startDate = null
-                ), any()
+                any(), "someMemberId"
             )
         }
     }
