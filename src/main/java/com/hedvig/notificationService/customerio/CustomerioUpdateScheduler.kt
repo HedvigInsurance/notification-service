@@ -31,13 +31,7 @@ open class CustomerioUpdateScheduler(
 
         for (customerioState in this.stateRepository.shouldUpdate(windowEndTime)) {
             logger.info("Running update for ${customerioState.memberId}")
-            try {
-                val contracts = this.contractLoader.getContractInfoForMember(customerioState.memberId)
-                val eventAndState = eventCreator.execute(customerioState, contracts)
-                customerioService.sendEventAndUpdateState(customerioState, eventAndState.asMap)
-            } catch (ex: RuntimeException) {
-                logger.error("Could not create event from customerio state", ex)
-            }
+            customerioService.doUpdate(customerioState, eventCreator, contractLoader)
         }
     }
 

@@ -79,25 +79,46 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
             }
             customerioState.shouldSendContractCreatedEvent()
             -> {
-                val event = createContractCreatedEvent(contracts)
-                customerioState.sentContractCreatedEvent()
-                ExecutionResult(event)
+                contractCreatedEvent(customerioState, contracts)
             }
             customerioState.shouldSendStartDateUpdatedEvent() -> {
-                val event = createStartDateUpdatedEvent(contracts)
-                customerioState.sentStartDateUpdatedEvent()
-                ExecutionResult(event)
+                startDateUpdatedEvent(customerioState, contracts)
             }
             customerioState.shouldSendActivatesTodayEvent() -> {
-                val event = createActivationDateTodayEvent(customerioState, contracts)
-                customerioState.sentActivatesTodayEvent(nextActivationDate = contracts.map { it.startDate }
-                    .sortedBy { it }
-                    .firstOrNull { it?.isAfter(customerioState.activationDateTriggerAt) == true })
-                ExecutionResult(event)
+                sendActivatesToday(customerioState, contracts)
             }
             else
             -> throw RuntimeException("CustomerioState in weird state")
         }
+    }
+
+    override fun sendActivatesToday(
+        customerioState: CustomerioState,
+        contracts: List<ContractInfo>
+    ): ExecutionResult {
+        val event = createActivationDateTodayEvent(customerioState, contracts)
+        customerioState.sentActivatesTodayEvent(nextActivationDate = contracts.map { it.startDate }
+            .sortedBy { it }
+            .firstOrNull { it?.isAfter(customerioState.activationDateTriggerAt) == true })
+        return ExecutionResult(event)
+    }
+
+    override fun startDateUpdatedEvent(
+        customerioState: CustomerioState,
+        contracts: List<ContractInfo>
+    ): ExecutionResult {
+        val event = createStartDateUpdatedEvent(contracts)
+        customerioState.sentStartDateUpdatedEvent()
+        return ExecutionResult(event)
+    }
+
+    override fun contractCreatedEvent(
+        customerioState: CustomerioState,
+        contracts: List<ContractInfo>
+    ): ExecutionResult {
+        val event = createContractCreatedEvent(contracts)
+        customerioState.sentContractCreatedEvent()
+        return ExecutionResult(event)
     }
 
     private fun createActivationDateTodayEvent(

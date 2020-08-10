@@ -9,4 +9,19 @@ CustomerioEventCreator {
         customerioState: CustomerioState,
         contracts: List<ContractInfo>
     ): ExecutionResult
+
+    fun contractCreatedEvent(
+        customerioState: CustomerioState,
+        contracts: List<ContractInfo>
+    ): ExecutionResult
+
+    fun startDateUpdatedEvent(
+        customerioState: CustomerioState,
+        contracts: List<ContractInfo>
+    ): ExecutionResult
+
+    fun sendActivatesToday(
+        customerioState: CustomerioState,
+        contracts: List<ContractInfo>
+    ): ExecutionResult
 }

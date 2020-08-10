@@ -21,7 +21,6 @@ class OnChargeFailedEventTriggerCustomerioEventTest {
 
     @Test
     internal fun `on unhandled failed charge event post to customer io`() {
-        val configurationProperties = ConfigurationProperties()
         val customerioService = mockk<CustomerioService>(relaxed = true)
         val memberService = mockk<MemberServiceImpl>()
         val firebaseNotificationService = mockk<FirebaseNotificationService>(relaxed = true)
@@ -30,10 +29,10 @@ class OnChargeFailedEventTriggerCustomerioEventTest {
         val repo = InMemoryCustomerIOStateRepository()
         val sut = EventHandler(
             repo = repo,
-            configuration = configurationProperties,
             firebaseNotificationService = firebaseNotificationService,
             customerioService = customerioService,
             memberService = memberService,
+            scheduler = mockk(),
             handledRequestRepository = handledRequestRepository
         )
         val requestId = "unhandled request id"
@@ -57,7 +56,6 @@ class OnChargeFailedEventTriggerCustomerioEventTest {
 
     @Test
     internal fun `on handled failed charge event dose nothing`() {
-        val configurationProperties = ConfigurationProperties()
         val customerioService = mockk<CustomerioService>(relaxed = true)
         val memberService = mockk<MemberServiceImpl>()
         val firebaseNotificationService = mockk<FirebaseNotificationService>(relaxed = true)
@@ -66,10 +64,10 @@ class OnChargeFailedEventTriggerCustomerioEventTest {
         val repo = InMemoryCustomerIOStateRepository()
         val sut = EventHandler(
             repo = repo,
-            configuration = configurationProperties,
             firebaseNotificationService = firebaseNotificationService,
             customerioService = customerioService,
             memberService = memberService,
+            scheduler = mockk(),
             handledRequestRepository = handledRequestRepository
         )
         val requestId = "handled request id"

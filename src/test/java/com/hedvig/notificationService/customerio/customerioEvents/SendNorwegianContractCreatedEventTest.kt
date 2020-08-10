@@ -2,16 +2,15 @@ package com.hedvig.notificationService.customerio.customerioEvents
 
 import assertk.assertThat
 import assertk.assertions.contains
-import assertk.assertions.containsAll
 import assertk.assertions.isEqualTo
 import com.hedvig.customerio.CustomerioClient
 import com.hedvig.notificationService.customerio.AgreementType
 import com.hedvig.notificationService.customerio.ConfigurationProperties
-import com.hedvig.notificationService.customerio.CustomerioUpdateScheduler
 import com.hedvig.notificationService.customerio.CustomerioService
-import com.hedvig.notificationService.customerio.SIGN_EVENT_WINDOWS_SIZE_MINUTES
 import com.hedvig.notificationService.customerio.Workspace
 import com.hedvig.notificationService.customerio.WorkspaceSelector
+import com.hedvig.notificationService.customerio.customerioEvents.jobs.ContractCreatedJob
+import com.hedvig.notificationService.customerio.customerioEvents.jobs.makeJobExecutionContext
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.hedvigfacades.makeContractInfo
 import com.hedvig.notificationService.customerio.state.CustomerioState
@@ -20,12 +19,14 @@ import com.hedvig.notificationService.serviceIntegration.productPricing.FeignExc
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import org.junit.Before
 import org.junit.Test
+import org.quartz.JobDataMap
+import org.quartz.Scheduler
 import java.time.Instant
-import java.time.temporal.ChronoUnit
 
 class SendNorwegianContractCreatedEventTest {
 
@@ -44,7 +45,9 @@ class SendNorwegianContractCreatedEventTest {
     lateinit var seClient: CustomerioClient
 
     lateinit var customerioService: CustomerioService
-    lateinit var scheduler: CustomerioUpdateScheduler
+    lateinit var contractCreatedJob: ContractCreatedJob
+
+    val scheduler: Scheduler = mockk(relaxed = true)
 
     @Before
     fun setup() {
@@ -58,8 +61,11 @@ class SendNorwegianContractCreatedEventTest {
             ),
             ConfigurationProperties()
         )
-        scheduler = CustomerioUpdateScheduler(
-            CustomerioEventCreatorImpl(), repo, contractLoader, customerioService
+        contractCreatedJob = ContractCreatedJob(
+            contractLoader,
+            CustomerioEventCreatorImpl(),
+            customerioService,
+            repo
         )
     }
 
@@ -80,7 +86,10 @@ class SendNorwegianContractCreatedEventTest {
                 )
             )
 
-        scheduler.sendUpdates(startTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
+        val jobData = JobDataMap()
+        jobData["memberId"] = "someMemberId"
+
+        contractCreatedJob.execute(makeJobExecutionContext(scheduler, contractCreatedJob, jobData))
 
         val slot = slot<Map<String, Any?>>()
         verify { noClient.sendEvent(any(), capture(slot)) }
@@ -107,37 +116,13 @@ class SendNorwegianContractCreatedEventTest {
                 )
             )
 
-        scheduler.sendUpdates(startTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
+        val jobData = JobDataMap()
+        jobData["memberId"] = "someMemberId"
+
+        contractCreatedJob.execute(makeJobExecutionContext(scheduler, contractCreatedJob, jobData))
 
         val slot = slot<Map<String, Any?>>()
         verify { seClient.sendEvent(any(), any()) }
-    }
-
-    @Test
-    fun `only send one ContractCreatedEvent after two updates`() {
-        val startTime = Instant.parse("2020-04-23T09:25:13.597224Z")
-        repo.save(CustomerioState("someMemberId", null, false, startTime))
-        every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
-        every { contractLoader.getContractInfoForMember(any()) } returns
-            listOf(
-                makeContractInfo(
-                    AgreementType.NorwegianHomeContent,
-                    switcherCompany = null,
-                    startDate = null,
-                    signSource = "IOS",
-                    partnerCode = "HEDVIG"
-                )
-            )
-
-        scheduler.sendUpdates(startTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
-        scheduler.sendUpdates(startTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
-
-        val slot = slot<Map<String, Any?>>()
-        verify(atMost = 1) { noClient.sendEvent(any(), capture(slot)) }
-
-        assertThat(slot.captured).containsAll(
-            "name" to "NorwegianContractCreatedEvent"
-        )
     }
 
     @Test
@@ -148,7 +133,10 @@ class SendNorwegianContractCreatedEventTest {
         every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
         every { noClient.sendEvent(any(), any()) } throws FeignExceptionForTest(500)
 
-        scheduler.sendUpdates(startTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
+        val jobData = JobDataMap()
+        jobData["memberId"] = "someMemberId"
+
+        contractCreatedJob.execute(makeJobExecutionContext(scheduler, contractCreatedJob, jobData))
 
         assertThat(repo.data["someMemberId"]?.contractCreatedTriggerAt).isEqualTo(startTime)
     }

@@ -30,10 +30,10 @@ class OnQuoteCreatedEventTest {
     fun setup() {
         eventHandlerToTest = EventHandler(
             repo = mockk(),
-            configuration = mockk(),
             firebaseNotificationService = mockk(),
             customerioService = customerioService,
             memberService = memberService,
+            scheduler = mockk(),
             handledRequestRepository = handledRequestRepository
         )
     }

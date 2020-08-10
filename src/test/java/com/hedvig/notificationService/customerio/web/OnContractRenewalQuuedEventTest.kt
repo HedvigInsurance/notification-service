@@ -19,24 +19,20 @@ import java.time.LocalDate
 
 class OnContractRenewalQuuedEventTest {
 
-    private val configurationProperties = ConfigurationProperties()
     private val customerioService = mockk<CustomerioService>(relaxed = true)
     private val memberService = mockk<MemberServiceImpl>()
     private val firebaseNotificationService = mockk<FirebaseNotificationService>(relaxed = true)
     private val handledRequestRepository = mockk<HandledRequestRepository>(relaxed = true)
     private val repo: InMemoryCustomerIOStateRepository = InMemoryCustomerIOStateRepository()
-    var sut: EventHandler
 
-    init {
-        sut = EventHandler(
-            repo = repo,
-            configuration = configurationProperties,
-            firebaseNotificationService = firebaseNotificationService,
-            customerioService = customerioService,
-            memberService = memberService,
-            handledRequestRepository = handledRequestRepository
-        )
-    }
+    val sut = EventHandler(
+        repo = repo,
+        firebaseNotificationService = firebaseNotificationService,
+        customerioService = customerioService,
+        memberService = memberService,
+        scheduler = mockk(),
+        handledRequestRepository = handledRequestRepository
+    )
 
     @Test
     fun `renewal queued test`() {

@@ -17,7 +17,7 @@ class FakeContractLoader :
             ContractInfo(
                 type = AgreementType.NorwegianHomeContent,
                 switcherCompany = null,
-                startDate = null,
+                startDate = LocalDate.now(),
                 signSource = "IOS",
                 partnerCode = "HEDVIG",
                 contractId = UUID.fromString("75868246-b0a3-11ea-8443-3af9d3902f96"),
