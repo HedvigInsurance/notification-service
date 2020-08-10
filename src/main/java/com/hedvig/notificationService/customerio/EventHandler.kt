@@ -1,7 +1,6 @@
 package com.hedvig.notificationService.customerio
 
 import com.hedvig.notificationService.customerio.customerioEvents.jobs.JobScheduler
-import com.hedvig.notificationService.customerio.customerioEvents.jobs.StartDateUpdatedJob
 import com.hedvig.notificationService.customerio.dto.ChargeFailedEvent
 import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
 import com.hedvig.notificationService.customerio.dto.ContractRenewalQueuedEvent
@@ -18,7 +17,6 @@ import org.quartz.SchedulerException
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.Instant
-import java.time.temporal.ChronoUnit
 
 @Service
 class EventHandler(
@@ -26,9 +24,8 @@ class EventHandler(
     private val firebaseNotificationService: FirebaseNotificationService,
     private val customerioService: CustomerioService,
     private val memberService: MemberServiceImpl,
-    private val scheduler: Scheduler
+    scheduler: Scheduler
 ) {
-    val jobGroup = "customerio.triggers"
     val jobScheduler = JobScheduler(scheduler)
 
     fun onStartDateUpdatedEvent(
@@ -43,16 +40,7 @@ class EventHandler(
         state.updateFirstUpcomingStartDate(event.startDate)
         repo.save(state)
 
-        val jobData = mapOf(
-            "memberId" to event.owningMemberId
-        )
-
-        jobScheduler.scheduleJob(
-            "onStartDateUpdatedEvent+${event.contractId}",
-            jobData,
-            StartDateUpdatedJob::class,
-            callTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES)
-        )
+        jobScheduler.rescheduleOrTriggerStartDateUpdated(event, callTime)
     }
 
     fun onContractCreatedEvent(contractCreatedEvent: ContractCreatedEvent, callTime: Instant = Instant.now()) {

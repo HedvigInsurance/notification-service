@@ -2,6 +2,7 @@ package com.hedvig.notificationService.customerio.customerioEvents.jobs
 
 import com.hedvig.notificationService.customerio.SIGN_EVENT_WINDOWS_SIZE_MINUTES
 import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
+import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent
 import org.quartz.Job
 import org.quartz.JobBuilder
 import org.quartz.JobDataMap
@@ -118,5 +119,18 @@ class JobScheduler(private val scheduler: Scheduler) {
                 contractCreatedEvent.startDate.atStartOfDay(ZoneId.of("Europe/Stockholm")).toInstant()
             )
         }
+    }
+
+    fun rescheduleOrTriggerStartDateUpdated(event: StartDateUpdatedEvent, callTime: Instant) {
+        val jobData = mapOf(
+            "memberId" to event.owningMemberId
+        )
+
+        this.scheduleJob(
+            "onStartDateUpdatedEvent+${event.contractId}",
+            jobData,
+            StartDateUpdatedJob::class,
+            callTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES)
+        )
     }
 }
