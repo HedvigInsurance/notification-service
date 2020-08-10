@@ -19,7 +19,7 @@ class OnContractRenewalQuuedEventTest {
 
     @Test
     internal fun `renewal queued test`() {
-        val configurationProperties = ConfigurationProperties()
+        ConfigurationProperties()
         val customerioService = mockk<CustomerioService>(relaxed = true)
         val memberService = mockk<MemberServiceImpl>()
         val firebaseNotificationService = mockk<FirebaseNotificationService>(relaxed = true)
@@ -27,10 +27,10 @@ class OnContractRenewalQuuedEventTest {
         val repo = InMemoryCustomerIOStateRepository()
         val sut = EventHandler(
             repo = repo,
-            configuration = configurationProperties,
             firebaseNotificationService = firebaseNotificationService,
             customerioService = customerioService,
-            memberService = memberService
+            memberService = memberService,
+            scheduler = mockk()
         )
 
         sut.onContractRenewalQueued(

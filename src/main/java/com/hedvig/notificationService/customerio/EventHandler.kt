@@ -1,5 +1,6 @@
 package com.hedvig.notificationService.customerio
 
+import com.hedvig.notificationService.customerio.customerioEvents.jobs.JobScheduler
 import com.hedvig.notificationService.customerio.dto.ChargeFailedEvent
 import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
 import com.hedvig.notificationService.customerio.dto.ContractRenewalQueuedEvent
@@ -11,6 +12,8 @@ import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.service.FirebaseNotificationService
 import com.hedvig.notificationService.serviceIntegration.memberService.dto.HasPersonSignedBeforeRequest
+import org.quartz.Scheduler
+import org.quartz.SchedulerException
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.Instant
@@ -18,21 +21,30 @@ import java.time.Instant
 @Service
 class EventHandler(
     private val repo: CustomerIOStateRepository,
-    private val configuration: ConfigurationProperties,
     private val firebaseNotificationService: FirebaseNotificationService,
     private val customerioService: CustomerioService,
-    private val memberService: MemberServiceImpl
+    private val memberService: MemberServiceImpl,
+    scheduler: Scheduler
 ) {
+    val jobScheduler = JobScheduler(scheduler)
+
     fun onStartDateUpdatedEvent(
         event: StartDateUpdatedEvent,
         callTime: Instant = Instant.now()
     ) {
+
         val state = repo.findByMemberId(event.owningMemberId)
             ?: CustomerioState(event.owningMemberId)
 
         state.triggerStartDateUpdated(callTime)
         state.updateFirstUpcomingStartDate(event.startDate)
         repo.save(state)
+
+        jobScheduler.rescheduleOrTriggerStartDateUpdated(event, callTime)
+        jobScheduler.rescheduleOrTriggerContractActivatedToday(
+            event.startDate,
+            event.owningMemberId
+        )
     }
 
     fun onContractCreatedEvent(contractCreatedEvent: ContractCreatedEvent, callTime: Instant = Instant.now()) {
@@ -44,6 +56,19 @@ class EventHandler(
 
         state.createContract(contractCreatedEvent.contractId, callTime, contractCreatedEvent.startDate)
         repo.save(state)
+
+        try {
+            jobScheduler.rescheduleOrTriggerContractCreated(contractCreatedEvent, callTime)
+
+            contractCreatedEvent.startDate?.let {
+                jobScheduler.rescheduleOrTriggerContractActivatedToday(
+                    it,
+                    contractCreatedEvent.owningMemberId
+                )
+            }
+        } catch (e: SchedulerException) {
+            throw RuntimeException(e.message, e)
+        }
     }
 
     fun onFailedChargeEvent(memberId: String, chargeFailedEvent: ChargeFailedEvent) {

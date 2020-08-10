@@ -1,6 +1,8 @@
 package com.hedvig.notificationService.customerio
 
 import com.hedvig.customerio.CustomerioClient
+import com.hedvig.notificationService.customerio.customerioEvents.CustomerioEventCreator
+import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import org.slf4j.LoggerFactory
@@ -76,6 +78,21 @@ class CustomerioService(
             )
         } catch (ex: RuntimeException) {
             logger.error("Could not send event to customerio", ex)
+        }
+    }
+
+    @Transactional
+    fun doUpdate(
+        customerioState: CustomerioState,
+        eventCreator: CustomerioEventCreator,
+        contractLoader: ContractLoader
+    ) {
+        try {
+            val contracts = contractLoader.getContractInfoForMember(customerioState.memberId)
+            val eventAndState = eventCreator.execute(customerioState, contracts)
+            sendEventAndUpdateState(customerioState, eventAndState.asMap)
+        } catch (ex: RuntimeException) {
+            logger.error("Could not create event from customerio state", ex)
         }
     }
 }
