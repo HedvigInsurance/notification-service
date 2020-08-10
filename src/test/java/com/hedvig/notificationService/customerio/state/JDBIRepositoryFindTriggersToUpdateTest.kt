@@ -213,7 +213,7 @@ class JDBIRepositoryFindTriggersToUpdateTest(@Autowired val jdbi: Jdbi) {
                             activationDateTriggerAt = timestamp
                         ),
                         timestamp.atStartOfDay(ZoneId.of("UTC")).toInstant(),
-                        1
+                        0
                     )
                 },
                 run {
@@ -224,7 +224,7 @@ class JDBIRepositoryFindTriggersToUpdateTest(@Autowired val jdbi: Jdbi) {
                             activationDateTriggerAt = timestamp
                         ),
                         timestamp.plusDays(1).atStartOfDay(ZoneId.of("UTC")).toInstant(),
-                        1
+                        0
                     )
                 },
                 run {

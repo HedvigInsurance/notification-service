@@ -115,8 +115,6 @@ where cs.member_id = :memberId
                     LEFT JOIN contract_triggers ct on ct.member_id = cs.member_id
                     WHERE 
                         (cs.underwriter_first_sign_attributes_update <= :byTime AND cs.sent_tmp_sign_event = false)
-                    OR
-                        (cs.activation_date_trigger_at <= :byTime)
                 """.trimIndent()
             )
                 .bind("byTime", byTime)
