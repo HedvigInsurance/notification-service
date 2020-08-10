@@ -136,12 +136,20 @@ class JobScheduler(private val scheduler: Scheduler) {
         val jobData = mapOf(
             "memberId" to event.owningMemberId
         )
+        val jobName = "onStartDateUpdatedEvent+${event.contractId}"
 
-        this.scheduleJob(
-            "onStartDateUpdatedEvent+${event.contractId}",
-            jobData,
-            StartDateUpdatedJob::class,
-            callTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES)
+        val successfullRescheduling = rescheduleJob(
+            TriggerKey.triggerKey(jobName, jobGroup),
+            Date.from(callTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
         )
+
+        if (!successfullRescheduling) {
+            this.scheduleJob(
+                jobName,
+                jobData,
+                StartDateUpdatedJob::class,
+                callTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES)
+            )
+        }
     }
 }
