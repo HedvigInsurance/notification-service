@@ -6,6 +6,7 @@ import com.hedvig.notificationService.customerio.dto.ChargeFailedEvent
 import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
 import com.hedvig.notificationService.customerio.dto.ContractRenewalQueuedEvent
 import com.hedvig.notificationService.customerio.dto.QuoteCreatedEvent
+import com.hedvig.notificationService.customerio.dto.RequestEvent
 import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent
 import com.hedvig.notificationService.service.request.EventRequestHandler
 import org.springframework.http.ResponseEntity
@@ -28,9 +29,9 @@ class EventController(
     @PostMapping("/request")
     fun event(
         @RequestHeader(value = "Request-Id") requestId: String,
-        @RequestBody eventJson: JsonNode
+        @RequestBody event: RequestEvent
     ): ResponseEntity<Any> {
-        eventRequestHandler.onEventRequest(requestId, eventJson)
+        eventRequestHandler.onEventRequest(requestId, event)
         return ResponseEntity.accepted().build()
     }
 

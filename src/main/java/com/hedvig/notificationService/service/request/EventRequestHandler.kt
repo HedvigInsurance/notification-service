@@ -14,18 +14,17 @@ import org.springframework.stereotype.Service
 @Service
 class EventRequestHandler(
     private val eventHandler: EventHandler,
-    private val objectMapper: ObjectMapper,
     private val handledRequestRepository: HandledRequestRepository
 ) {
 
     fun onEventRequest(
         requestId: String,
-        eventJson: JsonNode
+        event: RequestEvent
     ) {
         if (handledRequestRepository.isRequestHandled(requestId)) {
             return
         }
-        when (val event = getRequestEvent(eventJson)) {
+        when (event) {
             is ChargeFailedEvent -> eventHandler.onFailedChargeEvent(event)
             is ContractCreatedEvent -> eventHandler.onContractCreatedEvent(event)
             is ContractRenewalQueuedEvent -> eventHandler.onContractRenewalQueued(event)
@@ -33,21 +32,6 @@ class EventRequestHandler(
             is StartDateUpdatedEvent -> eventHandler.onStartDateUpdatedEvent(event)
         }
         handledRequestRepository.storeHandledRequest(requestId)
-    }
-
-    private fun getRequestEvent(eventJson: JsonNode): RequestEvent {
-        val name = eventJson["name"]?.asText()
-            ?: throw NoNameOnEventException(eventJson)
-        val data = eventJson["data"]
-            ?: throw NoDataOnEventException(eventJson)
-        return objectMapper.treeToValue(
-            data,
-            Class.forName("$EVENT_PACKAGE$name")
-        ) as RequestEvent
-    }
-
-    companion object {
-        private val EVENT_PACKAGE = "com.hedvig.notificationService.customerio.dto."
     }
 }
 

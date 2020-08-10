@@ -1,6 +1,8 @@
 package com.hedvig.notificationService.service.event
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.api.HttpBody
+import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent
 import com.hedvig.notificationService.service.request.EventRequestHandler
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.verify
@@ -17,6 +19,8 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.util.CollectionUtils
 import java.net.URI
+import java.time.LocalDate
+import java.util.UUID
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -28,17 +32,15 @@ class WebEventRequestTest {
 
     @Autowired
     lateinit var testRestTemplate: TestRestTemplate
-    @Autowired
-    lateinit var mapper: ObjectMapper
 
     @MockkBean(relaxed = true)
     private lateinit var eventRequestHandler: EventRequestHandler
 
-    val testEvent: Map<String, Any> = mapOf(
-        "name" to "TestEvent",
-        "data" to mapOf<String, Any>(
-            "memberId" to "1234"
-        )
+    val testEvent = mapOf(
+        "simpleClassName" to "StartDateUpdatedEvent",
+        "contractId" to UUID.randomUUID(),
+        "owningMemberId" to "12345",
+        "startDate" to LocalDate.now()
     )
 
     @Test
@@ -51,7 +53,14 @@ class WebEventRequestTest {
         val response = testRestTemplate.postForEntity(url, HttpEntity(body, headers), String::class.java)
 
         verify {
-            eventRequestHandler.onEventRequest(requestId, mapper.valueToTree(body))
+            eventRequestHandler.onEventRequest(
+                requestId,
+                StartDateUpdatedEvent(
+                    testEvent["contractId"].toString(),
+                    testEvent["owningMemberId"].toString(),
+                    LocalDate.parse(testEvent["startDate"].toString())
+                )
+            )
         }
 
         Assertions.assertThat(response.statusCode).isEqualTo(HttpStatus.ACCEPTED)

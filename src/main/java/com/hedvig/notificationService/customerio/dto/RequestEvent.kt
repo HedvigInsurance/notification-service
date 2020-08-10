@@ -1,11 +1,23 @@
 // TODO move this package with the event handler
 package com.hedvig.notificationService.customerio.dto
 
+import com.fasterxml.jackson.annotation.JsonSubTypes
+import com.fasterxml.jackson.annotation.JsonTypeInfo
+import com.fasterxml.jackson.annotation.JsonTypeName
 import com.hedvig.notificationService.customerio.dto.objects.ChargeFailedReason
+import com.hedvig.notificationService.serviceIntegration.underwriter.SwedishApartmentData
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.util.UUID
 
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "simpleClassName")
+@JsonSubTypes(
+    JsonSubTypes.Type(value = ChargeFailedEvent::class, name = "ChargeFailedEvent"),
+    JsonSubTypes.Type(value = ContractCreatedEvent::class, name = "ContractCreatedEvent"),
+    JsonSubTypes.Type(value = ContractRenewalQueuedEvent::class, name = "ContractRenewalQueuedEvent"),
+    JsonSubTypes.Type(value = QuoteCreatedEvent::class, name = "QuoteCreatedEvent"),
+    JsonSubTypes.Type(value = StartDateUpdatedEvent::class, name = "StartDateUpdatedEvent")
+)
 sealed class RequestEvent
 
 data class ChargeFailedEvent(
