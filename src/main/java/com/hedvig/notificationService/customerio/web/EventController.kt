@@ -1,12 +1,11 @@
 package com.hedvig.notificationService.customerio.web
 
-import com.fasterxml.jackson.databind.JsonNode
 import com.hedvig.notificationService.customerio.EventHandler
 import com.hedvig.notificationService.customerio.dto.ChargeFailedEvent
 import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
 import com.hedvig.notificationService.customerio.dto.ContractRenewalQueuedEvent
 import com.hedvig.notificationService.customerio.dto.QuoteCreatedEvent
-import com.hedvig.notificationService.customerio.dto.RequestEvent
+import com.hedvig.notificationService.customerio.dto.EventRequest
 import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent
 import com.hedvig.notificationService.service.request.EventRequestHandler
 import org.springframework.http.ResponseEntity
@@ -19,23 +18,22 @@ import org.springframework.web.bind.annotation.RestController
 import javax.validation.Valid
 
 @RestController
-@RequestMapping("/_/events")
+@RequestMapping("/_/")
 class EventController(
     private val eventHandler: EventHandler,
     private val eventRequestHandler: EventRequestHandler
 ) {
 
-    // TODO maybe better endpoint
-    @PostMapping("/request")
+    @PostMapping("/event")
     fun event(
         @RequestHeader(value = "Request-Id") requestId: String,
-        @RequestBody event: RequestEvent
+        @RequestBody event: EventRequest
     ): ResponseEntity<Any> {
         eventRequestHandler.onEventRequest(requestId, event)
         return ResponseEntity.accepted().build()
     }
 
-    @PostMapping("/contractCreated")
+    @PostMapping("/events/contractCreated")
     fun contractCreated(
         @RequestHeader(value = "Request-Id", required = false) requestId: String?,
         @RequestBody event: ContractCreatedEvent
@@ -47,7 +45,7 @@ class EventController(
         return ResponseEntity.accepted().build()
     }
 
-    @PostMapping("/startDateUpdated")
+    @PostMapping("/events/startDateUpdated")
     fun startDateUpdated(
         @RequestHeader(value = "Request-Id", required = false) requestId: String?,
         @RequestBody event: StartDateUpdatedEvent
@@ -59,7 +57,7 @@ class EventController(
         return ResponseEntity.accepted().build()
     }
 
-    @PostMapping("/contractRenewalQueued")
+    @PostMapping("/events/contractRenewalQueued")
     fun contractRenewalQueued(
         @RequestHeader(value = "Request-Id", required = false) requestId: String?,
         @RequestBody event: ContractRenewalQueuedEvent
@@ -71,7 +69,7 @@ class EventController(
         return ResponseEntity.accepted().build()
     }
 
-    @PostMapping("/{memberId}/chargeFailed")
+    @PostMapping("/events/{memberId}/chargeFailed")
     fun chargeFailed(
         @RequestHeader(value = "Request-Id", required = false) requestId: String?,
         @PathVariable memberId: String,
@@ -88,7 +86,7 @@ class EventController(
         return ResponseEntity.accepted().build()
     }
 
-    @PostMapping("/quoteCreated")
+    @PostMapping("/events/quoteCreated")
     fun quoteCreated(
         @RequestHeader(value = "Request-Id", required = false) requestId: String?,
         @RequestBody event: QuoteCreatedEvent

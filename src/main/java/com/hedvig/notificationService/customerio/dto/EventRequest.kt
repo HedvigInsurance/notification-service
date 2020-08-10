@@ -3,9 +3,7 @@ package com.hedvig.notificationService.customerio.dto
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
-import com.fasterxml.jackson.annotation.JsonTypeName
 import com.hedvig.notificationService.customerio.dto.objects.ChargeFailedReason
-import com.hedvig.notificationService.serviceIntegration.underwriter.SwedishApartmentData
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.util.UUID
@@ -18,7 +16,7 @@ import java.util.UUID
     JsonSubTypes.Type(value = QuoteCreatedEvent::class, name = "QuoteCreatedEvent"),
     JsonSubTypes.Type(value = StartDateUpdatedEvent::class, name = "StartDateUpdatedEvent")
 )
-sealed class RequestEvent
+sealed class EventRequest
 
 data class ChargeFailedEvent(
     val terminationDate: LocalDate?,
@@ -26,7 +24,7 @@ data class ChargeFailedEvent(
     val chargesLeftBeforeTermination: Int?,
     val chargeFailedReason: ChargeFailedReason,
     val memberId: String
-) : RequestEvent() {
+) : EventRequest() {
     fun toMap() = mapOf(
         "name" to "ChargeFailedEvent",
         "data" to mapOf(
@@ -44,14 +42,14 @@ data class ContractCreatedEvent(
     val owningMemberId: String,
     val startDate: LocalDate?,
     val signSource: String? = null
-) : RequestEvent()
+) : EventRequest()
 
 data class ContractRenewalQueuedEvent(
     val contractId: String,
     val contractType: String,
     val memberId: String,
     val renewalQueuedAt: LocalDate
-) : RequestEvent() {
+) : EventRequest() {
     fun toMap() = mapOf(
         "name" to "ContractRenewalQueuedEvent",
         "data" to mapOf(
@@ -78,7 +76,7 @@ data class QuoteCreatedEvent(
     val price: BigDecimal?,
     val currency: String,
     val originatingProductId: UUID?
-) : RequestEvent() {
+) : EventRequest() {
     fun toMap(): Map<String, Any> = mapOf(
         "name" to "QuoteCreatedEvent",
         "data" to mapOf(
@@ -98,4 +96,4 @@ data class StartDateUpdatedEvent(
     val contractId: String,
     val owningMemberId: String,
     val startDate: LocalDate
-) : RequestEvent()
+) : EventRequest()

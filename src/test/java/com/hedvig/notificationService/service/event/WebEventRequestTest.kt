@@ -1,7 +1,5 @@
 package com.hedvig.notificationService.service.event
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.api.HttpBody
 import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent
 import com.hedvig.notificationService.service.request.EventRequestHandler
 import com.ninjasquad.springmockk.MockkBean
@@ -45,7 +43,7 @@ class WebEventRequestTest {
 
     @Test
     fun `verify event request is handled`() {
-        val url = URI("http://localhost:$port/_/events/request")
+        val url = URI("http://localhost:$port/_/event")
 
         val body = testEvent
         val requestId = "requestId"

@@ -1,13 +1,11 @@
 package com.hedvig.notificationService.service.request
 
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.hedvig.notificationService.customerio.EventHandler
 import com.hedvig.notificationService.customerio.dto.ChargeFailedEvent
 import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
 import com.hedvig.notificationService.customerio.dto.ContractRenewalQueuedEvent
 import com.hedvig.notificationService.customerio.dto.QuoteCreatedEvent
-import com.hedvig.notificationService.customerio.dto.RequestEvent
+import com.hedvig.notificationService.customerio.dto.EventRequest
 import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent
 import org.springframework.stereotype.Service
 
@@ -19,7 +17,7 @@ class EventRequestHandler(
 
     fun onEventRequest(
         requestId: String,
-        event: RequestEvent
+        event: EventRequest
     ) {
         if (handledRequestRepository.isRequestHandled(requestId)) {
             return
@@ -34,8 +32,3 @@ class EventRequestHandler(
         handledRequestRepository.storeHandledRequest(requestId)
     }
 }
-
-abstract class ParseEventException(message: String) : Throwable(message)
-
-class NoNameOnEventException(jsonNode: JsonNode) : ParseEventException("No name on event [$jsonNode]")
-class NoDataOnEventException(jsonNode: JsonNode) : ParseEventException("No data on event [$jsonNode]")
