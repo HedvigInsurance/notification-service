@@ -1,7 +1,6 @@
 package com.hedvig.notificationService.customerio.state
 
 import com.hedvig.notificationService.customerio.customerioEvents.jobs.JobScheduler
-import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import java.time.Instant
 import java.time.ZoneId
@@ -19,11 +18,9 @@ class QuartzMigrator(
             val contracts = contractLoader.getContractInfoForMember(state.memberId)
 
             if (state.startDateUpdatedTriggerAt != null) {
+
                 jobScheduler.rescheduleOrTriggerStartDateUpdated(
-                    StartDateUpdatedEvent(
-                        contracts[0]!!.contractId.toString(),
-                        state.memberId, contracts[0].startDate!!
-                    ), now
+                    now, state.memberId
                 )
                 state.sentStartDateUpdatedEvent()
             }

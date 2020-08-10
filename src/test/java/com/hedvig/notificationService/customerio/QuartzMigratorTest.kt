@@ -3,7 +3,6 @@ package com.hedvig.notificationService.customerio
 import assertk.assertThat
 import assertk.assertions.isNull
 import com.hedvig.notificationService.customerio.customerioEvents.jobs.JobScheduler
-import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
@@ -111,9 +110,8 @@ class QuartzMigratorTest {
 
         assertThat(repo.data["someMemberId"]!!.startDateUpdatedTriggerAt).isNull()
         verify {
-            jobScheduler.rescheduleOrTriggerStartDateUpdated(
-                StartDateUpdatedEvent(contractId.toString(), "someMemberId", aRandomStartDate), any()
-            )
+
+            jobScheduler.rescheduleOrTriggerStartDateUpdated(any(), "someMemberId")
         }
     }
 

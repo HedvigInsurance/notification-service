@@ -77,13 +77,13 @@ class OnStartDateUpdatedEventTest {
 
         assertThat(jobSlot).any {
             it.matches(
-                "onStartDateUpdatedEvent+aContractId",
+                "onStartDateUpdatedEvent+aMemberId",
                 StartDateUpdatedJob::class.java,
                 mapOf("memberId" to "aMemberId")
             )
         }
         assertThat(triggerSot).any {
-            it.matches("onStartDateUpdatedEvent+aContractId", Date.from(callTime.plus(10, ChronoUnit.MINUTES)))
+            it.matches("onStartDateUpdatedEvent+aMemberId", Date.from(callTime.plus(10, ChronoUnit.MINUTES)))
         }
     }
 

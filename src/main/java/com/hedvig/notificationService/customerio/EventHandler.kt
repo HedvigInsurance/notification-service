@@ -41,7 +41,7 @@ class EventHandler(
 
         repo.save(state)
 
-        jobScheduler.rescheduleOrTriggerStartDateUpdated(event, callTime)
+        jobScheduler.rescheduleOrTriggerStartDateUpdated(callTime, event.owningMemberId)
         jobScheduler.rescheduleOrTriggerContractActivatedToday(
             event.startDate,
             event.owningMemberId,
