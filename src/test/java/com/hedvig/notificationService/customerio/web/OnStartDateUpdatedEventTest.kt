@@ -1,9 +1,8 @@
 package com.hedvig.notificationService.customerio.web
 
-import assertk.all
 import assertk.assertThat
+import assertk.assertions.any
 import assertk.assertions.isEqualTo
-import assertk.assertions.isTrue
 import com.hedvig.notificationService.customerio.ConfigurationProperties
 import com.hedvig.notificationService.customerio.CustomerioService
 import com.hedvig.notificationService.customerio.EventHandler
@@ -15,12 +14,10 @@ import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRe
 import com.hedvig.notificationService.service.FirebaseNotificationService
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.slot
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.quartz.JobDetail
 import org.quartz.Scheduler
-import org.quartz.SimpleTrigger
 import org.quartz.Trigger
 import java.time.Instant
 import java.time.LocalDate
@@ -53,6 +50,7 @@ class OnStartDateUpdatedEventTest {
 
     @Test
     fun `on start date updated event`() {
+        every { scheduler.getTrigger(any()) } returns null
         every { scheduler.scheduleJob(any(), any()) } returns Date()
 
         val time = Instant.parse("2020-04-27T14:03:23.337770Z")
@@ -66,9 +64,10 @@ class OnStartDateUpdatedEventTest {
     fun `post job to quartz`() {
         val callTime = Instant.parse("2020-04-27T14:03:23.337770Z")
 
-        val jobSlot = slot<JobDetail>()
-        val triggerSot = slot<Trigger>()
+        val jobSlot = mutableListOf<JobDetail>()
+        val triggerSot = mutableListOf<Trigger>()
 
+        every { scheduler.getTrigger(any()) } returns null
         every { scheduler.scheduleJob(capture(jobSlot), capture(triggerSot)) } returns Date()
 
         sut.onStartDateUpdatedEvent(
@@ -76,16 +75,15 @@ class OnStartDateUpdatedEventTest {
             callTime
         )
 
-        assertThat(jobSlot.captured).all {
-            transform { it.key.group }.isEqualTo("customerio.triggers")
-            transform { it.requestsRecovery() }.isTrue()
-            transform { it.jobClass }.isEqualTo(StartDateUpdatedJob::class.java)
-            transform { it.jobDataMap.get("memberId") }.isEqualTo("aMemberId")
+        assertThat(jobSlot).any {
+            it.matches(
+                "onStartDateUpdatedEvent+aContractId",
+                StartDateUpdatedJob::class.java,
+                mapOf("memberId" to "aMemberId")
+            )
         }
-        assertThat(triggerSot.captured).all {
-            transform { it.key.group }.isEqualTo("customerio.triggers")
-            transform { it.misfireInstruction }.isEqualTo(SimpleTrigger.MISFIRE_INSTRUCTION_FIRE_NOW)
-            transform { it.startTime }.isEqualTo(Date.from(callTime.plus(10, ChronoUnit.MINUTES)))
+        assertThat(triggerSot).any {
+            it.matches("onStartDateUpdatedEvent+aContractId", Date.from(callTime.plus(10, ChronoUnit.MINUTES)))
         }
     }
 
@@ -96,6 +94,7 @@ class OnStartDateUpdatedEventTest {
 
         repo.save(CustomerioState("aMemberId", null, startDateUpdatedTriggerAt = timeOfFirstCall))
 
+        every { scheduler.getTrigger(any()) } returns null
         every { scheduler.scheduleJob(any(), any()) } returns Date()
 
         sut.onStartDateUpdatedEvent(
@@ -117,6 +116,7 @@ class OnStartDateUpdatedEventTest {
                 activationDateTriggerAt = LocalDate.of(2020, 4, 1)
             )
         )
+        every { scheduler.getTrigger(any()) } returns null
         every { scheduler.scheduleJob(any(), any()) } returns Date()
 
         val timeOfCall = Instant.parse("2020-04-27T14:03:23.337770Z")
@@ -135,6 +135,7 @@ class OnStartDateUpdatedEventTest {
     @Test
     fun `without existing state set activation date trigger to startdate`() {
 
+        every { scheduler.getTrigger(any()) } returns null
         every { scheduler.scheduleJob(any(), any()) } returns Date()
 
         val timeOfFirstCall = Instant.parse("2020-04-27T14:03:23.337770Z")

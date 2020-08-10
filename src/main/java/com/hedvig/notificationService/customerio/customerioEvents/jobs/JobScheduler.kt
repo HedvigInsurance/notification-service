@@ -40,16 +40,11 @@ class JobScheduler(private val scheduler: Scheduler) {
     }
 
     fun rescheduleJob(
-        callTime: Instant,
-        triggerKey: TriggerKey
+        triggerKey: TriggerKey,
+        newStartTime: Date?
     ): Boolean {
         val existingTrigger = scheduler.getTrigger(triggerKey) ?: return false
 
-        val newStartTime = Date.from(
-            callTime.plus(
-                SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES
-            )
-        )
         scheduler.rescheduleJob(
             triggerKey, existingTrigger.triggerBuilder.startAt(
                 newStartTime
@@ -90,7 +85,13 @@ class JobScheduler(private val scheduler: Scheduler) {
         val jobName = "onContractCreatedEvent-${contractCreatedEvent.owningMemberId}"
         val triggerKey = TriggerKey.triggerKey(jobName, jobGroup)
 
-        val jobRescheduled = this.rescheduleJob(callTime, triggerKey)
+        val jobRescheduled = this.rescheduleJob(
+            triggerKey, Date.from(
+                callTime.plus(
+                    SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES
+                )
+            )
+        )
 
         if (!jobRescheduled) {
             val jobData = mapOf(
@@ -108,16 +109,24 @@ class JobScheduler(private val scheduler: Scheduler) {
 
     fun rescheduleOrTriggerContractActivatedToday(contractCreatedEvent: ContractCreatedEvent, callTime: Instant) {
         if (contractCreatedEvent.startDate != null) {
-            val jobData = mapOf(
-                "memberId" to contractCreatedEvent.owningMemberId
-            )
+            val jobName = "contractActivatedTodayJob-aContractId"
+            val triggerKey = TriggerKey(jobName, jobGroup)
 
-            this.scheduleJob(
-                "contractActivatedTodayJob-aContractId",
-                jobData,
-                ContractActivatedTodayJob::class,
-                contractCreatedEvent.startDate.atStartOfDay(ZoneId.of("Europe/Stockholm")).toInstant()
-            )
+            val triggerTime = contractCreatedEvent.startDate.atStartOfDay(ZoneId.of("Europe/Stockholm")).toInstant()
+            val jobExisted = rescheduleJob(triggerKey, Date.from(triggerTime))
+
+            if (!jobExisted) {
+                val jobData = mapOf(
+                    "memberId" to contractCreatedEvent.owningMemberId
+                )
+
+                this.scheduleJob(
+                    jobName,
+                    jobData,
+                    ContractActivatedTodayJob::class,
+                    triggerTime
+                )
+            }
         }
     }
 

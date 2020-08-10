@@ -17,10 +17,13 @@ import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRe
 import com.hedvig.notificationService.service.FirebaseNotificationService
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import org.junit.Test
 import org.quartz.JobDetail
 import org.quartz.Scheduler
 import org.quartz.Trigger
+import org.quartz.TriggerBuilder
+import org.quartz.TriggerKey
 import java.time.LocalDate
 import java.time.ZoneId
 import java.util.Date
@@ -65,6 +68,7 @@ class SchedulingOfActivationDateActiveTodayJobTest {
 
         val capturedJobDetails = mutableListOf<JobDetail>()
         val triggerSlot = mutableListOf<Trigger>()
+        every { scheduler.getTrigger(any()) } returns null
         every { scheduler.scheduleJob(capture(capturedJobDetails), capture(triggerSlot)) } returns Date()
 
         sut.onContractCreatedEvent(
@@ -96,6 +100,7 @@ class SchedulingOfActivationDateActiveTodayJobTest {
 
         val capturedJobDetails = mutableListOf<JobDetail>()
         val triggerSlot = mutableListOf<Trigger>()
+        every { scheduler.getTrigger(any()) } returns null
         every { scheduler.scheduleJob(capture(capturedJobDetails), capture(triggerSlot)) } returns Date()
 
         sut.onStartDateUpdatedEvent(
@@ -121,19 +126,52 @@ class SchedulingOfActivationDateActiveTodayJobTest {
             )
         }
     }
+
+    @Test
+    fun `start date updated event reschedules job`() {
+
+        val capturedJobDetails = mutableListOf<TriggerKey>()
+        val triggerSlot = mutableListOf<Trigger>()
+        every { scheduler.rescheduleJob(any(), any()) } returns Date()
+
+        every { scheduler.getTrigger(any()) } returns TriggerBuilder
+            .newTrigger()
+            .withIdentity("contractActivatedTodayJob-aContractId", "customerio.triggers")
+            .build()
+
+        sut.onStartDateUpdatedEvent(
+            StartDateUpdatedEvent(
+                "aContractId",
+                "aMemberId",
+                LocalDate.of(2020, 9, 1)
+            )
+        )
+
+        verify { scheduler.rescheduleJob(capture(capturedJobDetails), capture(triggerSlot)) }
+        assertThat(triggerSlot).any {
+            it.matches(
+                "contractActivatedTodayJob-aContractId",
+                Date.from(LocalDate.of(2020, 9, 1).atStartOfDay(ZoneId.of("Europe/Stockholm")).toInstant())
+            )
+        }
+    }
 }
 
 fun Assert<Trigger>.matches(
     name: String,
-    startDate: Date
+    startTime: Date
 ) = given { actual ->
 
     if (
         name == actual.key.name &&
-        startDate == actual.startTime
+        startTime == actual.startTime
     ) return@given
 
-    expected("${show(actual)} did not match expected")
+    expected(
+        "Trigger with name ${show(actual.key.name)} and startTime ${show(actual.startTime)} did not match ${show(
+            name
+        )} and $startTime"
+    )
 }
 
 fun Assert<JobDetail>.matches(
