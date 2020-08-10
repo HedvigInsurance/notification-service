@@ -3,7 +3,7 @@ package com.hedvig.notificationService.customerio.web
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import com.hedvig.notificationService.customerio.CustomerioService
-import com.hedvig.notificationService.customerio.EventHandler
+import com.hedvig.notificationService.service.event.EventHandler
 import com.hedvig.notificationService.customerio.dto.ChargeFailedEvent
 import com.hedvig.notificationService.customerio.dto.objects.ChargeFailedReason
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl

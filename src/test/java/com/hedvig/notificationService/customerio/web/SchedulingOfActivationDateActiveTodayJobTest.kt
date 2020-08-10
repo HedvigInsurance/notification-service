@@ -8,7 +8,7 @@ import assertk.assertions.none
 import assertk.assertions.support.expected
 import assertk.assertions.support.show
 import com.hedvig.notificationService.customerio.CustomerioService
-import com.hedvig.notificationService.customerio.EventHandler
+import com.hedvig.notificationService.service.event.EventHandler
 import com.hedvig.notificationService.customerio.customerioEvents.jobs.ContractActivatedTodayJob
 import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
 import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent

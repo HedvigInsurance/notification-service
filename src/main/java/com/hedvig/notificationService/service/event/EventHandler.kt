@@ -1,7 +1,6 @@
-// TODO: I think we should move this one to package com.hedvig.notificationService.service hence its not really just customer io
-// but I'm thinking of the merge conflict, will move it before opening the pr
-package com.hedvig.notificationService.customerio
+package com.hedvig.notificationService.service.event
 
+import com.hedvig.notificationService.customerio.CustomerioService
 import com.hedvig.notificationService.customerio.customerioEvents.jobs.JobScheduler
 import com.hedvig.notificationService.customerio.dto.ChargeFailedEvent
 import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent

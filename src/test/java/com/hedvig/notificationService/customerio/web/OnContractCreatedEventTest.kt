@@ -8,7 +8,7 @@ import assertk.assertions.isNull
 import assertk.assertions.isTrue
 import com.hedvig.notificationService.customerio.ConfigurationProperties
 import com.hedvig.notificationService.customerio.CustomerioService
-import com.hedvig.notificationService.customerio.EventHandler
+import com.hedvig.notificationService.service.event.EventHandler
 import com.hedvig.notificationService.customerio.SIGN_EVENT_WINDOWS_SIZE_MINUTES
 import com.hedvig.notificationService.customerio.customerioEvents.jobs.ContractCreatedJob
 import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent

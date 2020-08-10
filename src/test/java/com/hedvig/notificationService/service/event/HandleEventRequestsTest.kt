@@ -1,6 +1,5 @@
 package com.hedvig.notificationService.service.event
 
-import com.hedvig.notificationService.customerio.EventHandler
 import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent
 import com.hedvig.notificationService.service.request.EventRequestHandler
 import com.hedvig.notificationService.service.request.HandledRequestRepository
