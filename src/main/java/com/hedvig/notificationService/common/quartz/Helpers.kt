@@ -55,4 +55,4 @@ fun rescheduleJob(context: JobExecutionContext, errorFunction: (ex: Exception) -
 }
 
 fun JobDataMap.getIntOrNull(key: String): Int? =
-    this.getString(key)?.toIntOrNull()
+    this.getString(key)?.toInt()
