@@ -5,8 +5,7 @@ import com.hedvig.notificationService.customerio.customerioEvents.CustomerioEven
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.customerio.state.CustomerioState
-import com.hedvig.notificationService.customerio.state.EventHash
-import com.hedvig.notificationService.customerio.state.EventHashRepository
+import com.hedvig.notificationService.customerio.state.IdempotenceHashRepository
 import okhttp3.internal.toHexString
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -18,7 +17,7 @@ class CustomerioService(
     private val workspaceSelector: WorkspaceSelector,
     private val stateRepository: CustomerIOStateRepository,
     private val clients: Map<Workspace, CustomerioClient>,
-    private val eventHashRepository: EventHashRepository
+    private val idempotenceHashRepository: IdempotenceHashRepository
 ) {
 
     private val logger = LoggerFactory.getLogger(CustomerioService::class.java)
@@ -67,7 +66,7 @@ class CustomerioService(
         val hash = body.hashCode().toHexString()
         mutableMap["hash"] = hash
         clients[marketForMember]?.sendEvent(memberId, mutableMap.toMap())
-        eventHashRepository.save(memberId, hash)
+        idempotenceHashRepository.save(memberId, hash)
     }
 
     @Transactional
@@ -96,6 +95,18 @@ class CustomerioService(
             sendEventAndUpdateState(customerioState, eventAndState.asMap)
         } catch (ex: RuntimeException) {
             logger.error("Could not create event from customerio state", ex)
+        }
+    }
+
+    @Transactional
+    fun removeIdempotenceHash(memberId: String, hash: String) {
+        try {
+            val marketForMember = workspaceSelector.getWorkspaceForMember(memberId)
+
+            clients[marketForMember]?.sendEvent(memberId, mapOf("name" to "RemoveIdempotenceHash", "hash" to hash))
+            idempotenceHashRepository.delete(memberId, hash)
+        } catch (ex: RuntimeException) {
+            logger.error("Could not remove idempotence hash: $hash, memberId: $memberId", ex)
         }
     }
 }

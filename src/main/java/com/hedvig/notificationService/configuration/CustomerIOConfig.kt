@@ -5,6 +5,7 @@ import com.hedvig.customerio.Customerio
 import com.hedvig.customerio.CustomerioClient
 import com.hedvig.customerio.CustomerioMock
 import com.hedvig.notificationService.customerio.ConfigurationProperties
+import com.hedvig.notificationService.customerio.CustomerioRemoveIdempotenceHashesJob
 import com.hedvig.notificationService.customerio.CustomerioUpdateScheduler
 import com.hedvig.notificationService.customerio.Workspace
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoaderImpl
@@ -26,7 +27,6 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.event.ContextRefreshedEvent
 import org.springframework.context.event.EventListener
 import org.springframework.scheduling.annotation.EnableScheduling
-import java.time.Instant
 import javax.annotation.PostConstruct
 
 @Configuration
@@ -48,7 +48,7 @@ class CustomerIOConfig(
 
     @EventListener
     fun onContextRefereshedEvent(event: ContextRefreshedEvent) {
-        quartzMigrator.migrate(Instant.now())
+        //quartzMigrator.migrate(Instant.now())
     }
 
     @Bean()
@@ -100,6 +100,29 @@ class CustomerIOConfig(
             .forJob(job)
             .withIdentity("Customerio_update_scheduler_trigger")
             .withSchedule(simpleSchedule().repeatForever().withIntervalInSeconds(30))
+            .startNow()
+            .build()
+
+        if (!scheduler.checkExists(job.key) && !scheduler.checkExists(trigger.key)) {
+            scheduler.scheduleJob(job, trigger)
+        }
+        scheduler.start()
+    }
+
+    @PostConstruct
+    fun scheduleRemoveHashes() {
+        val job = JobBuilder.newJob()
+            .ofType(CustomerioRemoveIdempotenceHashesJob::class.java)
+            .withIdentity("Customerio_remove_idempotence_hashes")
+            .withDescription("Customer.io remove hashes scheduler")
+            .requestRecovery(true)
+            .build()
+
+        val trigger = TriggerBuilder
+            .newTrigger()
+            .forJob(job)
+            .withIdentity("Customerio_remove_idempotence_hashes_trigger")
+            .withSchedule(simpleSchedule().repeatForever().withIntervalInHours(1))
             .startNow()
             .build()
 

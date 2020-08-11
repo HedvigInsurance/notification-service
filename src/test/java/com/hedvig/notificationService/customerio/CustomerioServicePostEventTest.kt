@@ -1,7 +1,7 @@
 package com.hedvig.notificationService.customerio
 
 import com.hedvig.customerio.CustomerioClient
-import com.hedvig.notificationService.customerio.state.EventHashRepository
+import com.hedvig.notificationService.customerio.state.IdempotenceHashRepository
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import io.mockk.every
 import io.mockk.mockk
@@ -13,7 +13,7 @@ class CustomerioServicePostEventTest {
     val sweClient = mockk<CustomerioClient>(relaxed = true)
     val noClient = mockk<CustomerioClient>(relaxed = true)
     val workspaceSelector = mockk<WorkspaceSelector>()
-    val eventHashRepository = mockk<EventHashRepository>(relaxed = true)
+    val eventHashRepository = mockk<IdempotenceHashRepository>(relaxed = true)
 
     val sut = CustomerioService(
         workspaceSelector,

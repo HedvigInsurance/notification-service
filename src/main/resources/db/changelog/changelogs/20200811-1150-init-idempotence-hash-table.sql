@@ -1,8 +1,8 @@
 --liquibase formatted.sql
 
---changeset fredrikareschoug:20200811-1150-init-event-hash-table.sql
+--changeset fredrikareschoug:20200811-1150-init-idempotence-hash-table.sql
 
-CREATE TABLE event_hash
+CREATE TABLE idempotence_hash
 (
     member_id varchar(255) not null,
     hash varchar(255) not null,
@@ -10,4 +10,4 @@ CREATE TABLE event_hash
     primary key (member_id, hash)
 )
 
---rollback DROP TABLE event_hash
+--rollback DROP TABLE idempotence_hash
