@@ -6,13 +6,12 @@ import org.quartz.JobExecutionContext
 import org.springframework.scheduling.quartz.QuartzJobBean
 import java.time.Instant
 
-
 @DisallowConcurrentExecution
 open class CustomerioRemoveIdempotenceHashesJob(
     private val eventHashRepository: IdempotenceHashRepository,
     private val customerioService: CustomerioService
 ) : QuartzJobBean() {
-    
+
     override fun executeInternal(context: JobExecutionContext) {
         val hashesToBeRemoved = eventHashRepository.findBefore(Instant.now().minusSeconds(SEVEN_DAYS_IN_SECONDS))
         hashesToBeRemoved.forEach {

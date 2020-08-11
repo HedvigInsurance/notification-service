@@ -57,7 +57,6 @@ class CustomerioServicePostEventTest {
             )
         )
 
-
         sut.sendEvent(memberId, event)
 
         val expectedHash = "da0bfe4d"
