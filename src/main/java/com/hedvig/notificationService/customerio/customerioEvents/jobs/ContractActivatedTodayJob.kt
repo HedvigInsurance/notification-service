@@ -5,6 +5,7 @@ import com.hedvig.notificationService.customerio.CustomerioService
 import com.hedvig.notificationService.customerio.customerioEvents.CustomerioEventCreator
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
+import datadog.trace.api.Trace
 import org.quartz.DisallowConcurrentExecution
 import org.quartz.JobExecutionContext
 import org.quartz.PersistJobDataAfterExecution
@@ -21,6 +22,7 @@ class ContractActivatedTodayJob(
 ) : QuartzJobBean() {
     private val logger = LoggerFactory.getLogger(ContractActivatedTodayJob::class.java)
 
+    @Trace
     override fun executeInternal(jobContext: JobExecutionContext) {
         executeWithRetry(jobContext,
             {
@@ -28,6 +30,9 @@ class ContractActivatedTodayJob(
             }
         ) {
             val memberId = jobContext.mergedJobDataMap.get("memberId") as String
+
+            logger.info("Running ContractActivatedTodayJob.executeInternal with member $memberId")
+
             val customerioState = customerIOStateRepository.findByMemberId(memberId)!!
             val contracts = contractLoader.getContractInfoForMember(customerioState.memberId)
             val eventAndState = eventCreator.sendActivatesToday(customerioState, contracts)
