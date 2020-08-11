@@ -1,18 +1,11 @@
 package com.hedvig.notificationService.customerio
 
-import assertk.assertThat
-import assertk.assertions.isEqualTo
 import com.hedvig.customerio.CustomerioClient
-import com.hedvig.notificationService.customerio.builders.a
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.slot
 import io.mockk.verify
-import okhttp3.internal.toHexString
 import org.junit.Test
-import org.quartz.JobDetail
-import java.util.Date
 
 class CustomerioServicePostEventTest {
 
@@ -35,7 +28,7 @@ class CustomerioServicePostEventTest {
 
         sut.sendEvent("8080", mapOf("someKey" to 42))
 
-        verify { sweClient.sendEvent("8080", mapOf("someKey" to 42)) }
+        verify { sweClient.sendEvent("8080", mapOf("someKey" to 42, "hash" to "87059ce1")) }
     }
 
     @Test
@@ -44,7 +37,7 @@ class CustomerioServicePostEventTest {
 
         sut.sendEvent("8080", mapOf("someKey" to 42))
 
-        verify { noClient.sendEvent("8080", mapOf("someKey" to 42)) }
+        verify { noClient.sendEvent("8080", mapOf("someKey" to 42, "hash" to "87059ce1")) }
     }
 
     @Test
@@ -64,9 +57,38 @@ class CustomerioServicePostEventTest {
 
         sut.sendEvent(memberId, event)
 
-        val expectedMap = event.toMutableMap()
-        expectedMap["hash"] = "da0bfe4d"
+        val expectedMap =  createExpectedMap(event, "da0bfe4d")
 
         verify { sweClient.sendEvent(memberId, expectedMap) }
     }
+
+    @Test
+    fun `hash is unique on send event`() {
+        val memberOne = "1234"
+        val memberTwo = "4321"
+        val memberThree = "2234"
+        every { workspaceSelector.getWorkspaceForMember(memberOne) } returns Workspace.SWEDEN
+        every { workspaceSelector.getWorkspaceForMember(memberTwo) } returns Workspace.SWEDEN
+        every { workspaceSelector.getWorkspaceForMember(memberThree) } returns Workspace.SWEDEN
+
+        val eventMemberOne = mapOf("name" to "SomeCoolEvent", "data" to mapOf("attr1" to "4312", "attr2" to 231))
+        val eventMemberTwo = mapOf("name" to "OtherCoolEvent", "data" to mapOf("attr1" to 13, "attr2" to 231))
+        val eventMemberThree = mapOf("name" to "SomeCoolEvent", "data" to mapOf("attr1" to "different value", "attr2" to 231))
+
+        sut.sendEvent(memberOne, eventMemberOne)
+        sut.sendEvent(memberTwo, eventMemberTwo)
+        sut.sendEvent(memberThree, eventMemberThree)
+
+        val expectedMapOne = createExpectedMap(eventMemberOne, "c77b42")
+        verify { sweClient.sendEvent(memberOne, expectedMapOne) }
+
+        val expectedMapTwo = createExpectedMap(eventMemberTwo, "fddf54a3")
+        verify { sweClient.sendEvent(memberTwo, expectedMapTwo) }
+
+        val expectedMapThree = createExpectedMap(eventMemberThree, "ace32530")
+        verify { sweClient.sendEvent(memberThree, expectedMapThree) }
+    }
+
+    fun createExpectedMap(map: Map<String, Any>, hash: String) =
+        map.toMutableMap().also { it["hash"] = hash }
 }
