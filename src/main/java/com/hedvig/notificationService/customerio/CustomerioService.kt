@@ -60,7 +60,9 @@ class CustomerioService(
 
     fun sendEvent(memberId: String, body: Map<String, Any?>) {
         val marketForMember = workspaceSelector.getWorkspaceForMember(memberId)
-        clients[marketForMember]?.sendEvent(memberId, body)
+        val mutableMap = body.toMutableMap()
+        mutableMap["hash"] = body.hashCode().toHexString()
+        clients[marketForMember]?.sendEvent(memberId, mutableMap.toMap())
     }
 
     @Transactional
