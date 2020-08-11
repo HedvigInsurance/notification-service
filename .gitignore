@@ -32,6 +32,7 @@ target/*
 application.yaml
 application-development.yml
 application-test.yml
+application-local.yml
 service-account.json
 
 # vscode
@@ -44,3 +45,4 @@ service-account.json
 # jenv
 .java-version
 /private/
+
