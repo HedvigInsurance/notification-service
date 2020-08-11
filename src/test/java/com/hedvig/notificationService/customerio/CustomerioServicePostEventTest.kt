@@ -61,11 +61,12 @@ class CustomerioServicePostEventTest {
             )
         )
 
-        val mapSlot = slot<Map<String, Any>>()
-        every { sweClient.sendEvent(any(), capture(mapSlot)) } returns Unit
 
-        sut.sendEvent("1234", event)
+        sut.sendEvent(memberId, event)
 
-        assertThat { mapSlot.captured["hash"] }.isEqualTo("da0bfe4d")
+        val expectedMap = event.toMutableMap()
+        expectedMap["hash"] = "da0bfe4d"
+
+        verify { sweClient.sendEvent(memberId, expectedMap) }
     }
 }
