@@ -6,6 +6,7 @@ import com.hedvig.notificationService.customerio.CustomerioUpdateScheduler
 import com.hedvig.notificationService.customerio.customerioEvents.CustomerioEventCreator
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
+import datadog.trace.api.Trace
 import org.quartz.DisallowConcurrentExecution
 import org.quartz.JobExecutionContext
 import org.quartz.PersistJobDataAfterExecution
@@ -22,6 +23,7 @@ class StartDateUpdatedJob(
 ) : QuartzJobBean() {
     private val logger = LoggerFactory.getLogger(CustomerioUpdateScheduler::class.java)
 
+    @Trace
     override fun executeInternal(jobContext: JobExecutionContext) {
 
         executeWithRetry(jobContext,
