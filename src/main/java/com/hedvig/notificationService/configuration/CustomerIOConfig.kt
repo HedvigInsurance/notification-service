@@ -130,6 +130,5 @@ class CustomerIOConfig(
         if (!scheduler.checkExists(job.key) && !scheduler.checkExists(trigger.key)) {
             scheduler.scheduleJob(job, trigger)
         }
-        scheduler.start()
     }
 }
