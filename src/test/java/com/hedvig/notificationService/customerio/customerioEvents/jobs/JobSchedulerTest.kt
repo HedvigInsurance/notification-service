@@ -3,7 +3,7 @@ package com.hedvig.notificationService.customerio.customerioEvents.jobs
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import com.hedvig.notificationService.customerio.SIGN_EVENT_WINDOWS_SIZE_MINUTES
-import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent
+import com.hedvig.notificationService.service.event.StartDateUpdatedEvent
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot

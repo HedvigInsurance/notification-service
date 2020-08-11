@@ -1,6 +1,6 @@
 package com.hedvig.notificationService.customerio.builders
 
-import com.hedvig.notificationService.customerio.dto.QuoteCreatedEvent
+import com.hedvig.notificationService.service.event.QuoteCreatedEvent
 import java.math.BigDecimal
 import java.util.UUID
 

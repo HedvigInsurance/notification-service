@@ -1,4 +1,4 @@
-package com.hedvig.notificationService.service
+package com.hedvig.notificationService.service.firebase
 
 import com.hedvig.notificationService.entities.FirebaseToken
 import java.util.Optional

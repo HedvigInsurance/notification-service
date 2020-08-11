@@ -1,4 +1,4 @@
-package com.hedvig.notificationService.service
+package com.hedvig.notificationService.service.firebase
 
 object TextKeys {
 

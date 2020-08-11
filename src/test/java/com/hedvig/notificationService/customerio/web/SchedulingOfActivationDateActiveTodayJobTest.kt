@@ -8,13 +8,14 @@ import assertk.assertions.none
 import assertk.assertions.support.expected
 import assertk.assertions.support.show
 import com.hedvig.notificationService.customerio.CustomerioService
-import com.hedvig.notificationService.customerio.EventHandler
+import com.hedvig.notificationService.service.event.EventHandler
 import com.hedvig.notificationService.customerio.customerioEvents.jobs.ContractActivatedTodayJob
-import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
-import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent
+import com.hedvig.notificationService.service.event.ContractCreatedEvent
+import com.hedvig.notificationService.service.event.StartDateUpdatedEvent
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
-import com.hedvig.notificationService.service.FirebaseNotificationService
+import com.hedvig.notificationService.service.firebase.FirebaseNotificationService
+import com.hedvig.notificationService.service.request.HandledRequestRepository
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -35,13 +36,15 @@ class SchedulingOfActivationDateActiveTodayJobTest {
     val customerioService = mockk<CustomerioService>()
     val memberService = mockk<MemberServiceImpl>()
     val scheduler = mockk<Scheduler>(relaxed = true)
+    val handledRequestRepository = mockk<HandledRequestRepository>(relaxed = true)
     val sut: EventHandler =
         EventHandler(
             repo,
             firebaseNotificationService,
             customerioService,
             memberService,
-            scheduler
+            scheduler,
+            handledRequestRepository
         )
 
     @Test

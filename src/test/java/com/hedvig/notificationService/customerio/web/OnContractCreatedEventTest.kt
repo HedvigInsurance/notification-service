@@ -8,15 +8,16 @@ import assertk.assertions.isNull
 import assertk.assertions.isTrue
 import com.hedvig.notificationService.customerio.ConfigurationProperties
 import com.hedvig.notificationService.customerio.CustomerioService
-import com.hedvig.notificationService.customerio.EventHandler
+import com.hedvig.notificationService.service.event.EventHandler
 import com.hedvig.notificationService.customerio.SIGN_EVENT_WINDOWS_SIZE_MINUTES
 import com.hedvig.notificationService.customerio.customerioEvents.jobs.ContractCreatedJob
-import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
+import com.hedvig.notificationService.service.event.ContractCreatedEvent
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
-import com.hedvig.notificationService.service.FirebaseNotificationService
+import com.hedvig.notificationService.service.firebase.FirebaseNotificationService
+import com.hedvig.notificationService.service.request.HandledRequestRepository
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -41,6 +42,8 @@ class OnContractCreatedEventTest {
     @MockK
     lateinit var contractLoader: ContractLoader
 
+    val handledRequestRepository = mockk<HandledRequestRepository>(relaxed = true)
+
     private val repository = InMemoryCustomerIOStateRepository()
     lateinit var sut: EventHandler
     val scheduler: Scheduler = mockk(relaxed = true)
@@ -52,18 +55,20 @@ class OnContractCreatedEventTest {
         val customerioService = mockk<CustomerioService>()
         val memberService = mockk<MemberServiceImpl>()
         val firebaseNotificationService = mockk<FirebaseNotificationService>()
+
         sut = EventHandler(
             repo = repository,
             firebaseNotificationService = firebaseNotificationService,
             customerioService = customerioService,
             memberService = memberService,
-            scheduler = scheduler
+            scheduler = scheduler,
+            handledRequestRepository = handledRequestRepository
         )
     }
 
     @Test
     fun onContractCreatedEvent() {
-
+        val requestId = "un handled request id"
         val jobSlot = slot<JobDetail>()
         val triggerSot = slot<Trigger>()
 
@@ -72,12 +77,14 @@ class OnContractCreatedEventTest {
 
         val callTime = Instant.parse("2020-04-27T09:20:42.815351Z")
 
-        sut.onContractCreatedEvent(
+        sut.onContractCreatedEventHandleRequest(
             ContractCreatedEvent(
                 "someEventId",
                 "1337",
                 null
-            ), callTime
+            ),
+            callTime,
+            requestId
         )
 
         assertThat(repository.data["1337"]?.contractCreatedTriggerAt).isNull()
@@ -101,6 +108,7 @@ class OnContractCreatedEventTest {
                 )
             )
         }
+        verify { handledRequestRepository.storeHandledRequest(requestId) }
     }
 
     @Test
@@ -127,7 +135,7 @@ class OnContractCreatedEventTest {
         val newTriggerSlot = slot<Trigger>()
         every { scheduler.rescheduleJob(capture(oldTriggerKeySlot), capture(newTriggerSlot)) } returns Date()
 
-        sut.onContractCreatedEvent(
+        sut.onContractCreatedEventHandleRequest(
             ContractCreatedEvent(
                 "someEventId",
                 "1337",
@@ -158,7 +166,7 @@ class OnContractCreatedEventTest {
 
         val callTime = Instant.parse("2020-04-27T09:20:42.815351Z")
 
-        sut.onContractCreatedEvent(
+        sut.onContractCreatedEventHandleRequest(
             ContractCreatedEvent(
                 "someEventId",
                 "1337",
@@ -176,7 +184,7 @@ class OnContractCreatedEventTest {
         val stateCreatedAt = Instant.parse("2020-04-27T09:20:42.815351Z").minusMillis(3000)
         val time = Instant.parse("2020-04-27T09:20:42.815351Z")
 
-        sut.onContractCreatedEvent(
+        sut.onContractCreatedEventHandleRequest(
             ContractCreatedEvent(
                 "someEventId",
                 "1337",
@@ -201,7 +209,7 @@ class OnContractCreatedEventTest {
         )
         val time = Instant.parse("2020-04-27T09:20:42.815351Z")
 
-        sut.onContractCreatedEvent(
+        sut.onContractCreatedEventHandleRequest(
             ContractCreatedEvent(
                 "someEventId",
                 "1337",
@@ -226,7 +234,7 @@ class OnContractCreatedEventTest {
         )
         val time = Instant.parse("2020-04-27T09:20:42.815351Z")
 
-        sut.onContractCreatedEvent(
+        sut.onContractCreatedEventHandleRequest(
             ContractCreatedEvent(
                 "someEventId",
                 "1337",
@@ -248,7 +256,7 @@ class OnContractCreatedEventTest {
         )
 
         val time = Instant.parse("2020-04-27T09:20:42.815351Z")
-        sut.onContractCreatedEvent(
+        sut.onContractCreatedEventHandleRequest(
             ContractCreatedEvent(
                 "someEventId",
                 "1337",
@@ -257,5 +265,22 @@ class OnContractCreatedEventTest {
         )
 
         assertThat(repository.data["1337"]?.activationDateTriggerAt).isNull()
+    }
+
+    @Test
+    fun `handled request dose nothing`() {
+        val requestId = "handled request id"
+        every { handledRequestRepository.isRequestHandled(requestId) } returns true
+
+        sut.onContractCreatedEventHandleRequest(
+            ContractCreatedEvent(
+                "someEventId",
+                "1337",
+                null
+            ),
+            requestId = requestId
+        )
+
+        assertThat(repository.data["1337"]).isNull()
     }
 }

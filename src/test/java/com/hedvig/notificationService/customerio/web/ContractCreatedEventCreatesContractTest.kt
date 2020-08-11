@@ -7,12 +7,13 @@ import assertk.assertions.extracting
 import assertk.assertions.isNotNull
 import com.hedvig.notificationService.customerio.ConfigurationProperties
 import com.hedvig.notificationService.customerio.CustomerioService
-import com.hedvig.notificationService.customerio.EventHandler
-import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
+import com.hedvig.notificationService.service.event.EventHandler
+import com.hedvig.notificationService.service.event.ContractCreatedEvent
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
-import com.hedvig.notificationService.service.FirebaseNotificationService
+import com.hedvig.notificationService.service.firebase.FirebaseNotificationService
+import com.hedvig.notificationService.service.request.HandledRequestRepository
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.mockk
@@ -29,13 +30,15 @@ class ContractCreatedEventCreatesContractTest {
     val firebaseNotificationService = mockk<FirebaseNotificationService>()
     val customerioService = mockk<CustomerioService>()
     val memberService = mockk<MemberServiceImpl>()
+    val handledRequestRepository = mockk<HandledRequestRepository>()
     val scheduler: Scheduler = mockk(relaxed = true)
     val sut = EventHandler(
         repo = repo,
         firebaseNotificationService = firebaseNotificationService,
         customerioService = customerioService,
         memberService = memberService,
-        scheduler = scheduler
+        scheduler = scheduler,
+        handledRequestRepository = handledRequestRepository
     )
 
     @BeforeEach
@@ -47,8 +50,12 @@ class ContractCreatedEventCreatesContractTest {
     @Test
     internal fun `after contract created with no existing contracts a contract exists`() {
 
-        sut.onContractCreatedEvent(
-            ContractCreatedEvent("theContractId", "aMemberId", null),
+        sut.onContractCreatedEventHandleRequest(
+            ContractCreatedEvent(
+                "theContractId",
+                "aMemberId",
+                null
+            ),
             Instant.parse("2020-06-03T08:02:39.403803Z")
         )
 
@@ -70,8 +77,12 @@ class ContractCreatedEventCreatesContractTest {
         )
         repo.save(customerioState)
 
-        sut.onContractCreatedEvent(
-            ContractCreatedEvent("theNewContractId", "aMemberId", null),
+        sut.onContractCreatedEventHandleRequest(
+            ContractCreatedEvent(
+                "theNewContractId",
+                "aMemberId",
+                null
+            ),
             Instant.parse("2020-06-03T08:02:39.403803Z")
         )
 
@@ -93,8 +104,12 @@ class ContractCreatedEventCreatesContractTest {
         )
         repo.save(customerioState)
 
-        sut.onContractCreatedEvent(
-            ContractCreatedEvent("theFirstContractId", "aMemberId", null),
+        sut.onContractCreatedEventHandleRequest(
+            ContractCreatedEvent(
+                "theFirstContractId",
+                "aMemberId",
+                null
+            ),
             Instant.parse("2020-06-03T08:02:39.403803Z")
         )
 

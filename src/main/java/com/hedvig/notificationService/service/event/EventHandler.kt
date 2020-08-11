@@ -1,16 +1,13 @@
-package com.hedvig.notificationService.customerio
+package com.hedvig.notificationService.service.event
 
+import com.hedvig.notificationService.customerio.CustomerioService
 import com.hedvig.notificationService.customerio.customerioEvents.jobs.JobScheduler
-import com.hedvig.notificationService.customerio.dto.ChargeFailedEvent
-import com.hedvig.notificationService.customerio.dto.ContractCreatedEvent
-import com.hedvig.notificationService.customerio.dto.ContractRenewalQueuedEvent
-import com.hedvig.notificationService.customerio.dto.QuoteCreatedEvent
-import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent
 import com.hedvig.notificationService.customerio.dto.objects.ChargeFailedReason
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.customerio.state.CustomerioState
-import com.hedvig.notificationService.service.FirebaseNotificationService
+import com.hedvig.notificationService.service.firebase.FirebaseNotificationService
+import com.hedvig.notificationService.service.request.HandledRequestRepository
 import com.hedvig.notificationService.serviceIntegration.memberService.dto.HasPersonSignedBeforeRequest
 import org.quartz.Scheduler
 import org.quartz.SchedulerException
@@ -24,7 +21,8 @@ class EventHandler(
     private val firebaseNotificationService: FirebaseNotificationService,
     private val customerioService: CustomerioService,
     private val memberService: MemberServiceImpl,
-    scheduler: Scheduler
+    scheduler: Scheduler,
+    private val handledRequestRepository: HandledRequestRepository
 ) {
     val jobScheduler = JobScheduler(scheduler)
 
@@ -49,7 +47,10 @@ class EventHandler(
         )
     }
 
-    fun onContractCreatedEvent(contractCreatedEvent: ContractCreatedEvent, callTime: Instant = Instant.now()) {
+    fun onContractCreatedEvent(
+        contractCreatedEvent: ContractCreatedEvent,
+        callTime: Instant = Instant.now()
+    ) {
         val state = repo.findByMemberId(contractCreatedEvent.owningMemberId)
             ?: CustomerioState(contractCreatedEvent.owningMemberId)
 
@@ -74,36 +75,44 @@ class EventHandler(
         }
     }
 
-    fun onFailedChargeEvent(memberId: String, chargeFailedEvent: ChargeFailedEvent) {
-        customerioService.sendEvent(memberId, chargeFailedEvent.toMap(memberId))
+    fun onFailedChargeEvent(
+        chargeFailedEvent: ChargeFailedEvent
+    ) {
+        customerioService.sendEvent(chargeFailedEvent.memberId, chargeFailedEvent.toMap())
 
         try {
             if (chargeFailedEvent.terminationDate != null) {
-                firebaseNotificationService.sendTerminatedFailedChargesNotification(memberId)
+                firebaseNotificationService.sendTerminatedFailedChargesNotification(chargeFailedEvent.memberId)
                 return
             }
 
             when (chargeFailedEvent.chargeFailedReason) {
                 ChargeFailedReason.INSUFFICIENT_FUNDS -> firebaseNotificationService.sendPaymentFailedNotification(
-                    memberId
+                    chargeFailedEvent.memberId
                 )
                 ChargeFailedReason.NOT_CONNECTED_DIRECT_DEBIT -> firebaseNotificationService.sendConnectDirectDebitNotification(
-                    memberId
+                    chargeFailedEvent.memberId
                 )
             }
         } catch (e: Exception) {
-            logger.error("onFailedChargeEvent - Can not send notification for $memberId - Exception: ${e.message}")
+            logger.error("onFailedChargeEvent - Can not send notification for ${chargeFailedEvent.memberId} - Exception: ${e.message}")
         }
     }
 
-    fun onContractRenewalQueued(event: ContractRenewalQueuedEvent, callTime: Instant = Instant.now()) {
+    fun onContractRenewalQueued(
+        event: ContractRenewalQueuedEvent,
+        callTime: Instant = Instant.now()
+    ) {
         customerioService.sendEvent(event.memberId, event.toMap())
     }
 
-    fun onQuoteCreated(event: QuoteCreatedEvent, callTime: Instant = Instant.now()) {
+    fun onQuoteCreated(
+        event: QuoteCreatedEvent,
+        callTime: Instant = Instant.now()
+    ) {
         val shouldNotSendEvent = event.initiatedFrom == "HOPE" ||
-            event.originatingProductId != null ||
-            event.productType == "UNKNOWN"
+                event.originatingProductId != null ||
+                event.productType == "UNKNOWN"
         if (shouldNotSendEvent) {
             logger.info("Will not send QuoteCreatedEvent to customer.io for member=${event.memberId} (event=$event)")
             return
@@ -126,6 +135,57 @@ class EventHandler(
             ), callTime
         )
         customerioService.sendEvent(event.memberId, event.toMap())
+    }
+
+    /**
+     * Old request handlers
+     */
+    fun onStartDateUpdatedEventHandleRequest(
+        event: StartDateUpdatedEvent,
+        callTime: Instant = Instant.now(),
+        requestId: String? = null
+    ) = handleAndStoreUnhandledRequest(requestId) {
+        onStartDateUpdatedEvent(event, callTime)
+    }
+
+    fun onContractCreatedEventHandleRequest(
+        contractCreatedEvent: ContractCreatedEvent,
+        callTime: Instant = Instant.now(),
+        requestId: String? = null
+    ) = handleAndStoreUnhandledRequest(requestId) {
+        onContractCreatedEvent(contractCreatedEvent, callTime)
+    }
+
+    fun onFailedChargeEventHandleRequest(
+        chargeFailedEvent: ChargeFailedEvent,
+        requestId: String?
+    ) = handleAndStoreUnhandledRequest(requestId) {
+        onFailedChargeEvent(chargeFailedEvent)
+    }
+
+    fun onContractRenewalQueuedHandleRequest(
+        event: ContractRenewalQueuedEvent,
+        callTime: Instant = Instant.now(),
+        requestId: String? = null
+    ) = handleAndStoreUnhandledRequest(requestId) {
+        onContractRenewalQueued(event, callTime)
+    }
+
+    fun onQuoteCreatedHandleRequest(
+        event: QuoteCreatedEvent,
+        callTime: Instant = Instant.now(),
+        requestId: String? = null
+    ) = handleAndStoreUnhandledRequest(requestId) {
+        onQuoteCreated(event, callTime)
+    }
+
+    private fun handleAndStoreUnhandledRequest(requestId: String?, handle: () -> Unit) {
+        requestId?.let {
+            if (!handledRequestRepository.isRequestHandled(it)) {
+                handle.invoke()
+                handledRequestRepository.storeHandledRequest(it)
+            }
+        } ?: handle.invoke()
     }
 
     companion object {

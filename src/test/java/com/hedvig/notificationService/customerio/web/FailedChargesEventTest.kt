@@ -2,8 +2,8 @@ package com.hedvig.notificationService.customerio.web
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import com.hedvig.notificationService.customerio.EventHandler
-import com.hedvig.notificationService.customerio.dto.ChargeFailedEvent
+import com.hedvig.notificationService.service.event.EventHandler
+import com.hedvig.notificationService.service.event.ChargeFailedEvent
 import com.hedvig.notificationService.customerio.dto.objects.ChargeFailedReason
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.verify
@@ -46,21 +46,22 @@ class FailedChargesEventTest {
     }
 
     @Test
-    fun failedChargesSentCallesEventHandler() {
+    fun failedChargesSentCallsEventHandler() {
         val url = URI("http://localhost:$port/_/events/1227/chargeFailed")
         val body = makeJsonWithAttributes()
 
         testRestTemplate.postForEntity(url, HttpEntity(body), String::class.java)
 
         verify {
-            eventHandler.onFailedChargeEvent(
-                "1227",
+            eventHandler.onFailedChargeEventHandleRequest(
                 ChargeFailedEvent(
                     terminationDate = null,
                     numberOfFailedCharges = 1,
                     chargesLeftBeforeTermination = 2,
-                    chargeFailedReason = ChargeFailedReason.INSUFFICIENT_FUNDS
-                )
+                    chargeFailedReason = ChargeFailedReason.INSUFFICIENT_FUNDS,
+                    memberId = "1227"
+                ),
+                any()
             )
         }
     }

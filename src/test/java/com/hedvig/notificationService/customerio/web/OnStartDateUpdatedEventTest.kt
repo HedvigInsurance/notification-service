@@ -5,15 +5,17 @@ import assertk.assertions.any
 import assertk.assertions.isNull
 import com.hedvig.notificationService.customerio.ConfigurationProperties
 import com.hedvig.notificationService.customerio.CustomerioService
-import com.hedvig.notificationService.customerio.EventHandler
+import com.hedvig.notificationService.service.event.EventHandler
 import com.hedvig.notificationService.customerio.customerioEvents.jobs.StartDateUpdatedJob
-import com.hedvig.notificationService.customerio.dto.StartDateUpdatedEvent
+import com.hedvig.notificationService.service.event.StartDateUpdatedEvent
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
-import com.hedvig.notificationService.service.FirebaseNotificationService
+import com.hedvig.notificationService.service.firebase.FirebaseNotificationService
+import com.hedvig.notificationService.service.request.HandledRequestRepository
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.quartz.JobDetail
@@ -31,6 +33,7 @@ class OnStartDateUpdatedEventTest {
     val firebaseNotificationService = mockk<FirebaseNotificationService>(relaxed = true)
     val customerioService = mockk<CustomerioService>()
     val memberService = mockk<MemberServiceImpl>()
+    val handledRequestRepository = mockk<HandledRequestRepository>(relaxed = true)
     val scheduler = mockk<Scheduler>()
     lateinit var configuration: ConfigurationProperties
     lateinit var sut: EventHandler
@@ -44,20 +47,28 @@ class OnStartDateUpdatedEventTest {
             firebaseNotificationService,
             customerioService,
             memberService,
-            scheduler
+            scheduler,
+            handledRequestRepository
         )
     }
 
     @Test
-    fun `on start date updated event`() {
+    fun `on start date with request id updated event and store handled request`() {
+        val requestId = "a unhandled request"
         every { scheduler.getTrigger(any()) } returns null
         every { scheduler.scheduleJob(any(), any()) } returns Date()
 
         val time = Instant.parse("2020-04-27T14:03:23.337770Z")
-        sut.onStartDateUpdatedEvent(StartDateUpdatedEvent("aContractId", "aMemberId", LocalDate.of(2020, 5, 3)), time)
+        sut.onStartDateUpdatedEventHandleRequest(
+            StartDateUpdatedEvent(
+                "aContractId",
+                "aMemberId",
+                LocalDate.of(2020, 5, 3)
+            ), time, requestId)
 
         assertThat(repo.data["aMemberId"]?.startDateUpdatedTriggerAt).isNull()
         assertThat(repo.data["aMemberId"]?.activationDateTriggerAt).isNull()
+        verify { handledRequestRepository.storeHandledRequest(requestId) }
     }
 
     @Test
@@ -71,7 +82,11 @@ class OnStartDateUpdatedEventTest {
         every { scheduler.scheduleJob(capture(jobSlot), capture(triggerSot)) } returns Date()
 
         sut.onStartDateUpdatedEvent(
-            StartDateUpdatedEvent("aContractId", "aMemberId", LocalDate.of(2020, 5, 3)),
+            StartDateUpdatedEvent(
+                "aContractId",
+                "aMemberId",
+                LocalDate.of(2020, 5, 3)
+            ),
             callTime
         )
 
@@ -97,8 +112,12 @@ class OnStartDateUpdatedEventTest {
         every { scheduler.getTrigger(any()) } returns null
         every { scheduler.scheduleJob(any(), any()) } returns Date()
 
-        sut.onStartDateUpdatedEvent(
-            StartDateUpdatedEvent("aContractId", "aMemberId", LocalDate.of(2020, 5, 3)),
+        sut.onStartDateUpdatedEventHandleRequest(
+            StartDateUpdatedEvent(
+                "aContractId",
+                "aMemberId",
+                LocalDate.of(2020, 5, 3)
+            ),
             timeOfFirstCall.plusMillis(3000)
         )
 
@@ -120,7 +139,7 @@ class OnStartDateUpdatedEventTest {
         every { scheduler.scheduleJob(any(), any()) } returns Date()
 
         val timeOfCall = Instant.parse("2020-04-27T14:03:23.337770Z")
-        sut.onStartDateUpdatedEvent(
+        sut.onStartDateUpdatedEventHandleRequest(
             StartDateUpdatedEvent(
                 "aContractId",
                 "aMemberId",
@@ -140,7 +159,7 @@ class OnStartDateUpdatedEventTest {
 
         val timeOfFirstCall = Instant.parse("2020-04-27T14:03:23.337770Z")
 
-        sut.onStartDateUpdatedEvent(
+        sut.onStartDateUpdatedEventHandleRequest(
             StartDateUpdatedEvent(
                 "aContractId",
                 "aMemberId",
@@ -149,5 +168,24 @@ class OnStartDateUpdatedEventTest {
         )
 
         assertThat(repo.data["aMemberId"]?.activationDateTriggerAt).isNull()
+    }
+
+    @Test
+    fun `on handled request nothing is stored`() {
+        val requestId = "a handled request"
+        every { handledRequestRepository.isRequestHandled(requestId) } returns true
+
+        val memberId = "handledMemberId"
+        sut.onStartDateUpdatedEventHandleRequest(
+            StartDateUpdatedEvent(
+                "aContractId",
+                memberId,
+                LocalDate.of(2020, 4, 3)
+            ),
+            Instant.now(),
+            requestId
+        )
+
+        assertThat(repo.data[memberId]).isNull()
     }
 }
