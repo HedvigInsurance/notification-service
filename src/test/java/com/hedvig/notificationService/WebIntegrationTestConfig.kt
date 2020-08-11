@@ -47,8 +47,7 @@ class WebIntegrationTestConfig {
             mapOf(
                 Workspace.SWEDEN to customerioMock,
                 Workspace.NORWAY to customerioMock
-            ),
-            ConfigurationProperties()
+            )
         )
     }
 

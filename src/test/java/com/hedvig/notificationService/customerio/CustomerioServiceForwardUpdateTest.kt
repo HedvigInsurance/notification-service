@@ -50,8 +50,7 @@ class CustomerioServiceForwardUpdateTest {
             mapOf(
                 Workspace.SWEDEN to customerIOMockSweden,
                 Workspace.NORWAY to customerIOMockNorway
-            ),
-            ConfigurationProperties()
+            )
         )
     }
 

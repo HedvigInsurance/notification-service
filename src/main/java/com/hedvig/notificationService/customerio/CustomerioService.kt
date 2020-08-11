@@ -5,6 +5,7 @@ import com.hedvig.notificationService.customerio.customerioEvents.CustomerioEven
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.customerio.state.CustomerioState
+import okhttp3.internal.toHexString
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.Instant
@@ -14,8 +15,7 @@ import javax.transaction.Transactional
 class CustomerioService(
     private val workspaceSelector: WorkspaceSelector,
     private val stateRepository: CustomerIOStateRepository,
-    private val clients: Map<Workspace, CustomerioClient>,
-    private val configuration: ConfigurationProperties
+    private val clients: Map<Workspace, CustomerioClient>
 ) {
 
     private val logger = LoggerFactory.getLogger(CustomerioService::class.java)
@@ -71,11 +71,7 @@ class CustomerioService(
         try {
             logger.info("Sending event ${event["name"]} to member ${customerioState.memberId}")
             this.stateRepository.save(customerioState)
-            val workspace = workspaceSelector.getWorkspaceForMember(customerioState.memberId)
-            clients[workspace]?.sendEvent(
-                customerioState.memberId,
-                event
-            )
+            sendEvent(customerioState.memberId, event)
         } catch (ex: RuntimeException) {
             logger.error("Could not send event to customerio", ex)
         }

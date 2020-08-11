@@ -57,8 +57,7 @@ class NorwaySignHackUpdateCustomerIOTest {
             mapOf(
                 Workspace.SWEDEN to seCustomerioClient,
                 Workspace.NORWAY to noCustomerIoClient
-            ),
-            ConfigurationProperties()
+            )
         )
 
         scheduler = CustomerioUpdateScheduler(
