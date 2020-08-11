@@ -48,7 +48,7 @@ class CustomerIOConfig(
 
     @EventListener
     fun onContextRefereshedEvent(event: ContextRefreshedEvent) {
-        // quartzMigrator.migrate(Instant.now())
+        quartzMigrator.migrate(Instant.now())
     }
 
     @Bean()
