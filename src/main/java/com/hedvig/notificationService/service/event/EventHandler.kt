@@ -74,6 +74,7 @@ class EventHandler(
             throw RuntimeException(e.message, e)
         }
     }
+
     fun onFailedChargeEvent(
         chargeFailedEvent: ChargeFailedEvent
     ) {
@@ -143,79 +144,48 @@ class EventHandler(
         event: StartDateUpdatedEvent,
         callTime: Instant = Instant.now(),
         requestId: String? = null
-    ) {
-        requestId?.let {
-            if (handledRequestRepository.isRequestHandled(it)) {
-                return
-            }
-        }
+    ) = handleAndStoreUnhandledRequest(requestId) {
         onStartDateUpdatedEvent(event, callTime)
-        requestId?.let {
-            handledRequestRepository.storeHandledRequest(it)
-        }
     }
 
     fun onContractCreatedEventHandleRequest(
         contractCreatedEvent: ContractCreatedEvent,
         callTime: Instant = Instant.now(),
         requestId: String? = null
-    ) {
-        requestId?.let {
-            if (handledRequestRepository.isRequestHandled(it)) {
-                return
-            }
-        }
+    ) = handleAndStoreUnhandledRequest(requestId) {
         onContractCreatedEvent(contractCreatedEvent, callTime)
-        requestId?.let {
-            handledRequestRepository.storeHandledRequest(it)
-        }
     }
 
     fun onFailedChargeEventHandleRequest(
         chargeFailedEvent: ChargeFailedEvent,
         requestId: String?
-    ) {
-        requestId?.let {
-            if (handledRequestRepository.isRequestHandled(it)) {
-                return
-            }
-        }
+    ) = handleAndStoreUnhandledRequest(requestId) {
         onFailedChargeEvent(chargeFailedEvent)
-        requestId?.let {
-            handledRequestRepository.storeHandledRequest(it)
-        }
     }
 
     fun onContractRenewalQueuedHandleRequest(
         event: ContractRenewalQueuedEvent,
         callTime: Instant = Instant.now(),
         requestId: String? = null
-    ) {
-        requestId?.let {
-            if (handledRequestRepository.isRequestHandled(it)) {
-                return
-            }
-        }
+    ) = handleAndStoreUnhandledRequest(requestId) {
         onContractRenewalQueued(event, callTime)
-        requestId?.let {
-            handledRequestRepository.storeHandledRequest(it)
-        }
     }
 
     fun onQuoteCreatedHandleRequest(
         event: QuoteCreatedEvent,
         callTime: Instant = Instant.now(),
         requestId: String? = null
-    ) {
-        requestId?.let {
-            if (handledRequestRepository.isRequestHandled(it)) {
-                return
-            }
-        }
+    ) = handleAndStoreUnhandledRequest(requestId) {
         onQuoteCreated(event, callTime)
+    }
+
+    private fun handleAndStoreUnhandledRequest(requestId: String?, handle: () -> Unit) {
         requestId?.let {
-            handledRequestRepository.storeHandledRequest(it)
-        }
+            if (!handledRequestRepository.isRequestHandled(it)) {
+                handle.invoke()
+                handledRequestRepository.storeHandledRequest(it)
+            }
+        } ?: handle.invoke()
     }
 
     companion object {
