@@ -89,6 +89,21 @@ class CustomerioServicePostEventTest {
         verify { sweClient.sendEvent(memberThree, expectedMapThree) }
     }
 
-    fun createExpectedMap(map: Map<String, Any>, hash: String) =
+    @Test
+    fun `hash is the same data changed order on send event`() {
+        val member = "1234"
+        every { workspaceSelector.getWorkspaceForMember(member) } returns Workspace.SWEDEN
+
+        val event = mapOf("name" to "SomeCoolEvent", "data" to mapOf("attr1" to "123", "attr2" to "4312", "attr3" to 231))
+        val sameEventDifferentOrder = mapOf("data" to mapOf("attr3" to 231, "attr2" to "4312", "attr1" to "123"), "name" to "SomeCoolEvent")
+
+        sut.sendEvent(member, event)
+        sut.sendEvent(member, sameEventDifferentOrder)
+
+        val expectedMap = createExpectedMap(event, "6598188")
+        verify(exactly = 2) { sweClient.sendEvent(member, expectedMap) }
+    }
+
+    private fun createExpectedMap(map: Map<String, Any>, hash: String) =
         map.toMutableMap().also { it["hash"] = hash }
 }
