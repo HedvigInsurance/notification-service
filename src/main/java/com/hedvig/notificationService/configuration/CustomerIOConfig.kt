@@ -38,9 +38,6 @@ class CustomerIOConfig(
     @Autowired
     lateinit var configuration: ConfigurationProperties
 
-    @Autowired
-    lateinit var quartzMigrator: QuartzMigrator
-
     @Value("\${hedvig.usefakes:false}")
     var useFakes: Boolean = false
 
@@ -48,6 +45,7 @@ class CustomerIOConfig(
 
     @EventListener
     fun onContextRefereshedEvent(event: ContextRefreshedEvent) {
+        val quartzMigrator = event.applicationContext.getBean(QuartzMigrator::class.java)
         quartzMigrator.migrate(Instant.now())
     }
 
