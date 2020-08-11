@@ -67,7 +67,7 @@ class CustomerioService(
         val hash = body.hashCode().toHexString()
         mutableMap["hash"] = hash
         clients[marketForMember]?.sendEvent(memberId, mutableMap.toMap())
-        eventHashRepository.save(EventHash(memberId, hash))
+        eventHashRepository.save(memberId, hash)
     }
 
     @Transactional

@@ -1,7 +1,6 @@
 package com.hedvig.notificationService.customerio
 
 import com.hedvig.customerio.CustomerioClient
-import com.hedvig.notificationService.customerio.state.EventHash
 import com.hedvig.notificationService.customerio.state.EventHashRepository
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import io.mockk.every
@@ -65,7 +64,7 @@ class CustomerioServicePostEventTest {
         val expectedMap = createExpectedMap(event, expectedHash)
 
         verify { sweClient.sendEvent(memberId, expectedMap) }
-        verify { eventHashRepository.save(EventHash(memberId, expectedHash)) }
+        verify { eventHashRepository.save(memberId, expectedHash) }
     }
 
     @Test
@@ -89,17 +88,17 @@ class CustomerioServicePostEventTest {
         val hashOne = "c77b42"
         val expectedMapOne = createExpectedMap(eventMemberOne, hashOne)
         verify { sweClient.sendEvent(memberOne, expectedMapOne) }
-        verify { eventHashRepository.save(EventHash(memberOne, hashOne)) }
+        verify { eventHashRepository.save(memberOne, hashOne) }
 
         val hashTwo = "fddf54a3"
         val expectedMapTwo = createExpectedMap(eventMemberTwo, hashTwo)
         verify { sweClient.sendEvent(memberTwo, expectedMapTwo) }
-        verify { eventHashRepository.save(EventHash(memberTwo, hashTwo)) }
+        verify { eventHashRepository.save(memberTwo, hashTwo) }
 
         val hashThree = "ace32530"
         val expectedMapThree = createExpectedMap(eventMemberThree, hashThree)
         verify { sweClient.sendEvent(memberThree, expectedMapThree) }
-        verify { eventHashRepository.save(EventHash(memberThree, hashThree)) }
+        verify { eventHashRepository.save(memberThree, hashThree) }
     }
 
     @Test
@@ -118,7 +117,7 @@ class CustomerioServicePostEventTest {
         val expectedHash = "6598188"
         val expectedMap = createExpectedMap(event, expectedHash)
         verify(exactly = 2) { sweClient.sendEvent(member, expectedMap) }
-        verify(exactly = 2) { eventHashRepository.save(EventHash(member, expectedHash)) }
+        verify(exactly = 2) { eventHashRepository.save(member, expectedHash) }
     }
 
     private fun createExpectedMap(map: Map<String, Any>, hash: String) =
