@@ -11,6 +11,7 @@ import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRe
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import org.junit.Before
@@ -57,7 +58,8 @@ class NorwaySignHackUpdateCustomerIOTest {
             mapOf(
                 Workspace.SWEDEN to seCustomerioClient,
                 Workspace.NORWAY to noCustomerIoClient
-            )
+            ),
+            mockk()
         )
 
         scheduler = CustomerioUpdateScheduler(

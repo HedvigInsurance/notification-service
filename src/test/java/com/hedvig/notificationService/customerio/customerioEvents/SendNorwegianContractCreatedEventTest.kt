@@ -58,7 +58,8 @@ class SendNorwegianContractCreatedEventTest {
             mapOf(
                 Workspace.NORWAY to noClient,
                 Workspace.SWEDEN to seClient
-            )
+            ),
+            mockk()
         )
         contractCreatedJob = ContractCreatedJob(
             contractLoader,

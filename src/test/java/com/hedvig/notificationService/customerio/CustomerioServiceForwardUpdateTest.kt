@@ -8,6 +8,7 @@ import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRe
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -50,7 +51,8 @@ class CustomerioServiceForwardUpdateTest {
             mapOf(
                 Workspace.SWEDEN to customerIOMockSweden,
                 Workspace.NORWAY to customerIOMockNorway
-            )
+            ),
+            mockk()
         )
     }
 

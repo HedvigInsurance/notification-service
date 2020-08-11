@@ -6,6 +6,7 @@ import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import io.mockk.MockKAnnotations
 import io.mockk.impl.annotations.MockK
+import io.mockk.mockk
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -39,7 +40,7 @@ class CustomerioServiceContructionTest {
     @Test
     fun `Throw if no markets are passed in the contructor`() {
         exceptionRule.expect(IllegalArgumentException::class.java)
-        CustomerioService(workspaceSelector, repository, mapOf())
+        CustomerioService(workspaceSelector, repository, mapOf(), mockk())
     }
 
     @Test
@@ -48,7 +49,8 @@ class CustomerioServiceContructionTest {
         CustomerioService(
             workspaceSelector,
             repository,
-            mapOf(Workspace.SWEDEN to customerioClient)
+            mapOf(Workspace.SWEDEN to customerioClient),
+            mockk()
         )
     }
 
@@ -60,7 +62,8 @@ class CustomerioServiceContructionTest {
             mapOf(
                 Workspace.SWEDEN to customerioClient,
                 Workspace.NORWAY to customerioClient
-            )
+            ),
+            mockk()
         )
     }
 }

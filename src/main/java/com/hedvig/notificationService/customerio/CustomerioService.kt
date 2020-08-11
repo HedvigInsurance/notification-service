@@ -5,6 +5,8 @@ import com.hedvig.notificationService.customerio.customerioEvents.CustomerioEven
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.customerio.state.CustomerioState
+import com.hedvig.notificationService.customerio.state.EventHash
+import com.hedvig.notificationService.customerio.state.EventHashRepository
 import okhttp3.internal.toHexString
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -15,7 +17,8 @@ import javax.transaction.Transactional
 class CustomerioService(
     private val workspaceSelector: WorkspaceSelector,
     private val stateRepository: CustomerIOStateRepository,
-    private val clients: Map<Workspace, CustomerioClient>
+    private val clients: Map<Workspace, CustomerioClient>,
+    private val eventHashRepository: EventHashRepository
 ) {
 
     private val logger = LoggerFactory.getLogger(CustomerioService::class.java)
@@ -61,8 +64,10 @@ class CustomerioService(
     fun sendEvent(memberId: String, body: Map<String, Any?>) {
         val marketForMember = workspaceSelector.getWorkspaceForMember(memberId)
         val mutableMap = body.toMutableMap()
-        mutableMap["hash"] = body.hashCode().toHexString()
+        val hash = body.hashCode().toHexString()
+        mutableMap["hash"] = hash
         clients[marketForMember]?.sendEvent(memberId, mutableMap.toMap())
+        eventHashRepository.save(EventHash(memberId, hash))
     }
 
     @Transactional

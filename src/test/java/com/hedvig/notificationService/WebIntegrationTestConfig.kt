@@ -13,6 +13,7 @@ import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import com.hedvig.notificationService.serviceIntegration.memberService.FakeMemberServiceClient
 import com.hedvig.notificationService.serviceIntegration.memberService.MemberServiceClient
+import io.mockk.mockk
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Primary
@@ -47,7 +48,8 @@ class WebIntegrationTestConfig {
             mapOf(
                 Workspace.SWEDEN to customerioMock,
                 Workspace.NORWAY to customerioMock
-            )
+            ),
+            mockk()
         )
     }
 

@@ -1,6 +1,8 @@
 package com.hedvig.notificationService.customerio
 
 import com.hedvig.customerio.CustomerioClient
+import com.hedvig.notificationService.customerio.state.EventHash
+import com.hedvig.notificationService.customerio.state.EventHashRepository
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import io.mockk.every
 import io.mockk.mockk
@@ -12,6 +14,7 @@ class CustomerioServicePostEventTest {
     val sweClient = mockk<CustomerioClient>(relaxed = true)
     val noClient = mockk<CustomerioClient>(relaxed = true)
     val workspaceSelector = mockk<WorkspaceSelector>()
+    val eventHashRepository = mockk<EventHashRepository>(relaxed = true)
 
     val sut = CustomerioService(
         workspaceSelector,
@@ -19,7 +22,8 @@ class CustomerioServicePostEventTest {
         mapOf(
             Workspace.SWEDEN to sweClient,
             Workspace.NORWAY to noClient
-        )
+        ),
+        eventHashRepository
     )
 
     @Test
@@ -57,9 +61,11 @@ class CustomerioServicePostEventTest {
 
         sut.sendEvent(memberId, event)
 
-        val expectedMap =  createExpectedMap(event, "da0bfe4d")
+        val expectedHash = "da0bfe4d"
+        val expectedMap = createExpectedMap(event, expectedHash)
 
         verify { sweClient.sendEvent(memberId, expectedMap) }
+        verify { eventHashRepository.save(EventHash(memberId, expectedHash)) }
     }
 
     @Test
@@ -73,20 +79,27 @@ class CustomerioServicePostEventTest {
 
         val eventMemberOne = mapOf("name" to "SomeCoolEvent", "data" to mapOf("attr1" to "4312", "attr2" to 231))
         val eventMemberTwo = mapOf("name" to "OtherCoolEvent", "data" to mapOf("attr1" to 13, "attr2" to 231))
-        val eventMemberThree = mapOf("name" to "SomeCoolEvent", "data" to mapOf("attr1" to "different value", "attr2" to 231))
+        val eventMemberThree =
+            mapOf("name" to "SomeCoolEvent", "data" to mapOf("attr1" to "different value", "attr2" to 231))
 
         sut.sendEvent(memberOne, eventMemberOne)
         sut.sendEvent(memberTwo, eventMemberTwo)
         sut.sendEvent(memberThree, eventMemberThree)
 
-        val expectedMapOne = createExpectedMap(eventMemberOne, "c77b42")
+        val hashOne = "c77b42"
+        val expectedMapOne = createExpectedMap(eventMemberOne, hashOne)
         verify { sweClient.sendEvent(memberOne, expectedMapOne) }
+        verify { eventHashRepository.save(EventHash(memberOne, hashOne)) }
 
-        val expectedMapTwo = createExpectedMap(eventMemberTwo, "fddf54a3")
+        val hashTwo = "fddf54a3"
+        val expectedMapTwo = createExpectedMap(eventMemberTwo, hashTwo)
         verify { sweClient.sendEvent(memberTwo, expectedMapTwo) }
+        verify { eventHashRepository.save(EventHash(memberTwo, hashTwo)) }
 
-        val expectedMapThree = createExpectedMap(eventMemberThree, "ace32530")
+        val hashThree = "ace32530"
+        val expectedMapThree = createExpectedMap(eventMemberThree, hashThree)
         verify { sweClient.sendEvent(memberThree, expectedMapThree) }
+        verify { eventHashRepository.save(EventHash(memberThree, hashThree)) }
     }
 
     @Test
@@ -94,14 +107,18 @@ class CustomerioServicePostEventTest {
         val member = "1234"
         every { workspaceSelector.getWorkspaceForMember(member) } returns Workspace.SWEDEN
 
-        val event = mapOf("name" to "SomeCoolEvent", "data" to mapOf("attr1" to "123", "attr2" to "4312", "attr3" to 231))
-        val sameEventDifferentOrder = mapOf("data" to mapOf("attr3" to 231, "attr2" to "4312", "attr1" to "123"), "name" to "SomeCoolEvent")
+        val event =
+            mapOf("name" to "SomeCoolEvent", "data" to mapOf("attr1" to "123", "attr2" to "4312", "attr3" to 231))
+        val sameEventDifferentOrder =
+            mapOf("data" to mapOf("attr3" to 231, "attr2" to "4312", "attr1" to "123"), "name" to "SomeCoolEvent")
 
         sut.sendEvent(member, event)
         sut.sendEvent(member, sameEventDifferentOrder)
 
-        val expectedMap = createExpectedMap(event, "6598188")
+        val expectedHash = "6598188"
+        val expectedMap = createExpectedMap(event, expectedHash)
         verify(exactly = 2) { sweClient.sendEvent(member, expectedMap) }
+        verify(exactly = 2) { eventHashRepository.save(EventHash(member, expectedHash)) }
     }
 
     private fun createExpectedMap(map: Map<String, Any>, hash: String) =
