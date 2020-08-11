@@ -32,6 +32,9 @@ class ContractCreatedJob(
             }
         ) {
             val memberId = jobContext.mergedJobDataMap.get("memberId") as String
+
+            logger.info("Running ContractCreatedJob.executeInternal with member $memberId")
+
             val customerioState = customerIOStateRepository.findByMemberId(memberId)!!
             val contracts = contractLoader.getContractInfoForMember(customerioState.memberId)
             val eventAndState = eventCreator.contractCreatedEvent(customerioState, contracts)
