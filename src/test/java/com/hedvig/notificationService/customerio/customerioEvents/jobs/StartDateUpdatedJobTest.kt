@@ -18,11 +18,11 @@ import org.junit.jupiter.api.Test
 import org.quartz.Job
 import org.quartz.JobBuilder
 import org.quartz.JobDataMap
-import org.quartz.JobDetail
 import org.quartz.Scheduler
 import org.quartz.SchedulerContext
 import org.quartz.Trigger
 import org.quartz.TriggerBuilder
+import org.quartz.TriggerKey
 import org.quartz.impl.JobExecutionContextImpl
 import org.quartz.spi.OperableTrigger
 import org.quartz.spi.TriggerFiredBundle
@@ -79,9 +79,9 @@ class StartDateUpdatedJobTest {
     @Test
     fun exceptionReschedulesJob() {
 
-        val slot1 = slot<JobDetail>()
+        val slot1 = slot<TriggerKey>()
         val slot2 = slot<Trigger>()
-        every { scheduler.scheduleJob(capture(slot1), capture(slot2)) } returns Date()
+        every { scheduler.rescheduleJob(capture(slot1), capture(slot2)) } returns Date()
 
         val jobData = JobDataMap()
         jobData["memberId"] = "1234"

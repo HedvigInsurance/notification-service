@@ -45,8 +45,8 @@ fun rescheduleJob(context: JobExecutionContext, errorFunction: (ex: Exception) -
             )
         )
 
-        context.scheduler.scheduleJob(
-            context.jobDetail,
+        context.scheduler.rescheduleJob(
+            context.trigger.key,
             TriggerBuilder.newTrigger().startAt(newStartTime).build()
         )
     } catch (ex: SchedulerException) {
