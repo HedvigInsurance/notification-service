@@ -6,10 +6,6 @@ import java.time.LocalDate
 
 interface
 CustomerioEventCreator {
-    fun execute(
-        customerioState: CustomerioState,
-        contracts: List<ContractInfo>
-    ): ExecutionResult
 
     fun contractCreatedEvent(
         customerioState: CustomerioState,

@@ -68,31 +68,6 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
         return data
     }
 
-    override fun execute(
-        customerioState: CustomerioState,
-        contracts: List<ContractInfo>
-    ): ExecutionResult {
-        return when {
-            customerioState.shouldSendTmpSignedEvent() -> {
-                val event = createTmpSignedInsuranceEvent(contracts)
-                customerioState.sentTmpSignedEvent()
-                ExecutionResult(event)
-            }
-            customerioState.shouldSendContractCreatedEvent()
-            -> {
-                contractCreatedEvent(customerioState, contracts)
-            }
-            customerioState.shouldSendStartDateUpdatedEvent() -> {
-                startDateUpdatedEvent(customerioState, contracts)
-            }
-            customerioState.shouldSendActivatesTodayEvent() -> {
-                sendActivatesToday(customerioState, contracts, LocalDate.of(2020, 1, 2))
-            }
-            else
-            -> throw RuntimeException("CustomerioState in weird state")
-        }
-    }
-
     override fun sendActivatesToday(
         customerioState: CustomerioState,
         contracts: List<ContractInfo>,

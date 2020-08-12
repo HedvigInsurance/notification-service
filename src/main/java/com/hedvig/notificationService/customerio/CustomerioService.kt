@@ -90,9 +90,6 @@ class CustomerioService(
         contractLoader: ContractLoader
     ) {
         try {
-            val contracts = contractLoader.getContractInfoForMember(customerioState.memberId)
-            val eventAndState = eventCreator.execute(customerioState, contracts)
-            sendEventAndUpdateState(customerioState, eventAndState.asMap)
         } catch (ex: RuntimeException) {
             logger.error("Could not create event from customerio state", ex)
         }
