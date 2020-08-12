@@ -50,8 +50,8 @@ class CustomerioService(
 
     private fun isSignUpdateFromUnderwriter(attributes: Map<String, Any?>): Boolean {
         return attributes.containsKey("partner_code") ||
-                attributes.containsKey("switcher_company") ||
-                attributes.containsKey("sign_source")
+            attributes.containsKey("switcher_company") ||
+            attributes.containsKey("sign_source")
     }
 
     fun deleteCustomer(memberId: String) {
