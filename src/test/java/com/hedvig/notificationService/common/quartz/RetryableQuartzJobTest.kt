@@ -17,6 +17,7 @@ import org.quartz.JobExecutionContext
 import org.quartz.Scheduler
 import org.quartz.SchedulerException
 import org.quartz.Trigger
+import org.quartz.TriggerKey
 import java.util.Date
 
 class RetryableQuartzJobTest {
@@ -56,9 +57,9 @@ class RetryableQuartzJobTest {
                 JobDataMap()
             )
 
-        val jobSlot = slot<JobDetail>()
+        val jobSlot = slot<TriggerKey>()
         val triggerSlot = slot<Trigger>()
-        every { scheduler.scheduleJob(capture(jobSlot), capture(triggerSlot)) } returns Date()
+        every { scheduler.rescheduleJob(capture(jobSlot), capture(triggerSlot)) } returns Date()
         executeWithRetry(jobContext) {
             throw RuntimeException()
         }
@@ -77,9 +78,9 @@ class RetryableQuartzJobTest {
                 JobDataMap()
             )
 
-        val jobSlot = slot<JobDetail>()
+        val jobSlot = slot<TriggerKey>()
         val triggerSlot = slot<Trigger>()
-        every { scheduler.scheduleJob(capture(jobSlot), capture(triggerSlot)) } returns Date()
+        every { scheduler.rescheduleJob(capture(jobSlot), capture(triggerSlot)) } returns Date()
         executeWithRetry(jobContext) {
             throw RuntimeException()
         }
@@ -100,9 +101,9 @@ class RetryableQuartzJobTest {
                 jobData
             )
 
-        val jobSlot = slot<JobDetail>()
+        val jobSlot = slot<TriggerKey>()
         val triggerSlot = slot<Trigger>()
-        every { scheduler.scheduleJob(capture(jobSlot), capture(triggerSlot)) } returns Date()
+        every { scheduler.rescheduleJob(capture(jobSlot), capture(triggerSlot)) } returns Date()
         executeWithRetry(jobContext) {
             throw RuntimeException()
         }
@@ -177,7 +178,7 @@ class RetryableQuartzJobTest {
                 jobData
             )
 
-        every { scheduler.scheduleJob(any(), any()) } throws SchedulerException()
+        every { scheduler.rescheduleJob(any(), any()) } throws SchedulerException()
 
         var errorLambdaCalled = false
         executeWithRetry(jobContext, {
