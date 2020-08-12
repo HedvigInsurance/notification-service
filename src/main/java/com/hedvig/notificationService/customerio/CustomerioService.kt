@@ -64,7 +64,9 @@ class CustomerioService(
         val marketForMember = workspaceSelector.getWorkspaceForMember(memberId)
         val mutableMap = body.toMutableMap()
         val hash = body.hashCode().toHexString()
-        mutableMap["hash"] = hash
+        (mutableMap["data"] as? Map<*, *>)?.let {
+            mutableMap["hash"] = hash
+        }
         clients[marketForMember]?.sendEvent(memberId, mutableMap.toMap())
         idempotenceHashRepository.save(memberId, hash)
     }
