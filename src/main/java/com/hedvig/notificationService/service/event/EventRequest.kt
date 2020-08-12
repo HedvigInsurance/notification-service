@@ -3,7 +3,6 @@ package com.hedvig.notificationService.service.event
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.hedvig.notificationService.customerio.dto.objects.ChargeFailedReason
-import okhttp3.internal.toHexString
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.util.UUID
@@ -32,8 +31,7 @@ data class ChargeFailedEvent(
             "number_of_failed_charges" to numberOfFailedCharges,
             "charges_left_before_termination" to chargesLeftBeforeTermination,
             "termination_date" to terminationDate,
-            "charge_failed_reason" to chargeFailedReason,
-            "hash" to hashCode().toHexString()
+            "charge_failed_reason" to chargeFailedReason
         )
     )
 }
@@ -57,8 +55,7 @@ data class ContractRenewalQueuedEvent(
             "member_id" to memberId,
             "contract_id" to contractId,
             "contract_type" to contractType,
-            "renewal_queued_at" to renewalQueuedAt,
-            "hash" to hashCode().toHexString()
+            "renewal_queued_at" to renewalQueuedAt
         )
     )
 }
@@ -89,8 +86,7 @@ data class QuoteCreatedEvent(
             "current_insurer" to currentInsurer,
             "price" to price,
             "currency" to currency,
-            "postal_code" to postalCode,
-            "hash" to hashCode().toHexString()
+            "postal_code" to postalCode
         )
     )
 }

@@ -63,7 +63,6 @@ class CustomerIOIntegrationTest {
         testRestTemplate.postForEntity(url, HttpEntity(body), String::class.java)
 
         val expectedBody = body.toMutableMap()
-        expectedBody["hash"] = "893b8ffa"
         assertThat(customerioMock.events).contains("9999" to ObjectMapper().valueToTree(expectedBody))
     }
 }
