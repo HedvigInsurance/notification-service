@@ -3,7 +3,6 @@ package com.hedvig.notificationService
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.hedvig.customerio.CustomerioClient
 import com.hedvig.customerio.CustomerioMock
-import com.hedvig.notificationService.customerio.ConfigurationProperties
 import com.hedvig.notificationService.customerio.CustomerioService
 import com.hedvig.notificationService.customerio.Workspace
 import com.hedvig.notificationService.customerio.WorkspaceSelector
@@ -13,6 +12,7 @@ import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import com.hedvig.notificationService.serviceIntegration.memberService.FakeMemberServiceClient
 import com.hedvig.notificationService.serviceIntegration.memberService.MemberServiceClient
+import io.mockk.mockk
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Primary
@@ -48,7 +48,7 @@ class WebIntegrationTestConfig {
                 Workspace.SWEDEN to customerioMock,
                 Workspace.NORWAY to customerioMock
             ),
-            ConfigurationProperties()
+            mockk()
         )
     }
 

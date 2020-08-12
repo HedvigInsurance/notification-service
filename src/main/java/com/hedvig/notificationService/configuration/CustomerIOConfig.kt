@@ -5,6 +5,7 @@ import com.hedvig.customerio.Customerio
 import com.hedvig.customerio.CustomerioClient
 import com.hedvig.customerio.CustomerioMock
 import com.hedvig.notificationService.customerio.ConfigurationProperties
+import com.hedvig.notificationService.customerio.CustomerioRemoveIdempotenceHashesJob
 import com.hedvig.notificationService.customerio.CustomerioUpdateScheduler
 import com.hedvig.notificationService.customerio.Workspace
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoaderImpl
@@ -105,5 +106,27 @@ class CustomerIOConfig(
             scheduler.scheduleJob(job, trigger)
         }
         scheduler.start()
+    }
+
+    @PostConstruct
+    fun scheduleRemoveHashes() {
+        val job = JobBuilder.newJob()
+            .ofType(CustomerioRemoveIdempotenceHashesJob::class.java)
+            .withIdentity("Customerio_remove_idempotence_hashes")
+            .withDescription("Customer.io remove hashes scheduler")
+            .requestRecovery(true)
+            .build()
+
+        val trigger = TriggerBuilder
+            .newTrigger()
+            .forJob(job)
+            .withIdentity("Customerio_remove_idempotence_hashes_trigger")
+            .withSchedule(simpleSchedule().repeatForever().withIntervalInHours(1))
+            .startNow()
+            .build()
+
+        if (!scheduler.checkExists(job.key) && !scheduler.checkExists(trigger.key)) {
+            scheduler.scheduleJob(job, trigger)
+        }
     }
 }

@@ -27,7 +27,7 @@ class ConfigurableNorwaySignHackTest {
                 workspaceSelector,
                 stateRepository,
                 clients,
-                ConfigurationProperties()
+                mockk()
             )
 
         cut.updateCustomerAttributes("someId", makeSignFromUnderwriterMap())

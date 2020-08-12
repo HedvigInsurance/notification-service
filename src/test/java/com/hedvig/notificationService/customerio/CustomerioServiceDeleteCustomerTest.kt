@@ -30,7 +30,7 @@ class CustomerioServiceDeleteCustomerTest {
                 Workspace.SWEDEN to sweClient,
                 Workspace.NORWAY to noClient
             ),
-            ConfigurationProperties()
+            mockk()
         )
         cut.deleteCustomer("asdad")
         verify { noClient.deleteCustomer(any()) }
@@ -50,7 +50,7 @@ class CustomerioServiceDeleteCustomerTest {
                 Workspace.SWEDEN to sweClient,
                 Workspace.NORWAY to noClient
             ),
-            ConfigurationProperties()
+            mockk()
         )
         cut.deleteCustomer("asdad")
         verify { sweClient.deleteCustomer(any()) }
