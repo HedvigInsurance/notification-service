@@ -9,6 +9,10 @@ import com.hedvig.notificationService.service.event.EventRequest
 import com.hedvig.notificationService.service.event.StartDateUpdatedEvent
 import com.hedvig.notificationService.web.dto.ChargeFailedEventDto
 import com.hedvig.notificationService.service.request.EventRequestHandler
+import com.hedvig.notificationService.web.dto.ContractCreatedEventDto
+import com.hedvig.notificationService.web.dto.ContractRenewalQueuedEventDto
+import com.hedvig.notificationService.web.dto.QuoteCreatedEventDto
+import com.hedvig.notificationService.web.dto.StartDateUpdatedEventDto
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -38,10 +42,15 @@ class EventController(
     @PostMapping("/events/contractCreated")
     fun contractCreated(
         @RequestHeader(value = "Request-Id", required = false) requestId: String?,
-        @RequestBody event: ContractCreatedEvent
+        @RequestBody event: ContractCreatedEventDto
     ): ResponseEntity<Any> {
         eventHandler.onContractCreatedEventHandleRequest(
-            contractCreatedEvent = event,
+            contractCreatedEvent = ContractCreatedEvent(
+                contractId = event.contractId,
+                owningMemberId = event.owningMemberId,
+                startDate = event.startDate,
+                signSource = event.signSource
+            ),
             requestId = requestId
         )
         return ResponseEntity.accepted().build()
@@ -51,10 +60,14 @@ class EventController(
     @PostMapping("/events/startDateUpdated")
     fun startDateUpdated(
         @RequestHeader(value = "Request-Id", required = false) requestId: String?,
-        @RequestBody event: StartDateUpdatedEvent
+        @RequestBody event: StartDateUpdatedEventDto
     ): ResponseEntity<Any> {
         eventHandler.onStartDateUpdatedEventHandleRequest(
-            event = event,
+            event = StartDateUpdatedEvent(
+                contractId = event.contractId,
+                owningMemberId = event.owningMemberId,
+                startDate = event.startDate
+            ),
             requestId = requestId
         )
         return ResponseEntity.accepted().build()
@@ -64,10 +77,15 @@ class EventController(
     @PostMapping("/events/contractRenewalQueued")
     fun contractRenewalQueued(
         @RequestHeader(value = "Request-Id", required = false) requestId: String?,
-        @RequestBody event: ContractRenewalQueuedEvent
+        @RequestBody event: ContractRenewalQueuedEventDto
     ): ResponseEntity<Any> {
         eventHandler.onContractRenewalQueuedHandleRequest(
-            event = event,
+            event = ContractRenewalQueuedEvent(
+                contractId = event.contractId,
+                contractType = event.contractType,
+                memberId = event.memberId,
+                renewalQueuedAt = event.renewalQueuedAt
+            ),
             requestId = requestId
         )
         return ResponseEntity.accepted().build()
@@ -95,10 +113,25 @@ class EventController(
     @PostMapping("/events/quoteCreated")
     fun quoteCreated(
         @RequestHeader(value = "Request-Id", required = false) requestId: String?,
-        @RequestBody event: QuoteCreatedEvent
+        @RequestBody event: QuoteCreatedEventDto
     ): ResponseEntity<Any> {
         eventHandler.onQuoteCreatedHandleRequest(
-            event = event,
+            event = QuoteCreatedEvent(
+                event.memberId,
+                event.quoteId,
+                event.firstName,
+                event.lastName,
+                event.postalCode,
+                event.email,
+                event.ssn,
+                event.initiatedFrom,
+                event.attributedTo,
+                event.productType,
+                event.currentInsurer,
+                event.price,
+                event.currency,
+                event.originatingProductId
+            ),
             requestId = requestId
         )
         return ResponseEntity.accepted().build()
