@@ -31,7 +31,7 @@ class CustomerioServicePostEventTest {
 
         sut.sendEvent("8080", mapOf("someKey" to 42))
 
-        verify { sweClient.sendEvent("8080", mapOf("someKey" to 42, "hash" to "87059ce1")) }
+        verify { sweClient.sendEvent("8080", mapOf("someKey" to 42)) }
     }
 
     @Test
@@ -40,7 +40,7 @@ class CustomerioServicePostEventTest {
 
         sut.sendEvent("8080", mapOf("someKey" to 42))
 
-        verify { noClient.sendEvent("8080", mapOf("someKey" to 42, "hash" to "87059ce1")) }
+        verify { noClient.sendEvent("8080", mapOf("someKey" to 42)) }
     }
 
     @Test
@@ -120,5 +120,8 @@ class CustomerioServicePostEventTest {
     }
 
     private fun createExpectedMap(map: Map<String, Any>, hash: String) =
-        map.toMutableMap().also { it["hash"] = hash }
+        map.toMutableMap().also {
+            @Suppress("UNCHECKED_CAST")
+            (it["data"] as MutableMap<String, Any>)["hash"] = hash
+        }
 }

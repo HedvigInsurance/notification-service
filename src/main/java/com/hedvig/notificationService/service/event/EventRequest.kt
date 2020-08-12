@@ -3,7 +3,6 @@ package com.hedvig.notificationService.service.event
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.hedvig.notificationService.customerio.dto.objects.ChargeFailedReason
-import okhttp3.internal.toHexString
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.util.UUID
