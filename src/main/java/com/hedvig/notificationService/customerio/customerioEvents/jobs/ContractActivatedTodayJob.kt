@@ -11,6 +11,7 @@ import org.quartz.JobExecutionContext
 import org.quartz.PersistJobDataAfterExecution
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.quartz.QuartzJobBean
+import java.time.LocalDate
 
 @DisallowConcurrentExecution
 @PersistJobDataAfterExecution
@@ -35,7 +36,8 @@ class ContractActivatedTodayJob(
 
             val customerioState = customerIOStateRepository.findByMemberId(memberId)!!
             val contracts = contractLoader.getContractInfoForMember(customerioState.memberId)
-            val eventAndState = eventCreator.sendActivatesToday(customerioState, contracts)
+            TODO()
+            val eventAndState = eventCreator.sendActivatesToday(customerioState, contracts, LocalDate.of(2020, 1, 2))
             customerioService.sendEventAndUpdateState(customerioState, eventAndState.asMap)
         }
     }

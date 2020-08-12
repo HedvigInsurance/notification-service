@@ -24,7 +24,7 @@ class ContractsActivatedTodayEventTest {
         val customerioState = CustomerioState(
             "aMemberId",
             null,
-            activationDateTriggerAt = LocalDate.of(2020, 1, 2)
+            activationDateTriggerAt = null
         )
         eventCreatorImpl.sendActivatesToday(
             customerioState,
@@ -33,7 +33,8 @@ class ContractsActivatedTodayEventTest {
                     AgreementType.NorwegianHomeContent,
                     startDate = LocalDate.of(2020, 1, 2)
                 )
-            )
+            ),
+            LocalDate.of(2020, 1, 2)
         )
 
         assertThat(customerioState.activationDateTriggerAt).isNull()
@@ -44,15 +45,15 @@ class ContractsActivatedTodayEventTest {
         val eventCreatorImpl = CustomerioEventCreatorImpl()
         val result = eventCreatorImpl.sendActivatesToday(
             CustomerioState(
-                "aMemberId",
-                activationDateTriggerAt = LocalDate.of(2020, 1, 2)
+                "aMemberId"
             ),
             listOf(
                 makeContractInfo(
                     AgreementType.NorwegianTravel,
                     startDate = LocalDate.of(2020, 1, 2)
                 )
-            )
+            ),
+            LocalDate.of(2020, 1, 2)
         )
 
         assertThat(result.asMap).contains("name", "ContractsActivatedTodayEvent")
@@ -63,8 +64,7 @@ class ContractsActivatedTodayEventTest {
         val eventCreatorImpl = CustomerioEventCreatorImpl()
         val result = eventCreatorImpl.sendActivatesToday(
             CustomerioState(
-                "aMemberId",
-                activationDateTriggerAt = LocalDate.of(2020, 1, 2)
+                "aMemberId"
             ),
             listOf(
                 makeContractInfo(
@@ -75,7 +75,8 @@ class ContractsActivatedTodayEventTest {
                     AgreementType.NorwegianHomeContent,
                     startDate = LocalDate.of(2020, 1, 2)
                 )
-            )
+            ),
+            LocalDate.of(2020, 1, 2)
         )
 
         val event = result.event as ContractsActivatedTodayEvent
@@ -91,8 +92,7 @@ class ContractsActivatedTodayEventTest {
     fun `one contract with future activation date`() {
         val eventCreatorImpl = CustomerioEventCreatorImpl()
         val customerioState = CustomerioState(
-            "aMemberId",
-            activationDateTriggerAt = LocalDate.of(2020, 1, 2)
+            "aMemberId"
         )
         val result = eventCreatorImpl.sendActivatesToday(
             customerioState,
@@ -105,22 +105,21 @@ class ContractsActivatedTodayEventTest {
                     AgreementType.NorwegianHomeContent,
                     startDate = LocalDate.of(2020, 1, 3)
                 )
-            )
+            ),
+            LocalDate.of(2020, 1, 2)
         )
 
         val event = result.event as ContractsActivatedTodayEvent
         assertThat(event.data.activeInFuture).containsAll(
             Contract("innbo", null, LocalDate.of(2020, 1, 3).toString())
         )
-        assertThat(customerioState.activationDateTriggerAt).isEqualTo(LocalDate.of(2020, 1, 3))
     }
 
     @Test
     fun `one future activation date one without future activation date`() {
         val eventCreatorImpl = CustomerioEventCreatorImpl()
         val customerioState = CustomerioState(
-            "aMemberId",
-            activationDateTriggerAt = LocalDate.of(2020, 1, 2)
+            "aMemberId"
         )
         val result = eventCreatorImpl.sendActivatesToday(
             customerioState,
@@ -137,7 +136,8 @@ class ContractsActivatedTodayEventTest {
                     AgreementType.NorwegianHomeContent,
                     startDate = null
                 )
-            )
+            ),
+            LocalDate.of(2020, 1, 2)
         )
 
         val event = result.event as ContractsActivatedTodayEvent
@@ -145,15 +145,13 @@ class ContractsActivatedTodayEventTest {
             Contract("innbo", null, LocalDate.of(2020, 1, 3).toString()),
             Contract("innbo", null, null)
         )
-        assertThat(customerioState.activationDateTriggerAt).isEqualTo(LocalDate.of(2020, 1, 3))
     }
 
     @Test
     fun `one contract without future activation date`() {
         val eventCreatorImpl = CustomerioEventCreatorImpl()
         val customerioState = CustomerioState(
-            "aMemberId",
-            activationDateTriggerAt = LocalDate.of(2020, 1, 2)
+            "aMemberId"
         )
         val result = eventCreatorImpl.sendActivatesToday(
             customerioState,
@@ -166,7 +164,8 @@ class ContractsActivatedTodayEventTest {
                     AgreementType.NorwegianHomeContent,
                     startDate = null
                 )
-            )
+            ),
+            LocalDate.of(2020, 1, 2)
         )
 
         val event = result.event as ContractsActivatedTodayEvent
@@ -180,18 +179,18 @@ class ContractsActivatedTodayEventTest {
     fun `no contract with activation date today`() {
         val eventCreatorImpl = CustomerioEventCreatorImpl()
 
-        thrown.expectMessage("Cannot send crete event no contracts with activation date today")
+        thrown.expectMessage("Cannot send ContractsActivatedTodayEvent with no contracts with activation date today")
         val result = eventCreatorImpl.sendActivatesToday(
             CustomerioState(
-                "aMemberId",
-                activationDateTriggerAt = LocalDate.of(2020, 1, 2)
+                "aMemberId"
             ),
             listOf(
                 makeContractInfo(
                     AgreementType.NorwegianTravel,
                     startDate = LocalDate.of(2020, 1, 3)
                 )
-            )
+            ),
+            LocalDate.of(2020, 1, 2)
         )
 
         result.event as ContractsActivatedTodayEvent

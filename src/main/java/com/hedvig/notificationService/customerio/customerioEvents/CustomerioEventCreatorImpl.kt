@@ -5,6 +5,7 @@ import com.hedvig.notificationService.customerio.AgreementType
 import com.hedvig.notificationService.customerio.ContractInfo
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import org.springframework.stereotype.Component
+import java.time.LocalDate
 
 @Component
 class CustomerioEventCreatorImpl : CustomerioEventCreator {
@@ -85,7 +86,7 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
                 startDateUpdatedEvent(customerioState, contracts)
             }
             customerioState.shouldSendActivatesTodayEvent() -> {
-                sendActivatesToday(customerioState, contracts)
+                sendActivatesToday(customerioState, contracts, LocalDate.of(2020, 1, 2))
             }
             else
             -> throw RuntimeException("CustomerioState in weird state")
@@ -94,12 +95,10 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
 
     override fun sendActivatesToday(
         customerioState: CustomerioState,
-        contracts: List<ContractInfo>
+        contracts: List<ContractInfo>,
+        dateToday: LocalDate
     ): ExecutionResult {
-        val event = createActivationDateTodayEvent(customerioState, contracts)
-        customerioState.sentActivatesTodayEvent(nextActivationDate = contracts.map { it.startDate }
-            .sortedBy { it }
-            .firstOrNull { it?.isAfter(customerioState.activationDateTriggerAt) == true })
+        val event = createActivationDateTodayEvent(customerioState, contracts, dateToday)
         return ExecutionResult(event)
     }
 
@@ -123,17 +122,18 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
 
     private fun createActivationDateTodayEvent(
         customerioState: CustomerioState,
-        contracts: List<ContractInfo>
+        contracts: List<ContractInfo>,
+        dateToday: LocalDate
     ): ContractsActivatedTodayEvent {
         val contractsWithActivationDateToday =
-            contracts.filter { it.startDate == customerioState.activationDateTriggerAt }
+            contracts.filter { it.startDate == dateToday }
         if (contractsWithActivationDateToday.isEmpty()) {
-            throw RuntimeException("Cannot send crete event no contracts with activation date today")
+            throw RuntimeException("Cannot send ContractsActivatedTodayEvent with no contracts with activation date today")
         }
         return ContractsActivatedTodayEvent(
             contractsWithActivationDateToday
                 .map { Contract.from(it) },
-            contracts.filter { it.startDate == null || it.startDate.isAfter(customerioState.activationDateTriggerAt) }
+            contracts.filter { it.startDate == null || it.startDate.isAfter(dateToday) }
                 .map { Contract.from(it) }
         )
     }

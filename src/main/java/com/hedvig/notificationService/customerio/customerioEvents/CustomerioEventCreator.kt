@@ -2,6 +2,7 @@ package com.hedvig.notificationService.customerio.customerioEvents
 
 import com.hedvig.notificationService.customerio.ContractInfo
 import com.hedvig.notificationService.customerio.state.CustomerioState
+import java.time.LocalDate
 
 interface
 CustomerioEventCreator {
@@ -22,6 +23,7 @@ CustomerioEventCreator {
 
     fun sendActivatesToday(
         customerioState: CustomerioState,
-        contracts: List<ContractInfo>
+        contracts: List<ContractInfo>,
+        dateToday: LocalDate
     ): ExecutionResult
 }
