@@ -117,20 +117,20 @@ class EventController(
     ): ResponseEntity<Any> {
         eventHandler.onQuoteCreatedHandleRequest(
             event = QuoteCreatedEvent(
-                event.memberId,
-                event.quoteId,
-                event.firstName,
-                event.lastName,
-                event.postalCode,
-                event.email,
-                event.ssn,
-                event.initiatedFrom,
-                event.attributedTo,
-                event.productType,
-                event.currentInsurer,
-                event.price,
-                event.currency,
-                event.originatingProductId
+                memberId = event.memberId,
+                quoteId = event.quoteId,
+                firstName = event.firstName,
+                lastName = event.lastName,
+                postalCode = event.postalCode,
+                email = event.email,
+                ssn = event.ssn,
+                initiatedFrom = event.initiatedFrom,
+                attributedTo = event.attributedTo,
+                productType = event.productType,
+                currentInsurer = event.currentInsurer,
+                price = event.price,
+                currency = event.currency,
+                originatingProductId = event.originatingProductId
             ),
             requestId = requestId
         )

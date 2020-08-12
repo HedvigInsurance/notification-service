@@ -50,8 +50,8 @@ class CustomerioService(
 
     private fun isSignUpdateFromUnderwriter(attributes: Map<String, Any?>): Boolean {
         return attributes.containsKey("partner_code") ||
-            attributes.containsKey("switcher_company") ||
-            attributes.containsKey("sign_source")
+                attributes.containsKey("switcher_company") ||
+                attributes.containsKey("sign_source")
     }
 
     fun deleteCustomer(memberId: String) {
@@ -103,7 +103,14 @@ class CustomerioService(
         try {
             val marketForMember = workspaceSelector.getWorkspaceForMember(memberId)
 
-            clients[marketForMember]?.sendEvent(memberId, mapOf("name" to "RemoveIdempotenceHash", "hash" to hash))
+            clients[marketForMember]?.sendEvent(
+                memberId, mapOf(
+                    "name" to "RemoveIdempotenceHash",
+                    "data" to mapOf(
+                        "hash" to hash
+                    )
+                )
+            )
             idempotenceHashRepository.delete(memberId, hash)
         } catch (ex: RuntimeException) {
             logger.error("Could not remove idempotence hash: $hash, memberId: $memberId", ex)
