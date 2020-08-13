@@ -63,4 +63,23 @@ class HandleEventRequestsTest {
         }
         verify { handledRequestRepository.storeHandledRequest(requestId) }
     }
+
+    @Test
+    fun `contract terminated event`() {
+        val contractId = "aRandomContractId"
+        val memberId = "someMemberId"
+        val event = ContractTerminatedEvent(
+            contractId,
+            memberId,
+            LocalDate.of(2020, 9, 13),
+            false
+        )
+        serviceToTest.onEventRequest(
+            "rq", event
+        )
+
+        verify {
+            eventHandler.onContractTerminatedEvent(event)
+        }
+    }
 }

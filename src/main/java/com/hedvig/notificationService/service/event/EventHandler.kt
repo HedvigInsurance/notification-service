@@ -111,8 +111,8 @@ class EventHandler(
         callTime: Instant = Instant.now()
     ) {
         val shouldNotSendEvent = event.initiatedFrom == "HOPE" ||
-                event.originatingProductId != null ||
-                event.productType == "UNKNOWN"
+            event.originatingProductId != null ||
+            event.productType == "UNKNOWN"
         if (shouldNotSendEvent) {
             logger.info("Will not send QuoteCreatedEvent to customer.io for member=${event.memberId} (event=$event)")
             return
@@ -186,6 +186,10 @@ class EventHandler(
                 handledRequestRepository.storeHandledRequest(it)
             }
         } ?: handle.invoke()
+    }
+
+    fun onContractTerminatedEvent(event: ContractTerminatedEvent) {
+        TODO("Not yet implemented")
     }
 
     companion object {
