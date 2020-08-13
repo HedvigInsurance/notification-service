@@ -38,7 +38,7 @@ class StartDateUpdatedJob(
             val customerioState = customerIOStateRepository.findByMemberId(memberId)!!
             val contracts = contractLoader.getContractInfoForMember(customerioState.memberId)
             val eventAndState = eventCreator.startDateUpdatedEvent(customerioState, contracts)
-            customerioService.sendEventAndUpdateState(customerioState, eventAndState.asMap)
+            customerioService.sendEventAndUpdateState(customerioState, eventAndState.event)
         }
     }
 }

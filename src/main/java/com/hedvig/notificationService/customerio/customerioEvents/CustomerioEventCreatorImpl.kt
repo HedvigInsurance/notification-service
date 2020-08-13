@@ -72,9 +72,9 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
         customerioState: CustomerioState,
         contracts: List<ContractInfo>,
         dateToday: LocalDate
-    ): ExecutionResult {
+    ): ContractsActivatedTodayEvent? {
         val event = createActivationDateTodayEvent(customerioState, contracts, dateToday)
-        return ExecutionResult(event)
+        return event
     }
 
     override fun startDateUpdatedEvent(
@@ -99,11 +99,11 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
         customerioState: CustomerioState,
         contracts: List<ContractInfo>,
         dateToday: LocalDate
-    ): ContractsActivatedTodayEvent {
+    ): ContractsActivatedTodayEvent? {
         val contractsWithActivationDateToday =
             contracts.filter { it.startDate == dateToday }
         if (contractsWithActivationDateToday.isEmpty()) {
-            throw RuntimeException("Cannot send ContractsActivatedTodayEvent with no contracts with activation date today")
+            return null
         }
         return ContractsActivatedTodayEvent(
             contractsWithActivationDateToday

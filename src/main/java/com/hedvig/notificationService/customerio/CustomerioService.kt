@@ -2,6 +2,7 @@ package com.hedvig.notificationService.customerio
 
 import com.hedvig.customerio.CustomerioClient
 import com.hedvig.notificationService.customerio.customerioEvents.CustomerioEventCreator
+import com.hedvig.notificationService.customerio.customerioEvents.ExecutionResult
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.customerio.state.CustomerioState
@@ -72,9 +73,13 @@ class CustomerioService(
     @Transactional
     fun sendEventAndUpdateState(
         customerioState: CustomerioState,
-        event: Map<String, Any?>
+        eventObject: Any
     ) {
         try {
+            val event = @Suppress("UNCHECKED_CAST") ExecutionResult.objectMapper.convertValue(
+                eventObject,
+                Map::class.java
+            )!! as Map<String, Any?>
             logger.info("Sending event ${event["name"]} to member ${customerioState.memberId}")
             this.stateRepository.save(customerioState)
             sendEvent(customerioState.memberId, event)

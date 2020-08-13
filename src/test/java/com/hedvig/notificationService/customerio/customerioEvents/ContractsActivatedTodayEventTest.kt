@@ -1,9 +1,10 @@
 package com.hedvig.notificationService.customerio.customerioEvents
 
 import assertk.assertThat
-import assertk.assertions.contains
 import assertk.assertions.containsAll
 import assertk.assertions.isEqualTo
+import assertk.assertions.isInstanceOf
+import assertk.assertions.isNotNull
 import assertk.assertions.isNull
 import com.hedvig.notificationService.customerio.AgreementType
 import com.hedvig.notificationService.customerio.hedvigfacades.makeContractInfo
@@ -56,7 +57,7 @@ class ContractsActivatedTodayEventTest {
             LocalDate.of(2020, 1, 2)
         )
 
-        assertThat(result.asMap).contains("name", "ContractsActivatedTodayEvent")
+        assertThat(result).isNotNull().isInstanceOf(ContractsActivatedTodayEvent::class)
     }
 
     @Test
@@ -79,7 +80,7 @@ class ContractsActivatedTodayEventTest {
             LocalDate.of(2020, 1, 2)
         )
 
-        val event = result.event as ContractsActivatedTodayEvent
+        val event = result!!
         assertThat(event.data.activeToday).containsAll(
             Contract(
                 "innbo", null, LocalDate.of(2020, 1, 2).toString()
@@ -109,7 +110,7 @@ class ContractsActivatedTodayEventTest {
             LocalDate.of(2020, 1, 2)
         )
 
-        val event = result.event as ContractsActivatedTodayEvent
+        val event = result!!
         assertThat(event.data.activeInFuture).containsAll(
             Contract("innbo", null, LocalDate.of(2020, 1, 3).toString())
         )
@@ -140,7 +141,7 @@ class ContractsActivatedTodayEventTest {
             LocalDate.of(2020, 1, 2)
         )
 
-        val event = result.event as ContractsActivatedTodayEvent
+        val event = result!!
         assertThat(event.data.activeInFuture).containsAll(
             Contract("innbo", null, LocalDate.of(2020, 1, 3).toString()),
             Contract("innbo", null, null)
@@ -168,7 +169,7 @@ class ContractsActivatedTodayEventTest {
             LocalDate.of(2020, 1, 2)
         )
 
-        val event = result.event as ContractsActivatedTodayEvent
+        val event = result!!
         assertThat(event.data.activeInFuture).containsAll(
             Contract("innbo", null, null)
         )
@@ -179,7 +180,6 @@ class ContractsActivatedTodayEventTest {
     fun `no contract with activation date today`() {
         val eventCreatorImpl = CustomerioEventCreatorImpl()
 
-        thrown.expectMessage("Cannot send ContractsActivatedTodayEvent with no contracts with activation date today")
         val result = eventCreatorImpl.sendActivatesToday(
             CustomerioState(
                 "aMemberId"
@@ -193,6 +193,6 @@ class ContractsActivatedTodayEventTest {
             LocalDate.of(2020, 1, 2)
         )
 
-        result.event as ContractsActivatedTodayEvent
+        assertThat(result).isNull()
     }
 }

@@ -21,5 +21,5 @@ CustomerioEventCreator {
         customerioState: CustomerioState,
         contracts: List<ContractInfo>,
         dateToday: LocalDate
-    ): ExecutionResult
+    ): ContractsActivatedTodayEvent?
 }
