@@ -1,6 +1,5 @@
 package com.hedvig.notificationService.customerio.customerioEvents
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.hedvig.notificationService.customerio.AgreementType
 import com.hedvig.notificationService.customerio.ContractInfo
 import com.hedvig.notificationService.customerio.state.CustomerioState
@@ -141,12 +140,5 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
                 contractsWithoutStartDate.toList()
             )
         )
-    }
-}
-
-data class ExecutionResult(val event: Any) {
-
-    companion object {
-        val objectMapper: ObjectMapper = ObjectMapper()
     }
 }

@@ -22,7 +22,8 @@ class CustomerioServicePostEventTest {
             Workspace.SWEDEN to sweClient,
             Workspace.NORWAY to noClient
         ),
-        eventHashRepository
+        eventHashRepository,
+        mockk()
     )
 
     @Test

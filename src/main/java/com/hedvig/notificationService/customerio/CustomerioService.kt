@@ -1,8 +1,8 @@
 package com.hedvig.notificationService.customerio
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.hedvig.customerio.CustomerioClient
 import com.hedvig.notificationService.customerio.customerioEvents.CustomerioEventCreator
-import com.hedvig.notificationService.customerio.customerioEvents.ExecutionResult
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.customerio.state.CustomerioState
@@ -18,7 +18,8 @@ class CustomerioService(
     private val workspaceSelector: WorkspaceSelector,
     private val stateRepository: CustomerIOStateRepository,
     private val clients: Map<Workspace, CustomerioClient>,
-    private val idempotenceHashRepository: IdempotenceHashRepository
+    private val idempotenceHashRepository: IdempotenceHashRepository,
+    private val objectMapper: ObjectMapper
 ) {
 
     private val logger = LoggerFactory.getLogger(CustomerioService::class.java)
@@ -76,7 +77,7 @@ class CustomerioService(
         eventObject: Any
     ) {
         try {
-            val event = @Suppress("UNCHECKED_CAST") ExecutionResult.objectMapper.convertValue(
+            val event = @Suppress("UNCHECKED_CAST") objectMapper.convertValue(
                 eventObject,
                 Map::class.java
             )!! as Map<String, Any?>

@@ -59,6 +59,7 @@ class NorwaySignHackUpdateCustomerIOTest {
                 Workspace.SWEDEN to seCustomerioClient,
                 Workspace.NORWAY to noCustomerIoClient
             ),
+            mockk(),
             mockk()
         )
 
