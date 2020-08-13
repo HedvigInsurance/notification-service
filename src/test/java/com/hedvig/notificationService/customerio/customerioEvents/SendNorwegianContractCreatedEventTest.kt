@@ -3,6 +3,7 @@ package com.hedvig.notificationService.customerio.customerioEvents
 import assertk.assertThat
 import assertk.assertions.contains
 import assertk.assertions.isEqualTo
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.hedvig.customerio.CustomerioClient
 import com.hedvig.notificationService.customerio.AgreementType
 import com.hedvig.notificationService.customerio.CustomerioService
@@ -43,6 +44,8 @@ class SendNorwegianContractCreatedEventTest {
     @MockK(relaxed = true)
     lateinit var seClient: CustomerioClient
 
+    var objectMapper: ObjectMapper = ObjectMapper()
+
     lateinit var customerioService: CustomerioService
     lateinit var contractCreatedJob: ContractCreatedJob
 
@@ -59,7 +62,7 @@ class SendNorwegianContractCreatedEventTest {
                 Workspace.SWEDEN to seClient
             ),
             mockk(),
-            mockk()
+            objectMapper
         )
         contractCreatedJob = ContractCreatedJob(
             contractLoader,
