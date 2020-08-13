@@ -36,6 +36,6 @@ class ContractActivatedTodayJobTest {
 
         sut.execute(jobExecutionContext)
 
-        verify { eventCreator.sendActivatesToday(any(), any(), LocalDate.of(2020, 8, 12)) }
+        verify { eventCreator.contractsActivatedTodayEvent(any(), any(), LocalDate.of(2020, 8, 12)) }
     }
 }

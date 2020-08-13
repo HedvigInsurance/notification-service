@@ -27,7 +27,7 @@ class ContractsActivatedTodayEventTest {
             null,
             activationDateTriggerAt = null
         )
-        eventCreatorImpl.sendActivatesToday(
+        eventCreatorImpl.contractsActivatedTodayEvent(
             customerioState,
             listOf(
                 makeContractInfo(
@@ -44,7 +44,7 @@ class ContractsActivatedTodayEventTest {
     @Test
     fun `test naming`() {
         val eventCreatorImpl = CustomerioEventCreatorImpl()
-        val result = eventCreatorImpl.sendActivatesToday(
+        val result = eventCreatorImpl.contractsActivatedTodayEvent(
             CustomerioState(
                 "aMemberId"
             ),
@@ -63,7 +63,7 @@ class ContractsActivatedTodayEventTest {
     @Test
     fun `two contracts active today`() {
         val eventCreatorImpl = CustomerioEventCreatorImpl()
-        val result = eventCreatorImpl.sendActivatesToday(
+        val result = eventCreatorImpl.contractsActivatedTodayEvent(
             CustomerioState(
                 "aMemberId"
             ),
@@ -95,7 +95,7 @@ class ContractsActivatedTodayEventTest {
         val customerioState = CustomerioState(
             "aMemberId"
         )
-        val result = eventCreatorImpl.sendActivatesToday(
+        val result = eventCreatorImpl.contractsActivatedTodayEvent(
             customerioState,
             listOf(
                 makeContractInfo(
@@ -122,7 +122,7 @@ class ContractsActivatedTodayEventTest {
         val customerioState = CustomerioState(
             "aMemberId"
         )
-        val result = eventCreatorImpl.sendActivatesToday(
+        val result = eventCreatorImpl.contractsActivatedTodayEvent(
             customerioState,
             listOf(
                 makeContractInfo(
@@ -154,7 +154,7 @@ class ContractsActivatedTodayEventTest {
         val customerioState = CustomerioState(
             "aMemberId"
         )
-        val result = eventCreatorImpl.sendActivatesToday(
+        val result = eventCreatorImpl.contractsActivatedTodayEvent(
             customerioState,
             listOf(
                 makeContractInfo(
@@ -180,7 +180,7 @@ class ContractsActivatedTodayEventTest {
     fun `no contract with activation date today`() {
         val eventCreatorImpl = CustomerioEventCreatorImpl()
 
-        val result = eventCreatorImpl.sendActivatesToday(
+        val result = eventCreatorImpl.contractsActivatedTodayEvent(
             CustomerioState(
                 "aMemberId"
             ),

@@ -67,7 +67,7 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
         return data
     }
 
-    override fun sendActivatesToday(
+    override fun contractsActivatedTodayEvent(
         customerioState: CustomerioState,
         contracts: List<ContractInfo>,
         dateToday: LocalDate
