@@ -8,12 +8,12 @@ import assertk.assertions.none
 import assertk.assertions.support.expected
 import assertk.assertions.support.show
 import com.hedvig.notificationService.customerio.CustomerioService
-import com.hedvig.notificationService.service.event.EventHandler
 import com.hedvig.notificationService.customerio.customerioEvents.jobs.ContractActivatedTodayJob
-import com.hedvig.notificationService.service.event.ContractCreatedEvent
-import com.hedvig.notificationService.service.event.StartDateUpdatedEvent
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
+import com.hedvig.notificationService.service.event.ContractCreatedEvent
+import com.hedvig.notificationService.service.event.EventHandler
+import com.hedvig.notificationService.service.event.StartDateUpdatedEvent
 import com.hedvig.notificationService.service.firebase.FirebaseNotificationService
 import com.hedvig.notificationService.service.request.HandledRequestRepository
 import io.mockk.every
@@ -84,7 +84,7 @@ class SchedulingOfActivationDateActiveTodayJobTest {
 
         assertThat(capturedJobDetails).any {
             it.matches(
-                "contractActivatedTodayJob-aContractId",
+                "contractActivatedTodayJob-aMemberId",
                 ContractActivatedTodayJob::class.java,
                 mapOf("memberId" to "aMemberId")
             )
@@ -92,7 +92,7 @@ class SchedulingOfActivationDateActiveTodayJobTest {
 
         assertThat(triggerSlot).any {
             it.matches(
-                "contractActivatedTodayJob-aContractId",
+                "contractActivatedTodayJob-aMemberId",
                 Date.from(LocalDate.of(2020, 9, 1).atStartOfDay(ZoneId.of("Europe/Stockholm")).toInstant())
             )
         }
