@@ -1,5 +1,6 @@
 package com.hedvig.notificationService.customerio
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.hedvig.customerio.CustomerioClient
 import com.hedvig.notificationService.customerio.customerioEvents.CustomerioEventCreator
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
@@ -17,7 +18,8 @@ class CustomerioService(
     private val workspaceSelector: WorkspaceSelector,
     private val stateRepository: CustomerIOStateRepository,
     private val clients: Map<Workspace, CustomerioClient>,
-    private val idempotenceHashRepository: IdempotenceHashRepository
+    private val idempotenceHashRepository: IdempotenceHashRepository,
+    private val objectMapper: ObjectMapper
 ) {
 
     private val logger = LoggerFactory.getLogger(CustomerioService::class.java)
@@ -75,9 +77,13 @@ class CustomerioService(
     @Transactional
     fun sendEventAndUpdateState(
         customerioState: CustomerioState,
-        event: Map<String, Any?>
+        eventObject: Any
     ) {
         try {
+            val event = @Suppress("UNCHECKED_CAST") objectMapper.convertValue(
+                eventObject,
+                Map::class.java
+            )!! as Map<String, Any?>
             logger.info("Sending event ${event["name"]} to member ${customerioState.memberId}")
             this.stateRepository.save(customerioState)
             sendEvent(customerioState.memberId, event)
@@ -92,13 +98,7 @@ class CustomerioService(
         eventCreator: CustomerioEventCreator,
         contractLoader: ContractLoader
     ) {
-        try {
-            val contracts = contractLoader.getContractInfoForMember(customerioState.memberId)
-            val eventAndState = eventCreator.execute(customerioState, contracts)
-            sendEventAndUpdateState(customerioState, eventAndState.asMap)
-        } catch (ex: RuntimeException) {
-            logger.error("Could not create event from customerio state", ex)
-        }
+        // TODO: Remove this function and the quartz job that calls it
     }
 
     @Transactional

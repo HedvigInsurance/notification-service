@@ -37,8 +37,12 @@ class StartDateUpdatedJob(
 
             val customerioState = customerIOStateRepository.findByMemberId(memberId)!!
             val contracts = contractLoader.getContractInfoForMember(customerioState.memberId)
-            val eventAndState = eventCreator.startDateUpdatedEvent(customerioState, contracts)
-            customerioService.sendEventAndUpdateState(customerioState, eventAndState.asMap)
+            val event = eventCreator.startDateUpdatedEvent(customerioState, contracts)
+            if (event == null) {
+                logger.info("Not sending any StartDateUpdatedEvent to member $memberId")
+            } else {
+                customerioService.sendEventAndUpdateState(customerioState, event)
+            }
         }
     }
 }

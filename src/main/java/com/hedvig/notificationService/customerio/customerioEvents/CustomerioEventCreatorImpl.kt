@@ -1,10 +1,10 @@
 package com.hedvig.notificationService.customerio.customerioEvents
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.hedvig.notificationService.customerio.AgreementType
 import com.hedvig.notificationService.customerio.ContractInfo
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import org.springframework.stereotype.Component
+import java.time.LocalDate
 
 @Component
 class CustomerioEventCreatorImpl : CustomerioEventCreator {
@@ -67,83 +67,56 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
         return data
     }
 
-    override fun execute(
+    override fun contractsActivatedTodayEvent(
         customerioState: CustomerioState,
-        contracts: List<ContractInfo>
-    ): ExecutionResult {
-        return when {
-            customerioState.shouldSendTmpSignedEvent() -> {
-                val event = createTmpSignedInsuranceEvent(contracts)
-                customerioState.sentTmpSignedEvent()
-                ExecutionResult(event)
-            }
-            customerioState.shouldSendContractCreatedEvent()
-            -> {
-                contractCreatedEvent(customerioState, contracts)
-            }
-            customerioState.shouldSendStartDateUpdatedEvent() -> {
-                startDateUpdatedEvent(customerioState, contracts)
-            }
-            customerioState.shouldSendActivatesTodayEvent() -> {
-                sendActivatesToday(customerioState, contracts)
-            }
-            else
-            -> throw RuntimeException("CustomerioState in weird state")
-        }
-    }
-
-    override fun sendActivatesToday(
-        customerioState: CustomerioState,
-        contracts: List<ContractInfo>
-    ): ExecutionResult {
-        val event = createActivationDateTodayEvent(customerioState, contracts)
-        customerioState.sentActivatesTodayEvent(nextActivationDate = contracts.map { it.startDate }
-            .sortedBy { it }
-            .firstOrNull { it?.isAfter(customerioState.activationDateTriggerAt) == true })
-        return ExecutionResult(event)
+        contracts: List<ContractInfo>,
+        dateToday: LocalDate
+    ): ContractsActivatedTodayEvent? {
+        val event = createActivationDateTodayEvent(contracts, dateToday)
+        return event
     }
 
     override fun startDateUpdatedEvent(
         customerioState: CustomerioState,
         contracts: List<ContractInfo>
-    ): ExecutionResult {
+    ): ContractsActivationDateUpdatedEvent? {
         val event = createStartDateUpdatedEvent(contracts)
         customerioState.sentStartDateUpdatedEvent()
-        return ExecutionResult(event)
+        return event
     }
 
     override fun contractCreatedEvent(
         customerioState: CustomerioState,
         contracts: List<ContractInfo>
-    ): ExecutionResult {
+    ): NorwegianContractCreatedEvent {
         val event = createContractCreatedEvent(contracts)
         customerioState.sentContractCreatedEvent()
-        return ExecutionResult(event)
+        return event
     }
 
     private fun createActivationDateTodayEvent(
-        customerioState: CustomerioState,
-        contracts: List<ContractInfo>
-    ): ContractsActivatedTodayEvent {
+        contracts: List<ContractInfo>,
+        dateToday: LocalDate
+    ): ContractsActivatedTodayEvent? {
         val contractsWithActivationDateToday =
-            contracts.filter { it.startDate == customerioState.activationDateTriggerAt }
+            contracts.filter { it.startDate == dateToday }
         if (contractsWithActivationDateToday.isEmpty()) {
-            throw RuntimeException("Cannot send crete event no contracts with activation date today")
+            return null
         }
         return ContractsActivatedTodayEvent(
             contractsWithActivationDateToday
                 .map { Contract.from(it) },
-            contracts.filter { it.startDate == null || it.startDate.isAfter(customerioState.activationDateTriggerAt) }
+            contracts.filter { it.startDate == null || it.startDate.isAfter(dateToday) }
                 .map { Contract.from(it) }
         )
     }
 
     private fun createStartDateUpdatedEvent(
         contracts: Collection<ContractInfo>
-    ): ContractsActivationDateUpdatedEvent {
+    ): ContractsActivationDateUpdatedEvent? {
 
         if (contracts.all { it.startDate == null }) {
-            throw RuntimeException("Cannot create ActivationDateUpdatedEvent no contracts with start date")
+            return null
         }
 
         val contractsWithStartDate = mutableListOf<Contract>()
@@ -167,18 +140,5 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
                 contractsWithoutStartDate.toList()
             )
         )
-    }
-}
-
-data class ExecutionResult(val event: Any) {
-
-    val asMap: Map<String, Any?>
-        get() {
-            @Suppress("UNCHECKED_CAST")
-            return objectMapper.convertValue(event, Map::class.java)!! as Map<String, Any?>
-        }
-
-    companion object {
-        val objectMapper: ObjectMapper = ObjectMapper()
     }
 }

@@ -2,26 +2,24 @@ package com.hedvig.notificationService.customerio.customerioEvents
 
 import com.hedvig.notificationService.customerio.ContractInfo
 import com.hedvig.notificationService.customerio.state.CustomerioState
+import java.time.LocalDate
 
 interface
 CustomerioEventCreator {
-    fun execute(
-        customerioState: CustomerioState,
-        contracts: List<ContractInfo>
-    ): ExecutionResult
 
     fun contractCreatedEvent(
         customerioState: CustomerioState,
         contracts: List<ContractInfo>
-    ): ExecutionResult
+    ): NorwegianContractCreatedEvent
 
     fun startDateUpdatedEvent(
         customerioState: CustomerioState,
         contracts: List<ContractInfo>
-    ): ExecutionResult
+    ): ContractsActivationDateUpdatedEvent?
 
-    fun sendActivatesToday(
+    fun contractsActivatedTodayEvent(
         customerioState: CustomerioState,
-        contracts: List<ContractInfo>
-    ): ExecutionResult
+        contracts: List<ContractInfo>,
+        dateToday: LocalDate
+    ): ContractsActivatedTodayEvent?
 }

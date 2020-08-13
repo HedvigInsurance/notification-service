@@ -11,6 +11,9 @@ import org.quartz.JobExecutionContext
 import org.quartz.PersistJobDataAfterExecution
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.quartz.QuartzJobBean
+import java.time.Clock
+import java.time.Instant
+import java.time.ZoneId
 
 @DisallowConcurrentExecution
 @PersistJobDataAfterExecution
@@ -18,7 +21,8 @@ class ContractActivatedTodayJob(
     private val contractLoader: ContractLoader,
     private val eventCreator: CustomerioEventCreator,
     private val customerioService: CustomerioService,
-    private val customerIOStateRepository: CustomerIOStateRepository
+    private val customerIOStateRepository: CustomerIOStateRepository,
+    private val clock: Clock = Clock.systemUTC()
 ) : QuartzJobBean() {
     private val logger = LoggerFactory.getLogger(ContractActivatedTodayJob::class.java)
 
@@ -35,8 +39,14 @@ class ContractActivatedTodayJob(
 
             val customerioState = customerIOStateRepository.findByMemberId(memberId)!!
             val contracts = contractLoader.getContractInfoForMember(customerioState.memberId)
-            val eventAndState = eventCreator.sendActivatesToday(customerioState, contracts)
-            customerioService.sendEventAndUpdateState(customerioState, eventAndState.asMap)
+            val time = Instant.now(clock).atZone(ZoneId.of("Europe/Stockholm")).toLocalDate()
+
+            val event = eventCreator.contractsActivatedTodayEvent(customerioState, contracts, time)
+            if (event != null) {
+                customerioService.sendEventAndUpdateState(customerioState, event)
+            } else {
+                logger.info("Not sending any ContractActivatedToday events for $memberId")
+            }
         }
     }
 }

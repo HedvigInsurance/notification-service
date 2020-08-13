@@ -30,6 +30,7 @@ class CustomerioServiceDeleteCustomerTest {
                 Workspace.SWEDEN to sweClient,
                 Workspace.NORWAY to noClient
             ),
+            mockk(),
             mockk()
         )
         cut.deleteCustomer("asdad")
@@ -50,6 +51,7 @@ class CustomerioServiceDeleteCustomerTest {
                 Workspace.SWEDEN to sweClient,
                 Workspace.NORWAY to noClient
             ),
+            mockk(),
             mockk()
         )
         cut.deleteCustomer("asdad")

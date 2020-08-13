@@ -48,12 +48,16 @@ class WebIntegrationTestConfig {
                 Workspace.SWEDEN to customerioMock,
                 Workspace.NORWAY to customerioMock
             ),
+            mockk(),
             mockk()
         )
     }
 
     @Bean
-    fun workspaceSelector(productPricingFacade: ContractLoader, memberServiceClient: MemberServiceClient): WorkspaceSelector {
+    fun workspaceSelector(
+        productPricingFacade: ContractLoader,
+        memberServiceClient: MemberServiceClient
+    ): WorkspaceSelector {
         return WorkspaceSelector(
             productPricingFacade,
             MemberServiceImpl(memberServiceClient)

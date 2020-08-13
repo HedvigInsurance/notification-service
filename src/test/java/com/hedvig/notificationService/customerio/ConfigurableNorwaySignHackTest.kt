@@ -27,6 +27,7 @@ class ConfigurableNorwaySignHackTest {
                 workspaceSelector,
                 stateRepository,
                 clients,
+                mockk(),
                 mockk()
             )
 

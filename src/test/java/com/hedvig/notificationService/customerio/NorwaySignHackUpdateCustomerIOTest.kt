@@ -59,6 +59,7 @@ class NorwaySignHackUpdateCustomerIOTest {
                 Workspace.SWEDEN to seCustomerioClient,
                 Workspace.NORWAY to noCustomerIoClient
             ),
+            mockk(),
             mockk()
         )
 
@@ -119,32 +120,6 @@ class NorwaySignHackUpdateCustomerIOTest {
     }
 
     @Test
-    fun sendUpdatesAfterWindowTimeWithTwoMembers() {
-
-        val someTime = Instant.parse("2020-04-15T14:53:40.550493Z")
-        repository.save(
-            CustomerioState(
-                "memberOne",
-                someTime
-            )
-        )
-        repository.save(
-            CustomerioState(
-                "memberTwo",
-                someTime
-            )
-        )
-        every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
-        every { contractLoader.getContractInfoForMember(any()) } returns listOf(
-            makeContractInfo()
-        )
-        scheduler.sendUpdates(someTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
-
-        verify { noCustomerIoClient.sendEvent("memberOne", any()) }
-        verify { noCustomerIoClient.sendEvent("memberTwo", any()) }
-    }
-
-    @Test
     fun sendUpdatesWithNothingToUpdateDoesNotCallCustomerio() {
 
         val someTime = Instant.parse("2020-04-15T14:53:40.550493Z")
@@ -152,26 +127,6 @@ class NorwaySignHackUpdateCustomerIOTest {
         scheduler.sendUpdates(someTime)
 
         verify(inverse = true) { noCustomerIoClient.sendEvent(any(), any()) }
-    }
-
-    @Test
-    fun `two updates causes only one sent event`() {
-        val time = Instant.parse("2020-04-15T14:53:40.550493Z")
-
-        repository.save(
-            CustomerioState(
-                "someMemberID",
-                time
-            )
-        )
-        every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY
-        every { contractLoader.getContractInfoForMember(any()) } returns listOf(
-            makeContractInfo()
-        )
-        scheduler.sendUpdates(time.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
-        scheduler.sendUpdates(time.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
-
-        verify(atMost = 1) { noCustomerIoClient.sendEvent("someMemberID", any()) }
     }
 
     @Test

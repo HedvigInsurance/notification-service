@@ -113,11 +113,12 @@ class JobScheduler(private val scheduler: Scheduler) {
         memberId: String,
         contractId: String
     ) {
-        val jobName = "contractActivatedTodayJob-$contractId"
+
+        val jobName = "contractActivatedTodayJob-$memberId"
         val triggerKey = TriggerKey(jobName, jobGroup)
 
         val triggerTime = activationDate.atStartOfDay(ZoneId.of("Europe/Stockholm")).toInstant()
-        val jobExisted = rescheduleJob(triggerKey, Date.from(triggerTime))
+        val jobExisted = scheduler.getTrigger(triggerKey) != null
 
         if (!jobExisted) {
             val jobData = mapOf(

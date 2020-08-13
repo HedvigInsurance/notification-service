@@ -19,8 +19,8 @@ class IncludeSignSourceInNorwegianContractCreatedEventTest {
         val customerioState = CustomerioState("aMemberId", contractCreatedTriggerAt = Instant.now())
         customerioState.createContract("aContractId", Instant.now(), null)
 
-        val result = sut.execute(
-            customerioState, listOf(
+        val result = sut.createContractCreatedEvent(
+            listOf(
                 makeContractInfo(
                     AgreementType.NorwegianTravel,
                     switcherCompany = null,
@@ -31,7 +31,7 @@ class IncludeSignSourceInNorwegianContractCreatedEventTest {
             )
         )
 
-        assertThat(result.event)
+        assertThat(result)
             .isInstanceOf(NorwegianContractCreatedEvent::class)
             .all {
                 transform { it.data.signSource }.isEqualTo("RAPIO")
