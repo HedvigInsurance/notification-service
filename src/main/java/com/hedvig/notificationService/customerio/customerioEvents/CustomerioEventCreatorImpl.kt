@@ -80,10 +80,10 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
     override fun startDateUpdatedEvent(
         customerioState: CustomerioState,
         contracts: List<ContractInfo>
-    ): ExecutionResult {
+    ): ContractsActivationDateUpdatedEvent? {
         val event = createStartDateUpdatedEvent(contracts)
         customerioState.sentStartDateUpdatedEvent()
-        return ExecutionResult(event)
+        return event
     }
 
     override fun contractCreatedEvent(
@@ -115,10 +115,10 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
 
     private fun createStartDateUpdatedEvent(
         contracts: Collection<ContractInfo>
-    ): ContractsActivationDateUpdatedEvent {
+    ): ContractsActivationDateUpdatedEvent? {
 
         if (contracts.all { it.startDate == null }) {
-            throw RuntimeException("Cannot create ActivationDateUpdatedEvent no contracts with start date")
+            return null
         }
 
         val contractsWithStartDate = mutableListOf<Contract>()
@@ -146,12 +146,6 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
 }
 
 data class ExecutionResult(val event: Any) {
-
-    val asMap: Map<String, Any?>
-        get() {
-            @Suppress("UNCHECKED_CAST")
-            return objectMapper.convertValue(event, Map::class.java)!! as Map<String, Any?>
-        }
 
     companion object {
         val objectMapper: ObjectMapper = ObjectMapper()

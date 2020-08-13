@@ -15,7 +15,7 @@ CustomerioEventCreator {
     fun startDateUpdatedEvent(
         customerioState: CustomerioState,
         contracts: List<ContractInfo>
-    ): ExecutionResult
+    ): ContractsActivationDateUpdatedEvent?
 
     fun sendActivatesToday(
         customerioState: CustomerioState,
