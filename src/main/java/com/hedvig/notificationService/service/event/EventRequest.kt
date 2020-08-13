@@ -14,7 +14,8 @@ import java.util.UUID
     JsonSubTypes.Type(value = ContractCreatedEvent::class, name = "ContractCreatedEvent"),
     JsonSubTypes.Type(value = ContractRenewalQueuedEvent::class, name = "ContractRenewalQueuedEvent"),
     JsonSubTypes.Type(value = QuoteCreatedEvent::class, name = "QuoteCreatedEvent"),
-    JsonSubTypes.Type(value = StartDateUpdatedEvent::class, name = "StartDateUpdatedEvent")
+    JsonSubTypes.Type(value = StartDateUpdatedEvent::class, name = "StartDateUpdatedEvent"),
+    JsonSubTypes.Type(value = ContractTerminatedEvent::class, name = "ContractTerminatedEvent")
 )
 sealed class EventRequest
 
