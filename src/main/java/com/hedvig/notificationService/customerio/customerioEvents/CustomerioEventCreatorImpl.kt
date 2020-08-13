@@ -73,7 +73,7 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
         contracts: List<ContractInfo>,
         dateToday: LocalDate
     ): ContractsActivatedTodayEvent? {
-        val event = createActivationDateTodayEvent(customerioState, contracts, dateToday)
+        val event = createActivationDateTodayEvent(contracts, dateToday)
         return event
     }
 
@@ -89,14 +89,13 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
     override fun contractCreatedEvent(
         customerioState: CustomerioState,
         contracts: List<ContractInfo>
-    ): ExecutionResult {
+    ): NorwegianContractCreatedEvent {
         val event = createContractCreatedEvent(contracts)
         customerioState.sentContractCreatedEvent()
-        return ExecutionResult(event)
+        return event
     }
 
     private fun createActivationDateTodayEvent(
-        customerioState: CustomerioState,
         contracts: List<ContractInfo>,
         dateToday: LocalDate
     ): ContractsActivatedTodayEvent? {
