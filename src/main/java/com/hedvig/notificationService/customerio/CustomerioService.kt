@@ -89,10 +89,7 @@ class CustomerioService(
         eventCreator: CustomerioEventCreator,
         contractLoader: ContractLoader
     ) {
-        try {
-        } catch (ex: RuntimeException) {
-            logger.error("Could not create event from customerio state", ex)
-        }
+        // TODO: Remove this function and the quartz job that calls it
     }
 
     @Transactional

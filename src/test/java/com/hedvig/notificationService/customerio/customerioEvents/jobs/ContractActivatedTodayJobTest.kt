@@ -15,7 +15,7 @@ import java.time.ZoneId
 class ContractActivatedTodayJobTest {
 
     @Test
-    fun executeInternal() {
+    fun `current date is set to be in stockholm`() {
 
         val contractLoader = mockk<ContractLoader>()
         val eventCreator = mockk<CustomerioEventCreator>(relaxed = true)
