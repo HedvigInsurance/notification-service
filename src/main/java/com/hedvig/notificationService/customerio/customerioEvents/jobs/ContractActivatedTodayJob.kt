@@ -41,9 +41,9 @@ class ContractActivatedTodayJob(
             val contracts = contractLoader.getContractInfoForMember(customerioState.memberId)
             val time = Instant.now(clock).atZone(ZoneId.of("Europe/Stockholm")).toLocalDate()
 
-            val eventAndState = eventCreator.sendActivatesToday(customerioState, contracts, time)
-            if (eventAndState != null) {
-                customerioService.sendEventAndUpdateState(customerioState, eventAndState)
+            val event = eventCreator.sendActivatesToday(customerioState, contracts, time)
+            if (event != null) {
+                customerioService.sendEventAndUpdateState(customerioState, event)
             } else {
                 logger.info("Not sending any ContractActivatedToday events for $memberId")
             }
