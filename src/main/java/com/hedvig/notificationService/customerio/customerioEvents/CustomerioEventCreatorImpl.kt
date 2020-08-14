@@ -24,6 +24,13 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
         return NorwegianContractCreatedEvent(data)
     }
 
+    override fun contractsTerminatedEvent(
+        contracts: List<ContractInfo>,
+        terminatedContractIds: List<String>
+    ): ContractsTerminatedEvent {
+        TODO("Not yet implemented")
+    }
+
     private fun createContractCreatedData(contracts: Collection<ContractInfo>): NorwegianContractCreatedEvent.Data {
         var data = NorwegianContractCreatedEvent.Data(
             null,

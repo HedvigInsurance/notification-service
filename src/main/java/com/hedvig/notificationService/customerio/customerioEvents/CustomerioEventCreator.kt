@@ -22,4 +22,9 @@ CustomerioEventCreator {
         contracts: List<ContractInfo>,
         dateToday: LocalDate
     ): ContractsActivatedTodayEvent?
+
+    fun contractsTerminatedEvent(
+        contracts: List<ContractInfo>,
+        terminatedContractIds: List<String>
+    ): ContractsTerminatedEvent
 }
