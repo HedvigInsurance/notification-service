@@ -19,6 +19,7 @@ fun makeContractInfo(
         startDate = startDate,
         signSource = signSource,
         partnerCode = partnerCode,
-        contractId = contractId
+        contractId = contractId,
+        terminationDate = null
     )
 }

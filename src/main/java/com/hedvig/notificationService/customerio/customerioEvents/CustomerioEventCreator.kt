@@ -26,5 +26,5 @@ CustomerioEventCreator {
     fun contractsTerminatedEvent(
         contracts: List<ContractInfo>,
         terminatedContractIds: List<String>
-    ): ContractsTerminatedEvent
+    ): ContractsTerminatedEvent?
 }

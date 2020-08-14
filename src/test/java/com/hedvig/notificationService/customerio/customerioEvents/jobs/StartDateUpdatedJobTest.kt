@@ -59,7 +59,8 @@ class StartDateUpdatedJobTest {
                 AgreementType.NorwegianHomeContent,
                 null,
                 LocalDate.of(2020, 8, 13),
-                contractId = UUID.fromString("4c1b5d7c-d822-11ea-aab8-735d900f8217")
+                contractId = UUID.fromString("4c1b5d7c-d822-11ea-aab8-735d900f8217"),
+                terminationDate = null
             )
         )
 

@@ -2,6 +2,7 @@ package com.hedvig.notificationService.customerio.customerioEvents
 
 import assertk.assertThat
 import assertk.assertions.hasSize
+import assertk.assertions.isNull
 import com.hedvig.notificationService.customerio.AgreementType
 import com.hedvig.notificationService.customerio.ContractInfo
 import org.junit.Test
@@ -27,6 +28,25 @@ class CreateContractsTerminatedEventTest {
             listOf(aRandomContractId.toString())
         )
 
-        assertThat(result.data.terminatedContracts).hasSize(1)
+        assertThat(result!!.data.terminatedContracts).hasSize(1)
+    }
+
+    @Test
+    fun `terminated contractId is not terminated from contracts agreements`() {
+        val creator = CustomerioEventCreatorImpl()
+
+        val aRandomContractId = UUID.randomUUID()
+        val result = creator.contractsTerminatedEvent(
+            listOf(
+                ContractInfo(
+                    AgreementType.NorwegianTravel,
+                    contractId = aRandomContractId,
+                    terminationDate = null
+                )
+            ),
+            listOf(aRandomContractId.toString())
+        )
+
+        assertThat(result).isNull()
     }
 }

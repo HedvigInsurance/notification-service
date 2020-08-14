@@ -10,7 +10,8 @@ data class ContractInfo(
     val signSource: String? = null,
     val partnerCode: String? = null,
     val renewalDate: LocalDate? = null,
-    val contractId: UUID
+    val contractId: UUID,
+    val terminationDate: LocalDate?
 )
 
 enum class AgreementType {

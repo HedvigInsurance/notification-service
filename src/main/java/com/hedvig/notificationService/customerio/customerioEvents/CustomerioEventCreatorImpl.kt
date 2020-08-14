@@ -25,10 +25,23 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
     }
 
     override fun contractsTerminatedEvent(
-        contracts: List<ContractInfo>,
+        allMembersContracts: List<ContractInfo>,
         terminatedContractIds: List<String>
-    ): ContractsTerminatedEvent {
-        TODO("Not yet implemented")
+    ): ContractsTerminatedEvent? {
+
+        val terminatedContracts = terminatedContractIds.mapNotNull { contractId ->
+            val currentContract =
+                allMembersContracts.find { it.contractId.toString() == contractId }
+            if (currentContract?.terminationDate != null) {
+                Contract.from(currentContract)
+            } else {
+                null
+            }
+        }
+
+        if (terminatedContracts.isEmpty())
+            return null
+        return ContractsTerminatedEvent(ContractsTerminatedEvent.Data(terminatedContracts))
     }
 
     private fun createContractCreatedData(contracts: Collection<ContractInfo>): NorwegianContractCreatedEvent.Data {
