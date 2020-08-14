@@ -1,7 +1,9 @@
 package com.hedvig.notificationService.customerio.customerioEvents
 
+import assertk.all
 import assertk.assertThat
 import assertk.assertions.hasSize
+import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
 import assertk.assertions.isNull
 import com.hedvig.notificationService.customerio.AgreementType
@@ -29,7 +31,10 @@ class CreateContractsTerminatedEventTest {
             listOf(aRandomContractId.toString())
         )
 
-        assertThat(result!!.data.terminatedContracts).hasSize(1)
+        assertThat(result!!.data.terminatedContracts[0]).all {
+            transform { it.type }.isEqualTo(AgreementType.NorwegianTravel.typeName)
+            transform { it.terminationDate }.isEqualTo("2020-09-22")
+        }
     }
 
     @Test

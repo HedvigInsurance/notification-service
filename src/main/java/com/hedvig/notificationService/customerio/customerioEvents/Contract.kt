@@ -11,13 +11,15 @@ import com.hedvig.notificationService.customerio.ContractInfo
 data class Contract(
     val type: String,
     val switcherCompany: String?,
-    val startDate: String?
+    val startDate: String?,
+    val terminationDate: String? = null
 ) {
     companion object {
         fun from(contractInfo: ContractInfo): Contract = Contract(
             contractInfo.type.typeName,
             contractInfo.switcherCompany?.replace(" NO\$".toRegex(), ""),
-            contractInfo.startDate?.toString()
+            contractInfo.startDate?.toString(),
+            contractInfo.terminationDate?.toString()
         )
     }
 }
