@@ -29,15 +29,9 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
         terminatedContractIds: List<String>
     ): ContractsTerminatedEvent? {
 
-        val terminatedContracts = terminatedContractIds.mapNotNull { contractId ->
-            val currentContract =
-                allMembersContracts.find { it.contractId.toString() == contractId }
-            if (currentContract?.terminationDate != null) {
-                Contract.from(currentContract)
-            } else {
-                null
-            }
-        }
+        val terminatedContracts = allMembersContracts
+            .filter { contract -> terminatedContractIds.contains(contract.contractId.toString()) && contract.terminationDate != null }
+            .map(Contract.Companion::from)
 
         if (terminatedContracts.isEmpty())
             return null
