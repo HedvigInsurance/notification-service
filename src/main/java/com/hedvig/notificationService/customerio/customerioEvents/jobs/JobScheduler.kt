@@ -157,4 +157,13 @@ class JobScheduler(private val scheduler: Scheduler) {
             )
         }
     }
+
+    fun rescheduleOrTriggerContractTerminated(
+        contractId: String,
+        memberId: String,
+        terminationDate: LocalDate?,
+        finalContract: Boolean
+    ) {
+        TODO("Not yet implemented")
+    }
 }

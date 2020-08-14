@@ -23,7 +23,7 @@ import java.util.UUID
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-class HandleContractTerminatedTest {
+class HandleContractTerminateWebTest {
     @LocalServerPort
     var port: Int = 0
 
@@ -64,7 +64,8 @@ class HandleContractTerminatedTest {
                         testEvent["terminationDate"].toString()
                     ),
                     true
-                )
+                ),
+                any()
             )
         }
 

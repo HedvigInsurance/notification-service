@@ -79,7 +79,7 @@ class HandleEventRequestsTest {
         )
 
         verify {
-            eventHandler.onContractTerminatedEvent(event)
+            eventHandler.onContractTerminatedEvent(event, any())
         }
     }
 }

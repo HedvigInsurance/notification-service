@@ -22,9 +22,9 @@ class EventHandler(
     private val customerioService: CustomerioService,
     private val memberService: MemberServiceImpl,
     scheduler: Scheduler,
-    private val handledRequestRepository: HandledRequestRepository
+    private val handledRequestRepository: HandledRequestRepository,
+    private val jobScheduler: JobScheduler = JobScheduler(scheduler)
 ) {
-    val jobScheduler = JobScheduler(scheduler)
 
     fun onStartDateUpdatedEvent(
         event: StartDateUpdatedEvent,
@@ -137,6 +137,15 @@ class EventHandler(
         customerioService.sendEvent(event.memberId, event.toMap())
     }
 
+    fun onContractTerminatedEvent(event: ContractTerminatedEvent, callTime: Instant = Instant.now()) {
+        jobScheduler.rescheduleOrTriggerContractTerminated(
+            event.contractId,
+            event.owningMemberId,
+            event.terminationDate,
+            event.isFinalContract
+        )
+    }
+
     /**
      * Old request handlers
      */
@@ -186,10 +195,6 @@ class EventHandler(
                 handledRequestRepository.storeHandledRequest(it)
             }
         } ?: handle.invoke()
-    }
-
-    fun onContractTerminatedEvent(event: ContractTerminatedEvent) {
-        TODO("Not yet implemented")
     }
 
     companion object {
