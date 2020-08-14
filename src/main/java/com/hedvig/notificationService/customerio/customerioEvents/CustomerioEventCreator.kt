@@ -24,7 +24,7 @@ CustomerioEventCreator {
     ): ContractsActivatedTodayEvent?
 
     fun contractsTerminatedEvent(
-        contracts: List<ContractInfo>,
+        allMembersContracts: List<ContractInfo>,
         terminatedContractIds: List<String>
     ): ContractsTerminatedEvent?
 }

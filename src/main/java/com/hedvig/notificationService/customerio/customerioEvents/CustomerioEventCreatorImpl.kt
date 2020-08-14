@@ -3,11 +3,15 @@ package com.hedvig.notificationService.customerio.customerioEvents
 import com.hedvig.notificationService.customerio.AgreementType
 import com.hedvig.notificationService.customerio.ContractInfo
 import com.hedvig.notificationService.customerio.state.CustomerioState
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.time.LocalDate
 
 @Component
 class CustomerioEventCreatorImpl : CustomerioEventCreator {
+
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
     fun createTmpSignedInsuranceEvent(
         argContracts: Collection<ContractInfo>
     ): TmpSignedInsuranceEvent {
@@ -33,8 +37,11 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
             .filter { contract -> terminatedContractIds.contains(contract.contractId.toString()) && contract.terminationDate != null }
             .map(Contract.Companion::from)
 
-        if (terminatedContracts.isEmpty())
+        if (terminatedContracts.isEmpty()) {
+            logger.info("Tried to create ContractsTerminatedEvent for contracts with ids: $terminatedContracts but found no terminated contracts")
             return null
+        }
+
         return ContractsTerminatedEvent(ContractsTerminatedEvent.Data(terminatedContracts))
     }
 
