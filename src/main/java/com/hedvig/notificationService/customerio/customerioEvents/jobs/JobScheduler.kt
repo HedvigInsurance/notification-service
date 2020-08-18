@@ -24,7 +24,7 @@ import kotlin.reflect.KClass
 class JobScheduler(private val scheduler: Scheduler) {
 
     companion object {
-        val jobGroup = "customerio.triggers"
+        const val jobGroup = "customerio.triggers"
     }
 
     fun <T : Job> scheduleJob(
@@ -61,9 +61,9 @@ class JobScheduler(private val scheduler: Scheduler) {
 
     fun <T : Job> createJob(
         jobName: String,
-        jobData: JobDataMap,
+        jobData: JobDataMap = JobDataMap(),
         jobClass: Class<T>
-    ): JobDetail? {
+    ): JobDetail {
         return JobBuilder.newJob()
             .withIdentity(jobName, jobGroup)
             .ofType(jobClass)
@@ -170,15 +170,14 @@ class JobScheduler(private val scheduler: Scheduler) {
     ) {
         val jobKey = JobKey.jobKey("onContractTerminatedEvent-$memberId", jobGroup)
         val job =
-            scheduler.getJobDetail(jobKey) ?: JobBuilder.newJob(
-                ContractTerminatedEventJob::class.java
+            scheduler.getJobDetail(jobKey) ?: createJob(
+                jobName = jobKey.name,
+                jobClass = ContractTerminatedEventJob::class.java
             )
-                .withIdentity(jobKey)
-                .build()
 
         val existingContracts = job.jobDataMap.getString("contracts") ?: ""
-        val updatedContracts = existingContracts.split(',').plus(contractId).filter { !it.isEmpty() }
-        job.jobDataMap.put("contracts", updatedContracts.joinToString(","))
+        val updatedContracts = existingContracts.split(',').plus(contractId).filter { it.isNotEmpty() }
+        job.jobDataMap["contracts"] = updatedContracts.joinToString(",")
 
         scheduler.addJob(job, true)
 
