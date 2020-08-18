@@ -172,10 +172,16 @@ class JobScheduler(private val scheduler: Scheduler) {
         // 1. Create job schedule 30 min in future
         // 2. Update job datamap reschedule job 30 min into future
 
-        val job = scheduler.getJobDetail(JobKey.jobKey("")) ?: JobBuilder.newJob(ContractTerminatedEventJob::class.java)
-            .build()
+        val jobKey = JobKey.jobKey("onContractTerminatedEvent-$memberId", jobGroup)
+        val job =
+            scheduler.getJobDetail(jobKey) ?: JobBuilder.newJob(
+                ContractTerminatedEventJob::class.java
+            )
+                .withIdentity(jobKey)
+                .build()
+
         val existingContracts = job.jobDataMap.getString("contracts") ?: ""
-        val updatedContracts = existingContracts.split(',').plus(contractId)
+        val updatedContracts = existingContracts.split(',').plus(contractId).filter { !it.isEmpty() }
         job.jobDataMap.put("contracts", updatedContracts.joinToString(","))
 
         scheduler.addJob(job, true)

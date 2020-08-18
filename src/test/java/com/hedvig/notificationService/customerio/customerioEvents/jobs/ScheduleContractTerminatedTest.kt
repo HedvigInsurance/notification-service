@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test
 import org.quartz.JobBuilder
 import org.quartz.JobDataMap
 import org.quartz.JobDetail
+import org.quartz.JobKey
 import org.quartz.Scheduler
 
 class ScheduleContractTerminatedTest {
@@ -57,5 +58,31 @@ class ScheduleContractTerminatedTest {
         verify { scheduler.addJob(capture(jobDetail), true) }
 
         assertThat(jobDetail.captured.jobDataMap).contains("contracts" to "anExistingContractId,aContractId")
+    }
+
+    @Test
+    fun `with existing job use memberId in jobKey`() {
+
+        val jobScheduler = JobScheduler(scheduler)
+
+        every {
+            scheduler.getJobDetail(any())
+        } returns JobBuilder
+            .newJob(ContractTerminatedEventJob::class.java)
+            .setJobData(JobDataMap(mapOf("contracts" to "anExistingContractId")))
+            .build()
+
+        jobScheduler.rescheduleOrTriggerContractTerminated(
+            "aContractId",
+            "1337",
+            null,
+            false
+        )
+
+        val jobDetail = slot<JobDetail>()
+
+        val expectedJobKey = JobKey.jobKey("onContractTerminatedEvent-1337", JobScheduler.jobGroup)
+        verify { scheduler.getJobDetail(expectedJobKey) }
+        verify { scheduler.addJob(capture(jobDetail), true) }
     }
 }
