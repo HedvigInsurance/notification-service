@@ -1,10 +1,12 @@
 package com.hedvig.notificationService.customerio.customerioEvents.jobs
 
 import com.hedvig.notificationService.customerio.SIGN_EVENT_WINDOWS_SIZE_MINUTES
+import org.quartz.DateBuilder
 import org.quartz.Job
 import org.quartz.JobBuilder
 import org.quartz.JobDataMap
 import org.quartz.JobDetail
+import org.quartz.JobKey
 import org.quartz.Scheduler
 import org.quartz.SimpleScheduleBuilder
 import org.quartz.SimpleTrigger
@@ -21,7 +23,9 @@ import kotlin.reflect.KClass
 @Service
 class JobScheduler(private val scheduler: Scheduler) {
 
-    val jobGroup = "customerio.triggers"
+    companion object {
+        val jobGroup = "customerio.triggers"
+    }
 
     fun <T : Job> scheduleJob(
         id: String,
@@ -164,6 +168,16 @@ class JobScheduler(private val scheduler: Scheduler) {
         terminationDate: LocalDate?,
         finalContract: Boolean
     ) {
-        TODO("Not yet implemented")
+        // ContractId stored as strings in jobdata map
+        // 1. Create job schedule 30 min in future
+        // 2. Update job datamap reschedule job 30 min into future
+
+        val job = scheduler.getJobDetail(JobKey.jobKey("")) ?: JobBuilder.newJob(ContractTerminatedEventJob::class.java)
+            .build()
+        job.jobDataMap.put("contracts", contractId)
+
+        scheduler.addJob(job, true)
+
+        rescheduleJob(TriggerKey.triggerKey(""), DateBuilder.futureDate(30, DateBuilder.IntervalUnit.MINUTE))
     }
 }
