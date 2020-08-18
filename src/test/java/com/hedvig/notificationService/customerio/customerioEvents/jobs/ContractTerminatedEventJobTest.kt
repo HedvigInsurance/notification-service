@@ -31,4 +31,26 @@ class ContractTerminatedEventJobTest {
 
         verify { eventCreator.contractsTerminatedEvent(any(), listOf("someContractId")) }
     }
+
+    @Test
+    internal fun `handle multiple contracts`() {
+        val eventCreator = mockk<CustomerioEventCreator>(relaxed = true)
+        val cut = ContractTerminatedEventJob(
+            mockk(relaxed = true),
+            mockk(relaxed = true),
+            eventCreator,
+            mockk(relaxed = true)
+        )
+
+        val jobbContext = mockk<JobExecutionContext>(relaxed = true)
+        every { jobbContext.mergedJobDataMap } returns JobDataMap(
+            mapOf(
+                "memberId" to "",
+                "contracts" to "id1,id2,id3"
+            )
+        )
+        cut.execute(jobbContext)
+
+        verify { eventCreator.contractsTerminatedEvent(any(), listOf("id1", "id2", "id3")) }
+    }
 }
