@@ -31,11 +31,11 @@ class ContractTerminatedEventJob(
             val customerioState = customerIOStateRepository.findByMemberId(memberId)!!
             val contracts = contractLoader.getContractInfoForMember(customerioState.memberId)
 
-            val terminatedContracts =
-                jobContext.mergedJobDataMap
-                    .getString("contracts")!!
-                    .split(",")
-                    .filter { it.isNotEmpty() }
+            val contractsAsString = jobContext.mergedJobDataMap.getString("contracts")
+                ?: throw NullPointerException("Found no contracts in ContractTerminatedEventJob for member $memberId")
+
+            val terminatedContracts = contractsAsString.split(",")
+                .filter { it.isNotEmpty() }
 
             val event = eventCreator.contractsTerminatedEvent(contracts, terminatedContracts)
 
