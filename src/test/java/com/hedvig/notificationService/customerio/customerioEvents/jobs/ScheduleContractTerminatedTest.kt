@@ -2,6 +2,7 @@ package com.hedvig.notificationService.customerio.customerioEvents.jobs
 
 import assertk.assertThat
 import assertk.assertions.contains
+import assertk.assertions.isEqualTo
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
@@ -84,5 +85,28 @@ class ScheduleContractTerminatedTest {
         val expectedJobKey = JobKey.jobKey("onContractTerminatedEvent-1337", JobScheduler.jobGroup)
         verify { scheduler.getJobDetail(expectedJobKey) }
         verify { scheduler.addJob(capture(jobDetail), true) }
+    }
+
+    @Test
+    fun `with no existing job use memberId in jobKey`() {
+
+        val jobScheduler = JobScheduler(scheduler)
+
+        every {
+            scheduler.getJobDetail(any())
+        } returns null
+
+        jobScheduler.rescheduleOrTriggerContractTerminated(
+            "aContractId",
+            "1337",
+            null,
+            false
+        )
+
+        val jobDetail = slot<JobDetail>()
+
+        val expectedJobKey = JobKey.jobKey("onContractTerminatedEvent-1337", JobScheduler.jobGroup)
+        verify { scheduler.addJob(capture(jobDetail), true) }
+        assertThat(jobDetail.captured.key).isEqualTo(expectedJobKey)
     }
 }
