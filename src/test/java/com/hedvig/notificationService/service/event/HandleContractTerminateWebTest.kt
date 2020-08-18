@@ -62,8 +62,7 @@ class HandleContractTerminateWebTest {
                     testEvent["owningMemberId"].toString(),
                     LocalDate.parse(
                         testEvent["terminationDate"].toString()
-                    ),
-                    true
+                    )
                 ),
                 any()
             )

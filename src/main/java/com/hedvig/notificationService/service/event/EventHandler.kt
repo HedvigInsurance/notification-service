@@ -141,8 +141,7 @@ class EventHandler(
         jobScheduler.rescheduleOrTriggerContractTerminated(
             event.contractId,
             event.owningMemberId,
-            event.terminationDate,
-            event.isFinalContract
+            event.terminationDate
         )
     }
 

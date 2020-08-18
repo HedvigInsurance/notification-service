@@ -29,8 +29,7 @@ class ScheduleContractTerminatedTest {
         jobScheduler.rescheduleOrTriggerContractTerminated(
             "aContractId",
             "1",
-            null,
-            false
+            null
         )
 
         val jobDetail = slot<JobDetail>()
@@ -62,8 +61,7 @@ class ScheduleContractTerminatedTest {
         jobScheduler.rescheduleOrTriggerContractTerminated(
             "aContractId",
             "2",
-            null,
-            false
+            null
         )
 
         val jobDetail = slot<JobDetail>()
@@ -90,8 +88,7 @@ class ScheduleContractTerminatedTest {
         jobScheduler.rescheduleOrTriggerContractTerminated(
             "aContractId",
             "1337",
-            null,
-            false
+            null
         )
 
         val jobDetail = slot<JobDetail>()
@@ -113,8 +110,7 @@ class ScheduleContractTerminatedTest {
         jobScheduler.rescheduleOrTriggerContractTerminated(
             "aContractId",
             "1337",
-            null,
-            false
+            null
         )
 
         val jobDetail = slot<JobDetail>()
@@ -136,8 +132,7 @@ class ScheduleContractTerminatedTest {
         jobScheduler.rescheduleOrTriggerContractTerminated(
             "aContractId",
             "1337",
-            null,
-            false
+            null
         )
 
         val expectedTriggerKey = TriggerKey.triggerKey("onContractTerminatedEvent-1337", JobScheduler.jobGroup)

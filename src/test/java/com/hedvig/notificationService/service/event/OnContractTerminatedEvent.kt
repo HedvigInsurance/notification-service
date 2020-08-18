@@ -27,8 +27,7 @@ class OnContractTerminatedEvent {
             ContractTerminatedEvent(
                 "aContractId",
                 "1234",
-                LocalDate.of(2020, 1, 1),
-                true
+                LocalDate.of(2020, 1, 1)
             ),
             Instant.parse("2020-08-14T07:29:00Z")
         )
@@ -37,8 +36,7 @@ class OnContractTerminatedEvent {
             jobScheduler.rescheduleOrTriggerContractTerminated(
                 "aContractId",
                 "1234",
-                LocalDate.of(2020, 1, 1),
-                true
+                LocalDate.of(2020, 1, 1)
             )
         }
     }

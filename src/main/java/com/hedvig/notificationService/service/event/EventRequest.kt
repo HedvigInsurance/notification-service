@@ -1,6 +1,5 @@
 package com.hedvig.notificationService.service.event
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.hedvig.notificationService.customerio.dto.objects.ChargeFailedReason
@@ -48,9 +47,7 @@ data class ContractCreatedEvent(
 data class ContractTerminatedEvent(
     val contractId: String,
     val owningMemberId: String,
-    val terminationDate: LocalDate,
-    @JsonProperty(value = "isFinalContract")
-    val isFinalContract: Boolean
+    val terminationDate: LocalDate
 ) : EventRequest()
 
 data class ContractRenewalQueuedEvent(

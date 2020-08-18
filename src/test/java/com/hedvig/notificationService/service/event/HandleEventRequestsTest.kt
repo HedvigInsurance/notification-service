@@ -71,8 +71,7 @@ class HandleEventRequestsTest {
         val event = ContractTerminatedEvent(
             contractId,
             memberId,
-            LocalDate.of(2020, 9, 13),
-            false
+            LocalDate.of(2020, 9, 13)
         )
         serviceToTest.onEventRequest(
             "rq", event

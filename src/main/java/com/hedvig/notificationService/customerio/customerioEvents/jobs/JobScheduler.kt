@@ -164,8 +164,7 @@ class JobScheduler(private val scheduler: Scheduler) {
     fun rescheduleOrTriggerContractTerminated(
         contractId: String,
         memberId: String,
-        terminationDate: LocalDate?,
-        finalContract: Boolean
+        terminationDate: LocalDate?
     ) {
         val jobKey = JobKey.jobKey("onContractTerminatedEvent-$memberId", jobGroup)
         val job =
