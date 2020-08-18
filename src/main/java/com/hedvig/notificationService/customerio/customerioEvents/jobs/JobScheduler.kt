@@ -174,10 +174,14 @@ class JobScheduler(private val scheduler: Scheduler) {
 
         val job = scheduler.getJobDetail(JobKey.jobKey("")) ?: JobBuilder.newJob(ContractTerminatedEventJob::class.java)
             .build()
-        job.jobDataMap.put("contracts", contractId)
+        val existingContracts = job.jobDataMap.getString("contracts") ?: ""
+        val updatedContracts = existingContracts.split(',').plus(contractId)
+        job.jobDataMap.put("contracts", updatedContracts.joinToString(","))
 
         scheduler.addJob(job, true)
 
-        rescheduleJob(TriggerKey.triggerKey(""), DateBuilder.futureDate(30, DateBuilder.IntervalUnit.MINUTE))
+        rescheduleJob(
+            TriggerKey.triggerKey(""), DateBuilder.futureDate(30, DateBuilder.IntervalUnit.MINUTE)
+        )
     }
 }

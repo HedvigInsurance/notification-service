@@ -7,6 +7,8 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import org.junit.jupiter.api.Test
+import org.quartz.JobBuilder
+import org.quartz.JobDataMap
 import org.quartz.JobDetail
 import org.quartz.Scheduler
 
@@ -32,5 +34,28 @@ class ScheduleContractTerminatedTest {
         verify { scheduler.addJob(capture(jobDetail), true) }
 
         assertThat(jobDetail.captured.jobDataMap).contains("contracts" to "aContractId")
+    }
+
+    @Test
+    fun `with existing job add contractId to jobDataMap`() {
+
+        val jobScheduler = JobScheduler(scheduler)
+
+        every { scheduler.getJobDetail(any()) } returns JobBuilder
+            .newJob(ContractTerminatedEventJob::class.java)
+            .setJobData(JobDataMap(mapOf("contracts" to "anExistingContractId")))
+            .build()
+
+        jobScheduler.rescheduleOrTriggerContractTerminated(
+            "aContractId",
+            "",
+            null,
+            false
+        )
+
+        val jobDetail = slot<JobDetail>()
+        verify { scheduler.addJob(capture(jobDetail), true) }
+
+        assertThat(jobDetail.captured.jobDataMap).contains("contracts" to "anExistingContractId,aContractId")
     }
 }
