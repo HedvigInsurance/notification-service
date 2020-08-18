@@ -168,10 +168,6 @@ class JobScheduler(private val scheduler: Scheduler) {
         terminationDate: LocalDate?,
         finalContract: Boolean
     ) {
-        // ContractId stored as strings in jobdata map
-        // 1. Create job schedule 30 min in future
-        // 2. Update job datamap reschedule job 30 min into future
-
         val jobKey = JobKey.jobKey("onContractTerminatedEvent-$memberId", jobGroup)
         val job =
             scheduler.getJobDetail(jobKey) ?: JobBuilder.newJob(
@@ -187,7 +183,8 @@ class JobScheduler(private val scheduler: Scheduler) {
         scheduler.addJob(job, true)
 
         rescheduleJob(
-            TriggerKey.triggerKey(""), DateBuilder.futureDate(30, DateBuilder.IntervalUnit.MINUTE)
+            TriggerKey.triggerKey("onContractTerminatedEvent-$memberId", jobGroup),
+            DateBuilder.futureDate(30, DateBuilder.IntervalUnit.MINUTE)
         )
     }
 }

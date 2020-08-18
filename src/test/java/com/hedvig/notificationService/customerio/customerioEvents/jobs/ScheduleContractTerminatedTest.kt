@@ -13,6 +13,7 @@ import org.quartz.JobDataMap
 import org.quartz.JobDetail
 import org.quartz.JobKey
 import org.quartz.Scheduler
+import org.quartz.TriggerKey
 
 class ScheduleContractTerminatedTest {
 
@@ -108,5 +109,25 @@ class ScheduleContractTerminatedTest {
         val expectedJobKey = JobKey.jobKey("onContractTerminatedEvent-1337", JobScheduler.jobGroup)
         verify { scheduler.addJob(capture(jobDetail), true) }
         assertThat(jobDetail.captured.key).isEqualTo(expectedJobKey)
+    }
+
+    @Test
+    fun `memberId in triggerKey`() {
+
+        val jobScheduler = JobScheduler(scheduler)
+
+        every {
+            scheduler.getJobDetail(any())
+        } returns null
+
+        jobScheduler.rescheduleOrTriggerContractTerminated(
+            "aContractId",
+            "1337",
+            null,
+            false
+        )
+
+        val expectedTriggerKey = TriggerKey.triggerKey("onContractTerminatedEvent-1337", JobScheduler.jobGroup)
+        verify { scheduler.getTrigger(expectedTriggerKey) }
     }
 }
