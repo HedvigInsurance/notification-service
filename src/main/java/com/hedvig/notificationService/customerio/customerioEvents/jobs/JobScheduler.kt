@@ -33,8 +33,7 @@ class JobScheduler(private val scheduler: Scheduler) {
         jobClass: KClass<T>,
         startTime: Instant
     ) {
-        val jobDataMap = JobDataMap(jobData)
-        val jobDetail = createJob(id, jobDataMap, jobClass.java)
+        val jobDetail = createJob(id, jobData, jobClass.java)
 
         val trigger = createTrigger(id, startTime)
 
@@ -61,14 +60,14 @@ class JobScheduler(private val scheduler: Scheduler) {
 
     fun <T : Job> createJob(
         jobName: String,
-        jobData: JobDataMap = JobDataMap(),
+        jobData: Map<String, String> = mapOf(),
         jobClass: Class<T>
     ): JobDetail {
         return JobBuilder.newJob()
             .withIdentity(jobName, jobGroup)
             .ofType(jobClass)
             .requestRecovery()
-            .setJobData(jobData)
+            .setJobData(JobDataMap(jobData))
             .build()
     }
 
