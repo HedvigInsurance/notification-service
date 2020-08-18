@@ -1,7 +1,7 @@
 package com.hedvig.notificationService.customerio.customerioEvents.jobs
 
 import assertk.assertThat
-import assertk.assertions.contains
+import assertk.assertions.containsAll
 import assertk.assertions.isEqualTo
 import io.mockk.every
 import io.mockk.mockk
@@ -28,7 +28,7 @@ class ScheduleContractTerminatedTest {
 
         jobScheduler.rescheduleOrTriggerContractTerminated(
             "aContractId",
-            "",
+            "1",
             null,
             false
         )
@@ -36,7 +36,10 @@ class ScheduleContractTerminatedTest {
         val jobDetail = slot<JobDetail>()
         verify { scheduler.addJob(capture(jobDetail), true) }
 
-        assertThat(jobDetail.captured.jobDataMap).contains("contracts" to "aContractId")
+        assertThat(jobDetail.captured.jobDataMap).containsAll(
+            "contracts" to "aContractId",
+            "memberId" to "1"
+        )
     }
 
     @Test
@@ -46,12 +49,19 @@ class ScheduleContractTerminatedTest {
 
         every { scheduler.getJobDetail(any()) } returns JobBuilder
             .newJob(ContractTerminatedEventJob::class.java)
-            .setJobData(JobDataMap(mapOf("contracts" to "anExistingContractId")))
+            .setJobData(
+                JobDataMap(
+                    mapOf(
+                        "contracts" to "anExistingContractId",
+                        "memberId" to "2"
+                    )
+                )
+            )
             .build()
 
         jobScheduler.rescheduleOrTriggerContractTerminated(
             "aContractId",
-            "",
+            "2",
             null,
             false
         )
@@ -59,7 +69,10 @@ class ScheduleContractTerminatedTest {
         val jobDetail = slot<JobDetail>()
         verify { scheduler.addJob(capture(jobDetail), true) }
 
-        assertThat(jobDetail.captured.jobDataMap).contains("contracts" to "anExistingContractId,aContractId")
+        assertThat(jobDetail.captured.jobDataMap).containsAll(
+            "contracts" to "anExistingContractId,aContractId",
+            "memberId" to "2"
+        )
     }
 
     @Test

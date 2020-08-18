@@ -177,6 +177,7 @@ class JobScheduler(private val scheduler: Scheduler) {
         val existingContracts = job.jobDataMap.getString("contracts") ?: ""
         val updatedContracts = existingContracts.split(',').plus(contractId).filter { it.isNotEmpty() }
         job.jobDataMap["contracts"] = updatedContracts.joinToString(",")
+        job.jobDataMap["memberId"] = memberId
 
         scheduler.addJob(job, true)
 
