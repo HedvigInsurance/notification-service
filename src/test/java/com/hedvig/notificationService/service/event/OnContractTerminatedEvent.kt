@@ -10,7 +10,7 @@ import java.time.LocalDate
 class OnContractTerminatedEvent {
 
     @Test
-    fun `bla bla bla`() {
+    fun `contractTerminatedEvent calls rescheduleOrTriggerContractTerminated`() {
 
         val jobScheduler = mockk<JobScheduler>(relaxed = true)
         val eventHandler = EventHandler(
