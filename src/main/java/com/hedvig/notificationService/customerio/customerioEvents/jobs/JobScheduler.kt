@@ -1,10 +1,12 @@
 package com.hedvig.notificationService.customerio.customerioEvents.jobs
 
 import com.hedvig.notificationService.customerio.SIGN_EVENT_WINDOWS_SIZE_MINUTES
+import org.quartz.DateBuilder
 import org.quartz.Job
 import org.quartz.JobBuilder
 import org.quartz.JobDataMap
 import org.quartz.JobDetail
+import org.quartz.JobKey
 import org.quartz.Scheduler
 import org.quartz.SimpleScheduleBuilder
 import org.quartz.SimpleTrigger
@@ -21,7 +23,9 @@ import kotlin.reflect.KClass
 @Service
 class JobScheduler(private val scheduler: Scheduler) {
 
-    val jobGroup = "customerio.triggers"
+    companion object {
+        const val jobGroup = "customerio.triggers"
+    }
 
     fun <T : Job> scheduleJob(
         id: String,
@@ -29,8 +33,7 @@ class JobScheduler(private val scheduler: Scheduler) {
         jobClass: KClass<T>,
         startTime: Instant
     ) {
-        val jobDataMap = JobDataMap(jobData)
-        val jobDetail = createJob(id, jobDataMap, jobClass.java)
+        val jobDetail = createJob(id, jobData, jobClass.java)
 
         val trigger = createTrigger(id, startTime)
 
@@ -57,14 +60,14 @@ class JobScheduler(private val scheduler: Scheduler) {
 
     fun <T : Job> createJob(
         jobName: String,
-        jobData: JobDataMap,
+        jobData: Map<String, String> = mapOf(),
         jobClass: Class<T>
-    ): JobDetail? {
+    ): JobDetail {
         return JobBuilder.newJob()
             .withIdentity(jobName, jobGroup)
             .ofType(jobClass)
             .requestRecovery()
-            .setJobData(jobData)
+            .setJobData(JobDataMap(jobData))
             .build()
     }
 
@@ -156,5 +159,30 @@ class JobScheduler(private val scheduler: Scheduler) {
                 callTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES)
             )
         }
+    }
+
+    fun rescheduleOrTriggerContractTerminated(
+        contractId: String,
+        memberId: String,
+        terminationDate: LocalDate?
+    ) {
+        val jobKey = JobKey.jobKey("onContractTerminatedEvent-$memberId", jobGroup)
+        val job =
+            scheduler.getJobDetail(jobKey) ?: createJob(
+                jobName = jobKey.name,
+                jobClass = ContractTerminatedEventJob::class.java
+            )
+
+        val existingContracts = job.jobDataMap.getString("contracts") ?: ""
+        val updatedContracts = existingContracts.split(',').plus(contractId).filter { it.isNotEmpty() }
+        job.jobDataMap["contracts"] = updatedContracts.joinToString(",")
+        job.jobDataMap["memberId"] = memberId
+
+        scheduler.addJob(job, true)
+
+        rescheduleJob(
+            TriggerKey.triggerKey("onContractTerminatedEvent-$memberId", jobGroup),
+            DateBuilder.futureDate(30, DateBuilder.IntervalUnit.MINUTE)
+        )
     }
 }

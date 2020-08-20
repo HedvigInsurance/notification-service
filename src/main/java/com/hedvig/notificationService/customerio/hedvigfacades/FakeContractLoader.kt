@@ -20,8 +20,9 @@ class FakeContractLoader :
                 startDate = LocalDate.now(),
                 signSource = "IOS",
                 partnerCode = "HEDVIG",
+                renewalDate = LocalDate.of(2020, 6, 30),
                 contractId = UUID.fromString("75868246-b0a3-11ea-8443-3af9d3902f96"),
-                renewalDate = LocalDate.of(2020, 6, 30)
+                terminationDate = null
             )
         )
     }

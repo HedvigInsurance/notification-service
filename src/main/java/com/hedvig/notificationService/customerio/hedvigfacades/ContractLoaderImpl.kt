@@ -37,16 +37,17 @@ class ContractLoaderImpl(
     override fun getContractInfoForMember(memberId: String): List<ContractInfo> {
         val productPricingReponse = productPricingClient.getContractsForMember(memberId)
 
-        return productPricingReponse.body.map {
-            val underwriterResponse = underwriterClient.getQuoteFromContractId(it.id.toString()).body
+        return productPricingReponse.body.map { contract ->
+            val underwriterResponse = underwriterClient.getQuoteFromContractId(contract.id.toString()).body
             ContractInfo(
-                type = AgreementType.valueOf(it.agreements.first()::class.java.simpleName),
-                switcherCompany = it.switchedFrom,
-                startDate = it.masterInception,
-                signSource = it.signSource,
+                type = AgreementType.valueOf(contract.agreements.first()::class.java.simpleName),
+                switcherCompany = contract.switchedFrom,
+                startDate = contract.masterInception,
+                signSource = contract.signSource,
                 partnerCode = underwriterResponse.attributedTo,
-                renewalDate = it.renewal?.renewalDate,
-                contractId = it.id
+                renewalDate = contract.renewal?.renewalDate,
+                contractId = contract.id,
+                terminationDate = contract.terminationDate
             )
         }
     }

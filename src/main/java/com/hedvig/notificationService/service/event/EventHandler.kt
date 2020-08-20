@@ -22,9 +22,9 @@ class EventHandler(
     private val customerioService: CustomerioService,
     private val memberService: MemberServiceImpl,
     scheduler: Scheduler,
-    private val handledRequestRepository: HandledRequestRepository
+    private val handledRequestRepository: HandledRequestRepository,
+    private val jobScheduler: JobScheduler = JobScheduler(scheduler)
 ) {
-    val jobScheduler = JobScheduler(scheduler)
 
     fun onStartDateUpdatedEvent(
         event: StartDateUpdatedEvent,
@@ -111,8 +111,8 @@ class EventHandler(
         callTime: Instant = Instant.now()
     ) {
         val shouldNotSendEvent = event.initiatedFrom == "HOPE" ||
-                event.originatingProductId != null ||
-                event.productType == "UNKNOWN"
+            event.originatingProductId != null ||
+            event.productType == "UNKNOWN"
         if (shouldNotSendEvent) {
             logger.info("Will not send QuoteCreatedEvent to customer.io for member=${event.memberId} (event=$event)")
             return
@@ -135,6 +135,14 @@ class EventHandler(
             ), callTime
         )
         customerioService.sendEvent(event.memberId, event.toMap())
+    }
+
+    fun onContractTerminatedEvent(event: ContractTerminatedEvent, callTime: Instant = Instant.now()) {
+        jobScheduler.rescheduleOrTriggerContractTerminated(
+            event.contractId,
+            event.owningMemberId,
+            event.terminationDate
+        )
     }
 
     /**

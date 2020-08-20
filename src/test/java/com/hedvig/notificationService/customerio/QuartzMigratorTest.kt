@@ -34,7 +34,8 @@ class QuartzMigratorTest {
                 AgreementType.SwedishApartment,
                 "",
                 startDate = aRandomStartDate,
-                contractId = contractId
+                contractId = contractId,
+                terminationDate = null
             )
         )
 
@@ -64,7 +65,8 @@ class QuartzMigratorTest {
                 AgreementType.SwedishApartment,
                 "",
                 startDate = aRandomStartDate,
-                contractId = contractId
+                contractId = contractId,
+                terminationDate = null
             )
         )
 
@@ -95,13 +97,15 @@ class QuartzMigratorTest {
                 AgreementType.NorwegianTravel,
                 "",
                 startDate = aRandomStartDate,
-                contractId = contractId
+                contractId = contractId,
+                terminationDate = null
             ),
             ContractInfo(
                 AgreementType.NorwegianHomeContent,
                 "",
                 startDate = aRandomStartDate,
-                contractId = contractId2
+                contractId = contractId2,
+                terminationDate = null
             )
         )
 
@@ -128,7 +132,8 @@ class QuartzMigratorTest {
                 AgreementType.SwedishApartment,
                 "",
                 startDate = null,
-                contractId = contractId
+                contractId = contractId,
+                terminationDate = null
             )
         )
 
@@ -159,13 +164,15 @@ class QuartzMigratorTest {
                 AgreementType.NorwegianTravel,
                 "",
                 startDate = aRandomStartDate,
-                contractId = contractId
+                contractId = contractId,
+                terminationDate = null
             ),
             ContractInfo(
                 AgreementType.NorwegianHomeContent,
                 "",
                 startDate = aRandomStartDate,
-                contractId = contractId2
+                contractId = contractId2,
+                terminationDate = null
             )
         )
 

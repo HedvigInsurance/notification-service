@@ -3,6 +3,7 @@ package com.hedvig.notificationService.service.request
 import com.hedvig.notificationService.service.event.ChargeFailedEvent
 import com.hedvig.notificationService.service.event.ContractCreatedEvent
 import com.hedvig.notificationService.service.event.ContractRenewalQueuedEvent
+import com.hedvig.notificationService.service.event.ContractTerminatedEvent
 import com.hedvig.notificationService.service.event.EventHandler
 import com.hedvig.notificationService.service.event.EventRequest
 import com.hedvig.notificationService.service.event.QuoteCreatedEvent
@@ -28,6 +29,7 @@ class EventRequestHandler(
             is ContractRenewalQueuedEvent -> eventHandler.onContractRenewalQueued(event)
             is QuoteCreatedEvent -> eventHandler.onQuoteCreated(event)
             is StartDateUpdatedEvent -> eventHandler.onStartDateUpdatedEvent(event)
+            is ContractTerminatedEvent -> eventHandler.onContractTerminatedEvent(event)
         }
         handledRequestRepository.storeHandledRequest(requestId)
     }
