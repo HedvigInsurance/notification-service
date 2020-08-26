@@ -33,7 +33,7 @@ class ScheduleContractTerminatedTest {
         )
 
         val jobDetail = slot<JobDetail>()
-        verify { scheduler.addJob(capture(jobDetail), true) }
+        verify { scheduler.addJob(capture(jobDetail), true, true) }
 
         assertThat(jobDetail.captured.jobDataMap).containsAll(
             "contracts" to "aContractId",
@@ -65,7 +65,7 @@ class ScheduleContractTerminatedTest {
         )
 
         val jobDetail = slot<JobDetail>()
-        verify { scheduler.addJob(capture(jobDetail), true) }
+        verify { scheduler.addJob(capture(jobDetail), true, true) }
 
         assertThat(jobDetail.captured.jobDataMap).containsAll(
             "contracts" to "anExistingContractId,aContractId",
@@ -95,7 +95,7 @@ class ScheduleContractTerminatedTest {
 
         val expectedJobKey = JobKey.jobKey("onContractTerminatedEvent-1337", JobScheduler.jobGroup)
         verify { scheduler.getJobDetail(expectedJobKey) }
-        verify { scheduler.addJob(capture(jobDetail), true) }
+        verify { scheduler.addJob(capture(jobDetail), true, true) }
     }
 
     @Test
@@ -116,7 +116,7 @@ class ScheduleContractTerminatedTest {
         val jobDetail = slot<JobDetail>()
 
         val expectedJobKey = JobKey.jobKey("onContractTerminatedEvent-1337", JobScheduler.jobGroup)
-        verify { scheduler.addJob(capture(jobDetail), true) }
+        verify { scheduler.addJob(capture(jobDetail), true, true) }
         assertThat(jobDetail.captured.key).isEqualTo(expectedJobKey)
     }
 
