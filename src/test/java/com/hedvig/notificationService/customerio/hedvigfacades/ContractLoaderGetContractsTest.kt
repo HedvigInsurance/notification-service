@@ -1,6 +1,7 @@
 package com.hedvig.notificationService.customerio.hedvigfacades
 
 import com.hedvig.notificationService.customerio.AgreementType
+import com.hedvig.notificationService.serviceIntegration.productPricing.FeignExceptionForTest
 import com.hedvig.notificationService.serviceIntegration.productPricing.client.Address
 import com.hedvig.notificationService.serviceIntegration.productPricing.client.Agreement
 import com.hedvig.notificationService.serviceIntegration.productPricing.client.AgreementStatus
@@ -132,6 +133,35 @@ class ContractLoaderGetContractsTest {
 
         val contractInfo = sut.getContractInfoForMember("someId")
         assertThat(contractInfo.first().renewalDate).isEqualTo(LocalDate.of(2020, 7, 1))
+    }
+
+    @Test
+    fun `quote not found in underwriter`() {
+        val contractId = UUID.fromString("b43a96b2-a70c-11ea-ac39-3af9d3902f96")
+        every { productPricingClient.getContractsForMember(any()) } returns ResponseEntity.ok(
+            listOf(
+                makeContract(
+                    makeNorwegianHomeContentAgreement(),
+                    contractId = contractId,
+                    renewal = Renewal(
+                        LocalDate.of(2020, 7, 1),
+                        "url",
+                        UUID.randomUUID()
+                    )
+                )
+            )
+        )
+
+        every { underwriterClient.getQuoteFromContractId(contractId.toString()) } throws FeignExceptionForTest(404)
+
+        val sut =
+            ContractLoaderImpl(
+                productPricingClient,
+                underwriterClient
+            )
+
+        val contractInfo = sut.getContractInfoForMember("someId")
+        assertThat(contractInfo.first().partnerCode).isNull()
     }
 
     private fun makeNorwegianHomeContentAgreement(): Agreement.NorwegianHomeContent {

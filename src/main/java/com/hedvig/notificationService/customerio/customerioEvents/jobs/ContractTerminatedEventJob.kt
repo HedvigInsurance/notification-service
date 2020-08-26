@@ -7,10 +7,14 @@ import com.hedvig.notificationService.customerio.customerioEvents.CustomerioEven
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.customerio.state.CustomerioState
+import org.quartz.DisallowConcurrentExecution
 import org.quartz.JobExecutionContext
+import org.quartz.PersistJobDataAfterExecution
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.quartz.QuartzJobBean
 
+@DisallowConcurrentExecution
+@PersistJobDataAfterExecution
 class ContractTerminatedEventJob(
     private val customerIOStateRepository: CustomerIOStateRepository,
     private val contractLoader: ContractLoader,
