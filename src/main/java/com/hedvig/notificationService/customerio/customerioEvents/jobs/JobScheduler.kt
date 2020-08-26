@@ -178,11 +178,28 @@ class JobScheduler(private val scheduler: Scheduler) {
         job.jobDataMap["contracts"] = updatedContracts.joinToString(",")
         job.jobDataMap["memberId"] = memberId
 
-        scheduler.addJob(job, true)
+        scheduler.addJob(job, true, true)
 
-        rescheduleJob(
-            TriggerKey.triggerKey("onContractTerminatedEvent-$memberId", jobGroup),
-            DateBuilder.futureDate(30, DateBuilder.IntervalUnit.MINUTE)
+        val newStartTime = DateBuilder.futureDate(30, DateBuilder.IntervalUnit.MINUTE)
+        val triggerKey = TriggerKey.triggerKey("onContractTerminatedEvent-$memberId", jobGroup)
+        val triggerExisted = rescheduleJob(
+            triggerKey,
+            newStartTime
         )
+        if (!triggerExisted) {
+            scheduler.scheduleJob(
+                job,
+                TriggerBuilder
+                    .newTrigger()
+                    .withIdentity(triggerKey)
+                    .startAt(newStartTime)
+                    .withSchedule(
+                        SimpleScheduleBuilder
+                            .simpleSchedule()
+                            .withMisfireHandlingInstructionFireNow()
+                    )
+                    .build()
+            )
+        }
     }
 }
