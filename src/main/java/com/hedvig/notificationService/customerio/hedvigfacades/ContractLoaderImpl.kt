@@ -3,6 +3,7 @@ package com.hedvig.notificationService.customerio.hedvigfacades
 import com.hedvig.notificationService.customerio.AgreementType
 import com.hedvig.notificationService.customerio.ContractInfo
 import com.hedvig.notificationService.customerio.Workspace
+import com.hedvig.notificationService.serviceIntegration.productPricing.client.Contract
 import com.hedvig.notificationService.serviceIntegration.productPricing.client.ProductPricingClient
 import com.hedvig.notificationService.serviceIntegration.underwriter.UnderwriterClient
 import feign.FeignException
@@ -38,17 +39,28 @@ class ContractLoaderImpl(
         val productPricingReponse = productPricingClient.getContractsForMember(memberId)
 
         return productPricingReponse.body.map { contract ->
-            val underwriterResponse = underwriterClient.getQuoteFromContractId(contract.id.toString()).body
+            val underwriterResponse = loadQuote(contract)
             ContractInfo(
                 type = AgreementType.valueOf(contract.agreements.first()::class.java.simpleName),
                 switcherCompany = contract.switchedFrom,
                 startDate = contract.masterInception,
                 signSource = contract.signSource,
-                partnerCode = underwriterResponse.attributedTo,
+                partnerCode = underwriterResponse?.attributedTo,
                 renewalDate = contract.renewal?.renewalDate,
                 contractId = contract.id,
                 terminationDate = contract.terminationDate
             )
         }
     }
+
+    private fun loadQuote(contract: Contract) =
+        try {
+            underwriterClient.getQuoteFromContractId(contract.id.toString()).body
+        } catch (e: FeignException) {
+            if (e.status() == 404) {
+                null
+            } else {
+                throw e
+            }
+        }
 }
