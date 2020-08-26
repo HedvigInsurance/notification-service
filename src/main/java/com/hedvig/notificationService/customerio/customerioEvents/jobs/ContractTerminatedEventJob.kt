@@ -6,6 +6,7 @@ import com.hedvig.notificationService.customerio.CustomerioUpdateScheduler
 import com.hedvig.notificationService.customerio.customerioEvents.CustomerioEventCreator
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
+import com.hedvig.notificationService.customerio.state.CustomerioState
 import org.quartz.JobExecutionContext
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.quartz.QuartzJobBean
@@ -28,7 +29,10 @@ class ContractTerminatedEventJob(
 
             logger.info("Running ContractTerminatedEventJob.executeInternal with member $memberId")
 
-            val customerioState = customerIOStateRepository.findByMemberId(memberId)!!
+            val customerioState = customerIOStateRepository.findByMemberId(memberId) ?: CustomerioState(
+                memberId
+            )
+
             val contracts = contractLoader.getContractInfoForMember(customerioState.memberId)
 
             val contractsAsString = jobContext.mergedJobDataMap.getString("contracts")
