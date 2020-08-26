@@ -188,10 +188,10 @@ class JobScheduler(private val scheduler: Scheduler) {
         )
         if (!triggerExisted) {
             scheduler.scheduleJob(
-                job,
                 TriggerBuilder
                     .newTrigger()
                     .withIdentity(triggerKey)
+                    .forJob(jobKey)
                     .startAt(newStartTime)
                     .withSchedule(
                         SimpleScheduleBuilder
