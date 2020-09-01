@@ -43,8 +43,7 @@ public class FirebaseToken {
         if (!Objects.equals(this$memberId, other$memberId)) return false;
         final Object this$token = this.getToken();
         final Object other$token = other.getToken();
-        if (!Objects.equals(this$token, other$token)) return false;
-        return true;
+        return Objects.equals(this$token, other$token);
     }
 
     protected boolean canEqual(final Object other) {
