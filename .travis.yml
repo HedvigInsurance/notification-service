@@ -20,3 +20,13 @@ after_success:
 cache:
   directories:
     - $HOME/.m2
+    - $HOME/.sonar/cache
+addons:
+  sonarcloud:
+    organization: "hedviginsurance"
+    token:
+      secure: "NpqMRpqmS/8Sn0ujagzYgC6qJ4ImiyCQK+83w8YMG3UfZqCXxvekhDPUEFwWAf85j3ypbSfX8qZUVs1E5QOBiLH5DPS808JMtemHrcyP0dk+f9bPM8vtPeW91ybgz8QyfGjqXpyf0dw2vGsjl04zISjXIFEYqlBOFS2YgeLmn2621iUiqRBDXVl/fTyvySxBgMrL+4Q4ELS4Wjtyrvd/G0HxAlm582KL08hg9ro9pTblx8hxc4nsgpMGEf/dys5q8jpvzsjx3qpyWBFQzaqpAq7FXuYbGSQl9bNPw3vOqvbO+ari+XnKNs1nEtHHU/mkUmPEocw1SdIkvUHYhL+mUfiFuofpFOmp+ZiOzcROH2ckwABv0nxt70Fge5pXsDcDVQe8NfIqgDApKoyL5vKjg27ScOXjKyhc+vq1KJY6H52ZVOFYQlVWogIhQi0c+UWC/ZEUCjKF4Xh73SIfOTF+uiPa6jaKdIsaBHJQXxs/Ht7gCXXnpwA/uwDzHyPXWz4+LP+ARAf+HDtha5m8zae5WmY1e2gar4sMOmq4u+bLxp93Pd1+FNiEs3EyxXEbdvDS/z5TSuLGkPFBxHZRfWMcYJdabTJ6Tc47m7FE3QL9EPC/OxmWk0lRAXIOox0nAS0MYV6Nuf4xc9B2OvZ5RkCqMzDviHqm63bqcBfkXQhAVJc="
+script:
+  - ./mvnw test verify sonar:sonar -Pcoverage -B
+git:
+  depth: false
