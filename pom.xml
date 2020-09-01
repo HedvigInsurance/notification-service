@@ -17,7 +17,7 @@
         <kotlin.code.style>official</kotlin.code.style>
         <awssdk.version>1.11.415</awssdk.version>
         <jdbi.version>3.13.0</jdbi.version>
-        <sonar.projectKey>HedvigInsurance_product-pricing</sonar.projectKey>
+        <sonar.projectKey>HedvigInsurance_notification-service</sonar.projectKey>
         <sonar.organization>hedviginsurance</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
