@@ -73,11 +73,13 @@ data class QuoteCreatedEvent(
     val firstName: String,
     val lastName: String,
     val postalCode: String?,
+    val street: String?,
     val email: String,
     val ssn: String?,
     val initiatedFrom: String,
     val attributedTo: String,
     val productType: String,
+    val insuranceType: String,
     val currentInsurer: String?,
     val price: BigDecimal?,
     val currency: String,
@@ -90,10 +92,12 @@ data class QuoteCreatedEvent(
             "initiated_from" to initiatedFrom,
             "partner" to attributedTo,
             "product_type" to productType,
+            "insurance_type" to insuranceType,
             "current_insurer" to currentInsurer,
             "price" to price,
             "currency" to currency,
-            "postal_code" to postalCode
+            "postal_code" to postalCode,
+            "street" to street
         )
     )
 }

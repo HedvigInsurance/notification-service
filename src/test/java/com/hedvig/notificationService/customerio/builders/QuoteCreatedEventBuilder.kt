@@ -14,11 +14,13 @@ data class QuoteCreatedEventBuilder(
     val initiatedFrom: String = "WEBONBOARDING",
     val attributedTo: String = "HEDVIG",
     val productType: String = "APARTMENT",
+    val insuranceType: String = "RENT",
     val currentInsurer: String? = null,
     val price: BigDecimal = BigDecimal("99"),
     val currency: String = "SEK",
     val originatingProductId: UUID? = null,
-    val address: String? = "Testvägen 1"
+    val street: String = "Testvägen 1",
+    val postalCode: String = "12345"
 ) {
     fun build() = QuoteCreatedEvent(
         memberId = memberId,
@@ -30,10 +32,12 @@ data class QuoteCreatedEventBuilder(
         initiatedFrom = initiatedFrom,
         attributedTo = attributedTo,
         productType = productType,
+        insuranceType = insuranceType,
         currentInsurer = currentInsurer,
         price = price,
         currency = currency,
         originatingProductId = originatingProductId,
-        postalCode = address
+        street = street,
+        postalCode = postalCode
     )
 }
