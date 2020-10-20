@@ -12,6 +12,13 @@ internal class TextUtilsTest {
     }
 
     @Test
+    fun `properly extracts street name from regular street with apartment number`() {
+        val street = "Valhallavägen 117k lgh 1337"
+        val streetName = street.extractStreetName()
+        assertThat(streetName).isEqualTo("Valhallavägen")
+    }
+
+    @Test
     fun `properly extracts street name from street with multiple spaces`() {
         val street = "Valhallavägen    117k"
         val streetName = street.extractStreetName()

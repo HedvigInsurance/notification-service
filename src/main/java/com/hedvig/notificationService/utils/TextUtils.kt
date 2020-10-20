@@ -1,7 +1,7 @@
 package com.hedvig.notificationService.utils
 
 private val streetNameRegex = """
-    (\w.+)\s+\d
+    ([^\d]+)\d
 """.trimIndent().toRegex()
 
 fun String.extractStreetName(): String {
