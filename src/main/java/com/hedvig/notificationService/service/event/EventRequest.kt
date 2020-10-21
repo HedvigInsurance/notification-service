@@ -3,6 +3,7 @@ package com.hedvig.notificationService.service.event
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.hedvig.notificationService.customerio.dto.objects.ChargeFailedReason
+import com.hedvig.notificationService.utils.extractStreetName
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.util.UUID
@@ -97,7 +98,8 @@ data class QuoteCreatedEvent(
             "price" to price,
             "currency" to currency,
             "postal_code" to postalCode,
-            "street" to street
+            "street" to street,
+            "street_name" to street?.extractStreetName()
         )
     )
 }
