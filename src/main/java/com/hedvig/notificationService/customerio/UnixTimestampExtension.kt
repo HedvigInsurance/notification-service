@@ -20,6 +20,10 @@ fun Map<String, Any?>.replaceWithUnixTimestamp(): Map<String, Any?> {
                     // no-op
                 }
             }
+            is Map<*, *> -> {
+                @Suppress("UNCHECKED_CAST")
+                mutableMap[it.key] = (value as Map<String, Any?>?)?.replaceWithUnixTimestamp()
+            }
         }
     }
 

@@ -68,7 +68,56 @@ class UnixTimestampExtensionTest {
     }
 
     @Test
-    fun `given only string and int dose nothing`() {
+    fun `given map in map with local date time is replaced`() {
+        val map: Map<String, Any?> = mapOf("member_id" to "1234", "signed_at" to LocalDateTime.of(2020, 8, 17, 20, 17))
+
+        val dataMap: Map<String, Any?> = mapOf("data" to map)
+
+        val mapWithUnixTimestamp = dataMap.replaceWithUnixTimestamp()
+        val expectedMap = mapOf(
+            "data" to mapOf(
+                "member_id" to "1234",
+                "signed_at" to 1597695420L
+            )
+        )
+
+        assertThat(mapWithUnixTimestamp).isEqualTo(expectedMap)
+    }
+
+    @Test
+    fun `given map in map of String to Int does not blow up`() {
+        val map: Map<String, Int> = mapOf("member_id" to 1234)
+
+        val dataMap: Map<String, Any?> = mapOf("data" to map)
+
+        val mapWithUnixTimestamp = dataMap.replaceWithUnixTimestamp()
+        val expectedMap = mapOf(
+            "data" to mapOf(
+                "member_id" to 1234
+            )
+        )
+
+        assertThat(mapWithUnixTimestamp).isEqualTo(expectedMap)
+    }
+
+    @Test
+    fun `given map in map of Int to Int does not blow up`() {
+        val map: Map<Int, Int> = mapOf(1234 to 1234)
+
+        val dataMap: Map<String, Any?> = mapOf("data" to map)
+
+        val mapWithUnixTimestamp = dataMap.replaceWithUnixTimestamp()
+        val expectedMap = mapOf(
+            "data" to mapOf(
+                1234 to 1234
+            )
+        )
+
+        assertThat(mapWithUnixTimestamp).isEqualTo(expectedMap)
+    }
+
+    @Test
+    fun `given only string and int does nothing`() {
         val map: Map<String, Any?> = mapOf("member_id" to "1234", "member_age" to 35)
 
         val mapWithUnixTimestamp = map.replaceWithUnixTimestamp()
