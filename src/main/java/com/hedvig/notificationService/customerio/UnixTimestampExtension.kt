@@ -17,7 +17,7 @@ fun Map<String, Any?>.replaceWithUnixTimestamp(): Map<String, Any?> {
                 try {
                     mutableMap[it.key] = LocalDate.parse(value).localDateToUnixTimestamp()
                 } catch (e: Exception) {
-                    //no-op
+                    // no-op
                 }
             }
         }
@@ -27,5 +27,3 @@ fun Map<String, Any?>.replaceWithUnixTimestamp(): Map<String, Any?> {
 }
 
 private fun LocalDate.localDateToUnixTimestamp() = this.toEpochSecond(LocalTime.of(0, 0), ZoneOffset.UTC)
-
-
