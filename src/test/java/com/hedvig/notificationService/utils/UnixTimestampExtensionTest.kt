@@ -12,7 +12,7 @@ import java.time.ZoneId
 
 @ExtendWith(MockKExtension::class)
 class UnixTimestampExtensionTest {
-    
+
     private val utc = ZoneId.of("UTC")
 
     @Test
@@ -108,9 +108,9 @@ class UnixTimestampExtensionTest {
             "utcDate" to Instant.parse("2020-11-10T00:00:00Z")
         )
 
-        val dateSummerTime = 1597615200L //UTC 2020-08-16 22:00 Stockholm time 2020-08-17 00:00
-        val dateWinterTime = 1604962800L //UTC 2020-11-09 23:00 Stockholm time 2020-11-10 00:00
-        val utcDate = 1604966400L //UTC 2020-11-10 00:00
+        val dateSummerTime = 1597615200L // UTC 2020-08-16 22:00 Stockholm time 2020-08-17 00:00
+        val dateWinterTime = 1604962800L // UTC 2020-11-09 23:00 Stockholm time 2020-11-10 00:00
+        val utcDate = 1604966400L // UTC 2020-11-10 00:00
 
         val mapWithUnixTimestamp = map.replaceWithUnixTimestamp(ZoneId.of("Europe/Stockholm"))
         val expectedMap = map.toMutableMap().apply {
@@ -129,8 +129,8 @@ class UnixTimestampExtensionTest {
             "dateWinterTime" to "2020-11-10"
         )
 
-        val dateSummerTime = 1597636800L //UTC 2020-08-17 04:00 NY 2020-08-17 00:00
-        val dateWinterTime = 1604984400L //UTC 2020-11-10 05:00 NY 2020-11-10 00:00
+        val dateSummerTime = 1597636800L // UTC 2020-08-17 04:00 NY 2020-08-17 00:00
+        val dateWinterTime = 1604984400L // UTC 2020-11-10 05:00 NY 2020-11-10 00:00
 
         val mapWithUnixTimestamp = map.replaceWithUnixTimestamp(ZoneId.of("America/New_York"))
         val expectedMap = map.toMutableMap().apply {

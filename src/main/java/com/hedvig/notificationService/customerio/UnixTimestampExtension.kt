@@ -29,6 +29,6 @@ fun Map<String, Any?>.replaceWithUnixTimestamp(zoneId: ZoneId): Map<String, Any?
 }
 
 private fun LocalDate.localDateToUnixTimestamp(zoneId: ZoneId): Long {
-    val localDateTime = this.atTime(0,0)
+    val localDateTime = this.atTime(0, 0)
     return localDateTime.toEpochSecond(zoneId.rules.getOffset(localDateTime))
 }

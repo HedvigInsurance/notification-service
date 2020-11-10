@@ -4,7 +4,6 @@ import com.hedvig.notificationService.serviceIntegration.productPricing.client.M
 import com.neovisionaries.i18n.CountryCode
 import java.time.ZoneId
 import java.util.Locale
-import java.util.TimeZone
 
 enum class Workspace {
     SWEDEN {
@@ -17,7 +16,7 @@ enum class Workspace {
         override val requiresImplementation = true
         override val countryCode = CountryCode.NO
         override val market = Market.NORWAY
-        override val zoneId =  ZoneId.of("Europe/Oslo")
+        override val zoneId = ZoneId.of("Europe/Oslo")
     },
     NOT_FOUND {
         override val requiresImplementation = false
