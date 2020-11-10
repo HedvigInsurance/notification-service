@@ -2,7 +2,6 @@ package com.hedvig.notificationService.customerio
 
 import java.time.Instant
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
 
@@ -11,7 +10,6 @@ fun Map<String, Any?>.replaceWithUnixTimestamp(zoneId: ZoneId): Map<String, Any?
     mutableMap.forEach {
         when (val value = it.value) {
             is LocalDate -> mutableMap[it.key] = value.localDateToUnixTimestamp(zoneId)
-            is LocalDateTime -> mutableMap[it.key] = value.toEpochSecond(zoneId.rules.getOffset(value))
             is Instant -> mutableMap[it.key] = value.atZone(ZoneOffset.UTC).toEpochSecond()
             is String -> {
                 try {
