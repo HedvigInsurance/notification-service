@@ -47,12 +47,14 @@ class CustomerUpdateCustomerAttributesTest {
             mockk()
         )
     }
+
     @Test
     fun `update attribute with localdate is replaced`() {
         every { workspaceSelector.getWorkspaceForMember("8080") } returns Workspace.SWEDEN
 
         sut.updateCustomerAttributes("8080", mapOf("someKey" to LocalDate.of(2020, 8, 17)))
 
-        verify { seCustomerioClient.updateCustomer("8080", mapOf("someKey" to 1597622400L)) }
+        val someKeyTimestamp = 1597615200L // UTC 2020-08-16 22:00 Stockholm time 2020-08-17 00:00
+        verify { seCustomerioClient.updateCustomer("8080", mapOf("someKey" to someKeyTimestamp)) }
     }
 }
