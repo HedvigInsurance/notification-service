@@ -7,6 +7,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Test
+import java.time.LocalDate
 
 class CustomerioServicePostEventTest {
 
@@ -118,6 +119,15 @@ class CustomerioServicePostEventTest {
         val expectedMap = createExpectedMap(event, expectedHash)
         verify(exactly = 2) { sweClient.sendEvent(member, expectedMap) }
         verify(exactly = 2) { eventHashRepository.save(member, expectedHash) }
+    }
+
+    @Test
+    fun `local date is replaced on send event`() {
+        every { workspaceSelector.getWorkspaceForMember("8080") } returns Workspace.SWEDEN
+
+        sut.sendEvent("8080", mapOf("someKey" to LocalDate.of(2020, 8, 17)))
+
+        verify { sweClient.sendEvent("8080", mapOf("someKey" to 1597622400L)) }
     }
 
     private fun createExpectedMap(map: Map<String, Any>, hash: String) =

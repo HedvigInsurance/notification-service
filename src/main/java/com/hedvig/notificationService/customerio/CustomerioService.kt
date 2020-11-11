@@ -47,7 +47,7 @@ class CustomerioService(
             return
         }
 
-        clients[marketForMember]?.updateCustomer(memberId, attributes)
+        clients[marketForMember]?.updateCustomer(memberId, attributes.replaceWithUnixTimestamp(marketForMember.zoneId))
     }
 
     private fun isSignUpdateFromUnderwriter(attributes: Map<String, Any?>): Boolean {
@@ -70,7 +70,7 @@ class CustomerioService(
         (mutableMap["data"] as? MutableMap<String, Any?>)?.let {
             it["hash"] = hash
         }
-        clients[marketForMember]?.sendEvent(memberId, mutableMap.toMap())
+        clients[marketForMember]?.sendEvent(memberId, mutableMap.toMap().replaceWithUnixTimestamp(marketForMember.zoneId))
         idempotenceHashRepository.save(memberId, hash)
     }
 
