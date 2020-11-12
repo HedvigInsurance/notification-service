@@ -127,7 +127,7 @@ class CustomerioServicePostEventTest {
 
         sut.sendEvent("8080", mapOf("someKey" to LocalDate.of(2020, 8, 17)))
 
-        verify { sweClient.sendEvent("8080", mapOf("someKey" to 1597622400L)) }
+        verify { sweClient.sendEvent("8080", mapOf("someKey" to 1597615200L)) }
     }
 
     private fun createExpectedMap(map: Map<String, Any>, hash: String) =
