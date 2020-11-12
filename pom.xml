@@ -361,7 +361,7 @@
                         <plugin>spring</plugin>
                         <plugin>jpa</plugin>
                     </compilerPlugins>
-                    <jvmTarget>9</jvmTarget>
+                    <jvmTarget>1.8</jvmTarget>
                 </configuration>
                 <dependencies>
                     <dependency>
