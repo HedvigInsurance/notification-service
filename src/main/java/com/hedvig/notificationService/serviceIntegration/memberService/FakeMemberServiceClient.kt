@@ -1,7 +1,9 @@
 package com.hedvig.notificationService.serviceIntegration.memberService
 
+import com.hedvig.notificationService.serviceIntegration.memberService.dto.Flag
 import com.hedvig.notificationService.serviceIntegration.memberService.dto.Member
-import com.hedvig.notificationService.serviceIntegration.memberService.dto.HasPersonSignedBeforeRequest
+import com.hedvig.notificationService.serviceIntegration.memberService.dto.HasSignedBeforeRequest
+import com.hedvig.notificationService.serviceIntegration.memberService.dto.PersonStatusDto
 import org.springframework.http.ResponseEntity
 
 class FakeMemberServiceClient : MemberServiceClient {
@@ -37,5 +39,6 @@ class FakeMemberServiceClient : MemberServiceClient {
         return ResponseEntity.ok(PickedLocale("nb_NO"))
     }
 
-    override fun hasPersonSignedBefore(request: HasPersonSignedBeforeRequest): Boolean = false
+    override fun hasPersonSignedBefore(request: HasSignedBeforeRequest): Boolean = false
+    override fun getPersonStatusByMemberId(memberId: String): PersonStatusDto = PersonStatusDto(Flag.GREEN, false)
 }
