@@ -84,6 +84,6 @@ class OnChargeFailedEventTriggerCustomerioEventTest {
         )
 
         verify(exactly = 0) { customerioService.sendEvent(any(), any()) }
-        verify(exactly = 0) { handledRequestRepository.storeHandledRequest(requestId) }
+        verify(exactly = 0) { handledRequestRepository.storeHandledRequest(any()) }
     }
 }

@@ -8,7 +8,6 @@ import com.hedvig.notificationService.customerio.state.CustomerIOStateRepository
 import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.service.firebase.FirebaseNotificationService
 import com.hedvig.notificationService.service.request.HandledRequestRepository
-import com.hedvig.notificationService.serviceIntegration.memberService.dto.HasPersonSignedBeforeRequest
 import org.quartz.Scheduler
 import org.quartz.SchedulerException
 import org.slf4j.LoggerFactory
@@ -118,15 +117,21 @@ class EventHandler(
             return
         }
         val hasSignedBefore = memberService.hasPersonSignedBefore(
-            HasPersonSignedBeforeRequest(
-                ssn = event.ssn,
-                email = event.email
-            )
+            memberId = event.memberId,
+            ssn = event.ssn,
+            email = event.email
         )
         if (hasSignedBefore) {
             logger.info("Will not send QuoteCreatedEvent to customer.io for member=${event.memberId} since the person signed before")
             return
         }
+
+        val hasRedFlag = memberService.hasRedFlag(event.memberId)
+        if (hasRedFlag) {
+            logger.info("Will not send QuoteCreatedEvent to customer.io for member=${event.memberId} since the person has red flag")
+            return
+        }
+
         customerioService.updateCustomerAttributes(
             event.memberId, mapOf(
                 "email" to event.email,

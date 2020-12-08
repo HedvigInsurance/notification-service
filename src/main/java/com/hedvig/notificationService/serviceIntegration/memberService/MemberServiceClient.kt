@@ -1,7 +1,8 @@
 package com.hedvig.notificationService.serviceIntegration.memberService
 
 import com.hedvig.notificationService.serviceIntegration.memberService.dto.Member
-import com.hedvig.notificationService.serviceIntegration.memberService.dto.HasPersonSignedBeforeRequest
+import com.hedvig.notificationService.serviceIntegration.memberService.dto.HasSignedBeforeRequest
+import com.hedvig.notificationService.serviceIntegration.memberService.dto.PersonStatusDto
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -23,5 +24,8 @@ interface MemberServiceClient {
     fun pickedLocale(@PathVariable("memberId") memberId: String): ResponseEntity<PickedLocale>
 
     @PostMapping("/_/person/has/signed")
-    fun hasPersonSignedBefore(request: HasPersonSignedBeforeRequest): Boolean
+    fun hasPersonSignedBefore(request: HasSignedBeforeRequest): Boolean
+
+    @GetMapping("/_/person/member/{memberId}")
+    fun getPersonStatusByMemberId(@PathVariable memberId: String): PersonStatusDto
 }
