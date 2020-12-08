@@ -1,14 +1,13 @@
 package com.hedvig.notificationService.customerio.web
 
 import com.hedvig.notificationService.customerio.CustomerioService
-import com.hedvig.notificationService.service.event.EventHandler
 import com.hedvig.notificationService.customerio.builders.EMAIL
 import com.hedvig.notificationService.customerio.builders.MEMBER_ID
 import com.hedvig.notificationService.customerio.builders.SSN
 import com.hedvig.notificationService.customerio.builders.a
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
+import com.hedvig.notificationService.service.event.EventHandler
 import com.hedvig.notificationService.service.request.HandledRequestRepository
-import com.hedvig.notificationService.serviceIntegration.memberService.dto.HasSignedBeforeRequest
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
