@@ -33,7 +33,7 @@ class HandleEventRequestsTest {
         )
 
         verify(exactly = 0) { eventHandler.onStartDateUpdatedEvent(any(), any()) }
-        verify(exactly = 0) { handledRequestRepository.storeHandledRequest(requestId) }
+        verify(exactly = 0) { handledRequestRepository.storeHandledRequest(any()) }
     }
 
     @Test

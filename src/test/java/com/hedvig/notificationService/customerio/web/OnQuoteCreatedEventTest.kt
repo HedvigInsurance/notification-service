@@ -42,7 +42,7 @@ class OnQuoteCreatedEventTest {
     fun `send event when member is not signed and event is ordinary`() {
         val requestId = "unhandled request"
         val quoteCreatedEvent = a.quoteCreatedEvent.build()
-        every { memberService.hasPersonSignedBefore(HasSignedBeforeRequest(MEMBER_ID, SSN, EMAIL)) } returns false
+        every { memberService.hasPersonSignedBefore(MEMBER_ID, SSN, EMAIL) } returns false
         every { memberService.hasRedFlag(MEMBER_ID) } returns false
         eventHandlerToTest.onQuoteCreatedHandleRequest(quoteCreatedEvent, CALL_TIME, requestId)
         verify { customerioService.sendEvent(MEMBER_ID, quoteCreatedEvent.toMap()) }
@@ -63,58 +63,58 @@ class OnQuoteCreatedEventTest {
     @Test
     fun `does not send event when member signed and event is ordinary`() {
         val quoteCreatedEvent = a.quoteCreatedEvent.build()
-        every { memberService.hasPersonSignedBefore(HasSignedBeforeRequest(MEMBER_ID, SSN, EMAIL)) } returns true
+        every { memberService.hasPersonSignedBefore(MEMBER_ID, SSN, EMAIL) } returns true
         every { memberService.hasRedFlag(MEMBER_ID) } returns false
         eventHandlerToTest.onQuoteCreatedHandleRequest(quoteCreatedEvent, CALL_TIME)
         verify(exactly = 0) {
             customerioService.updateCustomerAttributes(
-                MEMBER_ID,
                 any(),
-                CALL_TIME
+                any(),
+                any()
             )
         }
-        verify(exactly = 0) { customerioService.sendEvent(MEMBER_ID, quoteCreatedEvent.toMap()) }
+        verify(exactly = 0) { customerioService.sendEvent(any(), any()) }
     }
 
     @Test
     fun `does not send event when member has not signed and quote is created from hope`() {
-        every { memberService.hasPersonSignedBefore(HasSignedBeforeRequest(MEMBER_ID, SSN, EMAIL)) } returns false
+        every { memberService.hasPersonSignedBefore(MEMBER_ID, SSN, EMAIL) } returns false
         every { memberService.hasRedFlag(MEMBER_ID) } returns false
         val eventWithQuoteCreatedFromHope = a.quoteCreatedEvent.copy(initiatedFrom = "HOPE").build()
         eventHandlerToTest.onQuoteCreatedHandleRequest(eventWithQuoteCreatedFromHope, CALL_TIME)
-        verify(exactly = 0) { customerioService.updateCustomerAttributes(MEMBER_ID, any(), CALL_TIME) }
-        verify(exactly = 0) { customerioService.sendEvent(MEMBER_ID, any()) }
+        verify(exactly = 0) { customerioService.updateCustomerAttributes(any(), any(), any()) }
+        verify(exactly = 0) { customerioService.sendEvent(any(), any()) }
     }
 
     @Test
     fun `does not send event when member has red flag`() {
-        every { memberService.hasPersonSignedBefore(HasSignedBeforeRequest(MEMBER_ID, SSN, EMAIL)) } returns false
+        every { memberService.hasPersonSignedBefore(MEMBER_ID, SSN, EMAIL) } returns false
         every { memberService.hasRedFlag(MEMBER_ID) } returns true
         val eventWithQuoteCreatedFromHope = a.quoteCreatedEvent.copy(initiatedFrom = "HOPE").build()
         eventHandlerToTest.onQuoteCreatedHandleRequest(eventWithQuoteCreatedFromHope, CALL_TIME)
-        verify(exactly = 0) { customerioService.updateCustomerAttributes(MEMBER_ID, any(), CALL_TIME) }
-        verify(exactly = 0) { customerioService.sendEvent(MEMBER_ID, any()) }
+        verify(exactly = 0) { customerioService.updateCustomerAttributes(any(), any(), any()) }
+        verify(exactly = 0) { customerioService.sendEvent(any(), any()) }
     }
 
     @Test
     fun `does not send event when member has not signed and quote has originating productId`() {
-        every { memberService.hasPersonSignedBefore(HasSignedBeforeRequest(MEMBER_ID, SSN, EMAIL)) } returns false
+        every { memberService.hasPersonSignedBefore(MEMBER_ID, SSN, EMAIL) } returns false
         every { memberService.hasRedFlag(MEMBER_ID) } returns false
         val eventWithQuoteWithOriginatingProductId =
             a.quoteCreatedEvent.copy(originatingProductId = UUID.randomUUID()).build()
         eventHandlerToTest.onQuoteCreatedHandleRequest(eventWithQuoteWithOriginatingProductId, CALL_TIME)
-        verify(exactly = 0) { customerioService.updateCustomerAttributes(MEMBER_ID, any(), CALL_TIME) }
-        verify(exactly = 0) { customerioService.sendEvent(MEMBER_ID, any()) }
+        verify(exactly = 0) { customerioService.updateCustomerAttributes(any(), any(), any()) }
+        verify(exactly = 0) { customerioService.sendEvent(any(), any()) }
     }
 
     @Test
     fun `does not send event when member has not signed and quote has unknown productType`() {
-        every { memberService.hasPersonSignedBefore(HasSignedBeforeRequest(MEMBER_ID, SSN, EMAIL)) } returns false
+        every { memberService.hasPersonSignedBefore(MEMBER_ID, SSN, EMAIL) } returns false
         every { memberService.hasRedFlag(MEMBER_ID) } returns false
         val eventWithQuoteWithOriginatingProductId = a.quoteCreatedEvent.copy(productType = "UNKNOWN").build()
         eventHandlerToTest.onQuoteCreatedHandleRequest(eventWithQuoteWithOriginatingProductId, CALL_TIME)
-        verify(exactly = 0) { customerioService.updateCustomerAttributes(MEMBER_ID, any(), CALL_TIME) }
-        verify(exactly = 0) { customerioService.sendEvent(MEMBER_ID, any()) }
+        verify(exactly = 0) { customerioService.updateCustomerAttributes(any(), any(), any()) }
+        verify(exactly = 0) { customerioService.sendEvent(any(), any()) }
     }
 
     @Test
