@@ -103,7 +103,7 @@ class OnUpdatePhoneNumberTest {
     }
 
     @Test
-    fun `on not formatted phone number in norway update event send formatted norwegian phone number`() {
+    fun `on update with norwegian cell number in norway update event send formatted phone number`() {
         every {
             workspaceSelector.getWorkspaceForMember(any())
         } returns Workspace.NORWAY
@@ -119,11 +119,11 @@ class OnUpdatePhoneNumberTest {
         sut.onPhoneNumberUpdatedEvent(
             PhoneNumberUpdatedEvent(
                 "123",
-                "08123456"
+                "909 64 159"
             )
         )
 
         assertThat(slot.captured).containsKey("phone_number")
-        assertThat(slot.captured["phone_number"]).isEqualTo("+478123456")
+        assertThat(slot.captured["phone_number"]).isEqualTo("+4790964159")
     }
 }

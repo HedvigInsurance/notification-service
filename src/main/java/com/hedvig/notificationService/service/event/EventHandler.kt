@@ -161,7 +161,7 @@ class EventHandler(
 
         workspace.countryCode?.let { countryCode ->
             val phoneNumberUtil = PhoneNumberUtil.getInstance()
-            val phoneNumber: String = phoneNumberUtil.format(
+            val phoneNumber = phoneNumberUtil.format(
                 phoneNumberUtil.parse(event.phoneNumber, countryCode.name),
                 PhoneNumberUtil.PhoneNumberFormat.E164
             )
