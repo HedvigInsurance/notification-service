@@ -32,7 +32,8 @@ class OnChargeFailedEventTriggerCustomerioEventTest {
             customerioService = customerioService,
             memberService = memberService,
             scheduler = mockk(),
-            handledRequestRepository = handledRequestRepository
+            handledRequestRepository = handledRequestRepository,
+            workspaceSelector = mockk()
         )
         val requestId = "unhandled request id"
 
@@ -67,7 +68,8 @@ class OnChargeFailedEventTriggerCustomerioEventTest {
             customerioService = customerioService,
             memberService = memberService,
             scheduler = mockk(),
-            handledRequestRepository = handledRequestRepository
+            handledRequestRepository = handledRequestRepository,
+            workspaceSelector = mockk()
         )
         val requestId = "handled request id"
         every { handledRequestRepository.isRequestHandled(requestId) } returns true

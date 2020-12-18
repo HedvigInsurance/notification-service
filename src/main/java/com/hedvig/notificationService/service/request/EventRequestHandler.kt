@@ -8,6 +8,7 @@ import com.hedvig.notificationService.service.event.EventHandler
 import com.hedvig.notificationService.service.event.EventRequest
 import com.hedvig.notificationService.service.event.QuoteCreatedEvent
 import com.hedvig.notificationService.service.event.StartDateUpdatedEvent
+import com.hedvig.notificationService.service.event.PhoneNumberUpdatedEvent
 import org.springframework.stereotype.Service
 
 @Service
@@ -30,6 +31,7 @@ class EventRequestHandler(
             is QuoteCreatedEvent -> eventHandler.onQuoteCreated(event)
             is StartDateUpdatedEvent -> eventHandler.onStartDateUpdatedEvent(event)
             is ContractTerminatedEvent -> eventHandler.onContractTerminatedEvent(event)
+            is PhoneNumberUpdatedEvent -> eventHandler.onPhoneNumberUpdatedEvent(event)
         }
         handledRequestRepository.storeHandledRequest(requestId)
     }

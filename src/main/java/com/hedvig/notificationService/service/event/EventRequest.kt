@@ -109,3 +109,8 @@ data class StartDateUpdatedEvent(
     val owningMemberId: String,
     val startDate: LocalDate
 ) : EventRequest()
+
+data class PhoneNumberUpdatedEvent(
+    val memberId: String,
+    val phoneNumber: String
+) : EventRequest()

@@ -3,6 +3,7 @@ package com.hedvig.notificationService.customerio.web
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import com.hedvig.notificationService.customerio.CustomerioService
+import com.hedvig.notificationService.customerio.WorkspaceSelector
 import com.hedvig.notificationService.service.event.EventHandler
 import com.hedvig.notificationService.service.event.ContractRenewalQueuedEvent
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
@@ -23,6 +24,7 @@ class OnContractRenewalQuuedEventTest {
     private val firebaseNotificationService = mockk<FirebaseNotificationService>(relaxed = true)
     private val handledRequestRepository = mockk<HandledRequestRepository>(relaxed = true)
     private val repo: InMemoryCustomerIOStateRepository = InMemoryCustomerIOStateRepository()
+    private val workspaceSelector = mockk<WorkspaceSelector>()
 
     val sut = EventHandler(
         repo = repo,
@@ -30,7 +32,8 @@ class OnContractRenewalQuuedEventTest {
         customerioService = customerioService,
         memberService = memberService,
         scheduler = mockk(),
-        handledRequestRepository = handledRequestRepository
+        handledRequestRepository = handledRequestRepository,
+        workspaceSelector = workspaceSelector
     )
 
     @Test

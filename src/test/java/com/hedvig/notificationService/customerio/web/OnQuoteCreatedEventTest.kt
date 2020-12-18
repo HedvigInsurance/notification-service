@@ -33,7 +33,8 @@ class OnQuoteCreatedEventTest {
             customerioService = customerioService,
             memberService = memberService,
             scheduler = mockk(),
-            handledRequestRepository = handledRequestRepository
+            handledRequestRepository = handledRequestRepository,
+            workspaceSelector = mockk()
         )
     }
 

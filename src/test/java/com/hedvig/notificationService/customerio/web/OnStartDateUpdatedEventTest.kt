@@ -48,7 +48,9 @@ class OnStartDateUpdatedEventTest {
             customerioService,
             memberService,
             scheduler,
-            handledRequestRepository
+            handledRequestRepository,
+            mockk(),
+            mockk()
         )
     }
 
