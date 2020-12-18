@@ -3,8 +3,6 @@ package com.hedvig.notificationService.service.event
 import com.hedvig.notificationService.customerio.CustomerioService
 import com.hedvig.notificationService.customerio.Workspace
 import com.hedvig.notificationService.customerio.WorkspaceSelector
-import com.hedvig.notificationService.service.event.EventHandler
-import com.hedvig.notificationService.service.event.PhoneNumberUpdatedEvent
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
@@ -79,7 +77,6 @@ class OnUpdatePhoneNumberTest {
         assertThat(slot.captured["phone_number"]).isEqualTo("+468123456")
     }
 
-
     @Test
     fun `on phone number with - and spaces update event send formatted phone number`() {
         every {
@@ -104,7 +101,6 @@ class OnUpdatePhoneNumberTest {
         assertThat(slot.captured).containsKey("phone_number")
         assertThat(slot.captured["phone_number"]).isEqualTo("+46701234563")
     }
-
 
     @Test
     fun `on not formatted phone number in norway update event send formatted norwegian phone number`() {
