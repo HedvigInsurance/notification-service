@@ -44,7 +44,8 @@ class SchedulingOfActivationDateActiveTodayJobTest {
             customerioService,
             memberService,
             scheduler,
-            handledRequestRepository
+            handledRequestRepository,
+            workspaceSelector = mockk()
         )
 
     @Test

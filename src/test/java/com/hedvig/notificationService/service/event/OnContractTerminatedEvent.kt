@@ -20,7 +20,8 @@ class OnContractTerminatedEvent {
             mockk(),
             mockk(),
             mockk(),
-            jobScheduler
+            jobScheduler,
+            mockk()
         )
 
         eventHandler.onContractTerminatedEvent(

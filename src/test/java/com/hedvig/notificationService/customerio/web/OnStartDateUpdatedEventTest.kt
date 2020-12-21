@@ -5,6 +5,7 @@ import assertk.assertions.any
 import assertk.assertions.isNull
 import com.hedvig.notificationService.customerio.ConfigurationProperties
 import com.hedvig.notificationService.customerio.CustomerioService
+import com.hedvig.notificationService.customerio.customerioEvents.jobs.JobScheduler
 import com.hedvig.notificationService.service.event.EventHandler
 import com.hedvig.notificationService.customerio.customerioEvents.jobs.StartDateUpdatedJob
 import com.hedvig.notificationService.service.event.StartDateUpdatedEvent
@@ -48,7 +49,9 @@ class OnStartDateUpdatedEventTest {
             customerioService,
             memberService,
             scheduler,
-            handledRequestRepository
+            handledRequestRepository,
+            JobScheduler(scheduler),
+            mockk()
         )
     }
 

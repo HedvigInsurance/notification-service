@@ -38,7 +38,8 @@ class ContractCreatedEventCreatesContractTest {
         customerioService = customerioService,
         memberService = memberService,
         scheduler = scheduler,
-        handledRequestRepository = handledRequestRepository
+        handledRequestRepository = handledRequestRepository,
+        workspaceSelector = mockk()
     )
 
     @BeforeEach

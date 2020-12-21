@@ -1,6 +1,8 @@
 package com.hedvig.notificationService.service.event
 
+import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.hedvig.notificationService.customerio.CustomerioService
+import com.hedvig.notificationService.customerio.WorkspaceSelector
 import com.hedvig.notificationService.customerio.customerioEvents.jobs.JobScheduler
 import com.hedvig.notificationService.customerio.dto.objects.ChargeFailedReason
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
@@ -22,7 +24,8 @@ class EventHandler(
     private val memberService: MemberServiceImpl,
     scheduler: Scheduler,
     private val handledRequestRepository: HandledRequestRepository,
-    private val jobScheduler: JobScheduler = JobScheduler(scheduler)
+    private val jobScheduler: JobScheduler = JobScheduler(scheduler),
+    private val workspaceSelector: WorkspaceSelector
 ) {
 
     fun onStartDateUpdatedEvent(
@@ -110,8 +113,8 @@ class EventHandler(
         callTime: Instant = Instant.now()
     ) {
         val shouldNotSendEvent = event.initiatedFrom == "HOPE" ||
-            event.originatingProductId != null ||
-            event.productType == "UNKNOWN"
+                event.originatingProductId != null ||
+                event.productType == "UNKNOWN"
         if (shouldNotSendEvent) {
             logger.info("Will not send QuoteCreatedEvent to customer.io for member=${event.memberId} (event=$event)")
             return
@@ -148,6 +151,27 @@ class EventHandler(
             event.owningMemberId,
             event.terminationDate
         )
+    }
+
+    fun onPhoneNumberUpdatedEvent(
+        event: PhoneNumberUpdatedEvent,
+        callTime: Instant = Instant.now()
+    ) {
+        val workspace = workspaceSelector.getWorkspaceForMember(event.memberId)
+
+        workspace.countryCode?.let { countryCode ->
+            val phoneNumberUtil = PhoneNumberUtil.getInstance()
+            val phoneNumber = phoneNumberUtil.format(
+                phoneNumberUtil.parse(event.phoneNumber, countryCode.name),
+                PhoneNumberUtil.PhoneNumberFormat.E164
+            )
+
+            customerioService.updateCustomerAttributes(
+                event.memberId, mapOf(
+                    "phone_number" to phoneNumber
+                )
+            )
+        }
     }
 
     /**

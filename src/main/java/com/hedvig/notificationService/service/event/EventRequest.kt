@@ -15,7 +15,8 @@ import java.util.UUID
     JsonSubTypes.Type(value = ContractRenewalQueuedEvent::class, name = "ContractRenewalQueuedEvent"),
     JsonSubTypes.Type(value = QuoteCreatedEvent::class, name = "QuoteCreatedEvent"),
     JsonSubTypes.Type(value = StartDateUpdatedEvent::class, name = "StartDateUpdatedEvent"),
-    JsonSubTypes.Type(value = ContractTerminatedEvent::class, name = "ContractTerminatedEvent")
+    JsonSubTypes.Type(value = ContractTerminatedEvent::class, name = "ContractTerminatedEvent"),
+    JsonSubTypes.Type(value = PhoneNumberUpdatedEvent::class, name = "PhoneNumberUpdatedEvent")
 )
 sealed class EventRequest
 
@@ -108,4 +109,9 @@ data class StartDateUpdatedEvent(
     val contractId: String,
     val owningMemberId: String,
     val startDate: LocalDate
+) : EventRequest()
+
+data class PhoneNumberUpdatedEvent(
+    val memberId: String,
+    val phoneNumber: String
 ) : EventRequest()
