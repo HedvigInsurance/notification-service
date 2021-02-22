@@ -2,6 +2,7 @@ package com.hedvig.notificationService.service.event
 
 import com.hedvig.notificationService.service.request.EventRequestHandler
 import com.hedvig.notificationService.service.request.HandledRequestRepository
+import com.hedvig.notificationService.web.dto.Carrier
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -28,7 +29,10 @@ class HandleEventRequestsTest {
             StartDateUpdatedEvent(
                 contractId,
                 memberId,
-                startDate
+                startDate,
+                false,
+                Carrier.HDI,
+                Carrier.HDI
             )
         )
 
@@ -48,7 +52,10 @@ class HandleEventRequestsTest {
             StartDateUpdatedEvent(
                 contractId,
                 memberId,
-                startDate
+                startDate,
+                false,
+                Carrier.HDI,
+                Carrier.HDI
             )
         )
 
@@ -57,7 +64,10 @@ class HandleEventRequestsTest {
                 StartDateUpdatedEvent(
                     contractId,
                     memberId,
-                    startDate
+                    startDate,
+                    false,
+                    Carrier.HDI,
+                    Carrier.HDI
                 ), any()
             )
         }

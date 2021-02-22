@@ -10,6 +10,7 @@ import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import com.hedvig.notificationService.service.firebase.FirebaseNotificationService
 import com.hedvig.notificationService.service.request.HandledRequestRepository
+import com.hedvig.notificationService.web.dto.Carrier
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
@@ -45,7 +46,10 @@ class OnContractRenewalQuuedEventTest {
                 "contractOne",
                 "contractType",
                 "member",
-                LocalDate.of(1989, 2, 17)
+                LocalDate.of(1989, 2, 17),
+                false,
+                Carrier.HDI,
+                Carrier.HDI
             ),
             requestId = requestId
         )
@@ -66,7 +70,10 @@ class OnContractRenewalQuuedEventTest {
                 "contractOne",
                 "contractType",
                 "member",
-                LocalDate.of(1989, 2, 17)
+                LocalDate.of(1989, 2, 17),
+                false,
+                Carrier.HDI,
+                Carrier.HDI
             ),
             requestId = requestId
         )

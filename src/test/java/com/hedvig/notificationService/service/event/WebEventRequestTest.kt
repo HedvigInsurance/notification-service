@@ -1,6 +1,7 @@
 package com.hedvig.notificationService.service.event
 
 import com.hedvig.notificationService.service.request.EventRequestHandler
+import com.hedvig.notificationService.web.dto.Carrier
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.verify
 import org.assertj.core.api.Assertions
@@ -37,7 +38,10 @@ class WebEventRequestTest {
         "eventName" to "StartDateUpdatedEvent",
         "contractId" to UUID.randomUUID(),
         "owningMemberId" to "12345",
-        "startDate" to LocalDate.now()
+        "startDate" to LocalDate.now(),
+        "carrier_will_be_switched_on_start_date_updated" to false,
+        "current_carrier" to Carrier.HDI,
+        "carrier_on_start_date" to Carrier.HDI
     )
 
     @Test
@@ -55,7 +59,10 @@ class WebEventRequestTest {
                 StartDateUpdatedEvent(
                     testEvent["contractId"].toString(),
                     testEvent["owningMemberId"].toString(),
-                    LocalDate.parse(testEvent["startDate"].toString())
+                    LocalDate.parse(testEvent["startDate"].toString()),
+                    testEvent["carrier_will_be_switched_on_start_date_updated"] as Boolean,
+                    testEvent["current_carrier"] as Carrier,
+                    testEvent["carrier_on_start_date"] as Carrier
                 )
             )
         }
