@@ -20,6 +20,7 @@ RUN mvn clean package
 FROM scratch AS test
 # Nothing to do - this service only has integration tests
 
+
 FROM dependencies AS integration_test
 
 # Copy test source and build+run tests
@@ -28,7 +29,7 @@ COPY src/test /src/test
 COPY --from=build /target /target
 RUN mvn test-compile
 ENV TEST_DB_URL=jdbc:postgresql://test_db:5432
-RUN mvn test
+ENTRYPOINT mvn test
 
 ##### Assemble artifact #####
 FROM amazoncorretto:11 AS assemble
