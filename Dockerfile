@@ -28,7 +28,7 @@ COPY src/test /src/test
 COPY --from=build /target /target
 RUN mvn test-compile
 ENV TEST_DB_URL=jdbc:postgresql://test_db:5432
-
+RUN mvn test
 
 ##### Assemble artifact #####
 FROM amazoncorretto:11 AS assemble
