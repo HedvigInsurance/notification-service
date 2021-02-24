@@ -58,7 +58,7 @@ data class ContractRenewalQueuedEvent(
     val contractType: String,
     val memberId: String,
     val renewalQueuedAt: LocalDate,
-    val carrierWillBeSwitchedOnRenewal: Boolean,
+    val carrierWillBeSwitched: Boolean,
     val currentCarrier: Carrier,
     val carrierOnRenewal: Carrier
 ) : EventRequest() {
@@ -69,7 +69,7 @@ data class ContractRenewalQueuedEvent(
             "contract_id" to contractId,
             "contract_type" to contractType,
             "renewal_queued_at" to renewalQueuedAt,
-            "carrier_will_be_switched_on_renewal" to carrierWillBeSwitchedOnRenewal,
+            "carrier_will_be_switched" to carrierWillBeSwitched,
             "current_carrier" to currentCarrier,
             "carrier_on_renewal" to carrierOnRenewal
         )
@@ -116,7 +116,7 @@ data class StartDateUpdatedEvent(
     val contractId: String,
     val owningMemberId: String,
     val startDate: LocalDate,
-    val carrierWillBeSwitchedOnStartDateUpdated: Boolean,
+    val carrierWillBeSwitched: Boolean,
     val currentCarrier: Carrier,
     val carrierOnStartDate: Carrier
 ) : EventRequest()

@@ -6,7 +6,7 @@ data class StartDateUpdatedEventDto(
     val contractId: String,
     val owningMemberId: String,
     val startDate: LocalDate,
-    val carrierWillBeSwitchedOnStartDateUpdated: Boolean,
+    val carrierWillBeSwitched: Boolean,
     val currentCarrier: Carrier,
     val carrierOnStartDate: Carrier
 )

@@ -39,9 +39,9 @@ class WebEventRequestTest {
         "contractId" to UUID.randomUUID(),
         "owningMemberId" to "12345",
         "startDate" to LocalDate.now(),
-        "carrier_will_be_switched_on_start_date_updated" to false,
-        "current_carrier" to Carrier.HDI,
-        "carrier_on_start_date" to Carrier.HDI
+        "carrierWillBeSwitched" to false,
+        "currentCarrier" to Carrier.HDI,
+        "carrierOnStartDate" to Carrier.HDI
     )
 
     @Test
@@ -60,9 +60,9 @@ class WebEventRequestTest {
                     testEvent["contractId"].toString(),
                     testEvent["owningMemberId"].toString(),
                     LocalDate.parse(testEvent["startDate"].toString()),
-                    testEvent["carrier_will_be_switched_on_start_date_updated"] as Boolean,
-                    testEvent["current_carrier"] as Carrier,
-                    testEvent["carrier_on_start_date"] as Carrier
+                    testEvent["carrierWillBeSwitched"] as Boolean,
+                    testEvent["currentCarrier"] as Carrier,
+                    testEvent["carrierOnStartDate"] as Carrier
                 )
             )
         }

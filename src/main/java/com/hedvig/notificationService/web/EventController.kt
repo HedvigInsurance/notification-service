@@ -67,7 +67,7 @@ class EventController(
                 contractId = event.contractId,
                 owningMemberId = event.owningMemberId,
                 startDate = event.startDate,
-                carrierWillBeSwitchedOnStartDateUpdated = event.carrierWillBeSwitchedOnStartDateUpdated,
+                carrierWillBeSwitched = event.carrierWillBeSwitched,
                 currentCarrier = event.currentCarrier,
                 carrierOnStartDate = event.carrierOnStartDate
             ),
@@ -88,7 +88,7 @@ class EventController(
                 contractType = event.contractType,
                 memberId = event.memberId,
                 renewalQueuedAt = event.renewalQueuedAt,
-                carrierWillBeSwitchedOnRenewal = event.carrierWillBeSwitchedOnRenewal,
+                carrierWillBeSwitched = event.carrierWillBeSwitched,
                 currentCarrier = event.currentCarrier,
                 carrierOnRenewal = event.carrierOnRenewal
             ),
