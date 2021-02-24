@@ -60,9 +60,9 @@ class WebEventRequestTest {
                     testEvent["contractId"].toString(),
                     testEvent["owningMemberId"].toString(),
                     LocalDate.parse(testEvent["startDate"].toString()),
-                    testEvent["carrierWillBeSwitched"] as Boolean,
-                    testEvent["currentCarrier"] as Carrier,
-                    testEvent["carrierOnStartDate"] as Carrier
+                    testEvent["carrierWillBeSwitched"] as Boolean?,
+                    testEvent["currentCarrier"] as Carrier?,
+                    testEvent["carrierOnStartDate"] as Carrier?
                 )
             )
         }
