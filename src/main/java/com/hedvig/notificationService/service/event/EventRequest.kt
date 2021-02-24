@@ -58,9 +58,9 @@ data class ContractRenewalQueuedEvent(
     val contractType: String,
     val memberId: String,
     val renewalQueuedAt: LocalDate,
-    val carrierWillBeSwitched: Boolean,
-    val currentCarrier: Carrier,
-    val carrierOnRenewal: Carrier
+    val carrierWillBeSwitched: Boolean?,
+    val currentCarrier: Carrier?,
+    val carrierOnRenewal: Carrier?
 ) : EventRequest() {
     fun toMap() = mapOf(
         "name" to "ContractRenewalQueuedEvent",
@@ -116,9 +116,9 @@ data class StartDateUpdatedEvent(
     val contractId: String,
     val owningMemberId: String,
     val startDate: LocalDate,
-    val carrierWillBeSwitched: Boolean,
-    val currentCarrier: Carrier,
-    val carrierOnStartDate: Carrier
+    val carrierWillBeSwitched: Boolean?,
+    val currentCarrier: Carrier?,
+    val carrierOnStartDate: Carrier?
 ) : EventRequest()
 
 data class PhoneNumberUpdatedEvent(
