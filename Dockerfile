@@ -21,6 +21,7 @@ FROM scratch AS test
 # Nothing to do - this service only has integration tests
 
 
+##### Integration test stage #####
 FROM dependencies AS integration_test
 
 # Copy test source and build+run tests
@@ -31,7 +32,8 @@ RUN mvn test-compile
 ENV TEST_DB_URL=jdbc:postgresql://test_db:5432
 ENTRYPOINT mvn test
 
-##### Assemble artifact #####
+
+##### Assemble stage #####
 FROM amazoncorretto:11 AS assemble
 
 # Fetch the datadog agent
