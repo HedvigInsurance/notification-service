@@ -16,6 +16,7 @@ import com.hedvig.notificationService.service.event.EventHandler
 import com.hedvig.notificationService.service.event.StartDateUpdatedEvent
 import com.hedvig.notificationService.service.firebase.FirebaseNotificationService
 import com.hedvig.notificationService.service.request.HandledRequestRepository
+import com.hedvig.notificationService.web.dto.Carrier
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -111,7 +112,10 @@ class SchedulingOfActivationDateActiveTodayJobTest {
             StartDateUpdatedEvent(
                 "aContractId",
                 "aMemberId",
-                LocalDate.of(2020, 9, 1)
+                LocalDate.of(2020, 9, 1),
+                false,
+                Carrier.HDI,
+                Carrier.HDI
             )
         )
 
@@ -145,7 +149,10 @@ class SchedulingOfActivationDateActiveTodayJobTest {
             StartDateUpdatedEvent(
                 "aContractId",
                 "aMemberId",
-                LocalDate.of(2020, 9, 1)
+                LocalDate.of(2020, 9, 1),
+                false,
+                Carrier.HDI,
+                Carrier.HDI
             )
         )
 

@@ -4,6 +4,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import com.hedvig.notificationService.customerio.SIGN_EVENT_WINDOWS_SIZE_MINUTES
 import com.hedvig.notificationService.service.event.StartDateUpdatedEvent
+import com.hedvig.notificationService.web.dto.Carrier
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
@@ -36,7 +37,14 @@ class JobSchedulerTest {
                 .build()
         every { scheduler.rescheduleJob(any(), any()) } returns Date()
 
-        val event = StartDateUpdatedEvent("contractId", "someMemberId", LocalDate.of(2020, 10, 1))
+        val event = StartDateUpdatedEvent(
+            "contractId",
+            "someMemberId",
+            LocalDate.of(2020, 10, 1),
+            false,
+            Carrier.HDI,
+            Carrier.HDI
+        )
         jobScheduler.rescheduleOrTriggerStartDateUpdated(
             callTime,
             event.owningMemberId

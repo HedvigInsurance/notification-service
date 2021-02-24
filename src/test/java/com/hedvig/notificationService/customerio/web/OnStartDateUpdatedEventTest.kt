@@ -14,6 +14,7 @@ import com.hedvig.notificationService.customerio.state.CustomerioState
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import com.hedvig.notificationService.service.firebase.FirebaseNotificationService
 import com.hedvig.notificationService.service.request.HandledRequestRepository
+import com.hedvig.notificationService.web.dto.Carrier
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -66,7 +67,10 @@ class OnStartDateUpdatedEventTest {
             StartDateUpdatedEvent(
                 "aContractId",
                 "aMemberId",
-                LocalDate.of(2020, 5, 3)
+                LocalDate.of(2020, 5, 3),
+                false,
+                Carrier.HDI,
+                Carrier.HDI
             ), time, requestId)
 
         assertThat(repo.data["aMemberId"]?.startDateUpdatedTriggerAt).isNull()
@@ -88,7 +92,10 @@ class OnStartDateUpdatedEventTest {
             StartDateUpdatedEvent(
                 "aContractId",
                 "aMemberId",
-                LocalDate.of(2020, 5, 3)
+                LocalDate.of(2020, 5, 3),
+                false,
+                Carrier.HDI,
+                Carrier.HDI
             ),
             callTime
         )
@@ -119,7 +126,10 @@ class OnStartDateUpdatedEventTest {
             StartDateUpdatedEvent(
                 "aContractId",
                 "aMemberId",
-                LocalDate.of(2020, 5, 3)
+                LocalDate.of(2020, 5, 3),
+                false,
+                Carrier.HDI,
+                Carrier.HDI
             ),
             timeOfFirstCall.plusMillis(3000)
         )
@@ -146,7 +156,10 @@ class OnStartDateUpdatedEventTest {
             StartDateUpdatedEvent(
                 "aContractId",
                 "aMemberId",
-                LocalDate.of(2020, 4, 3)
+                LocalDate.of(2020, 4, 3),
+                false,
+                Carrier.HDI,
+                Carrier.HDI
             ), timeOfCall
         )
 
@@ -166,7 +179,10 @@ class OnStartDateUpdatedEventTest {
             StartDateUpdatedEvent(
                 "aContractId",
                 "aMemberId",
-                LocalDate.of(2020, 4, 3)
+                LocalDate.of(2020, 4, 3),
+                false,
+                Carrier.HDI,
+                Carrier.HDI
             ), timeOfFirstCall.plusMillis(3000)
         )
 
@@ -183,7 +199,10 @@ class OnStartDateUpdatedEventTest {
             StartDateUpdatedEvent(
                 "aContractId",
                 memberId,
-                LocalDate.of(2020, 4, 3)
+                LocalDate.of(2020, 4, 3),
+                false,
+                Carrier.HDI,
+                Carrier.HDI
             ),
             Instant.now(),
             requestId

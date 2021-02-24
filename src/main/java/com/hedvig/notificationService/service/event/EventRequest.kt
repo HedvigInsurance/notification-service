@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.hedvig.notificationService.customerio.dto.objects.ChargeFailedReason
 import com.hedvig.notificationService.utils.extractStreetName
+import com.hedvig.notificationService.web.dto.Carrier
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.util.UUID
@@ -56,7 +57,10 @@ data class ContractRenewalQueuedEvent(
     val contractId: String,
     val contractType: String,
     val memberId: String,
-    val renewalQueuedAt: LocalDate
+    val renewalQueuedAt: LocalDate,
+    val carrierWillBeSwitched: Boolean?,
+    val currentCarrier: Carrier?,
+    val carrierOnRenewal: Carrier?
 ) : EventRequest() {
     fun toMap() = mapOf(
         "name" to "ContractRenewalQueuedEvent",
@@ -64,7 +68,10 @@ data class ContractRenewalQueuedEvent(
             "member_id" to memberId,
             "contract_id" to contractId,
             "contract_type" to contractType,
-            "renewal_queued_at" to renewalQueuedAt
+            "renewal_queued_at" to renewalQueuedAt,
+            "carrier_will_be_switched" to carrierWillBeSwitched,
+            "current_carrier" to currentCarrier,
+            "carrier_on_renewal" to carrierOnRenewal
         )
     )
 }
@@ -108,7 +115,10 @@ data class QuoteCreatedEvent(
 data class StartDateUpdatedEvent(
     val contractId: String,
     val owningMemberId: String,
-    val startDate: LocalDate
+    val startDate: LocalDate,
+    val carrierWillBeSwitched: Boolean?,
+    val currentCarrier: Carrier?,
+    val carrierOnStartDate: Carrier?
 ) : EventRequest()
 
 data class PhoneNumberUpdatedEvent(

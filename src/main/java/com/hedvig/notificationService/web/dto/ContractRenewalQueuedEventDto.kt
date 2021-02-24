@@ -6,5 +6,8 @@ data class ContractRenewalQueuedEventDto(
     val contractId: String,
     val contractType: String,
     val memberId: String,
-    val renewalQueuedAt: LocalDate
+    val renewalQueuedAt: LocalDate,
+    val carrierWillBeSwitched: Boolean,
+    val currentCarrier: Carrier,
+    val carrierOnRenewal: Carrier
 )
