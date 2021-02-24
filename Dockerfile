@@ -25,9 +25,9 @@ FROM scratch AS test
 FROM dependencies AS integration_test
 WORKDIR /hedvig/app
 # Copy test source and build+run tests
-COPY pom.xml /
-COPY src/test /src/test
-COPY --from=build /target /target
+COPY pom.xml .
+COPY src/test ./src/test
+COPY --from=build /target ./target
 RUN mvn test-compile
 ENV TEST_DB_URL=jdbc:postgresql://test_db:5432
 ENTRYPOINT ["mvn", "test"]
