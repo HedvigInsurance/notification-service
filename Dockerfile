@@ -23,7 +23,7 @@ FROM scratch AS test
 
 ##### Integration test stage #####
 FROM dependencies AS integration_test
-
+WORKDIR /hedvig/app
 # Copy test source and build+run tests
 COPY pom.xml /
 COPY src/test /src/test
