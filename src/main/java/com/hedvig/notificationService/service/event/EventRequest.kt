@@ -120,12 +120,11 @@ data class StartDateUpdatedEvent(
     val currentCarrier: Carrier?,
     val carrierOnStartDate: Carrier?
 ) : EventRequest() {
-    fun toStartDateWithUpdatedCarrieEventMap() = mapOf(
+    fun toStartDateWithUpdatedCarrierEventMap() = mapOf(
         "name" to "StartDateWithUpdatedCarrieEvent",
         "data" to mapOf(
             "member_id" to owningMemberId,
             "contract_id" to contractId,
-            "carrier_will_be_switched" to carrierWillBeSwitched,
             "current_carrier" to currentCarrier,
             "carrier_on_start_date" to carrierOnStartDate
         )

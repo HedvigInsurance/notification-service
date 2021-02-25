@@ -147,7 +147,7 @@ class EventController(
         return ResponseEntity.accepted().build()
     }
 
-    companion object{
+    companion object {
         val logger = LoggerFactory.getLogger(this::class.java)!!
     }
 }

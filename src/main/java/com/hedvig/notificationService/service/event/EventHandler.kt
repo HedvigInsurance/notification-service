@@ -33,8 +33,8 @@ class EventHandler(
         callTime: Instant = Instant.now()
     ) {
         if (event.carrierWillBeSwitched != null && event.carrierWillBeSwitched) {
-            logger.info("Handling StartDateWithUpdatedCarrieEvent for ${event.owningMemberId}")
-            customerioService.sendEvent(event.owningMemberId, event.toStartDateWithUpdatedCarrieEventMap())
+            logger.info("Handling StartDateWithUpdatedCarrierEvent for ${event.owningMemberId}")
+            customerioService.sendEvent(event.owningMemberId, event.toStartDateWithUpdatedCarrierEventMap())
         }
 
         val state = repo.findByMemberId(event.owningMemberId)
