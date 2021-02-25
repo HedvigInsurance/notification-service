@@ -13,6 +13,7 @@ import com.hedvig.notificationService.web.dto.ContractCreatedEventDto
 import com.hedvig.notificationService.web.dto.ContractRenewalQueuedEventDto
 import com.hedvig.notificationService.web.dto.QuoteCreatedEventDto
 import com.hedvig.notificationService.web.dto.StartDateUpdatedEventDto
+import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -34,6 +35,7 @@ class EventController(
         @RequestHeader(value = "Request-Id") requestId: String,
         @RequestBody event: EventRequest
     ): ResponseEntity<Any> {
+        logger.info("[Handling event ${event.javaClass.simpleName}] - RequestId: $requestId Event: $event")
         eventRequestHandler.onEventRequest(requestId, event)
         return ResponseEntity.accepted().build()
     }
@@ -143,5 +145,9 @@ class EventController(
             requestId = requestId
         )
         return ResponseEntity.accepted().build()
+    }
+
+    companion object {
+        val logger = LoggerFactory.getLogger(this::class.java)!!
     }
 }
