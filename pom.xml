@@ -291,6 +291,11 @@
             <version>0.7.1</version>
         </dependency>
         <dependency>
+            <groupId>com.hedvig.productPricing</groupId>
+            <artifactId>product-pricing-objects</artifactId>
+            <version>1.0.6</version>
+        </dependency>
+        <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
             <version>4.2.2</version>

@@ -4,7 +4,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import com.hedvig.notificationService.customerio.SIGN_EVENT_WINDOWS_SIZE_MINUTES
 import com.hedvig.notificationService.service.event.StartDateUpdatedEvent
-import com.hedvig.notificationService.web.dto.Carrier
+import com.hedvig.productPricingObjects.enums.Carrier
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot

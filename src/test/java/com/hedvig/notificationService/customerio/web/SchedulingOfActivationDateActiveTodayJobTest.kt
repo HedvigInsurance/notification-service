@@ -16,7 +16,7 @@ import com.hedvig.notificationService.service.event.EventHandler
 import com.hedvig.notificationService.service.event.StartDateUpdatedEvent
 import com.hedvig.notificationService.service.firebase.FirebaseNotificationService
 import com.hedvig.notificationService.service.request.HandledRequestRepository
-import com.hedvig.notificationService.web.dto.Carrier
+import com.hedvig.productPricingObjects.enums.Carrier
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify

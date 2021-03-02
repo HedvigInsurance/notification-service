@@ -1,5 +1,6 @@
 package com.hedvig.notificationService.web.dto
 
+import com.hedvig.productPricingObjects.enums.Carrier
 import java.time.LocalDate
 
 data class StartDateUpdatedEventDto(
