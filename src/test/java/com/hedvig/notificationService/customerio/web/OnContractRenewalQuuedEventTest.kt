@@ -4,13 +4,12 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import com.hedvig.notificationService.customerio.CustomerioService
 import com.hedvig.notificationService.customerio.WorkspaceSelector
-import com.hedvig.notificationService.service.event.EventHandler
-import com.hedvig.notificationService.service.event.ContractRenewalQueuedEvent
 import com.hedvig.notificationService.customerio.hedvigfacades.MemberServiceImpl
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
+import com.hedvig.notificationService.service.event.ContractRenewalQueuedEvent
+import com.hedvig.notificationService.service.event.EventHandler
 import com.hedvig.notificationService.service.firebase.FirebaseNotificationService
 import com.hedvig.notificationService.service.request.HandledRequestRepository
-import com.hedvig.notificationService.web.dto.Carrier
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
@@ -48,8 +47,8 @@ class OnContractRenewalQuuedEventTest {
                 "member",
                 LocalDate.of(1989, 2, 17),
                 false,
-                Carrier.HDI,
-                Carrier.HDI
+                "HDI",
+                "HDI"
             ),
             requestId = requestId
         )
@@ -72,8 +71,8 @@ class OnContractRenewalQuuedEventTest {
                 "member",
                 LocalDate.of(1989, 2, 17),
                 false,
-                Carrier.HDI,
-                Carrier.HDI
+                "HDI",
+                "HDI"
             ),
             requestId = requestId
         )
