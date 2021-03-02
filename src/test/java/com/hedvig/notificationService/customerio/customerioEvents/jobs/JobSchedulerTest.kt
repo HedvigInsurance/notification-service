@@ -4,7 +4,6 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import com.hedvig.notificationService.customerio.SIGN_EVENT_WINDOWS_SIZE_MINUTES
 import com.hedvig.notificationService.service.event.StartDateUpdatedEvent
-import com.hedvig.notificationService.web.dto.Carrier
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
@@ -42,8 +41,8 @@ class JobSchedulerTest {
             "someMemberId",
             LocalDate.of(2020, 10, 1),
             false,
-            Carrier.HDI,
-            Carrier.HDI
+            "HDI",
+            "HDI"
         )
         jobScheduler.rescheduleOrTriggerStartDateUpdated(
             callTime,

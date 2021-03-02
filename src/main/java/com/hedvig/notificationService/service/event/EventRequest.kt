@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.hedvig.notificationService.customerio.dto.objects.ChargeFailedReason
 import com.hedvig.notificationService.utils.extractStreetName
-import com.hedvig.notificationService.web.dto.Carrier
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.util.UUID
@@ -117,8 +116,8 @@ data class StartDateUpdatedEvent(
     val owningMemberId: String,
     val startDate: LocalDate,
     val carrierWillBeSwitched: Boolean?,
-    val currentCarrier: Carrier?,
-    val carrierOnStartDate: Carrier?
+    val currentCarrier: String?,
+    val carrierOnStartDate: String?
 ) : EventRequest() {
     fun toStartDateWithUpdatedCarrierEventMap() = mapOf(
         "name" to "StartDateWithUpdatedCarrierEvent",
