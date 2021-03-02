@@ -48,8 +48,8 @@ class OnContractRenewalQuuedEventTest {
                 "member",
                 LocalDate.of(1989, 2, 17),
                 false,
-                Carrier.HDI,
-                Carrier.HDI
+                "HDI",
+                "HDI"
             ),
             requestId = requestId
         )
@@ -72,8 +72,8 @@ class OnContractRenewalQuuedEventTest {
                 "member",
                 LocalDate.of(1989, 2, 17),
                 false,
-                Carrier.HDI,
-                Carrier.HDI
+                "HDI",
+                "HDI"
             ),
             requestId = requestId
         )
