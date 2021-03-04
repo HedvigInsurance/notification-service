@@ -28,7 +28,7 @@ FROM build AS integration_test
 COPY src/test src/test
 RUN mvn test-compile
 ENV TEST_DB_URL=jdbc:postgresql://test_db:5432
-ENTRYPOINT ["mvn", "test", "-f", "/usr/app/pom.xml"]
+ENTRYPOINT ["mvn", "verify", "-f", "/usr/app/pom.xml"]
 
 
 ##### Assemble stage #####
