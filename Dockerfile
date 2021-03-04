@@ -5,7 +5,7 @@ WORKDIR /usr/app
 
 # Resolve dependencies and cache them
 COPY pom.xml .
-RUN mvn dependency:go-offline
+RUN mvn dependency:go-offline -s /usr/share/maven/ref/settings-docker.xml
 
 
 ##### Build stage #####
@@ -14,7 +14,7 @@ FROM dependencies AS build
 # Copy application source and build it
 COPY src/main src/main
 COPY lombok.config .
-RUN mvn clean package
+RUN mvn clean package -s /usr/share/maven/ref/settings-docker.xml
 
 
 ##### Test stage #####
@@ -28,7 +28,7 @@ FROM build AS integration_test
 COPY src/test src/test
 RUN mvn test-compile
 ENV TEST_DB_URL=jdbc:postgresql://test_db:5432
-ENTRYPOINT ["mvn", "verify", "-f", "/usr/app/pom.xml"]
+ENTRYPOINT ["mvn", "integration-test", "-f", "/usr/app/pom.xml", "-s", "/usr/share/maven/ref/settings-docker.xml"]
 
 
 ##### Assemble stage #####
