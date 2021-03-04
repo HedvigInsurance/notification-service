@@ -26,7 +26,7 @@ FROM scratch AS test
 FROM build AS integration_test
 # Copy test source and build+run tests
 COPY src/test src/test
-RUN mvn test-compile
+RUN mvn test-compile -s /usr/share/maven/ref/settings-docker.xml
 ENV TEST_DB_URL=jdbc:postgresql://test_db:5432
 ENTRYPOINT ["mvn", "integration-test", "-f", "/usr/app/pom.xml", "-s", "/usr/share/maven/ref/settings-docker.xml"]
 
