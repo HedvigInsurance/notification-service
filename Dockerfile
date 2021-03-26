@@ -18,7 +18,7 @@ RUN mvn clean package -s /usr/share/maven/ref/settings-docker.xml
 
 
 ##### Test stage #####
-FROM scratch AS test
+FROM build AS test
 # Nothing to do - this service only has integration tests
 
 
