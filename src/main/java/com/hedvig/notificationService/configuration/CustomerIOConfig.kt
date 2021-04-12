@@ -71,7 +71,8 @@ class CustomerIOConfig(
             val customerioMock = CustomerioMock(objectMapper)
             return mapOf(
                 Workspace.SWEDEN to customerioMock,
-                Workspace.NORWAY to customerioMock
+                Workspace.NORWAY to customerioMock,
+                Workspace.DENMARK to customerioMock
             )
         } else {
             this.configuration.workspaces.map {

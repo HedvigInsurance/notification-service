@@ -34,6 +34,7 @@ class CustomerioServiceForwardUpdateTest {
 
     lateinit var customerIOMockNorway: CustomerioMock
     lateinit var customerIOMockSweden: CustomerioMock
+    lateinit var customerIOMockDenmark: CustomerioMock
     lateinit var router: CustomerioService
 
     @Before
@@ -41,6 +42,7 @@ class CustomerioServiceForwardUpdateTest {
         MockKAnnotations.init(this)
         customerIOMockSweden = CustomerioMock(objectMapper)
         customerIOMockNorway = CustomerioMock(objectMapper)
+        customerIOMockDenmark = CustomerioMock(objectMapper)
 
         router = CustomerioService(
             WorkspaceSelector(
@@ -50,7 +52,8 @@ class CustomerioServiceForwardUpdateTest {
             repository,
             mapOf(
                 Workspace.SWEDEN to customerIOMockSweden,
-                Workspace.NORWAY to customerIOMockNorway
+                Workspace.NORWAY to customerIOMockNorway,
+                Workspace.DENMARK to customerIOMockDenmark
             ),
             mockk(),
             mockk()
@@ -75,6 +78,14 @@ class CustomerioServiceForwardUpdateTest {
     }
 
     @Test
+    internal fun `route message to danish workspace`() {
+        every { contractLoader.getWorkspaceForMember(any()) } returns Workspace.DENMARK
+
+        router.updateCustomerAttributes("1337", mapOf())
+        assertEquals("1337", customerIOMockDenmark.updates.first().first)
+    }
+
+    @Test
     fun `send to sweden when locale country is se and no market is found`() {
 
         every { contractLoader.getWorkspaceForMember(any()) } returns Workspace.NOT_FOUND
@@ -94,6 +105,17 @@ class CustomerioServiceForwardUpdateTest {
         router.updateCustomerAttributes("1337", mapOf())
 
         assertEquals("1337", customerIOMockNorway.updates.first().first)
+    }
+
+    @Test
+    fun `send to denmark when locale country is denmark and no market is found`() {
+
+        every { contractLoader.getWorkspaceForMember(any()) } returns Workspace.NOT_FOUND
+        every { memberServiceImpl.getPickedLocale(any()) } returns Locale("nb", "dk")
+
+        router.updateCustomerAttributes("1337", mapOf())
+
+        assertEquals("1337", customerIOMockDenmark.updates.first().first)
     }
 
     @Test

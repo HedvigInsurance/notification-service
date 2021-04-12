@@ -46,6 +46,7 @@ class EventController(
         @RequestHeader(value = "Request-Id", required = false) requestId: String?,
         @RequestBody event: ContractCreatedEventDto
     ): ResponseEntity<Any> {
+        logger.warn("A deprecated event, /events/contractCreated, is being used.")
         eventHandler.onContractCreatedEventHandleRequest(
             contractCreatedEvent = ContractCreatedEvent(
                 contractId = event.contractId,
@@ -64,6 +65,7 @@ class EventController(
         @RequestHeader(value = "Request-Id", required = false) requestId: String?,
         @RequestBody event: StartDateUpdatedEventDto
     ): ResponseEntity<Any> {
+        logger.warn("A deprecated event, /events/startDateUpdated, is being used.")
         eventHandler.onStartDateUpdatedEventHandleRequest(
             event = StartDateUpdatedEvent(
                 contractId = event.contractId,
@@ -84,6 +86,7 @@ class EventController(
         @RequestHeader(value = "Request-Id", required = false) requestId: String?,
         @RequestBody event: ContractRenewalQueuedEventDto
     ): ResponseEntity<Any> {
+        logger.warn("A deprecated event, /events/contractRenewalQueue, is being used.")
         eventHandler.onContractRenewalQueuedHandleRequest(
             event = ContractRenewalQueuedEvent(
                 contractId = event.contractId,
@@ -106,6 +109,7 @@ class EventController(
         @PathVariable memberId: String,
         @Valid @RequestBody eventDto: ChargeFailedEventDto
     ): ResponseEntity<Any> {
+        logger.warn("A deprecated event, /events/{memberId}/chargeFailed, is being used.")
         val event = ChargeFailedEvent(
             terminationDate = eventDto.terminationDate,
             numberOfFailedCharges = eventDto.numberOfFailedCharges,
@@ -123,6 +127,7 @@ class EventController(
         @RequestHeader(value = "Request-Id", required = false) requestId: String?,
         @RequestBody event: QuoteCreatedEventDto
     ): ResponseEntity<Any> {
+        logger.warn("A deprecated event, /events/quoteCreated, is being used.")
         eventHandler.onQuoteCreatedHandleRequest(
             event = QuoteCreatedEvent(
                 memberId = event.memberId,

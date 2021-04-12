@@ -35,6 +35,9 @@ class NorwaySignHackUpdateCustomerIOTest {
     @MockK(relaxed = true)
     lateinit var noCustomerIoClient: CustomerioClient
 
+    @MockK(relaxed = true)
+    lateinit var dkCustomerIoClient: CustomerioClient
+
     lateinit var eventCreator: CustomerioEventCreator
 
     private val repository =
@@ -57,7 +60,8 @@ class NorwaySignHackUpdateCustomerIOTest {
             repository,
             mapOf(
                 Workspace.SWEDEN to seCustomerioClient,
-                Workspace.NORWAY to noCustomerIoClient
+                Workspace.NORWAY to noCustomerIoClient,
+                Workspace.DENMARK to dkCustomerIoClient
             ),
             mockk(),
             mockk()

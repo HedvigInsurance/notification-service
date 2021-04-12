@@ -46,7 +46,8 @@ class WebIntegrationTestConfig {
             InMemoryCustomerIOStateRepository(),
             mapOf(
                 Workspace.SWEDEN to customerioMock,
-                Workspace.NORWAY to customerioMock
+                Workspace.NORWAY to customerioMock,
+                Workspace.DENMARK to customerioMock
             ),
             mockk(),
             mockk()

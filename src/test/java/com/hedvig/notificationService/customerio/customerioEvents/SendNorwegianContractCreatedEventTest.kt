@@ -44,6 +44,9 @@ class SendNorwegianContractCreatedEventTest {
     @MockK(relaxed = true)
     lateinit var seClient: CustomerioClient
 
+    @MockK(relaxed = true)
+    lateinit var dkClient: CustomerioClient
+
     var objectMapper: ObjectMapper = ObjectMapper()
 
     lateinit var customerioService: CustomerioService
@@ -59,7 +62,8 @@ class SendNorwegianContractCreatedEventTest {
             repo,
             mapOf(
                 Workspace.NORWAY to noClient,
-                Workspace.SWEDEN to seClient
+                Workspace.SWEDEN to seClient,
+                Workspace.DENMARK to dkClient
             ),
             mockk(),
             objectMapper

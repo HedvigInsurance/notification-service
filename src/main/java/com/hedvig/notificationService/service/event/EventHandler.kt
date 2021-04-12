@@ -62,8 +62,9 @@ class EventHandler(
         val state = repo.findByMemberId(contractCreatedEvent.owningMemberId)
             ?: CustomerioState(contractCreatedEvent.owningMemberId)
 
-        if (state.underwriterFirstSignAttributesUpdate != null)
+        if (state.underwriterFirstSignAttributesUpdate != null) {
             return // This should only happen when we go live or if we rollback to earlier versions
+        }
 
         state.createContract(contractCreatedEvent.contractId, callTime, contractCreatedEvent.startDate)
         repo.save(state)
@@ -179,6 +180,12 @@ class EventHandler(
             )
         }
     }
+
+    fun onClaimClosedEvent(
+        event: ClaimClosedEvent,
+        callTime: Instant = Instant.now()
+    ) = customerioService.sendEvent(event.memberId, event.toMap())
+
 
     /**
      * Old request handlers

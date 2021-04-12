@@ -20,6 +20,14 @@ class ResolveWorkspaceFromLocaleTest {
         )
     }
 
+
+    @Test
+    fun `return denmark market given dk as country`() {
+        assertThat(Workspace.getWorkspaceFromLocale(Locale("en", "dk"))).isEqualTo(
+            Workspace.DENMARK
+        )
+    }
+
     @Test
     fun `return not found on unsupported locale`() {
         assertThat(Workspace.getWorkspaceFromLocale(Locale("nb", "us"))).isEqualTo(

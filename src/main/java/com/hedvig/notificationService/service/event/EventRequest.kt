@@ -16,7 +16,8 @@ import java.util.UUID
     JsonSubTypes.Type(value = QuoteCreatedEvent::class, name = "QuoteCreatedEvent"),
     JsonSubTypes.Type(value = StartDateUpdatedEvent::class, name = "StartDateUpdatedEvent"),
     JsonSubTypes.Type(value = ContractTerminatedEvent::class, name = "ContractTerminatedEvent"),
-    JsonSubTypes.Type(value = PhoneNumberUpdatedEvent::class, name = "PhoneNumberUpdatedEvent")
+    JsonSubTypes.Type(value = PhoneNumberUpdatedEvent::class, name = "PhoneNumberUpdatedEvent"),
+    JsonSubTypes.Type(value = ClaimClosedEvent::class, name = "ClaimClosedEvent")
 )
 sealed class EventRequest
 
@@ -134,3 +135,44 @@ data class PhoneNumberUpdatedEvent(
     val memberId: String,
     val phoneNumber: String
 ) : EventRequest()
+
+data class ClaimClosedEvent(
+    val memberId: String,
+    val cancellationDate: LocalDate,
+    val cancelledAt: String,
+    val createdAt: String,
+    val email: String,
+    val firstName: String,
+    val lastName: String,
+    val cardIsConnected: Boolean,
+    val numberFailedCharges: Int,
+    val signDate: LocalDate,
+    val signSource: String,
+    val timezone: String,
+    val trustpilotReviewId: String?,
+    val trustpilotReviewLink: String?,
+    val phoneNumber: String?,
+    val partnerCode: String?
+) : EventRequest() {
+    fun toMap() = mapOf(
+        "name" to "ClaimClosedEvent",
+        "data" to mapOf(
+            "member_id" to memberId, 
+            "cancellation_date" to cancellationDate, 
+            "cancelled_at" to cancelledAt, 
+            "created_at" to createdAt, 
+            "Email" to email, 
+            "first_name" to firstName, 
+            "is_card_connected" to cardIsConnected, 
+            "last_name" to lastName, 
+            "number_failed_charges" to numberFailedCharges, 
+            "sign_date" to signDate, 
+            "sign_source" to signSource, 
+            "Timezone" to timezone, 
+            "trustpilot_review_id" to trustpilotReviewId, 
+            "trustpilot_review_link" to trustpilotReviewLink, 
+            "phone_number" to phoneNumber, 
+            "partner_code" to partnerCode
+        )
+    )
+}
