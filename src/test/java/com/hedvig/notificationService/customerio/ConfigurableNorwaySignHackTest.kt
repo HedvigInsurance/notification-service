@@ -17,7 +17,8 @@ class ConfigurableNorwaySignHackTest {
         val stateRepository = InMemoryCustomerIOStateRepository()
         val clients = mapOf(
             Workspace.SWEDEN to mockk<Customerio>(),
-            Workspace.NORWAY to mockk<Customerio>()
+            Workspace.NORWAY to mockk(),
+            Workspace.DENMARK to mockk()
         )
 
         every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.NORWAY

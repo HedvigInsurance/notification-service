@@ -13,6 +13,7 @@ class CustomerioServicePostEventTest {
 
     val sweClient = mockk<CustomerioClient>(relaxed = true)
     val noClient = mockk<CustomerioClient>(relaxed = true)
+    val dkClient = mockk<CustomerioClient>(relaxed = true)
     val workspaceSelector = mockk<WorkspaceSelector>()
     val eventHashRepository = mockk<IdempotenceHashRepository>(relaxed = true)
 
@@ -21,7 +22,8 @@ class CustomerioServicePostEventTest {
         InMemoryCustomerIOStateRepository(),
         mapOf(
             Workspace.SWEDEN to sweClient,
-            Workspace.NORWAY to noClient
+            Workspace.NORWAY to noClient,
+            Workspace.DENMARK to dkClient
         ),
         eventHashRepository,
         mockk()
@@ -43,6 +45,15 @@ class CustomerioServicePostEventTest {
         sut.sendEvent("8080", mapOf("someKey" to 42))
 
         verify { noClient.sendEvent("8080", mapOf("someKey" to 42)) }
+    }
+
+    @Test
+    fun `forward test danish market`() {
+        every { workspaceSelector.getWorkspaceForMember("8080") } returns Workspace.DENMARK
+
+        sut.sendEvent("8080", mapOf("someKey" to 42))
+
+        verify { dkClient.sendEvent("8080", mapOf("someKey" to 42)) }
     }
 
     @Test

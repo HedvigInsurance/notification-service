@@ -23,6 +23,9 @@ class CustomerUpdateCustomerAttributesTest {
     @MockK(relaxed = true)
     lateinit var noCustomerIoClient: CustomerioClient
 
+    @MockK(relaxed = true)
+    lateinit var dkCustomerIoClient: CustomerioClient
+
     @MockK
     lateinit var contractLoader: ContractLoader
 
@@ -41,7 +44,8 @@ class CustomerUpdateCustomerAttributesTest {
             repository,
             mapOf(
                 Workspace.SWEDEN to seCustomerioClient,
-                Workspace.NORWAY to noCustomerIoClient
+                Workspace.NORWAY to noCustomerIoClient,
+                Workspace.DENMARK to dkCustomerIoClient
             ),
             mockk(),
             mockk()
@@ -49,7 +53,7 @@ class CustomerUpdateCustomerAttributesTest {
     }
 
     @Test
-    fun `update attribute with localdate is replaced`() {
+    fun `update attribute with localDate is replaced`() {
         every { workspaceSelector.getWorkspaceForMember("8080") } returns Workspace.SWEDEN
 
         sut.updateCustomerAttributes("8080", mapOf("someKey" to LocalDate.of(2020, 8, 17)))

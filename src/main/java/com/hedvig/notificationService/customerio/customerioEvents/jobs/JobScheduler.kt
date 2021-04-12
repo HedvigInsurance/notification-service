@@ -146,12 +146,12 @@ class JobScheduler(private val scheduler: Scheduler) {
         )
         val jobName = "onStartDateUpdatedEvent+$memberId"
 
-        val successfullRescheduling = rescheduleJob(
+        val successfulRescheduling = rescheduleJob(
             TriggerKey.triggerKey(jobName, jobGroup),
             Date.from(callTime.plus(SIGN_EVENT_WINDOWS_SIZE_MINUTES, ChronoUnit.MINUTES))
         )
 
-        if (!successfullRescheduling) {
+        if (!successfulRescheduling) {
             this.scheduleJob(
                 jobName,
                 jobData,

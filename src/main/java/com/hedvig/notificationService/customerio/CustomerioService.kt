@@ -75,15 +75,13 @@ class CustomerioService(
     }
 
     @Transactional
+    @Suppress("UNCHECKED_CAST")
     fun sendEventAndUpdateState(
         customerioState: CustomerioState,
         eventObject: Any
     ) {
         try {
-            val event = @Suppress("UNCHECKED_CAST") objectMapper.convertValue(
-                eventObject,
-                Map::class.java
-            )!! as Map<String, Any?>
+            val event = objectMapper.convertValue(eventObject, Map::class.java)!! as Map<String, Any?>
             logger.info("Sending event ${event["name"]} to member ${customerioState.memberId}")
             this.stateRepository.save(customerioState)
             sendEvent(customerioState.memberId, event)

@@ -18,6 +18,12 @@ enum class Workspace {
         override val market = Market.NORWAY
         override val zoneId = ZoneId.of("Europe/Oslo")
     },
+    DENMARK {
+        override val requiresImplementation = true
+        override val countryCode = CountryCode.DK
+        override val market = Market.DENMARK
+        override val zoneId = ZoneId.of("Europe/Copenhagen")
+    },
     NOT_FOUND {
         override val requiresImplementation = false
         override val countryCode = null
@@ -35,7 +41,6 @@ enum class Workspace {
             values().firstOrNull { it.countryCode == CountryCode.getByLocale(locale) } ?: NOT_FOUND
 
         fun getWorkspaceFromMarket(market: Market): Workspace =
-            values().firstOrNull() { it.market == market }
-                ?: NOT_FOUND
+            values().firstOrNull { it.market == market } ?: NOT_FOUND
     }
 }

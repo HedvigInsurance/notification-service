@@ -1,7 +1,6 @@
 package com.hedvig.notificationService.customerio
 
 import com.hedvig.customerio.CustomerioClient
-import com.hedvig.notificationService.customerio.customerioEvents.CustomerioEventCreator
 import com.hedvig.notificationService.customerio.hedvigfacades.ContractLoader
 import com.hedvig.notificationService.customerio.state.InMemoryCustomerIOStateRepository
 import io.mockk.MockKAnnotations
@@ -12,7 +11,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
 
-class CustomerioServiceContructionTest {
+class CustomerioServiceConstructionTest {
 
     @get:Rule
     var exceptionRule: ExpectedException = ExpectedException.none()
@@ -22,9 +21,6 @@ class CustomerioServiceContructionTest {
 
     @MockK
     lateinit var customerioClient: CustomerioClient
-
-    @MockK
-    lateinit var eventCreator: CustomerioEventCreator
 
     @MockK
     lateinit var contractLoader: ContractLoader
@@ -38,13 +34,13 @@ class CustomerioServiceContructionTest {
     }
 
     @Test
-    fun `Throw if no markets are passed in the contructor`() {
+    fun `Throw if no markets are passed in the constructor`() {
         exceptionRule.expect(IllegalArgumentException::class.java)
         CustomerioService(workspaceSelector, repository, mapOf(), mockk(), mockk())
     }
 
     @Test
-    fun `Throw if not all markets are passed in the contructor`() {
+    fun `Throw if not all markets are passed in the constructor`() {
         exceptionRule.expect(IllegalArgumentException::class.java)
         CustomerioService(
             workspaceSelector,
@@ -56,13 +52,14 @@ class CustomerioServiceContructionTest {
     }
 
     @Test
-    fun `Do not throw when all markets are passed in the contructor`() {
+    fun `Do not throw when all markets are passed in the constructor`() {
         CustomerioService(
             workspaceSelector,
             repository,
             mapOf(
                 Workspace.SWEDEN to customerioClient,
-                Workspace.NORWAY to customerioClient
+                Workspace.NORWAY to customerioClient,
+                Workspace.DENMARK to customerioClient
             ),
             mockk(),
             mockk()

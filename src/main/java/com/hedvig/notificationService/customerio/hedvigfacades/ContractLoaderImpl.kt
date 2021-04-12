@@ -12,10 +12,9 @@ import org.slf4j.LoggerFactory
 class ContractLoaderImpl(
     private val productPricingClient: ProductPricingClient,
     private val underwriterClient: UnderwriterClient
-) :
-    ContractLoader {
+) : ContractLoader {
 
-    val log = LoggerFactory.getLogger(ContractLoaderImpl::class.java)
+    private val log = LoggerFactory.getLogger(ContractLoaderImpl::class.java)
 
     override fun getWorkspaceForMember(memberId: String): Workspace {
 
@@ -36,9 +35,9 @@ class ContractLoaderImpl(
     }
 
     override fun getContractInfoForMember(memberId: String): List<ContractInfo> {
-        val productPricingReponse = productPricingClient.getContractsForMember(memberId)
+        val productPricingResponse = productPricingClient.getContractsForMember(memberId)
 
-        return productPricingReponse.body.map { contract ->
+        return productPricingResponse.body?.map { contract ->
             val underwriterResponse = loadQuote(contract)
             ContractInfo(
                 type = AgreementType.valueOf(contract.agreements.first()::class.java.simpleName),
@@ -50,7 +49,7 @@ class ContractLoaderImpl(
                 contractId = contract.id,
                 terminationDate = contract.terminationDate
             )
-        }
+        } ?: emptyList()
     }
 
     private fun loadQuote(contract: Contract) =

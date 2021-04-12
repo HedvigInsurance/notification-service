@@ -26,6 +26,9 @@ class NorwaySignHackHandleUpdatesFromUnderwriterTest {
     @MockK(relaxed = true)
     lateinit var noCustomerIoClient: CustomerioClient
 
+    @MockK(relaxed = true)
+    lateinit var dkCustomerIoClient: CustomerioClient
+
     @MockK
     lateinit var eventCreator: CustomerioEventCreator
 
@@ -51,7 +54,8 @@ class NorwaySignHackHandleUpdatesFromUnderwriterTest {
             repository,
             mapOf(
                 Workspace.SWEDEN to seCustomerioClient,
-                Workspace.NORWAY to noCustomerIoClient
+                Workspace.NORWAY to noCustomerIoClient,
+                Workspace.DENMARK to dkCustomerIoClient
             ),
             mockk(),
             mockk()
