@@ -33,7 +33,7 @@ class EventRequestHandler(
             is StartDateUpdatedEvent -> eventHandler.onStartDateUpdatedEvent(event)
             is ContractTerminatedEvent -> eventHandler.onContractTerminatedEvent(event)
             is PhoneNumberUpdatedEvent -> eventHandler.onPhoneNumberUpdatedEvent(event)
-            is ClaimClosedEvent ->  eventHandler.onClaimClosedEvent(event)
+            is ClaimClosedEvent -> eventHandler.onClaimClosedEvent(event)
         }
         handledRequestRepository.storeHandledRequest(requestId)
     }
