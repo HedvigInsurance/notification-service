@@ -10,6 +10,7 @@ ENV MAVEN_OPTS="-Dmaven.repo.local=/usr/share/maven/ref/repository -DGITHUB_USER
 
 # Resolve dependencies and cache them
 COPY pom.xml .
+COPY settings.xml .
 RUN mvn dependency:go-offline -s /usr/share/maven/ref/settings-docker.xml
 
 
