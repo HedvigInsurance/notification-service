@@ -186,7 +186,6 @@ class EventHandler(
         callTime: Instant = Instant.now()
     ) = customerioService.sendEvent(event.memberId, event.toMap())
 
-
     /**
      * Old request handlers
      */

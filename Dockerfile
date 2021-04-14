@@ -3,9 +3,15 @@
 FROM maven:3.6.3-amazoncorretto-11 AS dependencies
 WORKDIR /usr/app
 
+ARG GITHUB_USERNAME
+ARG GITHUB_TOKEN
+
+ENV MAVEN_OPTS="-Dmaven.repo.local=/usr/share/maven/ref/repository -DGITHUB_USERNAME=$GITHUB_USERNAME -DGITHUB_TOKEN=$GITHUB_TOKEN"
+
 # Resolve dependencies and cache them
 COPY pom.xml .
-RUN mvn dependency:go-offline -s /usr/share/maven/ref/settings-docker.xml
+COPY settings.xml .
+RUN mvn dependency:go-offline -s settings.xml
 
 
 ##### Build stage #####
@@ -14,7 +20,7 @@ FROM dependencies AS build
 # Copy application source and build it
 COPY src/main src/main
 COPY lombok.config .
-RUN mvn clean package -s /usr/share/maven/ref/settings-docker.xml
+RUN mvn clean package -s settings.xml
 
 
 ##### Test stage #####
@@ -26,7 +32,7 @@ FROM build AS test
 FROM build AS integration_test
 # Copy test source and build+run tests
 COPY src/test src/test
-RUN mvn test-compile -s /usr/share/maven/ref/settings-docker.xml
+RUN mvn test-compile -s settings.xml
 ENV TEST_DB_URL=jdbc:postgresql://test_db:5432
 ENTRYPOINT ["mvn", "integration-test", "-f", "/usr/app/pom.xml", "-s", "/usr/share/maven/ref/settings-docker.xml"]
 
