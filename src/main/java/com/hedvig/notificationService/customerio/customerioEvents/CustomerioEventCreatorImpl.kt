@@ -15,17 +15,36 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
     fun createTmpSignedInsuranceEvent(
         argContracts: Collection<ContractInfo>
     ): TmpSignedInsuranceEvent {
-
-        return TmpSignedInsuranceEvent(createContractCreatedData(argContracts))
+        return when(val data = danishOrNorwegianData(argContracts)) {
+            is DanishData -> TmpSignedInsuranceEvent(data)
+            is NorwegianData -> TmpSignedInsuranceEvent(data)
+            else -> throw RuntimeException("Unexpected data type $data for TmpSignedInsuranceEvent expecting NorwegianData or DanishData")
+        }
     }
 
     fun createContractCreatedEvent(
         contracts: Collection<ContractInfo>
-    ): NorwegianContractCreatedEvent {
+    ): ContractCreatedEvent {
+        return when(val data = danishOrNorwegianData(contracts)) {
+            is DanishData -> DanishContractCreatedEvent(data)
+            is NorwegianData -> NorwegianContractCreatedEvent(data)
+            else -> throw RuntimeException("Unexpected data type $data for ContractCreatedEvent expecting NorwegianData or DanishData")
+        }
+    }
 
-        val data = createContractCreatedData(contracts)
+    private fun danishOrNorwegianData(contracts: Collection<ContractInfo>): Data {
+        val norwegianAgreementType = listOf(AgreementType.NorwegianHomeContent, AgreementType.NorwegianTravel)
+        val danishAgreementType = listOf(AgreementType.DanishHomeContent, AgreementType.DanishAccident, AgreementType.DanishTravel)
 
-        return NorwegianContractCreatedEvent(data)
+        return when {
+            contracts.all { contractInfo -> norwegianAgreementType.contains(contractInfo.type) } ->
+                createNorwegianData(contracts)
+
+            contracts.all { contractInfo -> danishAgreementType.contains(contractInfo.type) } ->
+                createDanishData(contracts)
+
+            else -> throw RuntimeException("Unexpected contracts $contracts")
+        }
     }
 
     override fun contractsTerminatedEvent(
@@ -43,49 +62,6 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
         }
 
         return ContractsTerminatedEvent(ContractsTerminatedEvent.Data(terminatedContracts))
-    }
-
-    private fun createContractCreatedData(contracts: Collection<ContractInfo>): NorwegianContractCreatedEvent.Data {
-        var data = NorwegianContractCreatedEvent.Data(
-            null,
-            isSignedInnbo = false,
-            isSwitcherInnbo = false,
-            switcherCompanyInnbo = null,
-            activationDateReise = null,
-            isSignedReise = false,
-            isSwitcherReise = false,
-            switcherCompanyReise = null,
-            signSource = null,
-            partnerCode = null
-        )
-
-        contracts.forEach { contract ->
-            when (contract.type) {
-                AgreementType.NorwegianHomeContent ->
-                    data = data.copy(
-                        isSignedInnbo = true,
-                        activationDateInnbo = contract.startDate?.toString(),
-                        isSwitcherInnbo = contract.switcherCompany != null,
-                        switcherCompanyInnbo = contract.switcherCompany,
-                        signSource = contract.signSource,
-                        partnerCode = contract.partnerCode
-                    )
-                AgreementType.NorwegianTravel
-                ->
-                    data = data.copy(
-                        isSignedReise = true,
-                        activationDateReise = contract.startDate?.toString(),
-                        isSwitcherReise = contract.switcherCompany != null,
-                        switcherCompanyReise = contract.switcherCompany,
-                        signSource = contract.signSource,
-                        partnerCode = contract.partnerCode
-                    )
-                AgreementType.SwedishApartment,
-                AgreementType.SwedishHouse ->
-                    throw RuntimeException("Unexpected contract type ${contract.type}")
-            }
-        }
-        return data
     }
 
     override fun contractsActivatedTodayEvent(
@@ -109,7 +85,7 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
     override fun contractCreatedEvent(
         customerioState: CustomerioState,
         contracts: List<ContractInfo>
-    ): NorwegianContractCreatedEvent {
+    ): ContractCreatedEvent {
         val event = createContractCreatedEvent(contracts)
         customerioState.sentContractCreatedEvent()
         return event
