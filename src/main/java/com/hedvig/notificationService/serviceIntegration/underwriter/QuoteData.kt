@@ -11,7 +11,10 @@ import java.util.UUID
     JsonSubTypes.Type(value = SwedishApartmentData::class, name = "apartment"),
     JsonSubTypes.Type(value = SwedishHouseData::class, name = "house"),
     JsonSubTypes.Type(value = NorwegianHomeContentsData::class, name = "norwegianHomeContentsData"),
-    JsonSubTypes.Type(value = NorwegianTravelData::class, name = "norwegianTravelData")
+    JsonSubTypes.Type(value = NorwegianTravelData::class, name = "norwegianTravelData"),
+    JsonSubTypes.Type(value = DanishHomeContentsData::class, name = "danishHomeContentsData"),
+    JsonSubTypes.Type(value = DanishAccidentData::class, name = "danishAccidentData"),
+    JsonSubTypes.Type(value = DanishTravelData::class, name = "danishTravelData")
 )
 sealed class QuoteData {
     abstract val id: UUID
@@ -62,7 +65,6 @@ data class NorwegianHomeContentsData(
     val firstName: String,
     val lastName: String,
     val email: String?,
-
     val street: String,
     val city: String?,
     val zipCode: String,
@@ -83,3 +85,54 @@ data class NorwegianTravelData(
     @get:JvmName("getIsYouth")
     val isYouth: Boolean
 ) : QuoteData()
+
+data class DanishHomeContentsData(
+    override val id: UUID,
+    val ssn: String?,
+    val birthDate: LocalDate,
+    val firstName: String?,
+    val lastName: String?,
+    val email: String?,
+    val phoneNumber: String? = null,
+    val street: String,
+    val zipCode: String,
+    val bbrId: String? = null,
+    val city: String?,
+    val apartment: String?,
+    val floor: String?,
+    val livingSpace: Int,
+    val coInsured: Int,
+    @get:JvmName("getIsStudent")
+    val isStudent: Boolean,
+    val type: String
+) : QuoteData()
+
+data class DanishAccidentData(
+    override val id: UUID,
+    val ssn: String?,
+    val birthDate: LocalDate,
+    val firstName: String?,
+    val lastName: String?,
+    val email: String?,
+    val phoneNumber: String? = null,
+    val street: String,
+    val zipCode: String,
+    val coInsured: Int,
+    @get:JvmName("getIsStudent")
+    val isStudent: Boolean
+): QuoteData()
+
+data class DanishTravelData(
+    override val id: UUID,
+    val ssn: String?,
+    val birthDate: LocalDate,
+    val firstName: String?,
+    val lastName: String?,
+    val email: String?,
+    val phoneNumber: String? = null,
+    val street: String,
+    val zipCode: String,
+    val coInsured: Int,
+    @get:JvmName("getIsStudent")
+    val isStudent: Boolean
+): QuoteData()
