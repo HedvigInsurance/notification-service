@@ -10,7 +10,7 @@ CustomerioEventCreator {
     fun contractCreatedEvent(
         customerioState: CustomerioState,
         contracts: List<ContractInfo>
-    ): NorwegianContractCreatedEvent
+    ): ContractCreatedEvent
 
     fun startDateUpdatedEvent(
         customerioState: CustomerioState,

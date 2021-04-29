@@ -16,7 +16,7 @@ data class ContractInfo(
 
 enum class AgreementType {
     NorwegianHomeContent {
-        override val typeName: String = "innbo";
+        override val typeName: String = "innbo"
     },
     NorwegianTravel {
         override val typeName: String = "reise"
@@ -26,6 +26,15 @@ enum class AgreementType {
     },
     SwedishApartment {
         override val typeName: String = "swedish_apartment"
+    },
+    DanishHomeContent {
+        override val typeName: String = "danish_home_content"
+    },
+    DanishTravel {
+        override val typeName: String = "danish_travel"
+    },
+    DanishAccident {
+        override val typeName: String = "danish_accident"
     };
 
     abstract val typeName: String

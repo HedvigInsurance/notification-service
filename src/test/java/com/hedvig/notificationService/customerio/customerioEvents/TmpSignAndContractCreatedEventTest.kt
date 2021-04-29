@@ -236,4 +236,108 @@ class TmpSignAndContractCreatedEventTest(
 
         sut.createTmpSignedInsuranceEvent(contracts)
     }
+
+    @Test
+    fun `danish home content`() {
+
+        val contracts = listOf(
+            makeContractInfo(
+                AgreementType.DanishHomeContent,
+                switcherCompany = null,
+                startDate = null,
+                signSource = "IOS",
+                partnerCode = "HEDVIG"
+            )
+        )
+
+        val event = asMap(sut.createTmpSignedInsuranceEvent(contracts))
+
+        assertThat(event["name"]).isEqualTo("TmpSignedInsuranceEvent")
+        val eventData = event["data"] as Map<String, Any?>
+        assertAttributeWithValues(eventData, "is_signed_home_content")
+        assertAttributeWithValues(eventData, "activation_date_home_content")
+    }
+
+    @Test
+    fun `danish home content with signSource and partnerCode`() {
+
+        val contracts = listOf(
+            makeContractInfo(
+                AgreementType.DanishHomeContent,
+                switcherCompany = null,
+                startDate = LocalDate.of(2021, 3, 13),
+                signSource = "IOS",
+                partnerCode = "HEDVIG_TEST"
+            )
+        )
+
+        val event = asMap(sut.createTmpSignedInsuranceEvent(contracts))
+
+        assertThat(event["name"]).isEqualTo("TmpSignedInsuranceEvent")
+        val eventData = event["data"] as Map<String, Any?>
+        assertAttributeWithValues(eventData, "is_signed_home_content")
+        assertAttributeWithValues(eventData, "activation_date_home_content")
+        assertAttributeWithValues(eventData, "partner_code")
+        assertAttributeWithValues(eventData, "sign_source")
+    }
+
+    @Test
+    fun `danish home content and travel`() {
+
+        val contracts = listOf(
+            makeContractInfo(
+                AgreementType.DanishHomeContent,
+                switcherCompany = null,
+                startDate = LocalDate.of(2021, 3, 13),
+                signSource = "IOS",
+                partnerCode = "HEDVIG_TEST"
+            ),
+            makeContractInfo(
+                AgreementType.DanishTravel,
+                startDate = null
+            )
+        )
+
+        val event = asMap(sut.createTmpSignedInsuranceEvent(contracts))
+
+        assertThat(event["name"]).isEqualTo("TmpSignedInsuranceEvent")
+        val eventData = event["data"] as Map<String, Any?>
+        assertAttributeWithValues(eventData, "is_signed_home_content")
+        assertAttributeWithValues(eventData, "activation_date_home_content")
+        assertAttributeWithValues(eventData, "is_signed_travel")
+        assertAttributeWithValues(eventData, "activation_date_travel")
+    }
+
+    @Test
+    fun `danish home content, travel and accident`() {
+
+        val contracts = listOf(
+            makeContractInfo(
+                AgreementType.DanishHomeContent,
+                switcherCompany = null,
+                startDate = LocalDate.of(2021, 3, 13),
+                signSource = "IOS",
+                partnerCode = "HEDVIG_TEST"
+            ),
+            makeContractInfo(
+                AgreementType.DanishTravel,
+                startDate = LocalDate.of(2021, 3, 12)
+            ),
+            makeContractInfo(
+                AgreementType.DanishAccident,
+                startDate = LocalDate.of(2021, 3, 12)
+            )
+        )
+
+        val event = asMap(sut.createTmpSignedInsuranceEvent(contracts))
+
+        assertThat(event["name"]).isEqualTo("TmpSignedInsuranceEvent")
+        val eventData = event["data"] as Map<String, Any?>
+        assertAttributeWithValues(eventData, "is_signed_home_content")
+        assertAttributeWithValues(eventData, "activation_date_home_content")
+        assertAttributeWithValues(eventData, "is_signed_travel")
+        assertAttributeWithValues(eventData, "activation_date_travel")
+        assertAttributeWithValues(eventData, "is_signed_accident")
+        assertAttributeWithValues(eventData, "activation_date_accident")
+    }
 }

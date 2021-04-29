@@ -6,4 +6,14 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming
 
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy::class)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "name", visible = true)
-data class TmpSignedInsuranceEvent(val data: NorwegianContractCreatedEvent.Data)
+class TmpSignedInsuranceEvent() {
+    var data: Any? = null
+
+    constructor(data: DanishData) : this() {
+        this.data = data
+    }
+
+    constructor(data: NorwegianData) : this() {
+        this.data = data
+    }
+}

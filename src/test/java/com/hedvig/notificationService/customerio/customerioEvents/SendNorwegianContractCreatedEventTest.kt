@@ -133,6 +133,82 @@ class SendNorwegianContractCreatedEventTest {
     }
 
     @Test
+    fun sendContractCreatedEventToDanishMemberForDanishHomeContent() {
+        val startTime = Instant.parse("2020-04-23T09:25:13.597224Z")
+        repo.save(CustomerioState("someMemberId", null, false, startTime))
+
+        every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.DENMARK
+
+        every { contractLoader.getContractInfoForMember(any()) } returns
+                listOf(
+                    makeContractInfo(
+                        AgreementType.DanishHomeContent,
+                        switcherCompany = null,
+                        startDate = null,
+                        signSource = "IOS",
+                        partnerCode = "HEDVIG"
+                    )
+                )
+
+        val jobData = JobDataMap()
+        jobData["memberId"] = "someMemberId"
+
+        contractCreatedJob.execute(makeJobExecutionContext(scheduler, contractCreatedJob, jobData))
+
+        val slot = slot<Map<String, Any?>>()
+        verify { dkClient.sendEvent(any(), capture(slot)) }
+
+        assertThat(slot.captured["name"]).isEqualTo("DanishContractCreatedEvent")
+        assertThat(slot.captured["data"] as Map<String, Any>).contains("is_signed_home_content", true)
+    }
+
+    @Test
+    fun sendContractCreatedEventToDanishMemberForDanishHomeContentTravelAndAccident() {
+        val startTime = Instant.parse("2020-04-23T09:25:13.597224Z")
+        repo.save(CustomerioState("someMemberId", null, false, startTime))
+
+        every { workspaceSelector.getWorkspaceForMember(any()) } returns Workspace.DENMARK
+
+        every { contractLoader.getContractInfoForMember(any()) } returns
+                listOf(
+                    makeContractInfo(
+                        AgreementType.DanishHomeContent,
+                        switcherCompany = null,
+                        startDate = null,
+                        signSource = "IOS",
+                        partnerCode = "HEDVIG"
+                    ),
+                    makeContractInfo(
+                        AgreementType.DanishTravel,
+                        switcherCompany = null,
+                        startDate = null,
+                        signSource = "IOS",
+                        partnerCode = "HEDVIG"
+                    ),
+                    makeContractInfo(
+                        AgreementType.DanishAccident,
+                        switcherCompany = null,
+                        startDate = null,
+                        signSource = "IOS",
+                        partnerCode = "HEDVIG"
+                    )
+                )
+
+        val jobData = JobDataMap()
+        jobData["memberId"] = "someMemberId"
+
+        contractCreatedJob.execute(makeJobExecutionContext(scheduler, contractCreatedJob, jobData))
+
+        val slot = slot<Map<String, Any?>>()
+        verify { dkClient.sendEvent(any(), capture(slot)) }
+
+        assertThat(slot.captured["name"]).isEqualTo("DanishContractCreatedEvent")
+        assertThat(slot.captured["data"] as Map<String, Any>).contains("is_signed_home_content", true)
+        assertThat(slot.captured["data"] as Map<String, Any>).contains("is_signed_travel", true)
+        assertThat(slot.captured["data"] as Map<String, Any>).contains("is_signed_accident", true)
+    }
+
+    @Test
     fun `exception during sending does not update state`() {
         val startTime = Instant.parse("2020-04-23T09:25:13.597224Z")
         repo.save(CustomerioState("someMemberId", null, false, startTime))
