@@ -15,36 +15,29 @@ class CustomerioEventCreatorImpl : CustomerioEventCreator {
     fun createTmpSignedInsuranceEvent(
         argContracts: Collection<ContractInfo>
     ): TmpSignedInsuranceEvent {
-        return when(val data = danishOrNorwegianData(argContracts)) {
-            is DanishData -> TmpSignedInsuranceEvent(data)
-            is NorwegianData -> TmpSignedInsuranceEvent(data)
-            else -> throw RuntimeException("Unexpected data type $data for TmpSignedInsuranceEvent expecting NorwegianData or DanishData")
-        }
-    }
-
-    fun createContractCreatedEvent(
-        contracts: Collection<ContractInfo>
-    ): ContractCreatedEvent {
-        return when(val data = danishOrNorwegianData(contracts)) {
-            is DanishData -> DanishContractCreatedEvent(data)
-            is NorwegianData -> NorwegianContractCreatedEvent(data)
-            else -> throw RuntimeException("Unexpected data type $data for ContractCreatedEvent expecting NorwegianData or DanishData")
-        }
-    }
-
-    private fun danishOrNorwegianData(contracts: Collection<ContractInfo>): Data {
-        val norwegianAgreementType = listOf(AgreementType.NorwegianHomeContent, AgreementType.NorwegianTravel)
-        val danishAgreementType = listOf(AgreementType.DanishHomeContent, AgreementType.DanishAccident, AgreementType.DanishTravel)
-
         return when {
-            contracts.all { contractInfo -> norwegianAgreementType.contains(contractInfo.type) } ->
-                createNorwegianData(contracts)
+            isAllNorwegianContracts(argContracts) -> TmpSignedInsuranceEvent(NorwegianContractCreatedEvent(argContracts).data)
+            isAllDanishContracts(argContracts) -> TmpSignedInsuranceEvent(DanishContractCreatedEvent(argContracts).data)
+            else -> throw RuntimeException("Unexpected contracts $argContracts")
+        }
+    }
 
-            contracts.all { contractInfo -> danishAgreementType.contains(contractInfo.type) } ->
-                createDanishData(contracts)
-
+    fun createContractCreatedEvent(contracts: Collection<ContractInfo>): ContractCreatedEvent {
+        return when {
+            isAllNorwegianContracts(contracts) -> NorwegianContractCreatedEvent(contracts)
+            isAllDanishContracts(contracts) -> DanishContractCreatedEvent(contracts)
             else -> throw RuntimeException("Unexpected contracts $contracts")
         }
+    }
+
+    private fun isAllNorwegianContracts(contracts: Collection<ContractInfo>): Boolean {
+        val norwegianAgreementType = listOf(AgreementType.NorwegianHomeContent, AgreementType.NorwegianTravel)
+        return contracts.all { contractInfo -> norwegianAgreementType.contains(contractInfo.type) }
+    }
+
+    private fun isAllDanishContracts(contracts: Collection<ContractInfo>): Boolean {
+        val danishAgreementType = listOf(AgreementType.DanishHomeContent, AgreementType.DanishAccident, AgreementType.DanishTravel)
+        return contracts.all { contractInfo -> danishAgreementType.contains(contractInfo.type) }
     }
 
     override fun contractsTerminatedEvent(

@@ -11,7 +11,10 @@ import javax.money.MonetaryAmount
     JsonSubTypes.Type(value = Agreement.SwedishApartment::class, name = "SwedishApartment"),
     JsonSubTypes.Type(value = Agreement.SwedishHouse::class, name = "SwedishHouse"),
     JsonSubTypes.Type(value = Agreement.NorwegianHomeContent::class, name = "NorwegianHomeContent"),
-    JsonSubTypes.Type(value = Agreement.NorwegianTravel::class, name = "NorwegianTravel")
+    JsonSubTypes.Type(value = Agreement.NorwegianTravel::class, name = "NorwegianTravel"),
+    JsonSubTypes.Type(value = Agreement.DanishHomeContent::class, name = "DanishHomeContent"),
+    JsonSubTypes.Type(value = Agreement.DanishTravel::class, name = "DanishTravel"),
+    JsonSubTypes.Type(value = Agreement.DanishAccident::class, name = "DanishAccident")
 )
 sealed class Agreement {
     abstract val id: UUID
@@ -75,4 +78,42 @@ sealed class Agreement {
         val lineOfBusiness: NorwegianTravelLineOfBusiness,
         val numberCoInsured: Int
     ) : Agreement()
+
+    data class DanishHomeContent(
+        override val id: UUID,
+        override val fromDate: LocalDate?,
+        override val toDate: LocalDate?,
+        override val basePremium: MonetaryAmount,
+        override val certificateUrl: String?,
+        override val status: AgreementStatus,
+        val address: Address,
+        val numberCoInsured: Int,
+        val squareMeters: Long,
+        val lineOfBusiness: DanishHomeContentLineOfBusiness
+    ) : Agreement()
+
+    data class DanishAccident(
+        override val id: UUID,
+        override val fromDate: LocalDate?,
+        override val toDate: LocalDate?,
+        override val basePremium: MonetaryAmount,
+        override val certificateUrl: String?,
+        override val status: AgreementStatus,
+        val address: Address,
+        val numberCoInsured: Int,
+        val lineOfBusiness: DanishAccidentLineOfBusiness
+    ) : Agreement()
+
+    data class DanishTravel(
+        override val id: UUID,
+        override val fromDate: LocalDate?,
+        override val toDate: LocalDate?,
+        override val basePremium: MonetaryAmount,
+        override val certificateUrl: String?,
+        override val status: AgreementStatus,
+        val address: Address,
+        val numberCoInsured: Int,
+        val lineOfBusiness: DanishTravelLineOfBusiness
+    ) : Agreement()
+
 }
