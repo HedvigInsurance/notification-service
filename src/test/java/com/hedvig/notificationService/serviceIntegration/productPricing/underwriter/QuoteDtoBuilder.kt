@@ -1,10 +1,7 @@
 package com.hedvig.notificationService.serviceIntegration.productPricing.underwriter
 
 import com.hedvig.notificationService.serviceIntegration.underwriter.NorwegianHomeContentsData
-import com.hedvig.notificationService.serviceIntegration.underwriter.ProductType
 import com.hedvig.notificationService.serviceIntegration.underwriter.QuoteDto
-import com.hedvig.notificationService.serviceIntegration.underwriter.QuoteState
-import com.hedvig.notificationService.serviceIntegration.underwriter.SignMethod
 import java.math.BigDecimal
 import java.time.Instant
 import java.time.LocalDate
@@ -17,8 +14,8 @@ fun makeQuoteDto(attributedTo: String = "HEDVIG"): QuoteDto =
         UUID.randomUUID(),
         Instant.parse("2020-06-09T13:35:07.351264Z"),
         BigDecimal.TEN,
-        ProductType.HOME_CONTENT,
-        QuoteState.SIGNED,
+        "HOME_CONTENT",
+        "SIGNED",
         "IOS",
         attributedTo,
         NorwegianHomeContentsData(
@@ -45,5 +42,5 @@ fun makeQuoteDto(attributedTo: String = "HEDVIG"): QuoteDto =
         UUID.randomUUID(),
         UUID.randomUUID(),
         null,
-        SignMethod.NORWEGIAN_BANK_ID
+        "NORWEGIAN_BANK_ID"
     )

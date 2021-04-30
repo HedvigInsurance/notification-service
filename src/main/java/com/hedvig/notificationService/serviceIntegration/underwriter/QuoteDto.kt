@@ -10,8 +10,8 @@ data class QuoteDto(
     val id: UUID,
     val createdAt: Instant,
     val price: BigDecimal? = null,
-    val productType: ProductType,
-    val state: QuoteState,
+    val productType: String,
+    val state: String,
     val initiatedFrom: String,
     val attributedTo: String,
     val data: QuoteData,
@@ -26,26 +26,5 @@ data class QuoteDto(
     val contractId: UUID?,
     val agreementId: UUID?,
     val dataCollectionId: UUID? = null,
-    val signMethod: SignMethod
+    val signMethod: String
 )
-
-enum class QuoteState {
-    INCOMPLETE,
-    QUOTED,
-    SIGNED,
-    EXPIRED
-}
-
-enum class ProductType {
-    APARTMENT,
-    HOUSE,
-    OBJECT,
-    HOME_CONTENT,
-    TRAVEL,
-    UNKNOWN
-}
-
-enum class SignMethod {
-    SWEDISH_BANK_ID,
-    NORWEGIAN_BANK_ID
-}
