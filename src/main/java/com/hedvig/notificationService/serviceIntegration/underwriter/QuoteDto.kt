@@ -14,7 +14,6 @@ data class QuoteDto(
     val state: String,
     val initiatedFrom: String,
     val attributedTo: String,
-    val data: QuoteData,
     val currentInsurer: String? = null,
     val startDate: LocalDate? = null,
     val validity: Long,

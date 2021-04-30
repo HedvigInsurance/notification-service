@@ -31,7 +31,7 @@ sealed class Agreement {
         override val basePremium: MonetaryAmount,
         override val certificateUrl: String?,
         override val status: AgreementStatus,
-        val lineOfBusiness: SwedishApartmentLineOfBusiness,
+        val lineOfBusiness: String,
         val address: Address,
         val numberCoInsured: Int,
         val squareMeters: Long
@@ -61,7 +61,7 @@ sealed class Agreement {
         override val basePremium: MonetaryAmount,
         override val certificateUrl: String?,
         override val status: AgreementStatus,
-        val lineOfBusiness: NorwegianHomeContentLineOfBusiness,
+        val lineOfBusiness: String,
         val address: Address,
         val numberCoInsured: Int,
         val squareMeters: Long
@@ -75,7 +75,7 @@ sealed class Agreement {
         override val basePremium: MonetaryAmount,
         override val certificateUrl: String?,
         override val status: AgreementStatus,
-        val lineOfBusiness: NorwegianTravelLineOfBusiness,
+        val lineOfBusiness: String,
         val numberCoInsured: Int
     ) : Agreement()
 
@@ -89,7 +89,7 @@ sealed class Agreement {
         val address: Address,
         val numberCoInsured: Int,
         val squareMeters: Long,
-        val lineOfBusiness: DanishHomeContentLineOfBusiness
+        val lineOfBusiness: String
     ) : Agreement()
 
     data class DanishAccident(
@@ -101,7 +101,7 @@ sealed class Agreement {
         override val status: AgreementStatus,
         val address: Address,
         val numberCoInsured: Int,
-        val lineOfBusiness: DanishAccidentLineOfBusiness
+        val lineOfBusiness: String
     ) : Agreement()
 
     data class DanishTravel(
@@ -113,7 +113,7 @@ sealed class Agreement {
         override val status: AgreementStatus,
         val address: Address,
         val numberCoInsured: Int,
-        val lineOfBusiness: DanishTravelLineOfBusiness
+        val lineOfBusiness: String
     ) : Agreement()
 
 }
