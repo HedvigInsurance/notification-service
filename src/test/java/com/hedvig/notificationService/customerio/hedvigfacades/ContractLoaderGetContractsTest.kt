@@ -8,7 +8,6 @@ import com.hedvig.notificationService.serviceIntegration.productPricing.client.A
 import com.hedvig.notificationService.serviceIntegration.productPricing.client.Contract
 import com.hedvig.notificationService.serviceIntegration.productPricing.client.ContractStatus
 import com.hedvig.notificationService.serviceIntegration.productPricing.client.Market
-import com.hedvig.notificationService.serviceIntegration.productPricing.client.NorwegianHomeContentLineOfBusiness
 import com.hedvig.notificationService.serviceIntegration.productPricing.client.ProductPricingClient
 import com.hedvig.notificationService.serviceIntegration.productPricing.client.Renewal
 import com.hedvig.notificationService.serviceIntegration.productPricing.underwriter.makeQuoteDto
@@ -172,7 +171,7 @@ class ContractLoaderGetContractsTest {
             Money.of(33, "NOK"),
             null,
             AgreementStatus.ACTIVE,
-            NorwegianHomeContentLineOfBusiness.OWN, Address("", "", "", "", CountryCode.NO), 0, 33
+            "OWN", Address("", "", "", "", CountryCode.NO), 0, 33
         )
     }
 

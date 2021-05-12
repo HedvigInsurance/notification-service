@@ -1,10 +1,8 @@
 package com.hedvig.notificationService.serviceIntegration.productPricing.underwriter
 
-import com.hedvig.notificationService.serviceIntegration.underwriter.NorwegianHomeContentsData
 import com.hedvig.notificationService.serviceIntegration.underwriter.QuoteDto
 import java.math.BigDecimal
 import java.time.Instant
-import java.time.LocalDate
 import java.util.UUID
 
 class QuoteDtoBuilder
@@ -18,20 +16,6 @@ fun makeQuoteDto(attributedTo: String = "HEDVIG"): QuoteDto =
         "SIGNED",
         "IOS",
         attributedTo,
-        NorwegianHomeContentsData(
-            UUID.randomUUID(),
-            null,
-            LocalDate.of(1970, 1, 1),
-            "Herr Norsk",
-            "Noen",
-            "noen@norsk.no",
-            "A street",
-            null,
-            "1234",
-            42,
-            0,
-            false
-        ),
         null,
         null,
         123,
