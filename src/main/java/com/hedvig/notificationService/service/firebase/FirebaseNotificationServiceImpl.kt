@@ -7,7 +7,8 @@ import com.google.firebase.messaging.Aps
 import com.google.firebase.messaging.ApsAlert
 import com.google.firebase.messaging.FirebaseMessagingException
 import com.google.firebase.messaging.Message
-import com.hedvig.common.localization.LocalizationService
+import com.hedvig.libs.translations.LocaleResolver
+import com.hedvig.libs.translations.Translations
 import com.hedvig.notificationService.entities.FirebaseRepository
 import com.hedvig.notificationService.entities.FirebaseToken
 import com.hedvig.notificationService.service.firebase.TextKeys.CLAIM_PAID_BODY
@@ -26,9 +27,9 @@ import com.hedvig.notificationService.service.firebase.TextKeys.REFERRALS_ENABLE
 import com.hedvig.notificationService.service.firebase.TextKeys.REFERRALS_ENABLED_TITLE
 import com.hedvig.notificationService.service.firebase.TextKeys.REFERRAL_SUCCESS_BODY
 import com.hedvig.notificationService.serviceIntegration.memberService.MemberServiceClient
-import com.hedvig.resolver.LocaleResolver
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import java.util.Locale
 import java.util.Optional
 import javax.transaction.Transactional
 
@@ -36,7 +37,7 @@ import javax.transaction.Transactional
 open class FirebaseNotificationServiceImpl(
     private val firebaseRepository: FirebaseRepository,
     private val firebaseMessaging: FirebaseMessager,
-    private val localizationService: LocalizationService,
+    private val translations: Translations,
     private val memberService: MemberServiceClient
 ) : FirebaseNotificationService {
 
@@ -293,16 +294,27 @@ open class FirebaseNotificationServiceImpl(
         bodyReplacements: Map<String, String> = emptyMap()
     ): Pair<String, String> {
         val acceptLanguage = memberService.profile(memberId).body?.acceptLanguage
-        val locale = LocaleResolver.resolveLocale(acceptLanguage)
+        val locale = LocaleResolver.resolve(acceptLanguage)
 
         val title =
-            localizationService.getTranslation(titleTextKey, locale)
+            translateWithReplacements(titleTextKey, locale)
                 ?: throw Error("Could not find text key $titleTextKey")
         val body =
-            localizationService.getTranslation(bodyTextKey, locale, bodyReplacements)
+            translateWithReplacements(bodyTextKey, locale, bodyReplacements)
                 ?: throw Error("Could not find text key $bodyTextKey")
 
         return Pair(title, body)
+    }
+
+    fun translateWithReplacements(
+        key: String,
+        locale: Locale,
+        replacements: Map<String, String> = emptyMap()
+    ): String? {
+
+        var translation = translations.get(key, locale) ?: return null
+        replacements.forEach { (token, text) -> translation = translation.replace("{$token}", text) }
+        return translation
     }
 
     companion object {

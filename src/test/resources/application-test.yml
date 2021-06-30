@@ -22,3 +22,5 @@ hedvig:
     memberBcc: hej@hej.com
   notification-service:
     queueTasklist: asd
+  translations:
+    fakes: true

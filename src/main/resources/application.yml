@@ -15,10 +15,3 @@ graphcms.url: https://api-euwest.graphcms.com/v1/cjmawd9hw036a01cuzmjhplka/maste
 
 logging.level.com.hedvig: DEBUG
 spring.main.allow-bean-definition-overriding: true
-
----
-spring:
-  profiles: test, development
-
-lokalise:
-  useFakes: true
