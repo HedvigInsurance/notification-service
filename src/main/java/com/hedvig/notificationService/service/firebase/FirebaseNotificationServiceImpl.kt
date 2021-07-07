@@ -34,7 +34,7 @@ import java.util.Optional
 import javax.transaction.Transactional
 
 @Service
-open class FirebaseNotificationServiceImpl(
+class FirebaseNotificationServiceImpl(
     private val firebaseRepository: FirebaseRepository,
     private val firebaseMessaging: FirebaseMessager,
     private val translations: Translations,
@@ -63,8 +63,6 @@ open class FirebaseNotificationServiceImpl(
         incentiveCurrency: String
     ) {
         val firebaseToken = firebaseRepository.findById(memberId)
-
-        logger.info("Got token: $firebaseToken")
 
         val message = createMessage(
             memberId,
@@ -188,7 +186,8 @@ open class FirebaseNotificationServiceImpl(
             memberId = memberId,
             titleTextKey = titleTextKey,
             bodyTextKey = bodyTextKey,
-            bodyReplacements = bodyReplacements
+            bodyReplacements = bodyReplacements,
+            type = dataType
         )
 
         customData?.let {
@@ -199,6 +198,7 @@ open class FirebaseNotificationServiceImpl(
             memberId = memberId,
             titleTextKey = titleTextKey,
             bodyTextKey = bodyTextKey,
+            bodyReplacements = bodyReplacements,
             type = dataType
         )
 
@@ -232,10 +232,12 @@ open class FirebaseNotificationServiceImpl(
             val snapshot = future.get()
 
             if (snapshot.documents.isEmpty()) {
-                val docData = HashMap<String, Any>()
-                docData["memberId"] = memberId
-                docData["token"] = token
-                collection.add(docData)
+                collection.add(
+                    mapOf(
+                        "memberId" to memberId,
+                        "token" to token
+                    )
+                )
             }
         } catch (e: Exception) {
             logger.error(
@@ -255,11 +257,10 @@ open class FirebaseNotificationServiceImpl(
         memberId: String,
         titleTextKey: String,
         bodyTextKey: String,
-        bodyReplacements: Map<String, String>
+        bodyReplacements: Map<String, String>,
+        type: String
     ): ApnsConfig.Builder {
         val (title, body) = resolveTitleAndBody(memberId, titleTextKey, bodyTextKey, bodyReplacements)
-
-        logger.info("Title: $title, body: $body")
 
         return ApnsConfig
             .builder()
@@ -274,15 +275,17 @@ open class FirebaseNotificationServiceImpl(
                             .build()
                     ).build()
             )
+            .putCustomData(TYPE, type)
     }
 
     private fun createAndroidConfigBuilder(
         memberId: String,
         titleTextKey: String,
         bodyTextKey: String,
+        bodyReplacements: Map<String, String>,
         type: String
     ): AndroidConfig.Builder {
-        val (title, body) = resolveTitleAndBody(memberId, titleTextKey, bodyTextKey)
+        val (title, body) = resolveTitleAndBody(memberId, titleTextKey, bodyTextKey, bodyReplacements)
 
         return AndroidConfig
             .builder()
@@ -295,7 +298,7 @@ open class FirebaseNotificationServiceImpl(
         memberId: String,
         titleTextKey: String,
         bodyTextKey: String,
-        bodyReplacements: Map<String, String> = emptyMap()
+        bodyReplacements: Map<String, String>
     ): Pair<String, String> {
         val acceptLanguage = memberService.profile(memberId).body?.acceptLanguage
         val locale = LocaleResolver.resolve(acceptLanguage)
