@@ -320,12 +320,7 @@ class FirebaseNotificationServiceImpl(
     ): String? {
 
         var translation = translations.get(key, locale) ?: return null
-
-        logger.info("translation: $translation, replacements: $replacements")
-
         replacements.forEach { (token, text) -> translation = translation.replace("{$token}", text) }
-
-        logger.info("replaced translation: $translation")
         return translation
     }
 
