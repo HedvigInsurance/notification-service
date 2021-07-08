@@ -50,6 +50,7 @@ class FirebaseNotificationServiceImpl(
             dataType = NEW_MESSAGE,
             titleTextKey = DEFAULT_TITLE,
             bodyTextKey = NEW_MESSAGE_BODY,
+            overrideBody = messageText,
             customData = messageText?.let { mapOf(DATA_NEW_MESSAGE_BODY to it) }
         )
 
@@ -197,6 +198,7 @@ class FirebaseNotificationServiceImpl(
         dataType: String,
         titleTextKey: String,
         bodyTextKey: String,
+        overrideBody: String? = null,
         customData: Map<String, String>? = null,
         bodyReplacements: Map<String, String> = emptyMap()
     ): Message {
@@ -205,6 +207,7 @@ class FirebaseNotificationServiceImpl(
             titleTextKey = titleTextKey,
             bodyTextKey = bodyTextKey,
             bodyReplacements = bodyReplacements,
+            overrideBody = overrideBody,
             type = dataType
         )
 
@@ -217,6 +220,7 @@ class FirebaseNotificationServiceImpl(
             titleTextKey = titleTextKey,
             bodyTextKey = bodyTextKey,
             bodyReplacements = bodyReplacements,
+            overrideBody = overrideBody,
             type = dataType
         )
 
@@ -276,9 +280,10 @@ class FirebaseNotificationServiceImpl(
         titleTextKey: String,
         bodyTextKey: String,
         bodyReplacements: Map<String, String>,
+        overrideBody: String?,
         type: String
     ): ApnsConfig.Builder {
-        val (title, body) = resolveTitleAndBody(memberId, titleTextKey, bodyTextKey, bodyReplacements)
+        val (title, body) = resolveTitleAndBody(memberId, titleTextKey, bodyTextKey, bodyReplacements, overrideBody)
 
         return ApnsConfig
             .builder()
@@ -301,9 +306,10 @@ class FirebaseNotificationServiceImpl(
         titleTextKey: String,
         bodyTextKey: String,
         bodyReplacements: Map<String, String>,
+        overrideBody: String?,
         type: String
     ): AndroidConfig.Builder {
-        val (title, body) = resolveTitleAndBody(memberId, titleTextKey, bodyTextKey, bodyReplacements)
+        val (title, body) = resolveTitleAndBody(memberId, titleTextKey, bodyTextKey, bodyReplacements, overrideBody)
 
         return AndroidConfig
             .builder()
@@ -316,17 +322,14 @@ class FirebaseNotificationServiceImpl(
         memberId: String,
         titleTextKey: String,
         bodyTextKey: String,
-        bodyReplacements: Map<String, String>
+        bodyReplacements: Map<String, String>,
+        overrideBody: String?
     ): Pair<String, String> {
         val acceptLanguage = memberService.profile(memberId).body?.acceptLanguage
         val locale = LocaleResolver.resolve(acceptLanguage)
 
-        val title =
-            translateWithReplacements(titleTextKey, locale)
-                ?: throw Error("Could not find text key $titleTextKey")
-        val body =
-            translateWithReplacements(bodyTextKey, locale, bodyReplacements)
-                ?: throw Error("Could not find text key $bodyTextKey")
+        val title = translateWithReplacements(titleTextKey, locale)
+        val body = overrideBody ?: translateWithReplacements(bodyTextKey, locale, bodyReplacements)
 
         return Pair(title, body)
     }
@@ -335,8 +338,8 @@ class FirebaseNotificationServiceImpl(
         key: String,
         locale: Locale,
         replacements: Map<String, String> = emptyMap()
-    ): String? {
-        var translation = translations.get(key, locale) ?: return null
+    ): String {
+        var translation = translations.get(key, locale) ?: throw RuntimeException("Could not find text key $key")
         replacements.forEach { (token, text) -> translation = translation.replace("{$token}", text) }
         return translation
     }

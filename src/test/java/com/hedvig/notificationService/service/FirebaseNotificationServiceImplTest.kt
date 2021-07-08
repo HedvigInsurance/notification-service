@@ -116,10 +116,8 @@ internal class FirebaseNotificationServiceImplTest {
     @Test
     fun sendNewMessageNotificationWithMessage() {
         val title = "title"
-        val body = "body"
         val message = "example message"
         every { translations.get("DEFAULT_TITLE", any()) } returns title
-        every { translations.get("NEW_MESSAGE_BODY", any()) } returns body
         classUnderTest.sendNewMessageNotification(MEMBER_ID, message)
 
         deepMatchMessageCommonData(messages[0], mapOf("TYPE" to "NEW_MESSAGE"))
@@ -128,11 +126,11 @@ internal class FirebaseNotificationServiceImplTest {
             mapOf(
                 "TYPE" to "NEW_MESSAGE",
                 "DATA_MESSAGE_TITLE" to title,
-                "DATA_MESSAGE_BODY" to body,
+                "DATA_MESSAGE_BODY" to message,
                 "DATA_NEW_MESSAGE_BODY" to message
             )
         )
-        deepMatchMessageIOSData(messages[0], title, body)
+        deepMatchMessageIOSData(messages[0], title, message)
     }
 
     @Test
@@ -324,24 +322,6 @@ internal class FirebaseNotificationServiceImplTest {
         )
 
         deepMatchMessageIOSData(messages.first(), "New message!", "You get 123")
-    }
-    @Test
-    fun testCustomMessageContent() {
-        val locale = Locale("sv", "SE")
-        every {
-            translations.get(TextKeys.DEFAULT_TITLE, locale)
-        } returns "New message!"
-        every {
-            memberService.profile("mid").body?.acceptLanguage
-        } returns "sv_SE"
-
-        // No replacements supplied -> nothing replaced
-        classUnderTest.sendNewMessageNotification(
-            "mid",
-            "You can't handle the truth!"
-        )
-
-        deepMatchMessageIOSData(messages.first(), "New message!", "You can't handle the truth!")
     }
 
     private fun deepMatchMessageCommonData(message: Message, map: Map<String, String>) {
