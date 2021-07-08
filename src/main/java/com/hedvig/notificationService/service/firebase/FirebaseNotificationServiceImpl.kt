@@ -331,12 +331,11 @@ class FirebaseNotificationServiceImpl(
         return Pair(title, body)
     }
 
-    fun translateWithReplacements(
+    private fun translateWithReplacements(
         key: String,
         locale: Locale,
         replacements: Map<String, String> = emptyMap()
     ): String? {
-
         var translation = translations.get(key, locale) ?: return null
         replacements.forEach { (token, text) -> translation = translation.replace("{$token}", text) }
         return translation
