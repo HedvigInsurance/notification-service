@@ -64,8 +64,6 @@ open class FirebaseNotificationServiceImpl(
     ) {
         val firebaseToken = firebaseRepository.findById(memberId)
 
-        logger.info("Got token: $firebaseToken")
-
         val message = createMessage(
             memberId,
             firebaseToken,
@@ -259,8 +257,6 @@ open class FirebaseNotificationServiceImpl(
     ): ApnsConfig.Builder {
         val (title, body) = resolveTitleAndBody(memberId, titleTextKey, bodyTextKey, bodyReplacements)
 
-        logger.info("Title: $title, body: $body")
-
         return ApnsConfig
             .builder()
             .setAps(
@@ -317,12 +313,7 @@ open class FirebaseNotificationServiceImpl(
     ): String? {
 
         var translation = translations.get(key, locale) ?: return null
-
-        logger.info("translation: $translation, replacements: $replacements")
-
         replacements.forEach { (token, text) -> translation = translation.replace("{$token}", text) }
-
-        logger.info("replaced translation: $translation")
         return translation
     }
 
