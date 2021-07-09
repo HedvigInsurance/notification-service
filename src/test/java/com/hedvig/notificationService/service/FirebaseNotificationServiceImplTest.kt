@@ -11,12 +11,12 @@ import com.hedvig.notificationService.entities.FirebaseRepository
 import com.hedvig.notificationService.entities.FirebaseToken
 import com.hedvig.notificationService.service.firebase.FirebaseNotificationServiceImpl
 import com.hedvig.notificationService.service.firebase.RealFirebaseMessenger
+import com.hedvig.notificationService.service.firebase.TextKeys
 import com.hedvig.notificationService.serviceIntegration.memberService.MemberServiceClient
 import com.hedvig.notificationService.serviceIntegration.memberService.dto.Member
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
-import io.mockk.verify
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -91,6 +91,10 @@ internal class FirebaseNotificationServiceImplTest {
 
         messages.clear()
         every { firebaseMessaging.send(capture(messages)) } answers { "" }
+
+        every { translations.get(any(), any()) } answers {
+            it.invocation.args.first() as String
+        }
     }
 
     @Test
@@ -112,10 +116,8 @@ internal class FirebaseNotificationServiceImplTest {
     @Test
     fun sendNewMessageNotificationWithMessage() {
         val title = "title"
-        val body = "body"
         val message = "example message"
         every { translations.get("DEFAULT_TITLE", any()) } returns title
-        every { translations.get("NEW_MESSAGE_BODY", any()) } returns body
         classUnderTest.sendNewMessageNotification(MEMBER_ID, message)
 
         deepMatchMessageCommonData(messages[0], mapOf("TYPE" to "NEW_MESSAGE"))
@@ -124,11 +126,11 @@ internal class FirebaseNotificationServiceImplTest {
             mapOf(
                 "TYPE" to "NEW_MESSAGE",
                 "DATA_MESSAGE_TITLE" to title,
-                "DATA_MESSAGE_BODY" to body,
+                "DATA_MESSAGE_BODY" to message,
                 "DATA_NEW_MESSAGE_BODY" to message
             )
         )
-        deepMatchMessageIOSData(messages[0], title, body)
+        deepMatchMessageIOSData(messages[0], title, message)
     }
 
     @Test
@@ -166,14 +168,6 @@ internal class FirebaseNotificationServiceImplTest {
                 "DATA_MESSAGE_REFERRED_SUCCESS_INCENTIVE_CURRENCY" to incentiveCurrency
             )
         )
-
-        verify {
-            classUnderTest.translateWithReplacements(
-                "REFERRAL_SUCCESS_BODY",
-                any(),
-                mapOf("REFERRAL_VALUE" to "10")
-            )
-        }
     }
 
     @Test
@@ -308,42 +302,26 @@ internal class FirebaseNotificationServiceImplTest {
 
     @Test
     fun testReplacementsInTranslations() {
-
-        val locale = Locale("se")
-        val textKey = "textKey"
-        val textWithTokens = "text with token {XXX} and {YYY}"
-        every { translations.get(textKey, any()) } returns textWithTokens
+        val locale = Locale("sv", "SE")
+        every {
+            translations.get(TextKeys.DEFAULT_TITLE, locale)
+        } returns "New message!"
+        every {
+            translations.get(TextKeys.REFERRAL_SUCCESS_BODY, locale)
+        } returns "You get {REFERRAL_VALUE}"
+        every {
+            memberService.profile("mid").body?.acceptLanguage
+        } returns "sv_SE"
 
         // No replacements supplied -> nothing replaced
-        var translation = classUnderTest.translateWithReplacements(textKey, locale)
-        assertThat(translation).isEqualTo(textWithTokens)
-
-        // One replacement supplied -> one replaced
-        translation = classUnderTest.translateWithReplacements(textKey, locale, mapOf("XXX" to "Foo"))
-        assertThat(translation).isEqualTo("text with token Foo and {YYY}")
-
-        // Two replacement supplied -> two replaced
-        translation =
-            classUnderTest.translateWithReplacements(textKey, locale, mapOf("XXX" to "Foo", "YYY" to "bar"))
-        assertThat(translation).isEqualTo("text with token Foo and bar")
-
-        // Three replacement supplied -> two replaced
-        translation = classUnderTest.translateWithReplacements(
-            textKey,
-            locale,
-            mapOf("XXX" to "Foo", "YYY" to "bar", "ZZZ" to "Ish")
+        classUnderTest.sendReferredSuccessNotification(
+            "mid",
+            "Test Persson",
+            "123",
+            ""
         )
-        assertThat(translation).isEqualTo("text with token Foo and bar")
 
-        //  Three replacement supplied, but no tokens in text -> nothing replaced
-        val textWithoutTokens = "Nothing here"
-        every { translations.get(textKey, any()) } returns textWithoutTokens
-        translation = classUnderTest.translateWithReplacements(
-            textKey,
-            locale,
-            mapOf("XXX" to "Foo", "YYY" to "bar", "ZZZ" to "Ish")
-        )
-        assertThat(translation).isEqualTo(textWithoutTokens)
+        deepMatchMessageIOSData(messages.first(), "New message!", "You get 123")
     }
 
     private fun deepMatchMessageCommonData(message: Message, map: Map<String, String>) {
@@ -371,13 +349,13 @@ internal class FirebaseNotificationServiceImplTest {
             ReflectionTestUtils.getField(message, "apnsConfig") as ApnsConfig,
             "payload"
         ) as Map<String, Any>
-        val iOSTitle =
+        val actualTitle =
             ReflectionTestUtils.getField((apnsConfigPayload["aps"] as Map<String, Any>)["alert"], "title") as String
-        val iOSBody =
+        val actualBody =
             ReflectionTestUtils.getField((apnsConfigPayload["aps"] as Map<String, Any>)["alert"], "body") as String
 
-        assertThat(title).isEqualTo(iOSTitle)
-        assertThat(body).isEqualTo(iOSBody)
+        assertThat(actualTitle).isEqualTo(title)
+        assertThat(actualBody).isEqualTo(body)
         customData?.let {
             it.forEach { entry ->
                 assertThat(apnsConfigPayload).contains(Pair(entry.key, entry.value))

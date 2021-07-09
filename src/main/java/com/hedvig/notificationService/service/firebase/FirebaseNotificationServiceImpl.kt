@@ -34,7 +34,7 @@ import java.util.Optional
 import javax.transaction.Transactional
 
 @Service
-open class FirebaseNotificationServiceImpl(
+class FirebaseNotificationServiceImpl(
     private val firebaseRepository: FirebaseRepository,
     private val firebaseMessaging: FirebaseMessager,
     private val translations: Translations,
@@ -45,11 +45,12 @@ open class FirebaseNotificationServiceImpl(
         val firebaseToken = firebaseRepository.findById(memberId)
 
         val message = createMessage(
-            memberId,
-            firebaseToken,
-            NEW_MESSAGE,
-            DEFAULT_TITLE,
-            NEW_MESSAGE_BODY,
+            memberId = memberId,
+            firebaseToken = firebaseToken,
+            dataType = NEW_MESSAGE,
+            titleTextKey = DEFAULT_TITLE,
+            bodyTextKey = NEW_MESSAGE_BODY,
+            overrideBody = messageText,
             customData = messageText?.let { mapOf(DATA_NEW_MESSAGE_BODY to it) }
         )
 
@@ -65,12 +66,12 @@ open class FirebaseNotificationServiceImpl(
         val firebaseToken = firebaseRepository.findById(memberId)
 
         val message = createMessage(
-            memberId,
-            firebaseToken,
-            REFERRAL_SUCCESS,
-            DEFAULT_TITLE,
-            REFERRAL_SUCCESS_BODY,
-            mapOf(
+            memberId = memberId,
+            firebaseToken = firebaseToken,
+            dataType = REFERRAL_SUCCESS,
+            titleTextKey = DEFAULT_TITLE,
+            bodyTextKey = REFERRAL_SUCCESS_BODY,
+            customData = mapOf(
                 DATA_MESSAGE_REFERRED_SUCCESS_NAME to referredName,
                 DATA_MESSAGE_REFERRED_SUCCESS_INCENTIVE_AMOUNT to incentiveAmount,
                 DATA_MESSAGE_REFERRED_SUCCESS_INCENTIVE_CURRENCY to incentiveCurrency
@@ -110,8 +111,13 @@ open class FirebaseNotificationServiceImpl(
     override fun sendClaimPaidNotification(memberId: String) {
         val firebaseToken = firebaseRepository.findById(memberId)
 
-        val message = createMessage(memberId, firebaseToken,
-            CLAIM_PAID, CLAIM_PAID_TITLE, CLAIM_PAID_BODY)
+        val message = createMessage(
+            memberId = memberId,
+            firebaseToken = firebaseToken,
+            dataType = CLAIM_PAID,
+            titleTextKey = CLAIM_PAID_TITLE,
+            bodyTextKey = CLAIM_PAID_BODY
+        )
 
         sendNotification(CLAIM_PAID, memberId, message)
     }
@@ -120,11 +126,11 @@ open class FirebaseNotificationServiceImpl(
         val firebaseToken = firebaseRepository.findById(memberId)
 
         val message = createMessage(
-            memberId,
-            firebaseToken,
-            INSURANCE_POLICY_UPDATED,
-            INSURANCE_POLICY_UPDATED_TITLE,
-            INSURANCE_POLICY_UPDATED_BODY
+            memberId = memberId,
+            firebaseToken = firebaseToken,
+            dataType = INSURANCE_POLICY_UPDATED,
+            titleTextKey = INSURANCE_POLICY_UPDATED_TITLE,
+            bodyTextKey = INSURANCE_POLICY_UPDATED_BODY
         )
 
         sendNotification(INSURANCE_POLICY_UPDATED, memberId, message)
@@ -133,9 +139,13 @@ open class FirebaseNotificationServiceImpl(
     override fun sendInsuranceRenewedNotification(memberId: String) {
         val firebaseToken = firebaseRepository.findById(memberId)
 
-        val message =
-            createMessage(memberId, firebaseToken,
-                INSURANCE_RENEWED, INSURANCE_RENEWED_TITLE, INSURANCE_RENEWED_BODY)
+        val message = createMessage(
+            memberId = memberId,
+            firebaseToken = firebaseToken,
+            dataType = INSURANCE_RENEWED,
+            titleTextKey = INSURANCE_RENEWED_TITLE,
+            bodyTextKey = INSURANCE_RENEWED_BODY
+        )
 
         sendNotification(INSURANCE_RENEWED, memberId, message)
     }
@@ -143,9 +153,13 @@ open class FirebaseNotificationServiceImpl(
     override fun sendHedvigReferralsEnabledNotification(memberId: String) {
         val firebaseToken = firebaseRepository.findById(memberId)
 
-        val message =
-            createMessage(memberId, firebaseToken,
-                REFERRALS_ENABLED, REFERRALS_ENABLED_TITLE, REFERRALS_ENABLED_BODY)
+        val message = createMessage(
+            memberId = memberId,
+            firebaseToken = firebaseToken,
+            dataType = REFERRALS_ENABLED,
+            titleTextKey = REFERRALS_ENABLED_TITLE,
+            bodyTextKey = REFERRALS_ENABLED_BODY
+        )
 
         sendNotification(REFERRALS_ENABLED, memberId, message)
     }
@@ -153,8 +167,13 @@ open class FirebaseNotificationServiceImpl(
     override fun sendGenericCommunicationNotification(memberId: String, titleTextKey: String, bodyTextKey: String) {
         val firebaseToken = firebaseRepository.findById(memberId)
 
-        val message = createMessage(memberId, firebaseToken,
-            GENERIC_COMMUNICATION, titleTextKey, bodyTextKey)
+        val message = createMessage(
+            memberId = memberId,
+            firebaseToken = firebaseToken,
+            dataType = GENERIC_COMMUNICATION,
+            titleTextKey = titleTextKey,
+            bodyTextKey = bodyTextKey
+        )
 
         sendNotification(GENERIC_COMMUNICATION, memberId, message)
     }
@@ -179,6 +198,7 @@ open class FirebaseNotificationServiceImpl(
         dataType: String,
         titleTextKey: String,
         bodyTextKey: String,
+        overrideBody: String? = null,
         customData: Map<String, String>? = null,
         bodyReplacements: Map<String, String> = emptyMap()
     ): Message {
@@ -186,7 +206,9 @@ open class FirebaseNotificationServiceImpl(
             memberId = memberId,
             titleTextKey = titleTextKey,
             bodyTextKey = bodyTextKey,
-            bodyReplacements = bodyReplacements
+            bodyReplacements = bodyReplacements,
+            overrideBody = overrideBody,
+            type = dataType
         )
 
         customData?.let {
@@ -197,6 +219,8 @@ open class FirebaseNotificationServiceImpl(
             memberId = memberId,
             titleTextKey = titleTextKey,
             bodyTextKey = bodyTextKey,
+            bodyReplacements = bodyReplacements,
+            overrideBody = overrideBody,
             type = dataType
         )
 
@@ -230,10 +254,12 @@ open class FirebaseNotificationServiceImpl(
             val snapshot = future.get()
 
             if (snapshot.documents.isEmpty()) {
-                val docData = HashMap<String, Any>()
-                docData["memberId"] = memberId
-                docData["token"] = token
-                collection.add(docData)
+                collection.add(
+                    mapOf(
+                        "memberId" to memberId,
+                        "token" to token
+                    )
+                )
             }
         } catch (e: Exception) {
             logger.error(
@@ -253,9 +279,11 @@ open class FirebaseNotificationServiceImpl(
         memberId: String,
         titleTextKey: String,
         bodyTextKey: String,
-        bodyReplacements: Map<String, String>
+        bodyReplacements: Map<String, String>,
+        overrideBody: String?,
+        type: String
     ): ApnsConfig.Builder {
-        val (title, body) = resolveTitleAndBody(memberId, titleTextKey, bodyTextKey, bodyReplacements)
+        val (title, body) = resolveTitleAndBody(memberId, titleTextKey, bodyTextKey, bodyReplacements, overrideBody)
 
         return ApnsConfig
             .builder()
@@ -270,15 +298,18 @@ open class FirebaseNotificationServiceImpl(
                             .build()
                     ).build()
             )
+            .putCustomData(TYPE, type)
     }
 
     private fun createAndroidConfigBuilder(
         memberId: String,
         titleTextKey: String,
         bodyTextKey: String,
+        bodyReplacements: Map<String, String>,
+        overrideBody: String?,
         type: String
     ): AndroidConfig.Builder {
-        val (title, body) = resolveTitleAndBody(memberId, titleTextKey, bodyTextKey)
+        val (title, body) = resolveTitleAndBody(memberId, titleTextKey, bodyTextKey, bodyReplacements, overrideBody)
 
         return AndroidConfig
             .builder()
@@ -291,28 +322,24 @@ open class FirebaseNotificationServiceImpl(
         memberId: String,
         titleTextKey: String,
         bodyTextKey: String,
-        bodyReplacements: Map<String, String> = emptyMap()
+        bodyReplacements: Map<String, String>,
+        overrideBody: String?
     ): Pair<String, String> {
         val acceptLanguage = memberService.profile(memberId).body?.acceptLanguage
         val locale = LocaleResolver.resolve(acceptLanguage)
 
-        val title =
-            translateWithReplacements(titleTextKey, locale)
-                ?: throw Error("Could not find text key $titleTextKey")
-        val body =
-            translateWithReplacements(bodyTextKey, locale, bodyReplacements)
-                ?: throw Error("Could not find text key $bodyTextKey")
+        val title = translateWithReplacements(titleTextKey, locale)
+        val body = overrideBody ?: translateWithReplacements(bodyTextKey, locale, bodyReplacements)
 
         return Pair(title, body)
     }
 
-    fun translateWithReplacements(
+    private fun translateWithReplacements(
         key: String,
         locale: Locale,
         replacements: Map<String, String> = emptyMap()
-    ): String? {
-
-        var translation = translations.get(key, locale) ?: return null
+    ): String {
+        var translation = translations.get(key, locale) ?: throw RuntimeException("Could not find text key $key")
         replacements.forEach { (token, text) -> translation = translation.replace("{$token}", text) }
         return translation
     }

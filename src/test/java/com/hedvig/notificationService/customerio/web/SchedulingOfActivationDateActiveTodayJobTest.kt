@@ -177,7 +177,7 @@ fun Assert<Trigger>.matches(
         startTime == actual.startTime
     ) return@given
 
-    expected(
+    this.expected(
         "Trigger with name ${show(actual.key.name)} and startTime ${show(actual.startTime)} did not match ${show(
             name
         )} and $startTime"
@@ -198,5 +198,5 @@ fun Assert<JobDetail>.matches(
         }
     ) return@given
 
-    expected("${show(actual)} did not match expected")
+    this.expected("${show(actual)} did not match expected")
 }
